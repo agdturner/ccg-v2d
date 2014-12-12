@@ -1,0 +1,135 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package uk.ac.leeds.ccg.andyt.vector.geometry;
+
+import java.math.BigDecimal;
+//import java.math.MathContext;
+//import org.ojalgo.constant.BigMath;
+import org.ojalgo.function.implementation.BigFunction;
+//import org.ojalgo.function.implementation.FunctionSet;
+//import org.ojalgo.function.implementation.PrimitiveFunction;
+//import org.ojalgo.function.UnaryFunction;
+
+//import org.ojalgo.function.mu
+
+/**
+ *
+ * @author geoagdt
+ */
+public class Vector_Line2D extends Vector_AbstractGeometry2D {
+
+//    /**
+//     * The angle defining the line
+//     */
+//    double _AngleClockwiseFromYAxis;
+
+    /**
+     * The angle defining the line
+     */
+    BigDecimal _AngleClockwiseFromYAxis;
+
+    /**
+     * A point on the line
+     */
+    Vector_Point2D _Point2D;
+
+    public Vector_Line2D(
+            double angleClockwiseFromYAxis,
+            Vector_Point2D a_Point2D){
+        this._AngleClockwiseFromYAxis = new BigDecimal(angleClockwiseFromYAxis);
+        this._Point2D = new Vector_Point2D(a_Point2D);
+        set_DecimalPlacePrecision(
+                Math.max(
+                this._AngleClockwiseFromYAxis.scale(),
+                this._Point2D.get_DecimalPlacePrecision()));
+    }
+
+    public Vector_Line2D(
+            BigDecimal a_AngleClockwiseFromYAxis,
+            Vector_Point2D a_Point2D){
+        this._AngleClockwiseFromYAxis = new BigDecimal(a_AngleClockwiseFromYAxis.toString());
+        this._Point2D = new Vector_Point2D(a_Point2D);
+        set_DecimalPlacePrecision(
+                Math.max(
+                this._AngleClockwiseFromYAxis.scale(),
+                this._Point2D.get_DecimalPlacePrecision()));
+    }
+
+    /**
+     * Potential precision issues with Envelope extent...
+     * @return
+     */
+    @Override
+    public Vector_Envelope2D getEnvelope2D() {
+        //throw new UnsupportedOperationException("Not supported yet.");
+        BigDecimal minusALot = new BigDecimal(Double.MIN_VALUE);
+        BigDecimal plusALot = new BigDecimal(Double.MAX_VALUE);
+        Vector_Point2D a_Point2D = new Vector_Point2D(minusALot,minusALot);
+        Vector_Point2D b_Point2D = new Vector_Point2D(plusALot,plusALot);
+        return new Vector_Envelope2D(a_Point2D, b_Point2D);
+    }
+
+    @Override
+    public void applyDecimalPlacePrecision() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * @param ydiffExtremity
+     * @return
+     */
+    public Vector_Point2D[] getExtremePointsOnLine(double ydiffExtremity){
+        Vector_Point2D[] result = new Vector_Point2D[2];
+        BigDecimal ydiff_BigDecimal = new BigDecimal(ydiffExtremity);
+        BigDecimal xdiff_BigDecimal =
+                BigFunction.TAN.invoke(_AngleClockwiseFromYAxis).multiply(ydiff_BigDecimal);
+        result[0] = new Vector_Point2D(
+                this._Point2D._x.add(xdiff_BigDecimal),
+                this._Point2D._y.add(ydiff_BigDecimal));
+        result[1] = new Vector_Point2D(
+                this._Point2D._x.subtract(xdiff_BigDecimal),
+                this._Point2D._y.subtract(ydiff_BigDecimal));
+        return result;
+    }
+
+//    /**
+//     * @param ydiffExtremity
+//     * @return
+//     */
+//    public Point2D[] getExtremePointsOnLine(double ydiffExtremity){
+//        Point2D[] result = new Point2D[2];
+//        BigDecimal ydiff_BigDecimal = new BigDecimal(ydiffExtremity);
+//        BigDecimal xdiff_BigDecimal = new BigDecimal(Math.tan(_AngleClockwiseFromYAxis.doubleValue()) * ydiffExtremity);
+//        result[0] = new Point2D(
+//                this._Point2D._x.add(xdiff_BigDecimal),
+//                this._Point2D._y.add(ydiff_BigDecimal));
+//       result[1] = new Point2D(
+//                this._Point2D._x.subtract(xdiff_BigDecimal),
+//                this._Point2D._y.subtract(ydiff_BigDecimal));
+//        return result;
+//    }
+
+    public Vector_AbstractGeometry2D getIntersection(
+            Vector_Line2D a_Line2D,
+            double ydiffExtremity,
+            int a_DecimalPlacePrecision){
+        Vector_AbstractGeometry2D result;
+        Vector_Point2D[] extremePointsOnThis = this.getExtremePointsOnLine(
+                ydiffExtremity);
+        Vector_LineSegment2D extremePointsOnThis_LineSegment2D = new Vector_LineSegment2D(
+                extremePointsOnThis[0],
+                extremePointsOnThis[1]);
+        Vector_Point2D[] extremePointsOna_Line2D = a_Line2D.getExtremePointsOnLine(
+                ydiffExtremity);
+        Vector_LineSegment2D extremePointsOna_LineSegment2D = new Vector_LineSegment2D(
+                extremePointsOna_Line2D[0],
+                extremePointsOna_Line2D[1]);
+        result = extremePointsOnThis_LineSegment2D.getIntersection(
+                extremePointsOna_LineSegment2D,
+                a_DecimalPlacePrecision);
+        return result;
+    }
+}
