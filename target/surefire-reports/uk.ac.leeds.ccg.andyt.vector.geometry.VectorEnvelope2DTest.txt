@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: uk.ac.leeds.ccg.andyt.vector.geometry.VectorEnvelope2DTest
--------------------------------------------------------------------------------
-Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.093 sec
