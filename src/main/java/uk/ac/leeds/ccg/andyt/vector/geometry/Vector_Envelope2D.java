@@ -1,7 +1,5 @@
-package uk.ac.leeds.ccg.andyt.vector.geometry;
-
 /**
- * Library for handling spatial vector data.
+ * Component of a library for handling spatial vector data.
  * Copyright (C) 2009 Andy Turner, CCG, University of Leeds, UK.
  *
  * This library is free software; you can redistribute it and/or
@@ -18,6 +16,8 @@ package uk.ac.leeds.ccg.andyt.vector.geometry;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
+package uk.ac.leeds.ccg.andyt.vector.geometry;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -174,9 +174,9 @@ public class Vector_Envelope2D
     }
 
     /**
-     * If aEnvelope2D touches, or overlaps then it getIntersects.
-     * @param a_Envelope2D
-     * @return 
+     * If aEnvelope2D touches, or overlaps then it intersects.
+     * @param a_Envelope2D The Vector_Envelope2D to test for intersection.
+     * @return True iff this intersects with a_Envelope2D.
      */
     public boolean getIntersects(Vector_Envelope2D a_Envelope2D) {
         // Does this contain and corners of a_Envelope2D
@@ -302,7 +302,7 @@ public class Vector_Envelope2D
     }
 
     /**
-     * @param a_LineSegment2D
+     * @param a_LineSegment2D A Vector_LineSegment2D to test for intersection.
      * @return 0 if no, 1 if yes, 2 if maybe.
      */
     public int getIntersects(Vector_LineSegment2D a_LineSegment2D) {
@@ -343,7 +343,7 @@ public class Vector_Envelope2D
     }
 
     @Override
-    public void applyDecimalPlacePrecision() {
+    public final void applyDecimalPlacePrecision() {
         _xmin = _xmin.setScale(
                 get_DecimalPlacePrecision(),
                 get_RoundingMode());

@@ -1,25 +1,24 @@
 /**
- * Library for handling spatial vector data.
- * Copyright (C) 2009 Andy Turner, CCG, University of Leeds, UK.
+ * Component of a library for handling spatial vector data. Copyright (C) 2009
+ * Andy Turner, CCG, University of Leeds, UK.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
 package uk.ac.leeds.ccg.andyt.vector.geometry;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -27,9 +26,9 @@ import java.util.Set;
 import uk.ac.leeds.ccg.andyt.grids.core.AbstractGrid2DSquareCell;
 
 /**
- * Class for networks. These comprise a HashMap of Vector_Point2D instances each linked
- * to a HashSet of Connections. Each Connection comprises of a Vector_Point2D instance
- * and a value.
+ * Class for networks. These comprise a HashMap of Vector_Point2D instances each
+ * linked to a HashSet of Connections. Each Connection comprises of a
+ * Vector_Point2D instance and a value.
  */
 public class Vector_Network2D
         extends Vector_AbstractGeometry2D
@@ -59,9 +58,7 @@ public class Vector_Network2D
                         aGrid2DSquareCell,
                         row,
                         col);
-                Iterator a_Iterator = neighbouringPoints.iterator();
-                while (a_Iterator.hasNext()) {
-                    Vector_Point2D b_Point2D = (Vector_Point2D) a_Iterator.next();
+                for (Vector_Point2D b_Point2D : neighbouringPoints) {
                     Connection a_Connection = new Connection(
                             b_Point2D,
                             DefaultType,
@@ -80,12 +77,10 @@ public class Vector_Network2D
      * true then for connections between the same start and end points of the
      * same type, the lowest value of these is maintained, otherwise the highest
      * is.
-     * operator == 1, then min;
-     * operator == 2, then max;
-     * operator == 3, then increment;
-     * operator == 4, then sum;
-     * @param a_Network
-     * @param operator:
+     *
+     * @param a_Network Vector_Network2D
+     * @param operator If operator == 1, then min; operator == 2, then max;
+     * operator == 3, then increment; operator == 4, then sum.
      */
     public void addToNetwork(
             Vector_Network2D a_Network,
@@ -98,15 +93,11 @@ public class Vector_Network2D
             if (_Connection_HashMap.containsKey(a_Point2D)) {
                 HashSet<Connection> t_Connection_HashSet = _Connection_HashMap.get(a_Point2D);
                 HashSet<Connection> a_Connection_HashSet = a_Network._Connection_HashMap.get(a_Point2D);
-                Iterator b_Iterator = a_Connection_HashSet.iterator();
-                while (b_Iterator.hasNext()) {
-                    Connection a_Connection = (Connection) b_Iterator.next();
+                for (Connection a_Connection : a_Connection_HashSet) {
                     // See if this breaks out as expected... May be going through all records unnecessarily!
                     // No work needed for checking type due to the nature of Connection.equals(Object)
                     if (t_Connection_HashSet.contains(a_Connection)) {
-                        Iterator c_Iterator = t_Connection_HashSet.iterator();
-                        while (c_Iterator.hasNext()) {
-                            Connection t_Connection = (Connection) c_Iterator.next();
+                        for (Connection t_Connection : t_Connection_HashSet) {
                             if (t_Connection.equals(a_Connection)) {
                                 // See if this breaks out as desired... May be going through all records unnecessarily!
                                 switch (operator) {
@@ -151,12 +142,9 @@ public class Vector_Network2D
 
     /**
      *
-     * @param toConnect_Point2D
-     * @param a_Connection
-     * @param operator:
-     * operator 0, min;
-     * operator 1, max;
-     * operator default, sum.
+     * @param toConnect_Point2D Vector_Point2D
+     * @param a_Connection Connection
+     * @param operator: operator 0, min; operator 1, max; operator default, sum.
      */
     public void addToNetwork(
             Vector_Point2D toConnect_Point2D,
@@ -166,9 +154,7 @@ public class Vector_Network2D
         if (_Connection_HashMap.containsKey(toConnect_Point2D)) {
             HashSet<Connection> t_Connection_HashSet = (HashSet<Connection>) _Connection_HashMap.get(toConnect_Point2D);
             if (t_Connection_HashSet.contains(a_Connection)) {
-                Iterator a_Iterator = t_Connection_HashSet.iterator();
-                while (a_Iterator.hasNext()) {
-                    Connection t_Connection = (Connection) a_Iterator.next();
+                for (Connection t_Connection : t_Connection_HashSet) {
                     if (t_Connection.equals(a_Connection)) {
                         // See if this breaks out as desired... May be going through all records unnecessarily!
                         switch (operator) {
@@ -200,12 +186,10 @@ public class Vector_Network2D
 
     /**
      * Adds a connection with a Default Type and Value using the operator.
-     * @param toConnect_Point2D
-     * @param toConnectTo_Point2D
-     * @param operator:
-     * operator 0, min;
-     * operator 1, max;
-     * operator default, sum.
+     *
+     * @param toConnect_Point2D Vector_Point2D
+     * @param toConnectTo_Point2D Vector_Point2D
+     * @param operator: operator 0, min; operator 1, max; operator default, sum.
      */
     public void addToNetwork(
             Vector_Point2D toConnect_Point2D,
@@ -225,8 +209,9 @@ public class Vector_Network2D
 
     /**
      * Adds a connection with a Default Type and Value using the operator.
-     * @param toConnect_Point2D
-     * @param toConnectTo_Point2D
+     *
+     * @param toConnect_Point2D Vector_Point2D
+     * @param toConnectTo_Point2D Vector_Point2D
      */
     public void addToNetwork(
             Vector_Point2D toConnect_Point2D,
@@ -244,7 +229,7 @@ public class Vector_Network2D
         return "_Connection_HashMap.keySet().size() " + _Connection_HashMap.keySet().size();
     }
 
-    public HashSet<Vector_Point2D> getNeighbouringPoints(
+    public static HashSet<Vector_Point2D> getNeighbouringPoints(
             AbstractGrid2DSquareCell aGrid2DSquareCell,
             long row,
             long col) {
@@ -257,16 +242,16 @@ public class Vector_Network2D
         if (aGrid2DSquareCell.isInGrid(arow, acol, _HandleOutOfMemoryError)) {
             result.add(
                     new Vector_Point2D(
-                    aGrid2DSquareCell.getCellXBigDecimal(acol, _HandleOutOfMemoryError),
-                    aGrid2DSquareCell.getCellYBigDecimal(arow, _HandleOutOfMemoryError)));
+                            aGrid2DSquareCell.getCellXBigDecimal(acol, _HandleOutOfMemoryError),
+                            aGrid2DSquareCell.getCellYBigDecimal(arow, _HandleOutOfMemoryError)));
         }
         arow = row - 1;
         acol = col;
         if (aGrid2DSquareCell.isInGrid(arow, acol, _HandleOutOfMemoryError)) {
             result.add(
                     new Vector_Point2D(
-                    aGrid2DSquareCell.getCellXBigDecimal(acol, _HandleOutOfMemoryError),
-                    aGrid2DSquareCell.getCellYBigDecimal(arow, _HandleOutOfMemoryError)));
+                            aGrid2DSquareCell.getCellXBigDecimal(acol, _HandleOutOfMemoryError),
+                            aGrid2DSquareCell.getCellYBigDecimal(arow, _HandleOutOfMemoryError)));
 
         }
         arow = row - 1;
@@ -274,8 +259,8 @@ public class Vector_Network2D
         if (aGrid2DSquareCell.isInGrid(arow, acol, _HandleOutOfMemoryError)) {
             result.add(
                     new Vector_Point2D(
-                    aGrid2DSquareCell.getCellXBigDecimal(acol, _HandleOutOfMemoryError),
-                    aGrid2DSquareCell.getCellYBigDecimal(arow, _HandleOutOfMemoryError)));
+                            aGrid2DSquareCell.getCellXBigDecimal(acol, _HandleOutOfMemoryError),
+                            aGrid2DSquareCell.getCellYBigDecimal(arow, _HandleOutOfMemoryError)));
 
         }
         arow = row;
@@ -283,8 +268,8 @@ public class Vector_Network2D
         if (aGrid2DSquareCell.isInGrid(arow, acol, _HandleOutOfMemoryError)) {
             result.add(
                     new Vector_Point2D(
-                    aGrid2DSquareCell.getCellXBigDecimal(acol, _HandleOutOfMemoryError),
-                    aGrid2DSquareCell.getCellYBigDecimal(arow, _HandleOutOfMemoryError)));
+                            aGrid2DSquareCell.getCellXBigDecimal(acol, _HandleOutOfMemoryError),
+                            aGrid2DSquareCell.getCellYBigDecimal(arow, _HandleOutOfMemoryError)));
 
         }
         arow = row;
@@ -292,8 +277,8 @@ public class Vector_Network2D
         if (aGrid2DSquareCell.isInGrid(arow, acol, _HandleOutOfMemoryError)) {
             result.add(
                     new Vector_Point2D(
-                    aGrid2DSquareCell.getCellXBigDecimal(acol, _HandleOutOfMemoryError),
-                    aGrid2DSquareCell.getCellYBigDecimal(arow, _HandleOutOfMemoryError)));
+                            aGrid2DSquareCell.getCellXBigDecimal(acol, _HandleOutOfMemoryError),
+                            aGrid2DSquareCell.getCellYBigDecimal(arow, _HandleOutOfMemoryError)));
 
         }
         arow = row + 1;
@@ -301,8 +286,8 @@ public class Vector_Network2D
         if (aGrid2DSquareCell.isInGrid(arow, acol, _HandleOutOfMemoryError)) {
             result.add(
                     new Vector_Point2D(
-                    aGrid2DSquareCell.getCellXBigDecimal(acol, _HandleOutOfMemoryError),
-                    aGrid2DSquareCell.getCellYBigDecimal(arow, _HandleOutOfMemoryError)));
+                            aGrid2DSquareCell.getCellXBigDecimal(acol, _HandleOutOfMemoryError),
+                            aGrid2DSquareCell.getCellYBigDecimal(arow, _HandleOutOfMemoryError)));
 
         }
         arow = row + 1;
@@ -310,8 +295,8 @@ public class Vector_Network2D
         if (aGrid2DSquareCell.isInGrid(arow, acol, _HandleOutOfMemoryError)) {
             result.add(
                     new Vector_Point2D(
-                    aGrid2DSquareCell.getCellXBigDecimal(acol, _HandleOutOfMemoryError),
-                    aGrid2DSquareCell.getCellYBigDecimal(arow, _HandleOutOfMemoryError)));
+                            aGrid2DSquareCell.getCellXBigDecimal(acol, _HandleOutOfMemoryError),
+                            aGrid2DSquareCell.getCellYBigDecimal(arow, _HandleOutOfMemoryError)));
 
         }
         arow = row + 1;
@@ -319,8 +304,8 @@ public class Vector_Network2D
         if (aGrid2DSquareCell.isInGrid(arow, acol, _HandleOutOfMemoryError)) {
             result.add(
                     new Vector_Point2D(
-                    aGrid2DSquareCell.getCellXBigDecimal(acol, _HandleOutOfMemoryError),
-                    aGrid2DSquareCell.getCellYBigDecimal(arow, _HandleOutOfMemoryError)));
+                            aGrid2DSquareCell.getCellXBigDecimal(acol, _HandleOutOfMemoryError),
+                            aGrid2DSquareCell.getCellYBigDecimal(arow, _HandleOutOfMemoryError)));
 
         }
         return result;
@@ -364,8 +349,8 @@ public class Vector_Network2D
          */
         public double _Value;
         /**
-         * To distinguish between different types of connection e.g. On foot,
-         * by car etc...
+         * To distinguish between different types of connection e.g. On foot, by
+         * car etc...
          */
         public int _Type;
 
@@ -386,10 +371,11 @@ public class Vector_Network2D
         }
 
         /**
-         * This ignores _Value, so two connections are the same irrespective of 
+         * This ignores _Value, so two connections are the same irrespective of
          * _Value.
-         * @param o
-         * @return
+         *
+         * @param o Object
+         * @return boolean
          */
         @Override
         public boolean equals(Object o) {

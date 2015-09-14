@@ -1,6 +1,20 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * Component of a library for handling spatial vector data.
+ * Copyright (C) 2009 Andy Turner, CCG, University of Leeds, UK.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 package uk.ac.leeds.ccg.andyt.vector.geometrics;
 
@@ -23,6 +37,12 @@ public class Vector_Angles {
         // Do application code here...
     }
 
+    /**
+     * 
+     * @param a_LineRing A Vector_Point2D[] for which the angles to the YAxis 
+     * are wanted.
+     * @return A double[] of angles to the YAxis for a_LineRing.
+     */
     public static double[] getAnglesToYAxisClockwise_doubleArray(
             Vector_Point2D[] a_LineRing) {
         double[] result = new double[a_LineRing.length];
@@ -34,9 +54,9 @@ public class Vector_Angles {
     }
 
     /**
-     * Returns the Clockwise inside angles for a_LineRing 
-     * @param a_LineRing
-     * @return
+     * @param a_LineRing A Vector_Point2D[] for which the angles to the YAxis 
+     * are wanted.
+     * @return The Clockwise inside angles for a_LineRing.
      */
     public static double[] getInsideAnglesClockwise_doubleArray(
             Vector_Point2D[] a_LineRing) {
@@ -59,9 +79,9 @@ public class Vector_Angles {
     }
 
     /**
-     * @param a_Point2D
-     * @param b_Point2D
-     * @param c_Point2D
+     * @param a_Point2D External point.
+     * @param b_Point2D Mid point where inside angle is calculated.
+     * @param c_Point2D External point.
      * @return The inside Angle at b_Point for a Linear Ring assuming the ring
      * is clockwise and the Linear Ring Sequence is a_Point, b_Point, c_Point.
      */
@@ -81,6 +101,11 @@ public class Vector_Angles {
         return result;
     }
 
+    /**
+     * This is a basic operation working with double precision.
+     * @param angleInRadians The angleInRadians to be returned in degrees.
+     * @return The angle in degrees for the angleInRadians.
+     */
     public static double getRadToDeg_double(
             double angleInRadians) {
         return (angleInRadians / Math.PI) * 180.0d;

@@ -1,7 +1,5 @@
-package uk.ac.leeds.ccg.andyt.vector.tests;
-
 /**
- * Library for handling spatial vector data.
+ * Component of a library for handling spatial vector data.
  * Copyright (C) 2009 Andy Turner, CCG, University of Leeds, UK.
  *
  * This library is free software; you can redistribute it and/or
@@ -18,6 +16,8 @@ package uk.ac.leeds.ccg.andyt.vector.tests;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
+package uk.ac.leeds.ccg.andyt.vector.tests;
+
 import uk.ac.leeds.ccg.andyt.vector.geometry.Vector_Envelope2D;
 import uk.ac.leeds.ccg.andyt.vector.geometry.Vector_Point2D;
 

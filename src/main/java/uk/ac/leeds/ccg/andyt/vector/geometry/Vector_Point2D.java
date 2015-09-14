@@ -1,5 +1,5 @@
 /**
- * Library for handling spatial vector data.
+ * Component of a library for handling spatial vector data.
  * Copyright (C) 2009 Andy Turner, CCG, University of Leeds, UK.
  *
  * This library is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@ import java.math.BigDecimal;
 import org.ojalgo.constant.BigMath;
 import org.ojalgo.function.implementation.BigFunction;
 import uk.ac.leeds.ccg.andyt.generic.math.Generic_BigDecimal;
-import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
+//import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
 import uk.ac.leeds.ccg.andyt.vector.misc.VectorStaticBigDecimal;
 
 /**
@@ -57,7 +57,7 @@ public class Vector_Point2D
      * _x = new BigDecimal(aPoint2D._x.toString());
      * _y = new BigDecimal(aPoint2D._y.toString());
      *  set_DecimalPlacePrecision(Math.max(_x.scale(),_y.scale()));
-     * @param a_Point2D
+     * @param a_Point2D Vector_Point2D
      */
     public Vector_Point2D(
             Vector_Point2D a_Point2D) {
@@ -71,9 +71,8 @@ public class Vector_Point2D
      * _x = new BigDecimal(aPoint2D._x.toString());
      * _y = new BigDecimal(aPoint2D._y.toString());
      * set_DecimalPlacePrecision(_DecimalPlacePrecision_Integer);
-     * @param a_Point2D
-     * @param aPoint2D
-     * @param _DecimalPlacePrecision
+     * @param a_Point2D Vector_Point2D
+     * @param _DecimalPlacePrecision Precision
      */
     public Vector_Point2D(
             Vector_Point2D a_Point2D,
@@ -96,12 +95,9 @@ public class Vector_Point2D
      *         Math.max(
      *         toRoundToX_BigDecimal.scale(),
      *         toRoundToY_BigDecimal.scale()));
-     * @param a_Point2D
-     * @param aPoint2D
-     * @param toRoundToX_BigDecimal
-     * @param BigDecimal toRoundToX_BigDecimal
-     * @param toRoundToY_BigDecimal
-     * @param BigDecimal toRoundToY_BigDecimal
+     * @param a_Point2D Vector_Point2D
+     * @param toRoundToX_BigDecimal BigDecimal toRoundToX_BigDecimal
+     * @param toRoundToY_BigDecimal BigDecimal toRoundToY_BigDecimal
      */
     public Vector_Point2D(
             Vector_Point2D a_Point2D,
@@ -125,8 +121,8 @@ public class Vector_Point2D
      * this._x = new BigDecimal(_x.toString());
      * this._y = new BigDecimal(_y.toString());
      * set_DecimalPlacePrecision(Math.max(_x.scale(),_y.scale()));
-     * @param _x
-     * @param _y
+     * @param _x BigDecimal
+     * @param _y BigDecimal
      */
     public Vector_Point2D(
             BigDecimal _x,
@@ -140,9 +136,9 @@ public class Vector_Point2D
      * this._x = new BigDecimal(_x.toString());
      * this._y = new BigDecimal(_y.toString());
      * set_DecimalPlacePrecision(_DecimalPlacePrecision_Integer);
-     * @param _x
-     * @param _y
-     * @param _DecimalPlacePrecision
+     * @param _x BigDecimal
+     * @param _y BigDecimal
+     * @param _DecimalPlacePrecision Precision...
      */
     public Vector_Point2D(
             BigDecimal _x,
@@ -161,11 +157,10 @@ public class Vector_Point2D
      *         _y,
      *         toRoundToY_BigDecimal);
      * set_DecimalPlacePrecision(toRoundTo_BigDecimal.scale());
-     * @param _x
-     * @param _y
-     * @param toRoundToX_BigDecimal
-     * @param BigDecimal toRoundToX_BigDecimal
-     * @param toRoundToY_BigDecimal
+     * @param _x BigDecimal
+     * @param _y BigDecimal
+     * @param toRoundToX_BigDecimal BigDecimal toRoundToX_BigDecimal
+     * @param toRoundToY_BigDecimal BigDecimal
      */
     public Vector_Point2D(
             BigDecimal _x,
@@ -188,8 +183,8 @@ public class Vector_Point2D
      * _x = new BigDecimal(x);
      * _y = new BigDecimal(y);
      * set_DecimalPlacePrecision(Math.max(_x.scale(),_y.scale()));
-     * @param x
-     * @param y
+     * @param x String
+     * @param y String
      */
     public Vector_Point2D(
             String x,
@@ -203,9 +198,9 @@ public class Vector_Point2D
      * _x = new BigDecimal(x);
      * _y = new BigDecimal(y);
      * set_DecimalPlacePrecision(_DecimalPlacePrecision_Integer);
-     * @param x
-     * @param y
-     * @param _DecimalPlacePrecision
+     * @param x String
+     * @param y String
+     * @param _DecimalPlacePrecision Precision
      */
     public Vector_Point2D(
             String x,
@@ -220,8 +215,8 @@ public class Vector_Point2D
      * _x = new BigDecimal(x);
      * _y = new BigDecimal(y);
      * set_DecimalPlacePrecision(Math.max(_x.scale(),_y.scale()));
-     * @param x
-     * @param y
+     * @param x double
+     * @param y double
      * @deprecated
      */
     public Vector_Point2D(
@@ -236,9 +231,9 @@ public class Vector_Point2D
      * _x = new BigDecimal(x);
      * _y = new BigDecimal(y);
      * set_DecimalPlacePrecision(_DecimalPlacePrecision_Integer);
-     * @param x
-     * @param y
-     * @param _DecimalPlacePrecision
+     * @param x double
+     * @param y double
+     * @param _DecimalPlacePrecision Precision...
      */
     public Vector_Point2D(
             double x,
@@ -260,10 +255,10 @@ public class Vector_Point2D
      *         Math.max(
      *         toRoundToX_BigDecimal.scale(),
      *         toRoundToY_BigDecimal.scale()));
-     * @param x
-     * @param y
-     * @param toRoundToX_BigDecimal
-     * @param toRoundToY_BigDecimal
+     * @param x double
+     * @param y double
+     * @param toRoundToX_BigDecimal BigDecimal
+     * @param toRoundToY_BigDecimal BigDecimal
      */
     public Vector_Point2D(
             double x,
@@ -283,7 +278,7 @@ public class Vector_Point2D
     }
 
     @Override
-    public int set_DecimalPlacePrecision(int _DecimalPlacePrecision) {
+    public final int set_DecimalPlacePrecision(int _DecimalPlacePrecision) {
         int result = super.set_DecimalPlacePrecision(_DecimalPlacePrecision);
         applyDecimalPlacePrecision();
         return result;
@@ -360,8 +355,8 @@ public class Vector_Point2D
     /**
      * Precise to a_DecimalPlacePrecision number of decimal places given
      * precision of a_VectorPoint2D and this.
-     * @param a_VectorPoint2D
-     * @param a_DecimalPlacePrecision
+     * @param a_VectorPoint2D Vector_Point2D
+     * @param a_DecimalPlacePrecision Precision
      * @return The distance from a_VectorPoint2D to this.
      */
     public BigDecimal getDistance(
@@ -385,7 +380,7 @@ public class Vector_Point2D
 
     /**
      * Imprecise: Uses Java double precision for all calculations
-     * @param a_Point2D
+     * @param a_Point2D Vector_Point2D
      * @return Angle to the y axis clockwise. Default 0.0d.
      */
     public double getAngle_double(Vector_Point2D a_Point2D) {
@@ -429,7 +424,7 @@ public class Vector_Point2D
 
     /**
      * Imprecise, but uses BigMath and BigFunction default precision
-     * @param a_Point2D
+     * @param a_Point2D Vector_Point2D
      * @return Angle to the y axis clockwise. Default 0.0d.
      */
     public BigDecimal getAngle_BigDecimal(Vector_Point2D a_Point2D) {
@@ -520,7 +515,7 @@ public class Vector_Point2D
      * result[0] = this._x.doubleValue();
      * result[1] = this._y.doubleValue();
      * return result;
-     * @return
+     * @return double[}
      */
     public double[] to_doubleArray() {
         double[] result = new double[2];

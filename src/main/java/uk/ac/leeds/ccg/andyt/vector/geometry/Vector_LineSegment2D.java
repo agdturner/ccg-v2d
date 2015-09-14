@@ -1,23 +1,23 @@
+/**
+ * Component of a library for handling spatial vector data. Copyright (C) 2009
+ * Andy Turner, CCG, University of Leeds, UK.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
+ */
 package uk.ac.leeds.ccg.andyt.vector.geometry;
 
-/**
- * Library for handling spatial vector data.
- * Copyright (C) 2009 Andy Turner, CCG, University of Leeds, UK.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
- */
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -27,8 +27,8 @@ import java.math.RoundingMode;
 /**
  * Class for a line segment in 2D represented by two Point2D instances, one is
  * designated a start point and the other an end point. In this way a line
- * segment explicitly has a direction. Two Vector_LineSegment2D instances are regarded
- * as equal iff their start and end points are the same.
+ * segment explicitly has a direction. Two Vector_LineSegment2D instances are
+ * regarded as equal iff their start and end points are the same.
  */
 public class Vector_LineSegment2D
         extends Vector_AbstractGeometry2D
@@ -38,22 +38,21 @@ public class Vector_LineSegment2D
     public Vector_Point2D _End_Point2D;
 
     /**
-     * Creates a default Vector_LineSegment2D with:
-     * _Start_Point2D = null;
+     * Creates a default Vector_LineSegment2D with: _Start_Point2D = null;
      * _End_Point2D = null;
      */
     public Vector_LineSegment2D() {
     }
 
     /**
-     * Creates a Vector_LineSegment2D with:
-     * this._Start_Point2D = new Point2D(_StartPoint);
-     * this._End_Point2D = new Point2D(_EndPoint);
+     * Creates a Vector_LineSegment2D with: this._Start_Point2D = new
+     * Point2D(_StartPoint); this._End_Point2D = new Point2D(_EndPoint);
      * set_DecimalPlacePrecision(Math.max(
-     *          _Start_Point2D.get_DecimalPlacePrecision(),
-     *          _End_Point2D.get_DecimalPlacePrecision()));
-     * @param _StartPoint
-     * @param _EndPoint
+     * _Start_Point2D.get_DecimalPlacePrecision(),
+     * _End_Point2D.get_DecimalPlacePrecision()));
+     *
+     * @param _StartPoint Vector_Point2D
+     * @param _EndPoint Vector_Point2D
      */
     public Vector_LineSegment2D(
             Vector_Point2D _StartPoint,
@@ -66,14 +65,13 @@ public class Vector_LineSegment2D
     }
 
     /**
-     * Creates a Vector_LineSegment2D with:
-     * _StartPoint = _StartPoint;
-     * _EndPoint = _EndPoint;
-     * _DecimalPlacePrecision_Integer = _DecimalPlacePrecision_Integer;
-     * _RoundingMode = _RoundingMode.
-     * @param _StartPoint
-     * @param _EndPoint
-     * @param _DecimalPlacePrecision
+     * Creates a Vector_LineSegment2D with: _StartPoint = _StartPoint; _EndPoint
+     * = _EndPoint; _DecimalPlacePrecision_Integer =
+     * _DecimalPlacePrecision_Integer; _RoundingMode = _RoundingMode.
+     *
+     * @param _StartPoint Vector_Point2D
+     * @param _EndPoint Vector_Point2D
+     * @param _DecimalPlacePrecision int
      */
     public Vector_LineSegment2D(
             Vector_Point2D _StartPoint,
@@ -85,11 +83,13 @@ public class Vector_LineSegment2D
     }
 
     /**
-     * Creates a Vector_LineSegment2D with:
-     * this._Start_Point2D = new Point2D(a_LineSegment2D._Start_Point2D);
-     * this._End_Point2D = new Point2D(a_LineSegment2D._End_Point2D);
-     * this._DecimalPlacePrecision_Integer = a_LineSegment2D._DecimalPlacePrecision_Integer;
-     * @param a_LineSegment2D
+     * Creates a Vector_LineSegment2D with: this._Start_Point2D = new
+     * Point2D(a_LineSegment2D._Start_Point2D); this._End_Point2D = new
+     * Point2D(a_LineSegment2D._End_Point2D);
+     * this._DecimalPlacePrecision_Integer =
+     * a_LineSegment2D._DecimalPlacePrecision_Integer;
+     *
+     * @param a_LineSegment2D Vector_LineSegment2D
      */
     public Vector_LineSegment2D(
             Vector_LineSegment2D a_LineSegment2D) {
@@ -102,7 +102,7 @@ public class Vector_LineSegment2D
     }
 
     @Override
-    public int set_DecimalPlacePrecision(int _DecimalPlacePrecision) {
+    protected final int set_DecimalPlacePrecision(int _DecimalPlacePrecision) {
         int result = super.set_DecimalPlacePrecision(_DecimalPlacePrecision);
         applyDecimalPlacePrecision();
         return result;
@@ -116,8 +116,7 @@ public class Vector_LineSegment2D
     }
 
     /**
-     * Default is 1.
-     * Calls compareTo on the _StartPoint.
+     * Default is 1. Calls compareTo on the _StartPoint.
      */
     @Override
     public int compareTo(Object o) {
@@ -134,8 +133,8 @@ public class Vector_LineSegment2D
     }
 
     /**
-     *
-     * @param a_DecimalPlacePrecision
+     * @param a_DecimalPlacePrecision The decimal place precision to be used for
+     * this.
      * @return The length of this as a BigDecimal
      */
     public BigDecimal getLength(int a_DecimalPlacePrecision) {
@@ -147,8 +146,9 @@ public class Vector_LineSegment2D
     }
 
     /**
-     * @TODO Correct with regard _DecimalPlacePrecision_Integer!?
-     * @return
+     * TODO: Correct with regard _DecimalPlacePrecision_Integer!?
+     *
+     * @return Vector_Envelope2D 
      */
     @Override
     public Vector_Envelope2D getEnvelope2D() {
@@ -158,10 +158,13 @@ public class Vector_LineSegment2D
     }
 
     /**
-     * Intersection done by first seeing if Envelope intersection....
-     * @param a_LineSegment2D
-     * @param a_DecimalPlacePrecision
-     * @return true iff a_LineSegment2D getIntersects this.
+     * Intersection done by first seeing if Envelope intersects....
+     *
+     * @param a_LineSegment2D A Vector_LineSegment2D to test.
+     * @param a_DecimalPlacePrecision The decimal place precision to be used for
+     * this.
+     *
+     * @return True iff a_LineSegment2D getIntersects this.
      */
     public boolean getIntersects(
             Vector_LineSegment2D a_LineSegment2D,
@@ -181,9 +184,11 @@ public class Vector_LineSegment2D
                     if (b_Envelope2DIntersect == 1) {
                         return true;
                     } else {
-                        if (getIntersection(
+                        Vector_AbstractGeometry2D intersection;
+                        intersection = getIntersection(
                                 a_LineSegment2D,
-                                a_DecimalPlacePrecision) != null) {
+                                a_DecimalPlacePrecision);
+                        if (intersection != null) {
                             return true;
                         } else {
                             return false;
@@ -197,10 +202,12 @@ public class Vector_LineSegment2D
     /**
      * For optimisation reasons, intersection done by first seeing if there is
      * Envelope intersection...
-     * @param a_LineSegment2D
+     *
+     * @param a_LineSegment2D Vector_LineSegment2D to test for intersection.
      * @param ignore_this_Start_Point2D if true then if
      * this._Start_Point2D.getIntersects(a_LineSegment2D) return false
-     * @param a_DecimalPlacePrecision
+     * @param a_DecimalPlacePrecision The decimal place precision to be used for
+     * this.
      * @return true iff a_LineSegment2D getIntersects this.
      */
     public boolean getIntersects(
@@ -227,8 +234,10 @@ public class Vector_LineSegment2D
     /**
      * Intersection done by calculating angle or gradient of the line and
      * comparing this with that of a_Point.
-     * @param a_Point2D
-     * @param a_DecimalPlacePrecision
+     *
+     * @param a_Point2D A Vector_Point2D to test for intersection.
+     * @param a_DecimalPlacePrecision The decimal place precision to be used for
+     * this.
      * @return true iff a_Point2D getIntersects this.
      */
     public boolean getIntersects(
@@ -348,12 +357,13 @@ public class Vector_LineSegment2D
     /**
      * Intersection method adapted from
      * <a href="http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline2d/">http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline2d/</a>
-     * @param a_LineSegment2D
-     * @param a_DecimalPlacePrecision
+     *
+     * @param a_LineSegment2D Vector_LineSegment2D
+     * @param a_DecimalPlacePrecision Precision...
      * @return null if this does not intersect a_LineSegment2D; a Point2D if
-     * this getIntersects a_LineSegment2D at a point; and, a Vector_LineSegment2D if this
-     * getIntersects a_LineSegment2D in a line.
-     * @TODO Not sure about using Rounding Modes here, it might be best to
+     * this getIntersects a_LineSegment2D at a point; and, a
+     * Vector_LineSegment2D if this getIntersects a_LineSegment2D in a line.
+     * TODO: Not sure about using Rounding Modes here, it might be best to
      * handle arithmetic exceptions and provide another method into which a
      * MathContext can be passed...
      */
@@ -489,9 +499,8 @@ public class Vector_LineSegment2D
     }
 
     /**
-     * @TODO Control precision!
-     * The angle returned is the smallest angle between this and the X axis and
-     * so is between Math.PI and -Math.PI.
+     * TODO: Control precision! The angle returned is the smallest angle between
+     * this and the X axis and so is between Math.PI and -Math.PI.
      * @return The angle in radians to the X axis
      */
     public double getAngleToX_double() {
@@ -518,9 +527,9 @@ public class Vector_LineSegment2D
 //        return result;
 //    }
     /**
-     * @TODO Control precision!
-     * The angle returned is the smallest angle between this and the Y axis and
-     * so is between Math.PI and -Math.PI.
+     * TODO: Control precision! The angle returned is the smallest angle between
+     * this and the Y axis and so is between Math.PI and -Math.PI.
+     *
      * @return The angle in radians to the Y axis
      */
     public double getAngleToY_double() {
@@ -538,8 +547,8 @@ public class Vector_LineSegment2D
 
     /**
      * Assuming a_LineSegment.StartPoint == this.
-     * @param a_LineSegment2D
-     * @return
+     * @param a_LineSegment2D Vector_LineSegment2D
+     * @return BigDecimal
      */
     public BigDecimal getScalarProduct(
             Vector_LineSegment2D a_LineSegment2D) {
@@ -551,14 +560,14 @@ public class Vector_LineSegment2D
         }
         return (a_LineSegment2D._End_Point2D._x.multiply(
                 this._End_Point2D._x)).add(
-                (a_LineSegment2D._End_Point2D._y.multiply(
-                this._End_Point2D._y)));
+                        (a_LineSegment2D._End_Point2D._y.multiply(
+                                this._End_Point2D._y)));
     }
 
     /**
      * Assuming a_LineSegment.StartPoint == this.
-     * @param a_LineSegment2D
-     * @return
+     * @param a_LineSegment2D Vector_LineSegment2D
+     * @return BigDecimal
      */
     public BigDecimal getCrossProduct(
             Vector_LineSegment2D a_LineSegment2D) {
@@ -570,8 +579,8 @@ public class Vector_LineSegment2D
         }
         return (a_LineSegment2D._End_Point2D._x.multiply(
                 this._End_Point2D._y)).subtract(
-                (this._End_Point2D._x.multiply(
-                a_LineSegment2D._End_Point2D._y)));
+                        (this._End_Point2D._x.multiply(
+                                a_LineSegment2D._End_Point2D._y)));
     }
 
     @Override

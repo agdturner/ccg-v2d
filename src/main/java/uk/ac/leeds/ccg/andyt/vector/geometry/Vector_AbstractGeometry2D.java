@@ -1,6 +1,5 @@
-package uk.ac.leeds.ccg.andyt.vector.geometry;
 /**
- * Library for handling spatial vector data.
+ * Component of a library for handling spatial vector data.
  * Copyright (C) 2009 Andy Turner, CCG, University of Leeds, UK.
  *
  * This library is free software; you can redistribute it and/or
@@ -17,6 +16,7 @@ package uk.ac.leeds.ccg.andyt.vector.geometry;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
+package uk.ac.leeds.ccg.andyt.vector.geometry;
 
 import java.io.Serializable;
 import java.math.RoundingMode;
@@ -32,9 +32,9 @@ public abstract class Vector_AbstractGeometry2D
     public Vector_Environment _Vector_Environment;
 
     protected Integer _DecimalPlacePrecision_Integer;
-    private static int DefaultDecimalPlacePrecision_int = 0;
+    private static final int DefaultDecimalPlacePrecision_int = 0;
     protected RoundingMode _RoundingMode;
-    private static RoundingMode Default_RoundingMode = RoundingMode.FLOOR;
+    private static final RoundingMode Default_RoundingMode = RoundingMode.FLOOR;
 
     @Override
     public String toString() {
@@ -63,12 +63,13 @@ public abstract class Vector_AbstractGeometry2D
     /**
      * Default method probably best overridden to determine what setting
      * _DecimalPlacePrecision_Integer involves
-     * @param _DecimalPlacePrecision
-     * @return
+     * @param precision The number of decimal places set for 
+     * _DecimalPlacePrecision_Integer. 
+     * @return The current value of _DecimalPlacePrecision_Integer.
      */
-    protected int set_DecimalPlacePrecision(int _DecimalPlacePrecision){
+    protected int set_DecimalPlacePrecision(int precision){
         int result = get_DecimalPlacePrecision();
-        this._DecimalPlacePrecision_Integer = _DecimalPlacePrecision;
+        this._DecimalPlacePrecision_Integer = precision;
         return result;
     }
 

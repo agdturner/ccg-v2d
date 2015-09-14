@@ -1,6 +1,5 @@
-package uk.ac.leeds.ccg.andyt.vector.visualisation;
 /**
- * Library for handling spatial vector data.
+ * Component of a library for handling spatial vector data.
  * Copyright (C) 2009 Andy Turner, CCG, University of Leeds, UK.
  *
  * This library is free software; you can redistribute it and/or
@@ -17,20 +16,21 @@ package uk.ac.leeds.ccg.andyt.vector.visualisation;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
+package uk.ac.leeds.ccg.andyt.vector.visualisation;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+//import java.awt.event.WindowAdapter;
+//import java.awt.event.WindowEvent;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashMap;
+//import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import javax.swing.JApplet;
+//import javax.swing.JApplet;
 import javax.swing.JFrame;
 import uk.ac.leeds.ccg.andyt.vector.geometry.Vector_Envelope2D;
 import uk.ac.leeds.ccg.andyt.vector.geometry.Vector_Network2D;
