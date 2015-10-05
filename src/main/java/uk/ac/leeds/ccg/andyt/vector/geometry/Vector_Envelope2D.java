@@ -1,20 +1,20 @@
 /**
- * Component of a library for handling spatial vector data.
- * Copyright (C) 2009 Andy Turner, CCG, University of Leeds, UK.
+ * Component of a library for handling spatial vector data. Copyright (C) 2009
+ * Andy Turner, CCG, University of Leeds, UK.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
 package uk.ac.leeds.ccg.andyt.vector.geometry;
 
@@ -37,12 +37,12 @@ public class Vector_Envelope2D
 
     /**
      * Creates a default Vector_Envelope2D
-     <code>
-        _xmin = new BigDecimal(Long.MAX_VALUE);
-        _xmax = new BigDecimal(Long.MIN_VALUE);
-        _ymin = new BigDecimal(Long.MAX_VALUE);
-        _ymax = new BigDecimal(Long.MIN_VALUE);
-     </code>
+     * <code>
+     * _xmin = new BigDecimal(Long.MAX_VALUE);
+     * _xmax = new BigDecimal(Long.MIN_VALUE);
+     * _ymin = new BigDecimal(Long.MAX_VALUE);
+     * _ymax = new BigDecimal(Long.MIN_VALUE);
+     * </code>
      */
     public Vector_Envelope2D() {
         _xmin = new BigDecimal(Long.MAX_VALUE);
@@ -91,8 +91,8 @@ public class Vector_Envelope2D
         }
         set_DecimalPlacePrecision(
                 Math.max(
-                aPoint.get_DecimalPlacePrecision(),
-                bPoint.get_DecimalPlacePrecision()));
+                        aPoint.get_DecimalPlacePrecision(),
+                        bPoint.get_DecimalPlacePrecision()));
         applyDecimalPlacePrecision();
     }
 
@@ -105,8 +105,8 @@ public class Vector_Envelope2D
         _xmax = new BigDecimal(x.toString());
         set_DecimalPlacePrecision(
                 Math.max(
-                x.scale(),
-                y.scale()));
+                        x.scale(),
+                        y.scale()));
         applyDecimalPlacePrecision();
     }
 
@@ -175,6 +175,7 @@ public class Vector_Envelope2D
 
     /**
      * If aEnvelope2D touches, or overlaps then it intersects.
+     *
      * @param a_Envelope2D The Vector_Envelope2D to test for intersection.
      * @return True iff this intersects with a_Envelope2D.
      */
@@ -305,20 +306,33 @@ public class Vector_Envelope2D
      * @param a_LineSegment2D A Vector_LineSegment2D to test for intersection.
      * @return 0 if no, 1 if yes, 2 if maybe.
      */
-    public int getIntersects(Vector_LineSegment2D a_LineSegment2D) {
+    public int getIntersectsFailFast(Vector_LineSegment2D a_LineSegment2D) {
         Vector_Envelope2D a_Envelope2D = a_LineSegment2D.getEnvelope2D();
         if (a_Envelope2D.getIntersects(getEnvelope2D())) {
             if (getIntersects(a_LineSegment2D._Start_Point2D)) {
                 return 1;
-            } else {
-                if (getIntersects(a_LineSegment2D._End_Point2D)) {
-                    return 1;
-                }
-                return 2;
             }
+            if (getIntersects(a_LineSegment2D._End_Point2D)) {
+                return 1;
+            }
+            return 2;
         } else {
             return 0;
         }
+    }
+    
+    /**
+     * @param a_LineSegment2D A Vector_LineSegment2D to test for intersection.
+     * @return true iff this.intersects with a_LineSegment2D.
+     */
+    public boolean getIntersects(
+            Vector_LineSegment2D a_LineSegment2D, 
+            boolean handleOutOfMemoryError) {
+        return Vector_LineSegment2D.getIntersects(
+                _xmin, _ymin, _xmax, _ymax, 
+                a_LineSegment2D,
+                this._DecimalPlacePrecision_Integer,
+                handleOutOfMemoryError);
     }
 
     public boolean getIntersects(Vector_Point2D aPoint) {

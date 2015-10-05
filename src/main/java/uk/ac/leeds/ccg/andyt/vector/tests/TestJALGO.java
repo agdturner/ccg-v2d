@@ -26,6 +26,7 @@ import org.ojalgo.constant.BigMath;
  *
  * @author geoagdt
  */
+@Deprecated
 public class TestJALGO {
 public TestJALGO(){}
 

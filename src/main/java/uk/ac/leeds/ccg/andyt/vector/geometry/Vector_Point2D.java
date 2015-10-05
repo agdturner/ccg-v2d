@@ -337,10 +337,10 @@ public class Vector_Point2D
         return 1;
     }
 
-//    public boolean getIntersects(
+//    public boolean getIntersectsFailFast(
 //            LineSegment2D a_LineSegment2D,
 //            MathContext a_MathContextForCalculations) {
-//        return a_LineSegment2D.getIntersects(
+//        return a_LineSegment2D.getIntersectsFailFast(
 //                this,
 //                a_MathContextForCalculations);
 //    }

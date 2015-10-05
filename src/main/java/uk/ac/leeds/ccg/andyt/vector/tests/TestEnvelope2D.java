@@ -24,6 +24,7 @@ import uk.ac.leeds.ccg.andyt.vector.geometry.Vector_Point2D;
 /**
  * Class for tests and example uses of Vector_Envelope2D.
  */
+@Deprecated
 public class TestEnvelope2D {
 
     public static void main(String[] args) {
