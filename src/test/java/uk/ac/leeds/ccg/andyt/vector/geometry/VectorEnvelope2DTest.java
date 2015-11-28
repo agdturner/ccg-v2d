@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
 
 /**
  *
@@ -82,7 +83,7 @@ public class VectorEnvelope2DTest {
     }
 
     /**
-     * Test of getIntersects method, of class Vector_Envelope2D.
+     * Test of getIntersectsFailFast method, of class Vector_Envelope2D.
      */
     @Test
     public void testGetIntersects_Envelope2D() {
@@ -91,7 +92,7 @@ public class VectorEnvelope2DTest {
         boolean result;
 
         Vector_Point2D a_VectorPoint2D;
-        Vector_Point2D b_VectorPoint2D = new Vector_Point2D("1", "1");
+        Vector_Point2D b_VectorPoint2D = new Vector_Point2D(null, "1", "1");
         Vector_Envelope2D b_VectorPoint2D_Envelope2D = b_VectorPoint2D.getEnvelope2D();
         Vector_Envelope2D ab_VectorEnvelope2D;
         BigDecimal a_x = new BigDecimal("1");
@@ -100,7 +101,7 @@ public class VectorEnvelope2DTest {
         for (int i = 0; i < 1000; i++) {
             a_x = a_x.divide(ten_BigDecimal);
             a_y = a_y.divide(ten_BigDecimal);
-            a_VectorPoint2D = new Vector_Point2D(a_x, a_y);
+            a_VectorPoint2D = new Vector_Point2D(new Vector_Environment(), a_x, a_y);
             System.out.println("a_VectorPoint2D " + a_VectorPoint2D.toString());
             ab_VectorEnvelope2D = new Vector_Envelope2D(
                     a_VectorPoint2D,
@@ -115,46 +116,46 @@ public class VectorEnvelope2DTest {
     }
 
     /**
-     * Test of getIntersects method, of class Vector_Envelope2D.
+     * Test of getIntersectsFailFast method, of class Vector_Envelope2D.
      */
     @Test
     public void testGetIntersects_VectorLineSegment2D() {
-//        System.out.println("getIntersects");
+//        System.out.println("getIntersectsFailFast");
 //        VectorLineSegment2D a_LineSegment2D = null;
 //        Vector_Envelope2D instance = new Vector_Envelope2D();
 //        int expResult = 0;
-//        int result = instance.getIntersects(a_LineSegment2D);
+//        int result = instance.getIntersectsFailFast(a_LineSegment2D);
 //        assertEquals(expResult, result);
 //        // TODO review the generated test code and remove the default call to fail.
 //        fail("The test case is a prototype.");
     }
 
     /**
-     * Test of getIntersects method, of class Vector_Envelope2D.
+     * Test of getIntersectsFailFast method, of class Vector_Envelope2D.
      */
     @Test
     public void testGetIntersects_VectorPoint2D() {
-//        System.out.println("getIntersects");
+//        System.out.println("getIntersectsFailFast");
 //        Vector_Point2D aPoint = null;
 //        Vector_Envelope2D instance = new Vector_Envelope2D();
 //        boolean expResult = false;
-//        boolean result = instance.getIntersects(aPoint);
+//        boolean result = instance.getIntersectsFailFast(aPoint);
 //        assertEquals(expResult, result);
 //        // TODO review the generated test code and remove the default call to fail.
 //        fail("The test case is a prototype.");
     }
 
     /**
-     * Test of getIntersects method, of class Vector_Envelope2D.
+     * Test of getIntersectsFailFast method, of class Vector_Envelope2D.
      */
     @Test
     public void testGetIntersects_BigDecimal_BigDecimal() {
-//        System.out.println("getIntersects");
+//        System.out.println("getIntersectsFailFast");
 //        BigDecimal x = null;
 //        BigDecimal y = null;
 //        Vector_Envelope2D instance = new Vector_Envelope2D();
 //        boolean expResult = false;
-//        boolean result = instance.getIntersects(x, y);
+//        boolean result = instance.getIntersectsFailFast(x, y);
 //        assertEquals(expResult, result);
 //        // TODO review the generated test code and remove the default call to fail.
 //        fail("The test case is a prototype.");

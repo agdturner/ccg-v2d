@@ -92,12 +92,12 @@ public class VectorPoint2DTest {
         Vector_Point2D d;
 boolean result;
 boolean expResult;
-        a = new Vector_Point2D(0.1d, 0.3d);
+        a = new Vector_Point2D(null, 0.1d, 0.3d);
         System.out.println(
                 "a = new VectorPoint2D(0.1d,0.3d); "
                 + a.toString());
 
-        b = new Vector_Point2D("0.1", "0.3");
+        b = new Vector_Point2D(null, "0.1", "0.3");
         System.out.println(
                 "b = new VectorPoint2D(\"0.1\",\"0.3\"); "
                 + b.toString());

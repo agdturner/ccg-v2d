@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
 
 /**
  *
@@ -157,8 +158,8 @@ public class VectorLineSegment2DTest {
     @Test
     public void testGetIntersects_VectorPoint2D_int() {
         boolean result;
-        Vector_Point2D a = new Vector_Point2D("0", "0");
-        Vector_Point2D b = new Vector_Point2D("1", "1");
+        Vector_Point2D a = new Vector_Point2D(null, "0", "0");
+        Vector_Point2D b = new Vector_Point2D(null, "1", "1");
         Vector_LineSegment2D ab_VectorLineSegment2D = new Vector_LineSegment2D(
                 a,
                 b);
@@ -174,7 +175,7 @@ public class VectorLineSegment2DTest {
             System.out.println("a_DecimalPlacePrecision " + a_DecimalPlacePrecision);
             a_x = a_x.divide(ten_BigDecimal);
             a_y = a_y.divide(ten_BigDecimal);
-            a = new Vector_Point2D(a_x, a_y);
+            a = new Vector_Point2D(new Vector_Environment(), a_x, a_y);
             System.out.println("a " + a.toString());
             result = ab_VectorLineSegment2D.getIntersects(
                     a,
