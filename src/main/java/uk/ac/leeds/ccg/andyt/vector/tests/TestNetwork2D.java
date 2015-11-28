@@ -43,6 +43,7 @@ public class TestNetwork2D {
         Grid2DSquareCellDouble aGrid2DSquareCellDouble =
                 (Grid2DSquareCellDouble) aGrid2DSquareCellDoubleFactory.create(_NRows, _NCols);
         Vector_Network2D aNetwork2D = new Vector_Network2D(
+null, 
                 aGrid2DSquareCellDouble);
         System.out.println(aNetwork2D.toString());
 

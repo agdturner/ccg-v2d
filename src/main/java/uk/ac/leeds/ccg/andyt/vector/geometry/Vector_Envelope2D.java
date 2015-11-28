@@ -326,11 +326,13 @@ public class Vector_Envelope2D
      * @return true iff this.intersects with a_LineSegment2D.
      */
     public boolean getIntersects(
-            Vector_LineSegment2D a_LineSegment2D, 
+            Vector_LineSegment2D a_LineSegment2D,
+            BigDecimal tollerance,
             boolean handleOutOfMemoryError) {
         return Vector_LineSegment2D.getIntersects(
                 _xmin, _ymin, _xmax, _ymax, 
                 a_LineSegment2D,
+                tollerance,
                 this._DecimalPlacePrecision_Integer,
                 handleOutOfMemoryError);
     }

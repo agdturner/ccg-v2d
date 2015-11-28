@@ -83,6 +83,7 @@ public class TestRenderNetwork2D {
                 rows,
                 cols);
         Vector_Network2D aNetwork2D = new Vector_Network2D(
+                null, 
                 aGrid2DSquareCellDouble);
         tNetwork2D_HashSet.add(aNetwork2D);
         return tNetwork2D_HashSet;

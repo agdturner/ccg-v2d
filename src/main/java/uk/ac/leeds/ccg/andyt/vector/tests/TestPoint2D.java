@@ -39,37 +39,38 @@ public class TestPoint2D {
         System.out.println("<test_Constructors()>");
         Vector_Point2D a_Point;
 
-        a_Point = new Vector_Point2D("0.1", "0.3");
+        a_Point = new Vector_Point2D(null, "0.1", "0.3");
         System.out.println(
                 "new Point2D(\"0.1\",\"0.3\"); "
                 + a_Point.toString());
 
-        a_Point = new Vector_Point2D("0.1", "0.3", 2);
+        a_Point = new Vector_Point2D(null, "0.1", "0.3", 2);
         System.out.println(
                 "new Point2D(\"0.1\",\"0.3\",2); "
                 + a_Point.toString());
 
-        a_Point = new Vector_Point2D(0, 0);
+        a_Point = new Vector_Point2D(null, 0, 0);
         System.out.println(
                 "new Point2D(0,0); "
                 + a_Point.toString());
 
-        a_Point = new Vector_Point2D(0.1, 0.3);
+        a_Point = new Vector_Point2D(null, 0.1, 0.3);
         System.out.println(
                 "new Point2D(0.1d,0.3d); "
                 + a_Point.toString());
 
-        a_Point = new Vector_Point2D(0.1d, 0.3d, 1);
+        a_Point = new Vector_Point2D(null, 0.1d, 0.3d, 1);
         System.out.println(
                 "new Point2D(0.1d,0.3d,2); "
                 + a_Point.toString());
 
-        a_Point = new Vector_Point2D(0.1d, 0.3d, 2);
+        a_Point = new Vector_Point2D(null, 0.1d, 0.3d, 2);
         System.out.println(
                 "new Point2D(0.1d,0.3d,2); "
                 + a_Point.toString());
 
         a_Point = new Vector_Point2D(
+null, 
                 new BigDecimal("0.1"),
                 new BigDecimal("0.3"),
                 new BigDecimal("0.005"),
@@ -91,13 +92,13 @@ public class TestPoint2D {
         System.out.println("<test_Equality()>");
 
         Vector_Point2D a_Point;
-        a_Point = new Vector_Point2D(0.1d, 0.3d);
+        a_Point = new Vector_Point2D(null, 0.1d, 0.3d);
         System.out.println(
                 "a_Point = new Point(0.1d,0.3d); "
                 + a_Point.toString());
 
         Vector_Point2D b_Point;
-        b_Point = new Vector_Point2D("0.1", "0.3");
+        b_Point = new Vector_Point2D(null, "0.1", "0.3");
         System.out.println(
                 "b_Point = new Point2D(\"0.1\",\"0.3\"); "
                 + b_Point.toString());

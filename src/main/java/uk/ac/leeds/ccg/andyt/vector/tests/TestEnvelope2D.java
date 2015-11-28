@@ -40,8 +40,8 @@ public class TestEnvelope2D {
         System.out.println("<test_IntersectPoint2D()>");
         Vector_Point2D aPoint;
         Vector_Point2D bPoint;
-        aPoint = new Vector_Point2D("0", "0");
-        bPoint = new Vector_Point2D("1", "1");
+        aPoint = new Vector_Point2D(null, "0", "0");
+        bPoint = new Vector_Point2D(null, "1", "1");
         Vector_Envelope2D aEnvelope2D = new Vector_Envelope2D(
                 aPoint,
                 bPoint);
@@ -51,11 +51,11 @@ public class TestEnvelope2D {
         System.out.println(
                 aEnvelope2D.toString() + ".instersects(" + bPoint.toString() + ") "
                 + aEnvelope2D.getIntersects(bPoint));
-        aPoint = new Vector_Point2D("0.1", "0.3");
+        aPoint = new Vector_Point2D(null, "0.1", "0.3");
         System.out.println(
                 aEnvelope2D.toString() + ".instersects(" + aPoint.toString() + ") "
                 + aEnvelope2D.getIntersects(aPoint));
-        aPoint = new Vector_Point2D("1.01", "0.3");
+        aPoint = new Vector_Point2D(null, "1.01", "0.3");
         System.out.println(
                 aEnvelope2D.toString() + ".instersects(" + aPoint.toString() + ") "
                 + aEnvelope2D.getIntersects(aPoint));
@@ -73,13 +73,13 @@ public class TestEnvelope2D {
         // Test 1
         System.out.println("<test>");
 
-        a_Point2D = new Vector_Point2D(0, 0);
-        b_Point2D = new Vector_Point2D(1, 1);
+        a_Point2D = new Vector_Point2D(null, 0, 0);
+        b_Point2D = new Vector_Point2D(null, 1, 1);
         a_Envelope2D = new Vector_Envelope2D(
                 a_Point2D,
                 b_Point2D);
-        a_Point2D = new Vector_Point2D(1, 1);
-        b_Point2D = new Vector_Point2D(2, 2);
+        a_Point2D = new Vector_Point2D(null, 1, 1);
+        b_Point2D = new Vector_Point2D(null, 2, 2);
         b_Envelope2D = new Vector_Envelope2D(
                 a_Point2D,
                 b_Point2D);
@@ -97,13 +97,13 @@ public class TestEnvelope2D {
 
         // Test 2
         System.out.println("<test>");
-        a_Point2D = new Vector_Point2D(-1, 0);
-        b_Point2D = new Vector_Point2D(1, 0);
+        a_Point2D = new Vector_Point2D(null, -1, 0);
+        b_Point2D = new Vector_Point2D(null, 1, 0);
         a_Envelope2D = new Vector_Envelope2D(
                 a_Point2D,
                 b_Point2D);
-        a_Point2D = new Vector_Point2D(0, -1);
-        b_Point2D = new Vector_Point2D(0, 1);
+        a_Point2D = new Vector_Point2D(null, 0, -1);
+        b_Point2D = new Vector_Point2D(null, 0, 1);
         b_Envelope2D = new Vector_Envelope2D(
                 a_Point2D,
                 b_Point2D);
@@ -130,13 +130,13 @@ public class TestEnvelope2D {
         // Test 3
         System.out.println("<test>");
 
-        a_Point2D = new Vector_Point2D(-1, 0);
-        b_Point2D = new Vector_Point2D(1, 0);
+        a_Point2D = new Vector_Point2D(null, -1, 0);
+        b_Point2D = new Vector_Point2D(null, 1, 0);
         a_Envelope2D = new Vector_Envelope2D(
                 a_Point2D,
                 b_Point2D);
-        a_Point2D = new Vector_Point2D(-0.5, 0);
-        b_Point2D = new Vector_Point2D(0.5, 0);
+        a_Point2D = new Vector_Point2D(null, -0.5, 0);
+        b_Point2D = new Vector_Point2D(null, 0.5, 0);
         b_Envelope2D = new Vector_Envelope2D(
                 a_Point2D,
                 b_Point2D);
@@ -164,13 +164,13 @@ public class TestEnvelope2D {
         // Test 4
         System.out.println("<test>");
 
-        a_Point2D = new Vector_Point2D(0, -1);
-        b_Point2D = new Vector_Point2D(0, 1);
+        a_Point2D = new Vector_Point2D(null, 0, -1);
+        b_Point2D = new Vector_Point2D(null, 0, 1);
         a_Envelope2D = new Vector_Envelope2D(
                 a_Point2D,
                 b_Point2D);
-        a_Point2D = new Vector_Point2D(0, -0.5);
-        b_Point2D = new Vector_Point2D(0, 0.5);
+        a_Point2D = new Vector_Point2D(null, 0, -0.5);
+        b_Point2D = new Vector_Point2D(null, 0, 0.5);
         b_Envelope2D = new Vector_Envelope2D(
                 a_Point2D,
                 b_Point2D);
@@ -197,13 +197,13 @@ public class TestEnvelope2D {
         // Test 5
         System.out.println("<test>");
 
-        a_Point2D = new Vector_Point2D(0, -1);
-        b_Point2D = new Vector_Point2D(0, 1);
+        a_Point2D = new Vector_Point2D(null, 0, -1);
+        b_Point2D = new Vector_Point2D(null, 0, 1);
         a_Envelope2D = new Vector_Envelope2D(
                 a_Point2D,
                 b_Point2D);
-        a_Point2D = new Vector_Point2D(0, -0.5);
-        b_Point2D = new Vector_Point2D(0, 1.5);
+        a_Point2D = new Vector_Point2D(null, 0, -0.5);
+        b_Point2D = new Vector_Point2D(null, 0, 1.5);
         b_Envelope2D = new Vector_Envelope2D(
                 a_Point2D,
                 b_Point2D);
