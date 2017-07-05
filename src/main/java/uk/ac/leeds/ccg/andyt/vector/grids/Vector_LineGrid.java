@@ -7,7 +7,7 @@ package uk.ac.leeds.ccg.andyt.vector.grids;
 
 import java.io.File;
 import java.math.BigDecimal;
-import uk.ac.leeds.ccg.andyt.grids.core.AbstractGrid2DSquareCell.CellID;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_AbstractGrid2DSquareCell.CellID;
 import uk.ac.leeds.ccg.andyt.grids.core.Grid2DSquareCellDouble;
 import uk.ac.leeds.ccg.andyt.grids.core.Grid2DSquareCellDoubleChunkArrayFactory;
 import uk.ac.leeds.ccg.andyt.grids.core.Grid2DSquareCellDoubleFactory;

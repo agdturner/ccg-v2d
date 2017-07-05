@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import uk.ac.leeds.ccg.andyt.grids.core.AbstractGrid2DSquareCell;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_AbstractGrid2DSquareCell;
 import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
 
 /**
@@ -48,7 +48,7 @@ public class Vector_Network2D
 
     public Vector_Network2D(
             Vector_Environment ve,
-            AbstractGrid2DSquareCell aGrid2DSquareCell) {
+            Grids_AbstractGrid2DSquareCell aGrid2DSquareCell) {
         _Vector_Environment = ve;
         _Connection_HashMap = new HashMap<Vector_Point2D, HashSet<Connection>>();
         Vector_Point2D a_Point2D;
@@ -238,7 +238,7 @@ public class Vector_Network2D
 
     public static HashSet<Vector_Point2D> getNeighbouringPoints(
          Vector_Environment ve,
-            AbstractGrid2DSquareCell aGrid2DSquareCell,
+            Grids_AbstractGrid2DSquareCell aGrid2DSquareCell,
             long row,
             long col) {
         boolean _HandleOutOfMemoryError = false;
