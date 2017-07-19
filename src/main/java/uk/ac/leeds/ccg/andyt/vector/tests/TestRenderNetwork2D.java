@@ -22,8 +22,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashSet;
 import javax.swing.JFrame;
-import uk.ac.leeds.ccg.andyt.grids.core.Grid2DSquareCellDouble;
-import uk.ac.leeds.ccg.andyt.grids.core.Grid2DSquareCellDoubleFactory;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_Grid2DSquareCellDouble;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_Grid2DSquareCellDoubleFactory;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
 import uk.ac.leeds.ccg.andyt.vector.visualisation.VectorRenderNetwork2D;
 import uk.ac.leeds.ccg.andyt.vector.geometry.Vector_Network2D;
@@ -73,12 +73,12 @@ public class TestRenderNetwork2D {
         HashSet<Vector_Network2D> tNetwork2D_HashSet =
                 new HashSet<Vector_Network2D>();
         boolean handleOutOfMemoryError = false;
-        Grid2DSquareCellDoubleFactory aGrid2DSquareCellDoubleFactory =
-                new Grid2DSquareCellDoubleFactory(
+        Grids_Grid2DSquareCellDoubleFactory aGrid2DSquareCellDoubleFactory =
+                new Grids_Grid2DSquareCellDoubleFactory(
                 new Grids_Environment(),
                 handleOutOfMemoryError);
-        Grid2DSquareCellDouble aGrid2DSquareCellDouble =
-                (Grid2DSquareCellDouble)
+        Grids_Grid2DSquareCellDouble aGrid2DSquareCellDouble =
+                (Grids_Grid2DSquareCellDouble)
                 aGrid2DSquareCellDoubleFactory.create(
                 rows,
                 cols);

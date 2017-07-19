@@ -8,12 +8,12 @@ package uk.ac.leeds.ccg.andyt.vector.grids;
 import java.io.File;
 import java.math.BigDecimal;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_AbstractGrid2DSquareCell.CellID;
-import uk.ac.leeds.ccg.andyt.grids.core.Grid2DSquareCellDouble;
-import uk.ac.leeds.ccg.andyt.grids.core.Grid2DSquareCellDoubleChunkArrayFactory;
-import uk.ac.leeds.ccg.andyt.grids.core.Grid2DSquareCellDoubleFactory;
-import uk.ac.leeds.ccg.andyt.grids.core.GridStatistics0;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_Grid2DSquareCellDouble;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_Grid2DSquareCellDoubleChunkArrayFactory;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_Grid2DSquareCellDoubleFactory;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_GridStatistics0;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
-import uk.ac.leeds.ccg.andyt.grids.exchange.ImageExporter;
+import uk.ac.leeds.ccg.andyt.grids.exchange.Grids_ImageExporter;
 import uk.ac.leeds.ccg.andyt.grids.process.Grid2DSquareCellProcessor;
 import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
 import uk.ac.leeds.ccg.andyt.vector.geometry.Vector_LineSegment2D;
@@ -48,11 +48,11 @@ public class Vector_LineGrid {
         noDataValue = -9999.0d;
         boolean handleNoDataValue;
         handleNoDataValue = true;
-        Grid2DSquareCellDoubleFactory gf;
-        gf = new Grid2DSquareCellDoubleFactory(dir, noDataValue, ge, handleNoDataValue);
-        Grid2DSquareCellDoubleChunkArrayFactory gcaf;
-        gcaf = new Grid2DSquareCellDoubleChunkArrayFactory();
-        Grid2DSquareCellDouble g;
+        Grids_Grid2DSquareCellDoubleFactory gf;
+        gf = new Grids_Grid2DSquareCellDoubleFactory(dir, noDataValue, ge, handleNoDataValue);
+        Grids_Grid2DSquareCellDoubleChunkArrayFactory gcaf;
+        gcaf = new Grids_Grid2DSquareCellDoubleChunkArrayFactory();
+        Grids_Grid2DSquareCellDouble g;
         long _NRows;
         _NRows = 100;
         long _NCols;
@@ -64,8 +64,8 @@ public class Vector_LineGrid {
         _Dimensions[2] = new BigDecimal(0.0d);
         _Dimensions[3] = new BigDecimal(100.0d);
         _Dimensions[4] = new BigDecimal(100.0d);
-        GridStatistics0 gs;
-        gs = new GridStatistics0();
+        Grids_GridStatistics0 gs;
+        gs = new Grids_GridStatistics0();
         g = gf.create(gs, dir, gcaf, _NRows, _NCols, _Dimensions, ge, handleNoDataValue);
         // Vector set up
         Vector_Environment ve;
@@ -89,8 +89,8 @@ public class Vector_LineGrid {
 
         System.out.println(g.toString(handleNoDataValue));
 
-        ImageExporter ie;
-        ie = new ImageExporter(ge);
+        Grids_ImageExporter ie;
+        ie = new Grids_ImageExporter(ge);
 
         Grid2DSquareCellProcessor gp;
         gp = new Grid2DSquareCellProcessor(ge, dir);
@@ -112,7 +112,7 @@ public class Vector_LineGrid {
      * @param handleOutOfMemoryError
      */
     public static void addToGrid(
-            Grid2DSquareCellDouble g,
+            Grids_Grid2DSquareCellDouble g,
             Vector_LineSegment2D l,
             double factor,
             BigDecimal tollerance,

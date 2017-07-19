@@ -18,8 +18,8 @@
  */
 package uk.ac.leeds.ccg.andyt.vector.tests;
 
-import uk.ac.leeds.ccg.andyt.grids.core.Grid2DSquareCellDouble;
-import uk.ac.leeds.ccg.andyt.grids.core.Grid2DSquareCellDoubleFactory;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_Grid2DSquareCellDouble;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_Grid2DSquareCellDoubleFactory;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
 import uk.ac.leeds.ccg.andyt.vector.geometry.Vector_Network2D;
 
@@ -36,12 +36,12 @@ public class TestNetwork2D {
         boolean _HandleOutOfMemoryError = false;
         long _NRows = 10;
         long _NCols = 20;
-        Grid2DSquareCellDoubleFactory aGrid2DSquareCellDoubleFactory =
-                new Grid2DSquareCellDoubleFactory(
+        Grids_Grid2DSquareCellDoubleFactory aGrid2DSquareCellDoubleFactory =
+                new Grids_Grid2DSquareCellDoubleFactory(
                 new Grids_Environment(),
                 _HandleOutOfMemoryError);
-        Grid2DSquareCellDouble aGrid2DSquareCellDouble =
-                (Grid2DSquareCellDouble) aGrid2DSquareCellDoubleFactory.create(_NRows, _NCols);
+        Grids_Grid2DSquareCellDouble aGrid2DSquareCellDouble =
+                (Grids_Grid2DSquareCellDouble) aGrid2DSquareCellDoubleFactory.create(_NRows, _NCols);
         Vector_Network2D aNetwork2D = new Vector_Network2D(
 null, 
                 aGrid2DSquareCellDouble);
