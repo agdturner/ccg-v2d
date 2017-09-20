@@ -7,7 +7,7 @@ package uk.ac.leeds.ccg.andyt.vector.grids;
 
 import java.io.File;
 import java.math.BigDecimal;
-import uk.ac.leeds.ccg.andyt.grids.core.Grids_AbstractGrid2DSquareCell.CellID;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_2D_ID_long;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Grid2DSquareCellDouble;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Grid2DSquareCellDoubleChunkArrayFactory;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Grid2DSquareCellDoubleFactory;
@@ -150,7 +150,7 @@ public class Vector_LineGrid {
             long cellColIndex;
             cellColIndex = g.getCellColIndex(l._Start_Point2D._x, handleOutOfMemoryError);
             //System.out.println("cellRowIndex " + cellRowIndex + ", cellColIndex " + cellColIndex);
-            CellID cellID = g.getCellID(
+            Grids_2D_ID_long cellID = g.getCellID(
                     cellRowIndex,
                     cellColIndex,
                     handleOutOfMemoryError);
