@@ -14,7 +14,7 @@ import uk.ac.leeds.ccg.andyt.grids.core.Grids_Grid2DSquareCellDoubleFactory;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_GridStatistics0;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
 import uk.ac.leeds.ccg.andyt.grids.exchange.Grids_ImageExporter;
-import uk.ac.leeds.ccg.andyt.grids.process.Grid2DSquareCellProcessor;
+import uk.ac.leeds.ccg.andyt.grids.process.Grids_Processor;
 import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
 import uk.ac.leeds.ccg.andyt.vector.geometry.Vector_LineSegment2D;
 import uk.ac.leeds.ccg.andyt.vector.geometry.Vector_Point2D;
@@ -92,8 +92,8 @@ public class Vector_LineGrid {
         Grids_ImageExporter ie;
         ie = new Grids_ImageExporter(ge);
 
-        Grid2DSquareCellProcessor gp;
-        gp = new Grid2DSquareCellProcessor(ge, dir);
+        Grids_Processor gp;
+        gp = new Grids_Processor(ge, dir);
 
         File fout = new File(
                 dir,
