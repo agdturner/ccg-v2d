@@ -8,14 +8,15 @@ package uk.ac.leeds.ccg.andyt.vector.grids;
 import java.io.File;
 import java.math.BigDecimal;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_2D_ID_long;
-import uk.ac.leeds.ccg.andyt.grids.core.Grids_Grid2DSquareCellDouble;
-import uk.ac.leeds.ccg.andyt.grids.core.Grids_Grid2DSquareCellDoubleChunkArrayFactory;
-import uk.ac.leeds.ccg.andyt.grids.core.Grids_Grid2DSquareCellDoubleFactory;
-import uk.ac.leeds.ccg.andyt.grids.core.Grids_GridStatistics0;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_Grid2DSquareCellDouble;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.chunk.Grids_Grid2DSquareCellDoubleChunkArrayFactory;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_Grid2DSquareCellDoubleFactory;
+import uk.ac.leeds.ccg.andyt.grids.core.statistics.Grids_GridStatistics0;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
 import uk.ac.leeds.ccg.andyt.grids.exchange.Grids_ImageExporter;
 import uk.ac.leeds.ccg.andyt.grids.process.Grids_Processor;
 import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
+import uk.ac.leeds.ccg.andyt.vector.core.Vector_Object;
 import uk.ac.leeds.ccg.andyt.vector.geometry.Vector_LineSegment2D;
 import uk.ac.leeds.ccg.andyt.vector.geometry.Vector_Point2D;
 
@@ -23,13 +24,18 @@ import uk.ac.leeds.ccg.andyt.vector.geometry.Vector_Point2D;
  *
  * @author geoagdt
  */
-public class Vector_LineGrid {
+public class Vector_LineGrid extends Vector_Object {
 
-    public Vector_LineGrid() {
+    protected Vector_LineGrid() {}
+
+    protected Vector_LineGrid(Vector_Environment ve) {
+        super(ve);
     }
 
     public static void main(String[] args) {
-        new Vector_LineGrid().run();
+        Vector_Environment ve;
+        ve = new Vector_Environment();
+        new Vector_LineGrid(ve).run();
     }
 
     public void run() {
@@ -38,9 +44,6 @@ public class Vector_LineGrid {
         tollerance = new BigDecimal("0.0000001");
         double factor;
         factor = 1;
-
-        Grids_Environment ge;
-        ge = new Grids_Environment();
         File dir;
         dir = new File(
                 "/scratch02/DigitalWelfare/Output/LCC/SHBE/");
@@ -48,8 +51,11 @@ public class Vector_LineGrid {
         noDataValue = -9999.0d;
         boolean handleNoDataValue;
         handleNoDataValue = true;
+        Grids_Environment ge;
+        ge = ve.getGrids_Environment();
         Grids_Grid2DSquareCellDoubleFactory gf;
-        gf = new Grids_Grid2DSquareCellDoubleFactory(dir, noDataValue, ge, handleNoDataValue);
+        gf = new Grids_Grid2DSquareCellDoubleFactory(
+                dir, noDataValue, ge, handleNoDataValue);
         Grids_Grid2DSquareCellDoubleChunkArrayFactory gcaf;
         gcaf = new Grids_Grid2DSquareCellDoubleChunkArrayFactory();
         Grids_Grid2DSquareCellDouble g;
@@ -68,8 +74,6 @@ public class Vector_LineGrid {
         gs = new Grids_GridStatistics0();
         g = gf.create(gs, dir, gcaf, _NRows, _NCols, _Dimensions, ge, handleNoDataValue);
         // Vector set up
-        Vector_Environment ve;
-        ve = new Vector_Environment();
         Vector_Point2D p0;
         p0 = new Vector_Point2D(
                 ve,
@@ -93,7 +97,7 @@ public class Vector_LineGrid {
         ie = new Grids_ImageExporter(ge);
 
         Grids_Processor gp;
-        gp = new Grids_Processor(ge, dir);
+        gp = new Grids_Processor(ge, dir, true);
 
         File fout = new File(
                 dir,

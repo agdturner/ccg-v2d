@@ -18,7 +18,10 @@
  */
 package uk.ac.leeds.ccg.andyt.vector.core;
 
+import java.io.File;
 import uk.ac.leeds.ccg.andyt.generic.math.Generic_BigDecimal;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
+import uk.ac.leeds.ccg.andyt.vector.io.Vector_Files;
 
 /**
  *
@@ -26,33 +29,37 @@ import uk.ac.leeds.ccg.andyt.generic.math.Generic_BigDecimal;
  */
 public class Vector_Environment {
 
-    private Generic_BigDecimal _Generic_BigDecimal;
+    protected File directory;
+    
+    protected Vector_Files vf;
+    
+    protected Grids_Environment ge;
+    
+    protected Generic_BigDecimal bd;
 
     /**
      * @return the _Generic_BigDecimal
      */
     public Generic_BigDecimal get_Generic_BigDecimal() {
-        if (_Generic_BigDecimal == null) {
-            init_Generic_BigDecimal();
+        if (bd == null) {
+            bd = new Generic_BigDecimal();
         }
-            return _Generic_BigDecimal;
+        return bd;
     }
 
     /**
-     * @param Generic_BigDecimal the _Generic_BigDecimal to set
+     * @return the _Generic_BigDecimal
      */
-    public void set_Generic_BigDecimal(Generic_BigDecimal Generic_BigDecimal) {
-        this._Generic_BigDecimal = Generic_BigDecimal;
+    public Grids_Environment getGrids_Environment() {
+        if (ge == null) {
+            ge = new Grids_Environment(vf.getGridsDirectory());
+        }
+        return ge;
     }
 
-    /**
-     */
-    public void init_Generic_BigDecimal() {
-        _Generic_BigDecimal = new Generic_BigDecimal();
-    }
-
-    /**
-     * Creates a new Vector_Environment
-     */
     public Vector_Environment(){}
+
+    public Vector_Environment(Grids_Environment ge){
+        this.ge = ge;
+    }
 }
