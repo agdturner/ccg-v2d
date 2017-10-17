@@ -71,7 +71,7 @@ public class Vector_LineGrid extends Vector_Object {
         _Dimensions[3] = new BigDecimal(100.0d);
         _Dimensions[4] = new BigDecimal(100.0d);
         Grids_GridStatistics0 gs;
-        gs = new Grids_GridStatistics0();
+        gs = new Grids_GridStatistics0(ge);
         g = gf.create(gs, dir, gcaf, _NRows, _NCols, _Dimensions, ge, handleNoDataValue);
         // Vector set up
         Vector_Point2D p0;
