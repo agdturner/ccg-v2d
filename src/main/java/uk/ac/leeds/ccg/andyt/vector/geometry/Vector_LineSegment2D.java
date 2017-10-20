@@ -21,6 +21,7 @@ package uk.ac.leeds.ccg.andyt.vector.geometry;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_Dimensions;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_AbstractGrid2DSquareCell;
 import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
 //import org.ojalgo.function.implementation.BigFunction;
@@ -182,13 +183,13 @@ public class Vector_LineSegment2D
             BigDecimal tollerance,
             int a_DecimalPlacePrecision,
             boolean handleOutOfMemoryError) {
-        BigDecimal[] dimensions;
-        dimensions = g.get_Dimensions(handleOutOfMemoryError);
+        Grids_Dimensions dimensions;
+        dimensions = g.getDimensions(handleOutOfMemoryError);
         return getIntersects(
-                dimensions[1],
-                dimensions[2],
-                dimensions[3],
-                dimensions[4],
+                dimensions.getXMin(),
+                dimensions.getYMin(),
+                dimensions.getXMax(),
+                dimensions.getYMax(),
                 l,
                 tollerance,
                 a_DecimalPlacePrecision,

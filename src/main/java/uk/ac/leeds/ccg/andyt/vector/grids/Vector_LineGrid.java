@@ -8,6 +8,7 @@ package uk.ac.leeds.ccg.andyt.vector.grids;
 import java.io.File;
 import java.math.BigDecimal;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_2D_ID_long;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_Dimensions;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_Grid2DSquareCellDouble;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.chunk.Grids_Grid2DSquareCellDoubleChunkArrayFactory;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_Grid2DSquareCellDoubleFactory;
@@ -26,7 +27,8 @@ import uk.ac.leeds.ccg.andyt.vector.geometry.Vector_Point2D;
  */
 public class Vector_LineGrid extends Vector_Object {
 
-    protected Vector_LineGrid() {}
+    protected Vector_LineGrid() {
+    }
 
     protected Vector_LineGrid(Vector_Environment ve) {
         super(ve);
@@ -63,16 +65,16 @@ public class Vector_LineGrid extends Vector_Object {
         _NRows = 100;
         long _NCols;
         _NCols = 100;
-        BigDecimal[] _Dimensions; // The cellsize, xmin, ymin, xmax and ymax.
-        _Dimensions = new BigDecimal[5];
-        _Dimensions[0] = new BigDecimal(1.0d);
-        _Dimensions[1] = new BigDecimal(0.0d);
-        _Dimensions[2] = new BigDecimal(0.0d);
-        _Dimensions[3] = new BigDecimal(100.0d);
-        _Dimensions[4] = new BigDecimal(100.0d);
+        Grids_Dimensions dimensions; // The cellsize, xmin, ymin, xmax and ymax.
+        dimensions = new Grids_Dimensions(
+                new BigDecimal(0.0d),
+                new BigDecimal(0.0d),
+                new BigDecimal(100.0d),
+                new BigDecimal(100.0d),
+                new BigDecimal(1.0d));
         Grids_GridStatistics0 gs;
         gs = new Grids_GridStatistics0(ge);
-        g = gf.create(gs, dir, gcaf, _NRows, _NCols, _Dimensions, ge, handleNoDataValue);
+        g = gf.create(gs, dir, gcaf, _NRows, _NCols, dimensions, handleNoDataValue);
         // Vector set up
         Vector_Point2D p0;
         p0 = new Vector_Point2D(
@@ -124,26 +126,28 @@ public class Vector_LineGrid extends Vector_Object {
         int decimalPlacePrecision;
         decimalPlacePrecision = 10;
 //        int chunkNRows;
-//        chunkNRows = g.get_ChunkNRows(handleOutOfMemoryError);
+//        chunkNRows = g.getChunkNRows(handleOutOfMemoryError);
 //        int chunkNCols;
-//        chunkNCols = g.get_ChunkNCols(handleOutOfMemoryError);
-        BigDecimal[] dimensions;
-        dimensions = g.get_Dimensions(handleOutOfMemoryError);
+//        chunkNCols = g.getChunkNCols(handleOutOfMemoryError);
+        Grids_Dimensions dimensions;
+        dimensions = g.getDimensions(handleOutOfMemoryError);
 //        BigDecimal cellsize;
 //        cellsize = dimensions[0];
         BigDecimal xmin;
-        xmin = dimensions[1];
+        xmin = dimensions.getXMin();
         BigDecimal ymin;
-        ymin = dimensions[2];
+        ymin = dimensions.getYMin();
         BigDecimal xmax;
-        xmax = dimensions[3];
+        xmax = dimensions.getXMax();
         BigDecimal ymax;
-        ymax = dimensions[4];
+        ymax = dimensions.getYMax();
+        BigDecimal halfCellsize;
+        halfCellsize = dimensions.getHalfCellsize();        
         Integer directionIn;
         directionIn = null;
         //System.out.println("line length " + l.getLength(decimalPlacePrecision));
-        long nrows = g.get_NRows(handleOutOfMemoryError);
-        long ncols = g.get_NCols(handleOutOfMemoryError);
+        long nrows = g.getNRows(handleOutOfMemoryError);
+        long ncols = g.getNCols(handleOutOfMemoryError);
         // Check if line intersect grid and if not return fast.
         if (Vector_LineSegment2D.getIntersects(
                 xmin, ymin, xmax, ymax,
@@ -162,22 +166,23 @@ public class Vector_LineGrid extends Vector_Object {
 //                    l._Start_Point2D._x,
 //                    l._Start_Point2D._y,
 //                    handleOutOfMemoryError);
-            BigDecimal[] cellBounds;
-            cellBounds = g.getCellBounds_BigDecimalArray(
+            Grids_Dimensions cellBounds;
+            cellBounds = g.getCellDimensions(
+                    halfCellsize,
                     cellRowIndex,
                     cellColIndex,
                     handleOutOfMemoryError);
-//            cellBounds = g.getCellBounds_BigDecimalArray(
+//            cellBounds = g.getCellDimensions(
 //                    l._Start_Point2D._x,
 //                    l._Start_Point2D._y,
 //                    handleOutOfMemoryError);
             Object[] lineToIntersectIntersectPointDirection;
             lineToIntersectIntersectPointDirection = Vector_LineSegment2D.getLineToIntersectLineRemainingDirection(
                     tollerance,
-                    cellBounds[0],
-                    cellBounds[1],
-                    cellBounds[2],
-                    cellBounds[3],
+                    xmin,
+                    ymin,
+                    xmax,
+                    ymax,
                     l,
                     directionIn,
                     decimalPlacePrecision,
@@ -190,7 +195,7 @@ public class Vector_LineGrid extends Vector_Object {
             double v;
             v = length * factor;
             //System.out.println("lineToIntersect length " + length);
-            g.addToCell(cellID, v , handleOutOfMemoryError);
+            g.addToCell(cellID, v, handleOutOfMemoryError);
             if (lineToIntersectIntersectPointDirection[2] == null) {
                 return;
             }
@@ -243,16 +248,17 @@ public class Vector_LineGrid extends Vector_Object {
                         cellRowIndex,
                         cellColIndex,
                         handleOutOfMemoryError);
-                cellBounds = g.getCellBounds_BigDecimalArray(
+                cellBounds = g.getCellDimensions(
+                        halfCellsize,
                         cellRowIndex,
                         cellColIndex,
                         handleOutOfMemoryError);
                 lineToIntersectIntersectPointDirection = Vector_LineSegment2D.getLineToIntersectLineRemainingDirection(
                         tollerance,
-                        cellBounds[0],
-                        cellBounds[1],
-                        cellBounds[2],
-                        cellBounds[3],
+                        xmin,
+                        ymin,
+                        xmax,
+                        ymax,
                         remainingLine,
                         directionOut,
                         decimalPlacePrecision,

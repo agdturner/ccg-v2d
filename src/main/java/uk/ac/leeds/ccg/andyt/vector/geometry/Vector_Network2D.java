@@ -53,8 +53,8 @@ public class Vector_Network2D
         _Connection_HashMap = new HashMap<Vector_Point2D, HashSet<Connection>>();
         Vector_Point2D a_Point2D;
         HashSet<Vector_Point2D> neighbouringPoints;
-        for (long row = 0; row < aGrid2DSquareCell.get_NRows(HandleOutOfMemoryError); row++) {
-            for (long col = 0; col < aGrid2DSquareCell.get_NCols(HandleOutOfMemoryError); col++) {
+        for (long row = 0; row < aGrid2DSquareCell.getNRows(HandleOutOfMemoryError); row++) {
+            for (long col = 0; col < aGrid2DSquareCell.getNCols(HandleOutOfMemoryError); col++) {
                 a_Point2D = new Vector_Point2D(
                         ve,
                         aGrid2DSquareCell.getCellXBigDecimal(col, HandleOutOfMemoryError),
