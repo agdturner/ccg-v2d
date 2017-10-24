@@ -20,6 +20,7 @@ package uk.ac.leeds.ccg.andyt.vector.geometry;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
 
 /**
  * A class for simplifying geometry in 2D. For any AbstractGeometry an
@@ -30,114 +31,109 @@ public class Vector_Envelope2D
         extends Vector_AbstractGeometry2D
         implements Serializable {
 
-    public BigDecimal _xmin;
-    public BigDecimal _xmax;
-    public BigDecimal _ymin;
-    public BigDecimal _ymax;
+    public BigDecimal XMin;
+    public BigDecimal XMax;
+    public BigDecimal YMin;
+    public BigDecimal YMax;
 
-    /**
-     * Creates a default Vector_Envelope2D
-     * <code>
-     * _xmin = new BigDecimal(Long.MAX_VALUE);
-     * _xmax = new BigDecimal(Long.MIN_VALUE);
-     * _ymin = new BigDecimal(Long.MAX_VALUE);
-     * _ymax = new BigDecimal(Long.MIN_VALUE);
-     * </code>
-     */
-    public Vector_Envelope2D() {
-        _xmin = new BigDecimal(Long.MAX_VALUE);
-        _xmax = new BigDecimal(Long.MIN_VALUE);
-        _ymin = new BigDecimal(Long.MAX_VALUE);
-        _ymax = new BigDecimal(Long.MIN_VALUE);
+    protected Vector_Envelope2D() {
+    }
+
+    public Vector_Envelope2D(Vector_Environment ve) {
+        super(ve);        
     }
 
     public Vector_Envelope2D(
-            Vector_Envelope2D aEnvelope2D) {
-        _ymin = new BigDecimal(aEnvelope2D._ymin.toString());
-        _ymax = new BigDecimal(aEnvelope2D._ymax.toString());
-        _xmin = new BigDecimal(aEnvelope2D._xmin.toString());
-        _xmax = new BigDecimal(aEnvelope2D._xmax.toString());
-        set_DecimalPlacePrecision(aEnvelope2D._DecimalPlacePrecision_Integer);
-        applyDecimalPlacePrecision();
+            Vector_Envelope2D e) {
+        super(e.ve);
+        YMin = new BigDecimal(e.YMin.toString());
+        YMax = new BigDecimal(e.YMax.toString());
+        XMin = new BigDecimal(e.XMin.toString());
+        XMax = new BigDecimal(e.XMax.toString());
+        DecimalPlacePrecision = e.DecimalPlacePrecision;
+        //applyDecimalPlacePrecision();
     }
 
     public Vector_Envelope2D(
-            Vector_AbstractGeometry2D aAbstractGeometry2D) {
-        Vector_Envelope2D aEnvelope2D = aAbstractGeometry2D.getEnvelope2D();
-        _xmin = aEnvelope2D._xmin;
-        _xmax = aEnvelope2D._xmin;
-        _ymin = aEnvelope2D._ymin;
-        _ymax = aEnvelope2D._ymax;
-        set_DecimalPlacePrecision(aEnvelope2D._DecimalPlacePrecision_Integer);
-        applyDecimalPlacePrecision();
+            Vector_AbstractGeometry2D g) {
+        super(g.ve);
+        Vector_Envelope2D e = g.getEnvelope2D();
+        XMin = e.XMin;
+        XMax = e.XMin;
+        YMin = e.YMin;
+        YMax = e.YMax;
+        DecimalPlacePrecision = e.DecimalPlacePrecision;
+        //applyDecimalPlacePrecision();
     }
 
     public Vector_Envelope2D(
-            Vector_Point2D aPoint,
-            Vector_Point2D bPoint) {
-        if (aPoint._y.compareTo(bPoint._y) == 1) {
-            _ymin = bPoint._y;
-            _ymax = aPoint._y;
+            Vector_Point2D a,
+            Vector_Point2D b) {
+        super(a.ve);
+        if (a.Y.compareTo(b.Y) == 1) {
+            YMin = b.Y;
+            YMax = a.Y;
         } else {
-            _ymin = aPoint._y;
-            _ymax = bPoint._y;
+            YMin = a.Y;
+            YMax = b.Y;
         }
-        if (aPoint._x.compareTo(bPoint._x) == 1) {
-            _xmin = bPoint._x;
-            _xmax = aPoint._x;
+        if (a.X.compareTo(b.X) == 1) {
+            XMin = b.X;
+            XMax = a.X;
         } else {
-            _xmin = aPoint._x;
-            _xmax = bPoint._x;
+            XMin = a.X;
+            XMax = b.X;
         }
-        set_DecimalPlacePrecision(
-                Math.max(
-                        aPoint.get_DecimalPlacePrecision(),
-                        bPoint.get_DecimalPlacePrecision()));
-        applyDecimalPlacePrecision();
+        DecimalPlacePrecision = Math.max(
+                a.getDecimalPlacePrecision(),
+                b.getDecimalPlacePrecision());
+        //applyDecimalPlacePrecision();
     }
 
     public Vector_Envelope2D(
+            Vector_Environment ve,
             BigDecimal x,
             BigDecimal y) {
-        _ymin = new BigDecimal(y.toString());
-        _ymax = new BigDecimal(y.toString());
-        _xmin = new BigDecimal(x.toString());
-        _xmax = new BigDecimal(x.toString());
-        set_DecimalPlacePrecision(
-                Math.max(
-                        x.scale(),
-                        y.scale()));
-        applyDecimalPlacePrecision();
+        super(ve);
+        YMin = new BigDecimal(y.toString());
+        YMax = new BigDecimal(y.toString());
+        XMin = new BigDecimal(x.toString());
+        XMax = new BigDecimal(x.toString());
+        DecimalPlacePrecision = Math.max(
+                x.scale(),
+                y.scale());
+        //applyDecimalPlacePrecision();
     }
 
     public Vector_Envelope2D(
-            Vector_AbstractGeometry2D[] aAbstractGeometry2DArray) {
-        Vector_Envelope2D aEnvelope2D = aAbstractGeometry2DArray[0].getEnvelope2D();
-        _xmin = aEnvelope2D._xmin;
-        _DecimalPlacePrecision_Integer = _xmin.scale();
-        _xmax = aEnvelope2D._xmin;
-        _DecimalPlacePrecision_Integer = Math.max(_DecimalPlacePrecision_Integer, _xmax.scale());
-        _ymin = aEnvelope2D._ymin;
-        _DecimalPlacePrecision_Integer = Math.max(_DecimalPlacePrecision_Integer, _ymin.scale());
-        _ymax = aEnvelope2D._ymax;
-        _DecimalPlacePrecision_Integer = Math.max(_DecimalPlacePrecision_Integer, _ymax.scale());
-        for (int i = 1; i < aAbstractGeometry2DArray.length; i++) {
-            aEnvelope2D = aAbstractGeometry2DArray[i].getEnvelope2D();
-            if (aEnvelope2D._xmin.compareTo(_xmin) == -1) {
-                _xmin = aEnvelope2D._xmin;
-                _DecimalPlacePrecision_Integer = Math.max(_DecimalPlacePrecision_Integer, _xmin.scale());
+            Vector_AbstractGeometry2D[] g) {
+        super(g[0].ve);
+        Vector_Envelope2D e = g[0].getEnvelope2D();
+        XMin = e.XMin;
+        DecimalPlacePrecision = XMin.scale();
+        XMax = e.XMin;
+        DecimalPlacePrecision = Math.max(DecimalPlacePrecision, XMax.scale());
+        YMin = e.YMin;
+        DecimalPlacePrecision = Math.max(DecimalPlacePrecision, YMin.scale());
+        YMax = e.YMax;
+        DecimalPlacePrecision = Math.max(DecimalPlacePrecision, YMax.scale());
+        for (int i = 1; i < g.length; i++) {
+            e = g[i].getEnvelope2D();
+            if (e.XMin.compareTo(XMin) == -1) {
+                XMin = e.XMin;
+                DecimalPlacePrecision = Math.max(DecimalPlacePrecision, XMin.scale());
             }
-            if (aEnvelope2D._xmax.compareTo(_xmax) == 1) {
-                _xmax = aEnvelope2D._xmax;
-                _DecimalPlacePrecision_Integer = Math.max(_DecimalPlacePrecision_Integer, _xmax.scale());
+            if (e.XMax.compareTo(XMax) == 1) {
+                XMax = e.XMax;
+                DecimalPlacePrecision = Math.max(DecimalPlacePrecision, XMax.scale());
             }
-            if (aEnvelope2D._ymin.compareTo(_ymin) == -1) {
-                _ymin = aEnvelope2D._ymin;
-                _DecimalPlacePrecision_Integer = Math.max(_DecimalPlacePrecision_Integer, _ymin.scale());
+            if (e.YMin.compareTo(YMin) == -1) {
+                YMin = e.YMin;
+                DecimalPlacePrecision = Math.max(DecimalPlacePrecision, YMin.scale());
             }
-            if (aEnvelope2D._ymax.compareTo(_ymax) == 1) {
-                _ymax = aEnvelope2D._ymax;
-                _DecimalPlacePrecision_Integer = Math.max(_DecimalPlacePrecision_Integer, _ymax.scale());
+            if (e.YMax.compareTo(YMax) == 1) {
+                YMax = e.YMax;
+                DecimalPlacePrecision = Math.max(DecimalPlacePrecision, YMax.scale());
             }
         }
         applyDecimalPlacePrecision();
@@ -147,172 +143,117 @@ public class Vector_Envelope2D
     public String toString() {
         return this.getClass().getName() + "("
                 + super.toString()
-                + "xmin(" + _xmin.toString() + "),"
-                + "xmax(" + _xmax.toString() + "),"
-                + "ymin(" + _ymin.toString() + "),"
-                + "ymax(" + _ymax.toString() + "))";
+                + "XMin(" + XMin.toString() + "),"
+                + "XMax(" + XMax.toString() + "),"
+                + "YMin(" + YMin.toString() + "),"
+                + "YMax(" + YMax.toString() + "))";
     }
 
-    public static Vector_Envelope2D envelope(
-            Vector_Envelope2D a_Envelope2D,
-            Vector_Envelope2D b_Envelope2D) {
+//    public static Vector_Envelope2D envelope(
+//            Vector_Envelope2D a,
+//            Vector_Envelope2D b) {
+//        Vector_Envelope2D result = new Vector_Envelope2D();
+//        result.XMin = a.XMin.min(b.XMin);
+//        result.YMin = a.YMin.min(b.YMin);
+//        result.XMax = a.XMax.max(b.XMax);
+//        result.YMax = a.YMax.max(b.YMax);
+//        return result;
+//    }
+    public Vector_Envelope2D envelope(Vector_Envelope2D e) {
         Vector_Envelope2D result = new Vector_Envelope2D();
-        result._xmin = a_Envelope2D._xmin.min(b_Envelope2D._xmin);
-        result._ymin = a_Envelope2D._ymin.min(b_Envelope2D._ymin);
-        result._xmax = a_Envelope2D._xmax.max(b_Envelope2D._xmax);
-        result._ymax = a_Envelope2D._ymax.max(b_Envelope2D._ymax);
-        return result;
-    }
-
-    public Vector_Envelope2D envelope(Vector_Envelope2D a_Envelope2D) {
-        Vector_Envelope2D result = new Vector_Envelope2D();
-        result._xmin = a_Envelope2D._xmin.min(this._xmin);
-        result._ymin = a_Envelope2D._ymin.min(this._ymin);
-        result._xmax = a_Envelope2D._xmax.max(this._xmax);
-        result._ymax = a_Envelope2D._ymax.max(this._ymax);
+        result.XMin = e.XMin.min(this.XMin);
+        result.YMin = e.YMin.min(this.YMin);
+        result.XMax = e.XMax.max(this.XMax);
+        result.YMax = e.YMax.max(this.YMax);
         return result;
     }
 
     /**
      * If aEnvelope2D touches, or overlaps then it intersects.
      *
-     * @param a_Envelope2D The Vector_Envelope2D to test for intersection.
+     * @param e The Vector_Envelope2D to test for intersection.
      * @return True iff this intersects with a_Envelope2D.
      */
-    public boolean getIntersects(Vector_Envelope2D a_Envelope2D) {
-        // Does this contain and corners of a_Envelope2D
+    public boolean getIntersects(Vector_Envelope2D e) {
+        // Does this contain and corners of e
         boolean containsCorner;
-        containsCorner = getIntersects(
-                a_Envelope2D._xmin,
-                a_Envelope2D._ymin);
+        containsCorner = getIntersects(e.XMin, e.YMin);
         if (containsCorner) {
             return containsCorner;
         }
-        containsCorner = getIntersects(
-                a_Envelope2D._xmin,
-                a_Envelope2D._ymax);
+        containsCorner = getIntersects(e.XMin, e.YMax);
         if (containsCorner) {
             return containsCorner;
         }
-        containsCorner = getIntersects(
-                a_Envelope2D._xmax,
-                a_Envelope2D._ymin);
+        containsCorner = getIntersects(e.XMax, e.YMin);
         if (containsCorner) {
             return containsCorner;
         }
-        containsCorner = getIntersects(
-                a_Envelope2D._xmax,
-                a_Envelope2D._ymax);
+        containsCorner = getIntersects(e.XMax, e.YMax);
         if (containsCorner) {
             return containsCorner;
         }
-        // Does a_Envelope2D contain and corners of this
-        containsCorner = a_Envelope2D.getIntersects(
-                _xmax,
-                _ymax);
+        // Does e contain and corners of this
+        containsCorner = e.getIntersects(XMax, YMax);
         if (containsCorner) {
             return containsCorner;
         }
-        containsCorner = a_Envelope2D.getIntersects(
-                _xmin,
-                _ymax);
+        containsCorner = e.getIntersects(XMin, YMax);
         if (containsCorner) {
             return containsCorner;
         }
-        containsCorner = a_Envelope2D.getIntersects(
-                _xmax,
-                _ymin);
+        containsCorner = e.getIntersects(XMax, YMin);
         if (containsCorner) {
             return containsCorner;
         }
-        containsCorner = a_Envelope2D.getIntersects(
-                _xmax,
-                _ymax);
+        containsCorner = e.getIntersects(XMax, YMax);
         if (containsCorner) {
             return containsCorner;
         }
-        /*
-         * Check to see if _xmin and _xmax are between a_Envelope2D._xmin and
-         * a_Envelope2D._xmax and a_Envelope2D._ymin and a_Envelope2D._ymax are
-         * between _ymin and _ymax
+        /**
+         * Check to see if XMin and XMax are between e.XMin and e.XMax, and
+         * e.YMin and e.YMax are between YMin and YMax.
          */
-        if (a_Envelope2D._xmax.compareTo(_xmax) != 1
-                && a_Envelope2D._xmax.compareTo(_xmin) != -1
-                && a_Envelope2D._xmin.compareTo(_xmax) != 1
-                && a_Envelope2D._xmin.compareTo(_xmin) != -1) {
-            if (_ymin.compareTo(a_Envelope2D._ymax) != 1
-                    && _ymin.compareTo(a_Envelope2D._ymin) != -1
-                    && _ymax.compareTo(a_Envelope2D._ymax) != 1
-                    && _ymax.compareTo(a_Envelope2D._ymin) != -1) {
+        if (e.XMax.compareTo(XMax) != 1
+                && e.XMax.compareTo(XMin) != -1
+                && e.XMin.compareTo(XMax) != 1
+                && e.XMin.compareTo(XMin) != -1) {
+            if (YMin.compareTo(e.YMax) != 1
+                    && YMin.compareTo(e.YMin) != -1
+                    && YMax.compareTo(e.YMax) != 1
+                    && YMax.compareTo(e.YMin) != -1) {
                 return true;
             }
         }
-        /*
-         * Check to see if a_Envelope2D._xmin and a_Envelope2D._xmax are between
-         * _xmax and _ymin and _ymax are between a_Envelope2D._ymin and
-         * a_Envelope2D._ymax
+        /**
+         * Check to see if e.XMin and e.XMax are between XMax, and YMin and YMax
+         * are between e.YMin and e.YMax.
          */
-        if (_xmax.compareTo(a_Envelope2D._xmax) != 1
-                && _xmax.compareTo(a_Envelope2D._xmin) != -1
-                && _xmin.compareTo(a_Envelope2D._xmax) != 1
-                && _xmin.compareTo(a_Envelope2D._xmin) != -1) {
-            if (a_Envelope2D._ymin.compareTo(_ymax) != 1
-                    && a_Envelope2D._ymin.compareTo(_ymin) != -1
-                    && a_Envelope2D._ymax.compareTo(_ymax) != 1
-                    && a_Envelope2D._ymax.compareTo(_ymin) != -1) {
+        if (XMax.compareTo(e.XMax) != 1
+                && XMax.compareTo(e.XMin) != -1
+                && XMin.compareTo(e.XMax) != 1
+                && XMin.compareTo(e.XMin) != -1) {
+            if (e.YMin.compareTo(YMax) != 1
+                    && e.YMin.compareTo(YMin) != -1
+                    && e.YMax.compareTo(YMax) != 1
+                    && e.YMax.compareTo(YMin) != -1) {
                 return true;
             }
         }
-//        /*
-//         * Check to see if _ymin and _ymax are between a_Envelope2D._ymin and
-//         * a_Envelope2D._ymax and a_Envelope2D._xmin and a_Envelope2D._xmax are
-//         * between _xmin and _xmax
-//         */
-//        if (
-//                a_Envelope2D._ymax.compareTo(_ymax) != 1 &&
-//                a_Envelope2D._ymax.compareTo(_ymin) != -1 &&
-//                a_Envelope2D._ymin.compareTo(_ymax) != 1 &&
-//                a_Envelope2D._ymin.compareTo(_ymin) != -1 ) {
-//            if (
-//                _xmin.compareTo(a_Envelope2D._xmax) != 1 &&
-//                _xmin.compareTo(a_Envelope2D._xmin) != -1 &&
-//                _xmax.compareTo(a_Envelope2D._xmax) != 1 &&
-//                _xmax.compareTo(a_Envelope2D._xmin) != -1 ) {
-//                return true;
-//            }
-//        }
-//        /*
-//         * Check to see if a_Envelope2D._ymin and a_Envelope2D._ymax are between
-//         * _ymax and _xmin and _xmax are between a_Envelope2D._xmin and
-//         * a_Envelope2D._xmax
-//         */
-//        if (
-//                _ymax.compareTo(a_Envelope2D._ymax) != 1 &&
-//                _ymax.compareTo(a_Envelope2D._ymin) != -1 &&
-//                _ymin.compareTo(a_Envelope2D._ymax) != 1 &&
-//                _ymin.compareTo(a_Envelope2D._ymin) != -1 ) {
-//            if (
-//                a_Envelope2D._xmin.compareTo(_xmax) != 1 &&
-//                a_Envelope2D._xmin.compareTo(_xmin) != -1 &&
-//                a_Envelope2D._xmax.compareTo(_xmax) != 1 &&
-//                a_Envelope2D._xmax.compareTo(_xmin) != -1 ) {
-//                return true;
-//            }
-//        }
         return false;
     }
 
     /**
-     * @param a_LineSegment2D A Vector_LineSegment2D to test for intersection.
+     * @param l A Vector_LineSegment2D to test for intersection.
      * @return 0 if no, 1 if yes, 2 if maybe.
      */
-    public int getIntersectsFailFast(Vector_LineSegment2D a_LineSegment2D) {
-        Vector_Envelope2D a_Envelope2D = a_LineSegment2D.getEnvelope2D();
+    public int getIntersectsFailFast(Vector_LineSegment2D l) {
+        Vector_Envelope2D a_Envelope2D = l.getEnvelope2D();
         if (a_Envelope2D.getIntersects(getEnvelope2D())) {
-            if (getIntersects(a_LineSegment2D._Start_Point2D)) {
+            if (getIntersects(l.Start)) {
                 return 1;
             }
-            if (getIntersects(a_LineSegment2D._End_Point2D)) {
+            if (getIntersects(l.End)) {
                 return 1;
             }
             return 2;
@@ -320,37 +261,39 @@ public class Vector_Envelope2D
             return 0;
         }
     }
-    
+
     /**
-     * @param a_LineSegment2D A Vector_LineSegment2D to test for intersection.
+     * @param l A Vector_LineSegment2D to test for intersection.
+     * @param tollerance
+     * @param handleOutOfMemoryError
      * @return true iff this.intersects with a_LineSegment2D.
      */
     public boolean getIntersects(
-            Vector_LineSegment2D a_LineSegment2D,
+            Vector_LineSegment2D l,
             BigDecimal tollerance,
             boolean handleOutOfMemoryError) {
         return Vector_LineSegment2D.getIntersects(
-                _xmin, _ymin, _xmax, _ymax, 
-                a_LineSegment2D,
+                XMin, YMin, XMax, YMax,
+                l,
                 tollerance,
-                this._DecimalPlacePrecision_Integer,
+                DecimalPlacePrecision,
                 handleOutOfMemoryError);
     }
 
-    public boolean getIntersects(Vector_Point2D aPoint) {
-        return aPoint._x.compareTo(_xmin) != -1
-                && aPoint._x.compareTo(_xmax) != 1
-                && aPoint._y.compareTo(_ymin) != -1
-                && aPoint._y.compareTo(_ymax) != 1;
+    public boolean getIntersects(Vector_Point2D p) {
+        return p.X.compareTo(XMin) != -1
+                && p.X.compareTo(XMax) != 1
+                && p.Y.compareTo(YMin) != -1
+                && p.Y.compareTo(YMax) != 1;
     }
 
     public boolean getIntersects(
             BigDecimal x,
             BigDecimal y) {
-        return x.compareTo(_xmin) != -1
-                && x.compareTo(_xmax) != 1
-                && y.compareTo(_ymin) != -1
-                && y.compareTo(_ymax) != 1;
+        return x.compareTo(XMin) != -1
+                && x.compareTo(XMax) != 1
+                && y.compareTo(YMin) != -1
+                && y.compareTo(YMax) != 1;
     }
 
     @Override
@@ -360,17 +303,17 @@ public class Vector_Envelope2D
 
     @Override
     public final void applyDecimalPlacePrecision() {
-        _xmin = _xmin.setScale(
-                get_DecimalPlacePrecision(),
+        XMin = XMin.setScale(
+                getDecimalPlacePrecision(),
                 get_RoundingMode());
-        _xmax = _xmax.setScale(
-                get_DecimalPlacePrecision(),
+        XMax = XMax.setScale(
+                getDecimalPlacePrecision(),
                 get_RoundingMode());
-        _ymin = _ymin.setScale(
-                get_DecimalPlacePrecision(),
+        YMin = YMin.setScale(
+                getDecimalPlacePrecision(),
                 get_RoundingMode());
-        _ymax = _ymax.setScale(
-                get_DecimalPlacePrecision(),
+        YMax = YMax.setScale(
+                getDecimalPlacePrecision(),
                 get_RoundingMode());
     }
 }

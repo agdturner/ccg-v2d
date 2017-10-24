@@ -79,19 +79,19 @@ public class Vector_Angles {
     }
 
     /**
-     * @param a_Point2D External point.
-     * @param b_Point2D Mid point where inside angle is calculated.
-     * @param c_Point2D External point.
+     * @param a External point.
+     * @param b Mid point where inside angle is calculated.
+     * @param c External point.
      * @return The inside Angle at b_Point for a Linear Ring assuming the ring
      * is clockwise and the Linear Ring Sequence is a_Point, b_Point, c_Point.
      */
     public static double getInsideAngleClockwise_doubleArray(
-            Vector_Point2D a_Point2D,
-            Vector_Point2D b_Point2D,
-            Vector_Point2D c_Point2D) {
-        double angle_aby = (Math.PI * 2.0d) - a_Point2D.getAngle_double(b_Point2D);
+            Vector_Point2D a,
+            Vector_Point2D b,
+            Vector_Point2D c) {
+        double angle_aby = (Math.PI * 2.0d) - a.getAngle_double(b);
         //double angle_aby_deg = getRadToDeg_double(angle_aby);
-        double angle_bcy = Math.PI - b_Point2D.getAngle_double(c_Point2D);
+        double angle_bcy = Math.PI - b.getAngle_double(c);
         //double angle_bcy_deg = getRadToDeg_double(angle_bcy);
         double result = angle_bcy - angle_aby;
         if (result < 0) {

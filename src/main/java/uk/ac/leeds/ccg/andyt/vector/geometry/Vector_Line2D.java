@@ -51,25 +51,25 @@ public class Vector_Line2D extends Vector_AbstractGeometry2D {
     public Vector_Line2D(
             double angleClockwiseFromYAxis,
             Vector_Point2D a_Point2D) {
-        _Vector_Environment = a_Point2D._Vector_Environment;
+        ve = a_Point2D.ve;
         this._AngleClockwiseFromYAxis = new BigDecimal(angleClockwiseFromYAxis);
         this._Point2D = new Vector_Point2D(a_Point2D);
-        set_DecimalPlacePrecision(
+        setDecimalPlacePrecision(
                 Math.max(
                         this._AngleClockwiseFromYAxis.scale(),
-                        this._Point2D.get_DecimalPlacePrecision()));
+                        this._Point2D.getDecimalPlacePrecision()));
     }
 
     public Vector_Line2D(
             BigDecimal a_AngleClockwiseFromYAxis,
             Vector_Point2D a_Point2D) {
-        _Vector_Environment = a_Point2D._Vector_Environment;
+        ve = a_Point2D.ve;
         this._AngleClockwiseFromYAxis = new BigDecimal(a_AngleClockwiseFromYAxis.toString());
         this._Point2D = new Vector_Point2D(a_Point2D);
-        set_DecimalPlacePrecision(
+        setDecimalPlacePrecision(
                 Math.max(
                         this._AngleClockwiseFromYAxis.scale(),
-                        this._Point2D.get_DecimalPlacePrecision()));
+                        this._Point2D.getDecimalPlacePrecision()));
     }
 
     /**
@@ -81,9 +81,9 @@ public class Vector_Line2D extends Vector_AbstractGeometry2D {
         BigDecimal minusALot = new BigDecimal(Double.MIN_VALUE);
         BigDecimal plusALot = new BigDecimal(Double.MAX_VALUE);
         Vector_Point2D a_Point2D = new Vector_Point2D(
-                _Vector_Environment, minusALot, minusALot);
+                ve, minusALot, minusALot);
         Vector_Point2D b_Point2D = new Vector_Point2D(
-                _Vector_Environment, plusALot, plusALot);
+                ve, plusALot, plusALot);
         return new Vector_Envelope2D(a_Point2D, b_Point2D);
     }
 
@@ -98,13 +98,13 @@ public class Vector_Line2D extends Vector_AbstractGeometry2D {
         BigDecimal xdiff_BigDecimal
                 = BigFunction.TAN.invoke(_AngleClockwiseFromYAxis).multiply(ydiff_BigDecimal);
         result[0] = new Vector_Point2D(
-                _Vector_Environment,
-                this._Point2D._x.add(xdiff_BigDecimal),
-                this._Point2D._y.add(ydiff_BigDecimal));
+                ve,
+                this._Point2D.X.add(xdiff_BigDecimal),
+                this._Point2D.Y.add(ydiff_BigDecimal));
         result[1] = new Vector_Point2D(
-                _Vector_Environment,
-                this._Point2D._x.subtract(xdiff_BigDecimal),
-                this._Point2D._y.subtract(ydiff_BigDecimal));
+                ve,
+                this._Point2D.X.subtract(xdiff_BigDecimal),
+                this._Point2D.Y.subtract(ydiff_BigDecimal));
         return result;
     }
 
@@ -113,11 +113,11 @@ public class Vector_Line2D extends Vector_AbstractGeometry2D {
 //        BigDecimal ydiff_BigDecimal = new BigDecimal(ydiffExtremity);
 //        BigDecimal xdiff_BigDecimal = new BigDecimal(Math.tan(_AngleClockwiseFromYAxis.doubleValue()) * ydiffExtremity);
 //        result[0] = new Point2D(
-//                this._Point2D._x.add(xdiff_BigDecimal),
-//                this._Point2D._y.add(ydiff_BigDecimal));
+//                this._Point2D.X.add(xdiff_BigDecimal),
+//                this._Point2D.Y.add(ydiff_BigDecimal));
 //       result[1] = new Point2D(
-//                this._Point2D._x.subtract(xdiff_BigDecimal),
-//                this._Point2D._y.subtract(ydiff_BigDecimal));
+//                this._Point2D.X.subtract(xdiff_BigDecimal),
+//                this._Point2D.Y.subtract(ydiff_BigDecimal));
 //        return result;
 //    }
     public Vector_AbstractGeometry2D getIntersection(

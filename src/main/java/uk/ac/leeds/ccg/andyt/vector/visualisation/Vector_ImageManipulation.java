@@ -25,32 +25,32 @@ import java.awt.image.BufferedImage;
  *
  * @author geoagdt
  */
-public class VectorImageManipulation {
+public class Vector_ImageManipulation {
 
     /**
      * Adapted from http://www.javalobby.org/articles/ultimate-image/
-     * @param a_BufferedImage The image to be resized.
+     * @param bi The image to be resized.
      * @param newWidth The new width for the image.
      * @param newHeight The new height for the image.
      * @return A BufferedImage resized
      */
     public static BufferedImage resize(
-            BufferedImage a_BufferedImage,
+            BufferedImage bi,
             int newWidth,
             int newHeight) {
-        int width = a_BufferedImage.getWidth();
-        int height = a_BufferedImage.getHeight();
+        int width = bi.getWidth();
+        int height = bi.getHeight();
         BufferedImage result = new BufferedImage(
                 newWidth,
                 newHeight,
-                a_BufferedImage.TYPE_INT_RGB);
+                bi.TYPE_INT_RGB);
                 //a_BufferedImage.getType());
         Graphics2D g = result.createGraphics();
 //        g.setRenderingHint(
 //                RenderingHints.KEY_INTERPOLATION,
 //                RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         g.drawImage(
-                a_BufferedImage,
+                bi,
                 0,
                 0,
                 newWidth,

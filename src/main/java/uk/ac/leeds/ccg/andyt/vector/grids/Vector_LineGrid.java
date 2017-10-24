@@ -154,17 +154,17 @@ public class Vector_LineGrid extends Vector_Object {
                 l, tollerance,
                 decimalPlacePrecision, handleOutOfMemoryError)) {
             long cellRowIndex;
-            cellRowIndex = g.getCellRowIndex(l._Start_Point2D._y, handleOutOfMemoryError);
+            cellRowIndex = g.getCellRowIndex(l.Start.Y, handleOutOfMemoryError);
             long cellColIndex;
-            cellColIndex = g.getCellColIndex(l._Start_Point2D._x, handleOutOfMemoryError);
+            cellColIndex = g.getCellColIndex(l.Start.X, handleOutOfMemoryError);
             //System.out.println("cellRowIndex " + cellRowIndex + ", cellColIndex " + cellColIndex);
             Grids_2D_ID_long cellID = g.getCellID(
                     cellRowIndex,
                     cellColIndex,
                     handleOutOfMemoryError);
 //            CellID cellID = g.getCellID(
-//                    l._Start_Point2D._x,
-//                    l._Start_Point2D._y,
+//                    l.Start.X,
+//                    l.Start.Y,
 //                    handleOutOfMemoryError);
             Grids_Dimensions cellBounds;
             cellBounds = g.getCellDimensions(
@@ -173,8 +173,8 @@ public class Vector_LineGrid extends Vector_Object {
                     cellColIndex,
                     handleOutOfMemoryError);
 //            cellBounds = g.getCellDimensions(
-//                    l._Start_Point2D._x,
-//                    l._Start_Point2D._y,
+//                    l.Start.X,
+//                    l.Start.Y,
 //                    handleOutOfMemoryError);
             Object[] lineToIntersectIntersectPointDirection;
             lineToIntersectIntersectPointDirection = Vector_LineSegment2D.getLineToIntersectLineRemainingDirection(

@@ -21,66 +21,57 @@ package uk.ac.leeds.ccg.andyt.vector.geometry;
 import java.io.Serializable;
 import java.math.RoundingMode;
 import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
+import uk.ac.leeds.ccg.andyt.vector.core.Vector_Object;
 
 /**
  * An abstract class defining a geometrical object and the methods it must
  * implement.
  */
-public abstract class Vector_AbstractGeometry2D
-        implements Serializable {
+public abstract class Vector_AbstractGeometry2D extends Vector_Object {
 
-    public Vector_Environment _Vector_Environment;
+    protected int DecimalPlacePrecision = 0;
+    protected RoundingMode _RoundingMode = RoundingMode.FLOOR;
 
-    protected Integer _DecimalPlacePrecision_Integer;
-    private static final int DefaultDecimalPlacePrecision_int = 0;
-    protected RoundingMode _RoundingMode;
-    private static final RoundingMode Default_RoundingMode = RoundingMode.FLOOR;
+    protected Vector_AbstractGeometry2D() {    }
+
+    public Vector_AbstractGeometry2D(Vector_Environment ve) {
+        super(ve);
+    }
 
     @Override
     public String toString() {
-        return "_DecimalPlacePrecision(" + _DecimalPlacePrecision_Integer + ")," +
-                "_RoundingMode(" + _RoundingMode + "),";
+        return "DecimalPlacePrecision(" + DecimalPlacePrecision + "),"
+                + "RoundingMode(" + _RoundingMode + "),";
     }
 
-    public abstract Vector_Envelope2D getEnvelope2D();
-
-    public abstract void applyDecimalPlacePrecision();
-
-    /**
-     * @return 0 (a primitive copy of DefaultDecimalPlacePrecision_int)
-     */
-    public int getDefaultDecimalPlacePrecision_int(){
-        return DefaultDecimalPlacePrecision_int;
-    }
-
-    public int get_DecimalPlacePrecision(){
-        if (_DecimalPlacePrecision_Integer == null){
-            _DecimalPlacePrecision_Integer = DefaultDecimalPlacePrecision_int;
-        }
-        return _DecimalPlacePrecision_Integer;
+    public int getDecimalPlacePrecision() {
+        return DecimalPlacePrecision;
     }
 
     /**
      * Default method probably best overridden to determine what setting
-     * _DecimalPlacePrecision_Integer involves
-     * @param precision The number of decimal places set for 
-     * _DecimalPlacePrecision_Integer. 
-     * @return The current value of _DecimalPlacePrecision_Integer.
+     * DecimalPlacePrecision_Integer involves
+     *
+     * @param precision The number of decimal places set for
+     * DecimalPlacePrecision_Integer.
+     * @return The current value of DecimalPlacePrecision_Integer.
      */
-    protected int set_DecimalPlacePrecision(int precision){
-        int result = get_DecimalPlacePrecision();
-        this._DecimalPlacePrecision_Integer = precision;
+    protected int setDecimalPlacePrecision(int precision) {
+        int result = getDecimalPlacePrecision();
+        DecimalPlacePrecision = precision;
+        applyDecimalPlacePrecision();
         return result;
     }
 
-    public RoundingMode getDefault_RoundingMode(){
-        return Default_RoundingMode;
+    public RoundingMode get_RoundingMode() {
+        return _RoundingMode;
     }
 
-    public RoundingMode get_RoundingMode(){
-        if (_RoundingMode == null){
-            this._RoundingMode = Default_RoundingMode;
-        }
-        return this._RoundingMode;
+    public void set_RoundingMode(RoundingMode r) {
+        _RoundingMode = r;
     }
+    
+    public abstract Vector_Envelope2D getEnvelope2D();
+    
+    public abstract void applyDecimalPlacePrecision();
 }

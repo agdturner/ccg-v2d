@@ -21,17 +21,27 @@ package uk.ac.leeds.ccg.andyt.vector.visualisation;
 import java.awt.Graphics2D;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
+import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
 
 /**
  * Abstract render class.
  */
-public abstract class VectorAbstractRender extends JApplet {
+public abstract class Vector_AbstractRender extends JApplet {
 
-    public int _width_int = 512;
-    public int _height_int = 256;
+    public Vector_Environment ve;
+   
+    public int Width = 512;
+    public int Height = 256;
     //public int scale = 50;
 
     public JFrame _JFrame;
     public Graphics2D _Graphics2D;
+    
+    protected Vector_AbstractRender(){}
+
+    public Vector_AbstractRender(
+            Vector_Environment ve){
+        this.ve = ve;
+    }
 
 }

@@ -35,22 +35,22 @@ public class Vector_Network2D
         extends Vector_AbstractGeometry2D
         implements Serializable {
 
-    public static double DefaultValue = 1;
+    public static int DefaultCapacity = 1;
     public static int DefaultType = 0;
     private static boolean HandleOutOfMemoryError = false;
-    public HashMap<Vector_Point2D, HashSet<Connection>> _Connection_HashMap;
+    public HashMap<Vector_Point2D, HashSet<Connection>> Connections;
 
     public Vector_Network2D(
             Vector_Environment ve) {
-        _Vector_Environment = ve;
-        _Connection_HashMap = new HashMap<Vector_Point2D, HashSet<Connection>>();
+        this.ve = ve;
+        Connections = new HashMap<Vector_Point2D, HashSet<Connection>>();
     }
 
     public Vector_Network2D(
             Vector_Environment ve,
             Grids_AbstractGrid2DSquareCell aGrid2DSquareCell) {
-        _Vector_Environment = ve;
-        _Connection_HashMap = new HashMap<Vector_Point2D, HashSet<Connection>>();
+        this.ve = ve;
+        Connections = new HashMap<Vector_Point2D, HashSet<Connection>>();
         Vector_Point2D a_Point2D;
         HashSet<Vector_Point2D> neighbouringPoints;
         for (long row = 0; row < aGrid2DSquareCell.getNRows(HandleOutOfMemoryError); row++) {
@@ -69,10 +69,10 @@ public class Vector_Network2D
                     Connection a_Connection = new Connection(
                             b_Point2D,
                             DefaultType,
-                            DefaultValue);
+                            DefaultCapacity);
                     a_Connection_HashSet.add(a_Connection);
                 }
-                _Connection_HashMap.put(
+                Connections.put(
                         a_Point2D,
                         a_Connection_HashSet);
             }
@@ -92,14 +92,14 @@ public class Vector_Network2D
     public void addToNetwork(
             Vector_Network2D a_Network,
             int operator) {
-        //_Connection_HashMap.putAll(a_Network._Connection_HashMap);
-        Iterator a_Iterator = a_Network._Connection_HashMap.keySet().iterator();
+        //_Connection_HashMap.putAll(a_Network.Connections);
+        Iterator a_Iterator = a_Network.Connections.keySet().iterator();
         Vector_Point2D a_Point2D;
         while (a_Iterator.hasNext()) {
             a_Point2D = (Vector_Point2D) a_Iterator.next();
-            if (_Connection_HashMap.containsKey(a_Point2D)) {
-                HashSet<Connection> t_Connection_HashSet = _Connection_HashMap.get(a_Point2D);
-                HashSet<Connection> a_Connection_HashSet = a_Network._Connection_HashMap.get(a_Point2D);
+            if (Connections.containsKey(a_Point2D)) {
+                HashSet<Connection> t_Connection_HashSet = Connections.get(a_Point2D);
+                HashSet<Connection> a_Connection_HashSet = a_Network.Connections.get(a_Point2D);
                 for (Connection a_Connection : a_Connection_HashSet) {
                     // See if this breaks out as expected... May be going through all records unnecessarily!
                     // No work needed for checking type due to the nature of Connection.equals(Object)
@@ -109,17 +109,17 @@ public class Vector_Network2D
                                 // See if this breaks out as desired... May be going through all records unnecessarily!
                                 switch (operator) {
                                     case 0:
-                                        if (t_Connection._Value > a_Connection._Value) {
+                                        if (t_Connection.Capacity > a_Connection.Capacity) {
                                             t_Connection_HashSet.add(a_Connection);
                                         }
                                         break;
                                     case 1:
-                                        if (t_Connection._Value < a_Connection._Value) {
+                                        if (t_Connection.Capacity < a_Connection.Capacity) {
                                             t_Connection_HashSet.add(a_Connection);
                                         }
                                         break;
                                     default:
-                                        t_Connection.set_Value(t_Connection._Value + a_Connection._Value);
+                                        t_Connection.setCapacity(t_Connection.Capacity + a_Connection.Capacity);
                                         break;
                                 }
                             }
@@ -130,7 +130,7 @@ public class Vector_Network2D
                     }
                 }
             } else {
-                _Connection_HashMap.put(a_Point2D, a_Network._Connection_HashMap.get(a_Point2D));
+                Connections.put(a_Point2D, a_Network.Connections.get(a_Point2D));
             }
         }
     }
@@ -138,10 +138,10 @@ public class Vector_Network2D
     public void addToNetwork(
             Vector_Point2D toConnect_Point2D,
             HashSet<Connection> a_Connections_HashSet) {
-        if (_Connection_HashMap.containsKey(toConnect_Point2D)) {
-            ((HashSet) _Connection_HashMap.get(toConnect_Point2D)).addAll(a_Connections_HashSet);
+        if (Connections.containsKey(toConnect_Point2D)) {
+            ((HashSet) Connections.get(toConnect_Point2D)).addAll(a_Connections_HashSet);
         } else {
-            _Connection_HashMap.put(
+            Connections.put(
                     toConnect_Point2D,
                     a_Connections_HashSet);
         }
@@ -157,26 +157,26 @@ public class Vector_Network2D
             Vector_Point2D toConnect_Point2D,
             Connection a_Connection,
             int operator) {
-        //if (!toConnect_Point2D.equals(a_Connection._Point2D)){
-        if (_Connection_HashMap.containsKey(toConnect_Point2D)) {
-            HashSet<Connection> t_Connection_HashSet = (HashSet<Connection>) _Connection_HashMap.get(toConnect_Point2D);
+        //if (!toConnect_Point2D.equals(a_Connection.Location)){
+        if (Connections.containsKey(toConnect_Point2D)) {
+            HashSet<Connection> t_Connection_HashSet = (HashSet<Connection>) Connections.get(toConnect_Point2D);
             if (t_Connection_HashSet.contains(a_Connection)) {
                 for (Connection t_Connection : t_Connection_HashSet) {
                     if (t_Connection.equals(a_Connection)) {
                         // See if this breaks out as desired... May be going through all records unnecessarily!
                         switch (operator) {
                             case 0:
-                                if (t_Connection._Value > a_Connection._Value) {
+                                if (t_Connection.Capacity > a_Connection.Capacity) {
                                     t_Connection_HashSet.add(a_Connection);
                                 }
                                 break;
                             case 1:
-                                if (t_Connection._Value < a_Connection._Value) {
+                                if (t_Connection.Capacity < a_Connection.Capacity) {
                                     t_Connection_HashSet.add(a_Connection);
                                 }
                                 break;
                             default:
-                                t_Connection.set_Value(t_Connection._Value + a_Connection._Value);
+                                t_Connection.setCapacity(t_Connection.Capacity + a_Connection.Capacity);
                         }
                     }
                 }
@@ -184,7 +184,7 @@ public class Vector_Network2D
         } else {
             HashSet<Connection> a_Connection_HashSet = new HashSet<Connection>();
             a_Connection_HashSet.add(a_Connection);
-            _Connection_HashMap.put(
+            Connections.put(
                     toConnect_Point2D,
                     a_Connection_HashSet);
         }
@@ -206,7 +206,7 @@ public class Vector_Network2D
             Connection a_Connection = new Connection(
                     toConnectTo_Point2D,
                     DefaultType,
-                    DefaultValue);
+                    DefaultCapacity);
             addToNetwork(
                     toConnect_Point2D,
                     a_Connection,
@@ -233,7 +233,7 @@ public class Vector_Network2D
 
     @Override
     public String toString() {
-        return "_Connection_HashMap.keySet().size() " + _Connection_HashMap.keySet().size();
+        return "_Connection_HashMap.keySet().size() " + Connections.keySet().size();
     }
 
     public static HashSet<Vector_Point2D> getNeighbouringPoints(
@@ -332,7 +332,7 @@ public class Vector_Network2D
         Vector_Envelope2D result = new Vector_Envelope2D();
         Vector_Point2D a_Point2D;
         Vector_Point2D b_Point2D;
-        Set<Vector_Point2D> a_Connection_HashMap_Key_Set = _Connection_HashMap.keySet();
+        Set<Vector_Point2D> a_Connection_HashMap_Key_Set = Connections.keySet();
         Iterator<Vector_Point2D> a_Connection_HashMap_Key_Set_Iterator = a_Connection_HashMap_Key_Set.iterator();
         HashSet<Connection> a_Connection_HashMap_HashSet;
         Iterator<Connection> a_Connection_HashMap_HashSet_Iterator;
@@ -340,11 +340,11 @@ public class Vector_Network2D
         while (a_Connection_HashMap_Key_Set_Iterator.hasNext()) {
             a_Point2D = a_Connection_HashMap_Key_Set_Iterator.next();
             result = result.envelope(a_Point2D.getEnvelope2D());
-            a_Connection_HashMap_HashSet = _Connection_HashMap.get(a_Point2D);
+            a_Connection_HashMap_HashSet = Connections.get(a_Point2D);
             a_Connection_HashMap_HashSet_Iterator = a_Connection_HashMap_HashSet.iterator();
             while (a_Connection_HashMap_HashSet_Iterator.hasNext()) {
                 a_Connection = a_Connection_HashMap_HashSet_Iterator.next();
-                b_Point2D = a_Connection._Point2D;
+                b_Point2D = a_Connection.Location;
                 result = result.envelope(b_Point2D.getEnvelope2D());
             }
         }
@@ -358,37 +358,31 @@ public class Vector_Network2D
 
     public class Connection implements Serializable {
 
-        public Vector_Point2D _Point2D;
-        /**
-         * Intended for capacity or other condition, or store of information
-         * (e.g. number of flows)...
-         */
-        public double _Value;
-        /**
-         * To distinguish between different types of connection e.g. On foot, by
-         * car etc...
-         */
-        public int _Type;
+        public Vector_Point2D Location;
+
+        public int Capacity;
+        
+        public int Type;
 
         public Connection() {
         }
 
         public Connection(
-                Vector_Point2D _Point2D,
-                int _Type,
-                double _Value) {
-            this._Point2D = _Point2D;
-            this._Type = _Type;
-            this._Value = _Value;
+                Vector_Point2D location,
+                int type,
+                int capacity) {
+            this.Location = location;
+            this.Type = type;
+            this.Capacity = capacity;
         }
 
-        public void set_Value(double _Value) {
-            this._Value = _Value;
+        public void setCapacity(int capacity) {
+            this.Capacity = capacity;
         }
 
         /**
-         * This ignores _Value, so two connections are the same irrespective of
-         * _Value.
+         * This ignores Capacity, so two connections are the same irrespective of
+ Capacity.
          *
          * @param o Object
          * @return boolean
@@ -396,9 +390,9 @@ public class Vector_Network2D
         @Override
         public boolean equals(Object o) {
             if (o instanceof Connection) {
-                Connection a_Connection = (Connection) o;
-                return _Point2D.equals(a_Connection._Point2D)
-                        && _Type == a_Connection._Type;
+                Connection c = (Connection) o;
+                return Location.equals(c.Location)
+                        && Type == c.Type;
             }
             return false;
         }
@@ -406,8 +400,8 @@ public class Vector_Network2D
         @Override
         public int hashCode() {
             int hash = 7;
-            hash = 73 * hash + (this._Point2D != null ? this._Point2D.hashCode() : 0);
-            hash = 73 * hash + this._Type;
+            hash = 73 * hash + (this.Location != null ? this.Location.hashCode() : 0);
+            hash = 73 * hash + this.Type;
             return hash;
         }
     }

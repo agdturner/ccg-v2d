@@ -19,16 +19,29 @@
 package uk.ac.leeds.ccg.andyt.vector.visualisation;
 
 import java.awt.Graphics;
+//import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
+import javax.imageio.ImageIO;
+import javax.swing.JPanel;
 
-/**
- */
-public class VectorOverlayComponent_Network2D extends VectorOverlayComponent {
+public class Vector_OverlayComponent extends JPanel {
 
-    public VectorRenderNetwork2D _RenderNetwork2D;
+    public BufferedImage _BufferedImage = null;
+    //public Image _Image;
 
-    public VectorOverlayComponent_Network2D(
-            VectorRenderNetwork2D _RenderNetwork2D) {
-        this._RenderNetwork2D = _RenderNetwork2D;
+    public Vector_OverlayComponent() {
+    }
+
+    public void readImage(URL imageURL) {
+        try {
+            _BufferedImage = ImageIO.read(imageURL);
+            //_Image = Toolkit.getDefaultToolkit().getImage(imageURL);
+        } catch (IOException e) {
+            e.printStackTrace(System.err);
+        }
+        repaint();
     }
 
     @Override
@@ -36,8 +49,8 @@ public class VectorOverlayComponent_Network2D extends VectorOverlayComponent {
         if (_BufferedImage != null) {
             g.drawImage(_BufferedImage, 0, 0, this);
         }
-        _RenderNetwork2D.draw(g);
+        // Call out to all things to be overlayed...
     }
 
-}
 
+}

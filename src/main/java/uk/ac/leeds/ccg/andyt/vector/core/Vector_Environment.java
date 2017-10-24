@@ -19,9 +19,12 @@
 package uk.ac.leeds.ccg.andyt.vector.core;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import uk.ac.leeds.ccg.andyt.generic.math.Generic_BigDecimal;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
 import uk.ac.leeds.ccg.andyt.vector.io.Vector_Files;
+import uk.ac.leeds.ccg.andyt.vector.projection.Vector_OSGBtoLatLon;
 
 /**
  *
@@ -36,6 +39,8 @@ public class Vector_Environment {
     protected Grids_Environment ge;
     
     protected Generic_BigDecimal bd;
+    
+    protected Vector_OSGBtoLatLon OSGBtoLatLon;
 
     /**
      * @return the _Generic_BigDecimal
@@ -62,4 +67,22 @@ public class Vector_Environment {
     public Vector_Environment(Grids_Environment ge){
         this.ge = ge;
     }
+    
+    public BigDecimal getRounded_BigDecimal(
+            BigDecimal toRoundBigDecimal,
+            BigDecimal toRoundToBigDecimal) {
+        int scale = toRoundToBigDecimal.scale();
+        BigDecimal result = toRoundBigDecimal.setScale(scale - 1, RoundingMode.FLOOR);
+        result = result.setScale(scale);
+        result = result.add(toRoundToBigDecimal);
+        return result;
+    }
+
+    public Vector_OSGBtoLatLon getOSGBtoLatLon() {
+        if (OSGBtoLatLon == null) {
+            OSGBtoLatLon = new Vector_OSGBtoLatLon();
+        }
+        return OSGBtoLatLon;
+    }
+
 }
