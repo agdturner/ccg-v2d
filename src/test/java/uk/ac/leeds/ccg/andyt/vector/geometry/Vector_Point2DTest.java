@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package uk.ac.leeds.ccg.andyt.vector.geometry;
 
 import java.math.BigDecimal;
@@ -17,9 +16,9 @@ import static org.junit.Assert.*;
  *
  * @author geoagdt
  */
-public class VectorPoint2DTest {
+public class Vector_Point2DTest {
 
-    public VectorPoint2DTest() {
+    public Vector_Point2DTest() {
     }
 
     @BeforeClass
@@ -39,20 +38,19 @@ public class VectorPoint2DTest {
     }
 
 //    /**
-//     * Test of set_DecimalPlacePrecision method, of class Vector_Point2D.
+//     * Test of setDecimalPlacePrecision method, of class Vector_Point2D.
 //     */
 //    @Test
 //    public void testSet_DecimalPlacePrecision() {
-////        System.out.println("set_DecimalPlacePrecision");
+////        System.out.println("setDecimalPlacePrecision");
 ////        int _DecimalPlacePrecision = 0;
 ////        Vector_Point2D instance = new Vector_Point2D();
 ////        int expResult = 0;
-////        int result = instance.set_DecimalPlacePrecision(_DecimalPlacePrecision);
+////        int result = instance.setDecimalPlacePrecision(_DecimalPlacePrecision);
 ////        assertEquals(expResult, result);
 ////        // TODO review the generated test code and remove the default call to fail.
 ////        fail("The test case is a prototype.");
 //    }
-
     /**
      * Test of roundTo method, of class Vector_Point2D.
      */
@@ -90,8 +88,8 @@ public class VectorPoint2DTest {
         Vector_Point2D b;
         Vector_Point2D c;
         Vector_Point2D d;
-boolean result;
-boolean expResult;
+        boolean result;
+        boolean expResult;
         a = new Vector_Point2D(null, 0.1d, 0.3d);
         System.out.println(
                 "a = new VectorPoint2D(0.1d,0.3d); "
@@ -101,7 +99,7 @@ boolean expResult;
         System.out.println(
                 "b = new VectorPoint2D(\"0.1\",\"0.3\"); "
                 + b.toString());
-        
+
         result = a.equals(b);
         System.out.println(
                 "a.equals(b); "
@@ -135,7 +133,7 @@ boolean expResult;
                 + result);
         expResult = true;
         assertEquals(expResult, result);
-        
+
         result = c.equals(d);
         System.out.println(
                 "c.equals(d); "

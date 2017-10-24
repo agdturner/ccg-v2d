@@ -17,9 +17,9 @@ import uk.ac.leeds.ccg.andyt.vector.geometry.Vector_Point2D;
  *
  * @author geoagdt
  */
-public class VectorAnglesTest {
+public class Vector_AnglesTest {
 
-    public VectorAnglesTest() {
+    public Vector_AnglesTest() {
     }
 
     @BeforeClass

@@ -17,9 +17,9 @@ import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
  *
  * @author geoagdt
  */
-public class VectorEnvelope2DTest {
+public class Vector_Envelope2DTest {
 
-    public VectorEnvelope2DTest() {
+    public Vector_Envelope2DTest() {
     }
 
     @BeforeClass
@@ -91,26 +91,26 @@ public class VectorEnvelope2DTest {
         boolean expResult;
         boolean result;
 
-        Vector_Point2D a_VectorPoint2D;
-        Vector_Point2D b_VectorPoint2D = new Vector_Point2D(null, "1", "1");
-        Vector_Envelope2D b_VectorPoint2D_Envelope2D = b_VectorPoint2D.getEnvelope2D();
-        Vector_Envelope2D ab_VectorEnvelope2D;
-        BigDecimal a_x = new BigDecimal("1");
-        BigDecimal a_y = new BigDecimal("1");
-        BigDecimal ten_BigDecimal = new BigDecimal("10");
+        Vector_Point2D a;
+        Vector_Point2D b = new Vector_Point2D(null, "1", "1");
+        Vector_Envelope2D be = b.getEnvelope2D();
+        Vector_Envelope2D abe;
+        BigDecimal aX = new BigDecimal("1");
+        BigDecimal aY = new BigDecimal("1");
+        BigDecimal ten = new BigDecimal("10");
         for (int i = 0; i < 1000; i++) {
-            a_x = a_x.divide(ten_BigDecimal);
-            a_y = a_y.divide(ten_BigDecimal);
-            a_VectorPoint2D = new Vector_Point2D(new Vector_Environment(), a_x, a_y);
-            System.out.println("a_VectorPoint2D " + a_VectorPoint2D.toString());
-            ab_VectorEnvelope2D = new Vector_Envelope2D(
-                    a_VectorPoint2D,
-                    b_VectorPoint2D);
+            aX = aX.divide(ten);
+            aY = aY.divide(ten);
+            a = new Vector_Point2D(new Vector_Environment(), aX, aY);
+            System.out.println("a " + a.toString());
+            abe = new Vector_Envelope2D(
+                    a,
+                    b);
             expResult = true;
-            result = ab_VectorEnvelope2D.getIntersects(a_VectorPoint2D.getEnvelope2D());
-            System.out.println("ab_VectorEnvelope2D.getIntersects(a_VectorPoint2D.getEnvelope2D()) " + result);
+            result = abe.getIntersects(a.getEnvelope2D());
+            System.out.println("abe.getIntersects(a.getEnvelope2D()) " + result);
             assertEquals(expResult, result);
-            result = ab_VectorEnvelope2D.getIntersects(b_VectorPoint2D_Envelope2D);
+            result = abe.getIntersects(be);
             assertEquals(expResult, result);
         }
     }

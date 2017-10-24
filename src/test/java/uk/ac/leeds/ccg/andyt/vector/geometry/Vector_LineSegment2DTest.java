@@ -17,9 +17,9 @@ import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
  *
  * @author geoagdt
  */
-public class VectorLineSegment2DTest {
+public class Vector_LineSegment2DTest {
 
-    public VectorLineSegment2DTest() {
+    public Vector_LineSegment2DTest() {
     }
 
     @BeforeClass
@@ -39,15 +39,15 @@ public class VectorLineSegment2DTest {
     }
 
     /**
-     * Test of set_DecimalPlacePrecision method, of class Vector_LineSegment2D.
+     * Test of setDecimalPlacePrecision method, of class Vector_LineSegment2D.
      */
     @Test
     public void testSet_DecimalPlacePrecision() {
-//        System.out.println("set_DecimalPlacePrecision");
+//        System.out.println("setDecimalPlacePrecision");
 //        int _DecimalPlacePrecision = 0;
 //        Vector_LineSegment2D instance = new Vector_LineSegment2D();
 //        int expResult = 0;
-//        int result = instance.set_DecimalPlacePrecision(_DecimalPlacePrecision);
+//        int result = instance.setDecimalPlacePrecision(_DecimalPlacePrecision);
 //        assertEquals(expResult, result);
 //        // TODO review the generated test code and remove the default call to fail.
 //        fail("The test case is a prototype.");
@@ -160,28 +160,28 @@ public class VectorLineSegment2DTest {
         boolean result;
         Vector_Point2D a = new Vector_Point2D(null, "0", "0");
         Vector_Point2D b = new Vector_Point2D(null, "1", "1");
-        Vector_LineSegment2D ab_VectorLineSegment2D = new Vector_LineSegment2D(
+        Vector_LineSegment2D ab = new Vector_LineSegment2D(
                 a,
                 b);
         System.out.println(
-                "ab_VectorLineSegment2D " + ab_VectorLineSegment2D);
+                "ab " + ab);
         boolean expResult = true;
-        BigDecimal ten_BigDecimal = new BigDecimal("10");
-        BigDecimal a_x = new BigDecimal("1");
-        BigDecimal a_y = new BigDecimal("1");
-        int a_DecimalPlacePrecision = 0;
+        BigDecimal ten = new BigDecimal("10");
+        BigDecimal aX = new BigDecimal("1");
+        BigDecimal aY = new BigDecimal("1");
+        int decimalPlacePrecision = 0;
         for (int i = 0; i < 1000; i++) {
-            a_DecimalPlacePrecision++;
-            System.out.println("a_DecimalPlacePrecision " + a_DecimalPlacePrecision);
-            a_x = a_x.divide(ten_BigDecimal);
-            a_y = a_y.divide(ten_BigDecimal);
-            a = new Vector_Point2D(new Vector_Environment(), a_x, a_y);
+            decimalPlacePrecision++;
+            System.out.println("DecimalPlacePrecision " + decimalPlacePrecision);
+            aX = aX.divide(ten);
+            aY = aY.divide(ten);
+            a = new Vector_Point2D(new Vector_Environment(), aX, aY);
             System.out.println("a " + a.toString());
-            result = ab_VectorLineSegment2D.getIntersects(
+            result = ab.getIntersects(
                     a,
-                    a_DecimalPlacePrecision);
+                    decimalPlacePrecision);
             System.out.println(
-                    "ab_VectorLineSegment2D.getIntersects(a,a_DecimalPlacePrecision)"
+                    "ab.getIntersects(a,DecimalPlacePrecision)"
                     + result);
             assertEquals(expResult, result);
         }
