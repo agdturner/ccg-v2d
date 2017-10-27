@@ -9,9 +9,9 @@ import java.io.File;
 import java.math.BigDecimal;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_2D_ID_long;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Dimensions;
-import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_Grid2DSquareCellDouble;
-import uk.ac.leeds.ccg.andyt.grids.core.grid.chunk.Grids_Grid2DSquareCellDoubleChunkArrayFactory;
-import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_Grid2DSquareCellDoubleFactory;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_GridDouble;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.chunk.Grids_GridChunkDoubleArrayFactory;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_GridDoubleFactory;
 import uk.ac.leeds.ccg.andyt.grids.core.statistics.Grids_GridStatistics0;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
 import uk.ac.leeds.ccg.andyt.grids.exchange.Grids_ImageExporter;
@@ -55,12 +55,12 @@ public class Vector_LineGrid extends Vector_Object {
         handleNoDataValue = true;
         Grids_Environment ge;
         ge = ve.getGrids_Environment();
-        Grids_Grid2DSquareCellDoubleFactory gf;
-        gf = new Grids_Grid2DSquareCellDoubleFactory(
+        Grids_GridDoubleFactory gf;
+        gf = new Grids_GridDoubleFactory(
                 dir, noDataValue, ge, handleNoDataValue);
-        Grids_Grid2DSquareCellDoubleChunkArrayFactory gcaf;
-        gcaf = new Grids_Grid2DSquareCellDoubleChunkArrayFactory();
-        Grids_Grid2DSquareCellDouble g;
+        Grids_GridChunkDoubleArrayFactory gcaf;
+        gcaf = new Grids_GridChunkDoubleArrayFactory();
+        Grids_GridDouble g;
         long _NRows;
         _NRows = 100;
         long _NCols;
@@ -118,7 +118,7 @@ public class Vector_LineGrid extends Vector_Object {
      * @param handleOutOfMemoryError
      */
     public static void addToGrid(
-            Grids_Grid2DSquareCellDouble g,
+            Grids_GridDouble g,
             Vector_LineSegment2D l,
             double factor,
             BigDecimal tollerance,

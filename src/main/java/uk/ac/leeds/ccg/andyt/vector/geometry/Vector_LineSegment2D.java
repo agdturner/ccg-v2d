@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Dimensions;
-import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_AbstractGrid2DSquareCell;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_AbstractGridNumber;
 import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
 //import org.ojalgo.function.implementation.BigFunction;
 //import org.ojalgo.constant.BigMath;
@@ -161,7 +161,7 @@ public class Vector_LineSegment2D
      * @return true iff l intersects g
      */
     public static boolean getIntersects(
-            Grids_AbstractGrid2DSquareCell g,
+            Grids_AbstractGridNumber g,
             Vector_LineSegment2D l,
             BigDecimal tollerance,
             int a_DecimalPlacePrecision,
