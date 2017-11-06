@@ -12,7 +12,7 @@ import uk.ac.leeds.ccg.andyt.grids.core.Grids_Dimensions;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_GridDouble;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.chunk.Grids_GridChunkDoubleArrayFactory;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_GridDoubleFactory;
-import uk.ac.leeds.ccg.andyt.grids.core.statistics.Grids_GridStatistics0;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.statistics.Grids_GridStatistics;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
 import uk.ac.leeds.ccg.andyt.grids.io.Grids_ImageExporter;
 import uk.ac.leeds.ccg.andyt.grids.process.Grids_Processor;
@@ -55,16 +55,13 @@ public class Vector_LineGrid extends Vector_Object {
         handleNoDataValue = true;
         Grids_Environment ge;
         ge = ve.getGrids_Environment();
-        Grids_GridDoubleFactory gf;
-        gf = new Grids_GridDoubleFactory(
-                dir, noDataValue, ge, handleNoDataValue);
         Grids_GridChunkDoubleArrayFactory gcaf;
         gcaf = new Grids_GridChunkDoubleArrayFactory();
         Grids_GridDouble g;
-        long _NRows;
-        _NRows = 100;
-        long _NCols;
-        _NCols = 100;
+        long nRows;
+        nRows = 100;
+        long nCols;
+        nCols = 100;
         Grids_Dimensions dimensions; // The cellsize, xmin, ymin, xmax and ymax.
         dimensions = new Grids_Dimensions(
                 new BigDecimal(0.0d),
@@ -72,9 +69,12 @@ public class Vector_LineGrid extends Vector_Object {
                 new BigDecimal(100.0d),
                 new BigDecimal(100.0d),
                 new BigDecimal(1.0d));
-        Grids_GridStatistics0 gs;
-        gs = new Grids_GridStatistics0(ge);
-        g = gf.create(gs, dir, gcaf, _NRows, _NCols, dimensions, handleNoDataValue);
+        Grids_GridStatistics gs;
+        gs = new Grids_GridStatistics(ge);
+        Grids_GridDoubleFactory gf;
+        gf = new Grids_GridDoubleFactory(ge, dir, noDataValue, 
+                (int) nRows, (int) nCols, dimensions, gs, gcaf);
+        g = gf.create(gs, dir, gcaf, nRows, nCols, dimensions, handleNoDataValue);
         // Vector set up
         Vector_Point2D p0;
         p0 = new Vector_Point2D(
@@ -142,7 +142,7 @@ public class Vector_LineGrid extends Vector_Object {
         BigDecimal ymax;
         ymax = dimensions.getYMax();
         BigDecimal halfCellsize;
-        halfCellsize = dimensions.getHalfCellsize();        
+        halfCellsize = dimensions.getHalfCellsize();
         Integer directionIn;
         directionIn = null;
         //System.out.println("line length " + l.getLength(decimalPlacePrecision));
