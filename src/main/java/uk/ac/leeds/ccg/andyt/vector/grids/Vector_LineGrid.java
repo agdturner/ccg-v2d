@@ -12,8 +12,8 @@ import uk.ac.leeds.ccg.andyt.grids.core.Grids_Dimensions;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_GridDouble;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.chunk.Grids_GridChunkDoubleArrayFactory;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_GridDoubleFactory;
-import uk.ac.leeds.ccg.andyt.grids.core.grid.statistics.Grids_GridStatistics;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.statistics.Grids_GridDoubleStatistics;
 import uk.ac.leeds.ccg.andyt.grids.io.Grids_ImageExporter;
 import uk.ac.leeds.ccg.andyt.grids.process.Grids_Processor;
 import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
@@ -69,8 +69,8 @@ public class Vector_LineGrid extends Vector_Object {
                 new BigDecimal(100.0d),
                 new BigDecimal(100.0d),
                 new BigDecimal(1.0d));
-        Grids_GridStatistics gs;
-        gs = new Grids_GridStatistics(ge);
+        Grids_GridDoubleStatistics gs;
+        gs = new Grids_GridDoubleStatistics(ge);
         Grids_GridDoubleFactory gf;
         gf = new Grids_GridDoubleFactory(ge, dir, noDataValue, 
                 (int) nRows, (int) nCols, dimensions, gs, gcaf);
