@@ -154,9 +154,9 @@ public class Vector_LineGrid extends Vector_Object {
                 l, tollerance,
                 decimalPlacePrecision, handleOutOfMemoryError)) {
             long cellRowIndex;
-            cellRowIndex = g.getCellRowIndex(l.Start.Y, handleOutOfMemoryError);
+            cellRowIndex = g.getRow(l.Start.Y, handleOutOfMemoryError);
             long cellColIndex;
-            cellColIndex = g.getCellColIndex(l.Start.X, handleOutOfMemoryError);
+            cellColIndex = g.getCol(l.Start.X, handleOutOfMemoryError);
             //System.out.println("cellRowIndex " + cellRowIndex + ", cellColIndex " + cellColIndex);
             Grids_2D_ID_long cellID = g.getCellID(
                     cellRowIndex,
