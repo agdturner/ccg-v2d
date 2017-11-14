@@ -71,9 +71,13 @@ public class Vector_LineGrid extends Vector_Object {
                 new BigDecimal(1.0d));
         Grids_GridDoubleStatistics gs;
         gs = new Grids_GridDoubleStatistics(ge);
+        
         Grids_GridDoubleFactory gf;
-        gf = new Grids_GridDoubleFactory(ge, dir, noDataValue, 
-                (int) nRows, (int) nCols, dimensions, gs, gcaf);
+        gf = new Grids_GridDoubleFactory(
+                ge, 
+                dir,
+                ge.getProcessor().GridChunkDoubleFactory, gcaf, noDataValue, 
+                (int) nRows, (int) nCols, dimensions, gs);
         g = gf.create(gs, dir, gcaf, nRows, nCols, dimensions, handleNoDataValue);
         // Vector set up
         Vector_Point2D p0;
@@ -99,7 +103,7 @@ public class Vector_LineGrid extends Vector_Object {
         ie = new Grids_ImageExporter(ge);
 
         Grids_Processor gp;
-        gp = new Grids_Processor(ge, dir, true);
+        gp = new Grids_Processor(ge, dir);
 
         File fout = new File(
                 dir,
