@@ -13,7 +13,7 @@ import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_GridDouble;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.chunk.Grids_GridChunkDoubleArrayFactory;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_GridDoubleFactory;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
-import uk.ac.leeds.ccg.andyt.grids.core.grid.statistics.Grids_GridDoubleStatistics;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.stats.Grids_GridDoubleStats;
 import uk.ac.leeds.ccg.andyt.grids.io.Grids_ImageExporter;
 import uk.ac.leeds.ccg.andyt.grids.process.Grids_Processor;
 import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
@@ -69,8 +69,8 @@ public class Vector_LineGrid extends Vector_Object {
                 new BigDecimal(100.0d),
                 new BigDecimal(100.0d),
                 new BigDecimal(1.0d));
-        Grids_GridDoubleStatistics gs;
-        gs = new Grids_GridDoubleStatistics(ge);
+        Grids_GridDoubleStats gs;
+        gs = new Grids_GridDoubleStats(ge);
         
         Grids_GridDoubleFactory gf;
         gf = new Grids_GridDoubleFactory(
@@ -91,9 +91,7 @@ public class Vector_LineGrid extends Vector_Object {
                 new BigDecimal(40.5d),
                 new BigDecimal(20.5d));
         Vector_LineSegment2D l;
-        l = new Vector_LineSegment2D(
-                p0,
-                p1);
+        l = new Vector_LineSegment2D(                p0,                p1);
         System.out.println("line " + l);
         addToGrid(g, l, factor, tollerance, handleNoDataValue);
 
