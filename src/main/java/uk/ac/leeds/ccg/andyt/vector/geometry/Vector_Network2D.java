@@ -53,13 +53,13 @@ public class Vector_Network2D
         Connections = new HashMap<Vector_Point2D, HashSet<Connection>>();
         Vector_Point2D a_Point2D;
         HashSet<Vector_Point2D> neighbouringPoints;
-        for (long row = 0; row < aGrid2DSquareCell.getNRows(HandleOutOfMemoryError); row++) {
-            for (long col = 0; col < aGrid2DSquareCell.getNCols(HandleOutOfMemoryError); col++) {
+        for (long row = 0; row < aGrid2DSquareCell.getNRows(); row++) {
+            for (long col = 0; col < aGrid2DSquareCell.getNCols(); col++) {
                 a_Point2D = new Vector_Point2D(
                         ve,
-                        aGrid2DSquareCell.getCellXBigDecimal(col, HandleOutOfMemoryError),
-                        aGrid2DSquareCell.getCellYBigDecimal(row, HandleOutOfMemoryError));
-                HashSet a_Connection_HashSet = new HashSet<Connection>();
+                        aGrid2DSquareCell.getCellXBigDecimal(col),
+                        aGrid2DSquareCell.getCellYBigDecimal(row));
+                HashSet<Connection> a_Connection_HashSet = new HashSet<>();
                 neighbouringPoints = getNeighbouringPoints(
                         ve,
                         aGrid2DSquareCell,
@@ -237,92 +237,60 @@ public class Vector_Network2D
     }
 
     public static HashSet<Vector_Point2D> getNeighbouringPoints(
-         Vector_Environment ve,
-            Grids_AbstractGridNumber aGrid2DSquareCell,
+            Vector_Environment ve,
+            Grids_AbstractGridNumber g,
             long row,
             long col) {
-        boolean _HandleOutOfMemoryError = false;
         HashSet<Vector_Point2D> result = new HashSet<Vector_Point2D>();
         long arow;
         long acol;
         arow = row - 1;
         acol = col - 1;
-        if (aGrid2DSquareCell.isInGrid(arow, acol, _HandleOutOfMemoryError)) {
-            result.add(
-                    new Vector_Point2D(
-                            ve,
-                            aGrid2DSquareCell.getCellXBigDecimal(acol, _HandleOutOfMemoryError),
-                            aGrid2DSquareCell.getCellYBigDecimal(arow, _HandleOutOfMemoryError)));
+        if (g.isInGrid(arow, acol)) {
+            result.add(new Vector_Point2D(ve, g.getCellXBigDecimal(acol),
+                    g.getCellYBigDecimal(arow)));
         }
         arow = row - 1;
         acol = col;
-        if (aGrid2DSquareCell.isInGrid(arow, acol, _HandleOutOfMemoryError)) {
-            result.add(
-                    new Vector_Point2D(
-                            ve,
-                            aGrid2DSquareCell.getCellXBigDecimal(acol, _HandleOutOfMemoryError),
-                            aGrid2DSquareCell.getCellYBigDecimal(arow, _HandleOutOfMemoryError)));
-
+        if (g.isInGrid(arow, acol)) {
+            result.add(new Vector_Point2D(ve, g.getCellXBigDecimal(acol),
+                    g.getCellYBigDecimal(arow)));
         }
         arow = row - 1;
         acol = col + 1;
-        if (aGrid2DSquareCell.isInGrid(arow, acol, _HandleOutOfMemoryError)) {
-            result.add(
-                    new Vector_Point2D(
-                            ve,
-                            aGrid2DSquareCell.getCellXBigDecimal(acol, _HandleOutOfMemoryError),
-                            aGrid2DSquareCell.getCellYBigDecimal(arow, _HandleOutOfMemoryError)));
-
+        if (g.isInGrid(arow, acol)) {
+            result.add(new Vector_Point2D(ve, g.getCellXBigDecimal(acol),
+                    g.getCellYBigDecimal(arow)));
         }
         arow = row;
         acol = col - 1;
-        if (aGrid2DSquareCell.isInGrid(arow, acol, _HandleOutOfMemoryError)) {
-            result.add(
-                    new Vector_Point2D(
-                            ve,
-                            aGrid2DSquareCell.getCellXBigDecimal(acol, _HandleOutOfMemoryError),
-                            aGrid2DSquareCell.getCellYBigDecimal(arow, _HandleOutOfMemoryError)));
-
+        if (g.isInGrid(arow, acol)) {
+            result.add(new Vector_Point2D(ve, g.getCellXBigDecimal(acol),
+                    g.getCellYBigDecimal(arow)));
         }
         arow = row;
         acol = col + 1;
-        if (aGrid2DSquareCell.isInGrid(arow, acol, _HandleOutOfMemoryError)) {
-            result.add(
-                    new Vector_Point2D(
-                            ve,
-                            aGrid2DSquareCell.getCellXBigDecimal(acol, _HandleOutOfMemoryError),
-                            aGrid2DSquareCell.getCellYBigDecimal(arow, _HandleOutOfMemoryError)));
-
+        if (g.isInGrid(arow, acol)) {
+            result.add(new Vector_Point2D(ve, g.getCellXBigDecimal(acol),
+                    g.getCellYBigDecimal(arow)));
         }
         arow = row + 1;
         acol = col - 1;
-        if (aGrid2DSquareCell.isInGrid(arow, acol, _HandleOutOfMemoryError)) {
-            result.add(
-                    new Vector_Point2D(
-                            ve,
-                            aGrid2DSquareCell.getCellXBigDecimal(acol, _HandleOutOfMemoryError),
-                            aGrid2DSquareCell.getCellYBigDecimal(arow, _HandleOutOfMemoryError)));
-
+        if (g.isInGrid(arow, acol)) {
+            result.add(new Vector_Point2D(ve, g.getCellXBigDecimal(acol),
+                    g.getCellYBigDecimal(arow)));
         }
         arow = row + 1;
         acol = col;
-        if (aGrid2DSquareCell.isInGrid(arow, acol, _HandleOutOfMemoryError)) {
-            result.add(
-                    new Vector_Point2D(
-                            ve,
-                            aGrid2DSquareCell.getCellXBigDecimal(acol, _HandleOutOfMemoryError),
-                            aGrid2DSquareCell.getCellYBigDecimal(arow, _HandleOutOfMemoryError)));
-
+        if (g.isInGrid(arow, acol)) {
+            result.add(new Vector_Point2D(ve, g.getCellXBigDecimal(acol),
+                    g.getCellYBigDecimal(arow)));
         }
         arow = row + 1;
         acol = col + 1;
-        if (aGrid2DSquareCell.isInGrid(arow, acol, _HandleOutOfMemoryError)) {
-            result.add(
-                    new Vector_Point2D(
-                            ve,
-                            aGrid2DSquareCell.getCellXBigDecimal(acol, _HandleOutOfMemoryError),
-                            aGrid2DSquareCell.getCellYBigDecimal(arow, _HandleOutOfMemoryError)));
-
+        if (g.isInGrid(arow, acol)) {
+            result.add(new Vector_Point2D(ve, g.getCellXBigDecimal(acol), 
+                    g.getCellYBigDecimal(arow)));
         }
         return result;
     }
@@ -361,7 +329,7 @@ public class Vector_Network2D
         public Vector_Point2D Location;
 
         public int Capacity;
-        
+
         public int Type;
 
         public Connection() {
@@ -381,8 +349,8 @@ public class Vector_Network2D
         }
 
         /**
-         * This ignores Capacity, so two connections are the same irrespective of
- Capacity.
+         * This ignores Capacity, so two connections are the same irrespective
+         * of Capacity.
          *
          * @param o Object
          * @return boolean

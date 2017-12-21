@@ -71,12 +71,12 @@ public class Vector_LineGrid extends Vector_Object {
                 new BigDecimal(1.0d));
         Grids_GridDoubleStats gs;
         gs = new Grids_GridDoubleStats(ge);
-        
+
         Grids_GridDoubleFactory gf;
         gf = new Grids_GridDoubleFactory(
-                ge, 
+                ge,
                 dir,
-                ge.getProcessor().GridChunkDoubleFactory, gcaf, noDataValue, 
+                ge.getProcessor().GridChunkDoubleFactory, gcaf, noDataValue,
                 (int) nRows, (int) nCols, dimensions, gs);
         g = gf.create(gs, dir, gcaf, nRows, nCols, dimensions, handleNoDataValue);
         // Vector set up
@@ -86,28 +86,19 @@ public class Vector_LineGrid extends Vector_Object {
                 new BigDecimal(30.2d),
                 new BigDecimal(30.5d));
         Vector_Point2D p1;
-        p1 = new Vector_Point2D(
-                ve,
-                new BigDecimal(40.5d),
+        p1 = new Vector_Point2D(ve, new BigDecimal(40.5d),
                 new BigDecimal(20.5d));
         Vector_LineSegment2D l;
-        l = new Vector_LineSegment2D(                p0,                p1);
+        l = new Vector_LineSegment2D(p0, p1);
         System.out.println("line " + l);
         addToGrid(g, l, factor, tollerance, handleNoDataValue);
-
-        System.out.println(g.toString(handleNoDataValue));
-
+        System.out.println(g.toString());
         Grids_ImageExporter ie;
         ie = new Grids_ImageExporter(ge);
-
         Grids_Processor gp;
         gp = new Grids_Processor(ge, dir);
-
-        File fout = new File(
-                dir,
-                "test.PNG");
-        ie.toGreyScaleImage(g, gp, fout, "PNG", handleNoDataValue);
-
+        File fout = new File(dir, "test.PNG");
+        ie.toGreyScaleImage(g, gp, fout, "PNG");
     }
 
     /**
@@ -128,11 +119,11 @@ public class Vector_LineGrid extends Vector_Object {
         int decimalPlacePrecision;
         decimalPlacePrecision = 10;
 //        int chunkNRows;
-//        chunkNRows = g.getChunkNRows(handleOutOfMemoryError);
+//        chunkNRows = g.getChunkNRows();
 //        int chunkNCols;
-//        chunkNCols = g.getChunkNCols(handleOutOfMemoryError);
+//        chunkNCols = g.getChunkNCols();
         Grids_Dimensions dimensions;
-        dimensions = g.getDimensions(handleOutOfMemoryError);
+        dimensions = g.getDimensions();
 //        BigDecimal cellsize;
 //        cellsize = dimensions[0];
         BigDecimal xmin;
@@ -148,46 +139,21 @@ public class Vector_LineGrid extends Vector_Object {
         Integer directionIn;
         directionIn = null;
         //System.out.println("line length " + l.getLength(decimalPlacePrecision));
-        long nrows = g.getNRows(handleOutOfMemoryError);
-        long ncols = g.getNCols(handleOutOfMemoryError);
+        long nrows = g.getNRows();
+        long ncols = g.getNCols();
         // Check if line intersect grid and if not return fast.
-        if (Vector_LineSegment2D.getIntersects(
-                xmin, ymin, xmax, ymax,
-                l, tollerance,
-                decimalPlacePrecision, handleOutOfMemoryError)) {
-            long cellRowIndex;
-            cellRowIndex = g.getRow(l.Start.Y, handleOutOfMemoryError);
-            long cellColIndex;
-            cellColIndex = g.getCol(l.Start.X, handleOutOfMemoryError);
-            //System.out.println("cellRowIndex " + cellRowIndex + ", cellColIndex " + cellColIndex);
-            Grids_2D_ID_long cellID = g.getCellID(
-                    cellRowIndex,
-                    cellColIndex,
-                    handleOutOfMemoryError);
-//            CellID cellID = g.getCellID(
-//                    l.Start.X,
-//                    l.Start.Y,
-//                    handleOutOfMemoryError);
+        if (Vector_LineSegment2D.getIntersects(xmin, ymin, xmax, ymax, l,
+                tollerance, decimalPlacePrecision, handleOutOfMemoryError)) {
+            long row;
+            row = g.getRow(l.Start.Y);
+            long col;
+            col = g.getCol(l.Start.X);
+            Grids_2D_ID_long cellID = g.getCellID(row, col);
             Grids_Dimensions cellBounds;
-            cellBounds = g.getCellDimensions(
-                    halfCellsize,
-                    cellRowIndex,
-                    cellColIndex,
-                    handleOutOfMemoryError);
-//            cellBounds = g.getCellDimensions(
-//                    l.Start.X,
-//                    l.Start.Y,
-//                    handleOutOfMemoryError);
+            cellBounds = g.getCellDimensions(halfCellsize, row, col);
             Object[] lineToIntersectIntersectPointDirection;
             lineToIntersectIntersectPointDirection = Vector_LineSegment2D.getLineToIntersectLineRemainingDirection(
-                    tollerance,
-                    xmin,
-                    ymin,
-                    xmax,
-                    ymax,
-                    l,
-                    directionIn,
-                    decimalPlacePrecision,
+                    tollerance, xmin, ymin, xmax, ymax, l, directionIn, decimalPlacePrecision,
                     handleOutOfMemoryError);
             Vector_LineSegment2D lineToIntersect;
             lineToIntersect = (Vector_LineSegment2D) lineToIntersectIntersectPointDirection[0];
@@ -197,7 +163,7 @@ public class Vector_LineGrid extends Vector_Object {
             double v;
             v = length * factor;
             //System.out.println("lineToIntersect length " + length);
-            g.addToCell(cellID, v, handleOutOfMemoryError);
+            g.addToCell(cellID, v);
             if (lineToIntersectIntersectPointDirection[2] == null) {
                 return;
             }
@@ -214,63 +180,48 @@ public class Vector_LineGrid extends Vector_Object {
             while (!(remainingLineLength.compareTo(tollerance) == -1 && remainingLineLength.compareTo(tollerance.negate()) == 1)) {
                 //System.out.println("remainingLineLength " + remainingLineLength);
                 if (directionOut == 0) {
-                    cellRowIndex++;
+                    row++;
                 }
                 if (directionOut == 1) {
-                    cellRowIndex++;
-                    cellColIndex++;
+                    row++;
+                    col++;
                 }
                 if (directionOut == 2) {
-                    cellColIndex++;
+                    col++;
                 }
                 if (directionOut == 3) {
-                    cellColIndex++;
-                    cellRowIndex--;
+                    col++;
+                    row--;
                 }
                 if (directionOut == 4) {
-                    cellRowIndex--;
+                    row--;
                 }
                 if (directionOut == 5) {
-                    cellColIndex--;
-                    cellRowIndex--;
+                    col--;
+                    row--;
                 }
                 if (directionOut == 6) {
-                    cellColIndex--;
+                    col--;
                 }
                 if (directionOut == 7) {
-                    cellColIndex--;
-                    cellRowIndex++;
+                    col--;
+                    row++;
                 }
-                if (cellRowIndex < 0 || cellRowIndex >= nrows
-                        || cellColIndex < 0 || cellColIndex >= ncols) {
+                if (row < 0 || row >= nrows
+                        || col < 0 || col >= ncols) {
                     return;
                 }
                 //System.out.println("cellRowIndex " + cellRowIndex + ", cellColIndex " + cellColIndex);
-                cellID = g.getCellID(
-                        cellRowIndex,
-                        cellColIndex,
-                        handleOutOfMemoryError);
-                cellBounds = g.getCellDimensions(
-                        halfCellsize,
-                        cellRowIndex,
-                        cellColIndex,
-                        handleOutOfMemoryError);
+                cellID = g.getCellID(row, col);
+                cellBounds = g.getCellDimensions(halfCellsize, row, col);
                 lineToIntersectIntersectPointDirection = Vector_LineSegment2D.getLineToIntersectLineRemainingDirection(
-                        tollerance,
-                        xmin,
-                        ymin,
-                        xmax,
-                        ymax,
-                        remainingLine,
-                        directionOut,
-                        decimalPlacePrecision,
-                        handleOutOfMemoryError);
+                        tollerance, xmin, ymin, xmax, ymax, remainingLine, directionOut, decimalPlacePrecision, handleOutOfMemoryError);
                 lineToIntersect = (Vector_LineSegment2D) lineToIntersectIntersectPointDirection[0];
                 //System.out.println("lineToIntersect " + lineToIntersect);
                 length = lineToIntersect.getLength(decimalPlacePrecision).doubleValue();
                 //System.out.println("lineToIntersect length " + length);
                 v = length * factor;
-                g.addToCell(cellID, v, handleOutOfMemoryError);
+                g.addToCell(cellID, v);
                 if (lineToIntersectIntersectPointDirection[2] == null) {
                     return;
                 }

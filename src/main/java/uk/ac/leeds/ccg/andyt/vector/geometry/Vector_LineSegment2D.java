@@ -167,7 +167,7 @@ public class Vector_LineSegment2D
             int a_DecimalPlacePrecision,
             boolean handleOutOfMemoryError) {
         Grids_Dimensions dimensions;
-        dimensions = g.getDimensions(handleOutOfMemoryError);
+        dimensions = g.getDimensions();
         return getIntersects(
                 dimensions.getXMin(),
                 dimensions.getYMin(),
