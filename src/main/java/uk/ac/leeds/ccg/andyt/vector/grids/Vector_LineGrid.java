@@ -78,7 +78,7 @@ public class Vector_LineGrid extends Vector_Object {
                 dir,
                 ge.getProcessor().GridChunkDoubleFactory, gcaf, noDataValue,
                 (int) nRows, (int) nCols, dimensions, gs);
-        g = gf.create(gs, dir, gcaf, nRows, nCols, dimensions, handleNoDataValue);
+        g = gf.create(gs, dir, gcaf, nRows, nCols, dimensions);
         // Vector set up
         Vector_Point2D p0;
         p0 = new Vector_Point2D(
