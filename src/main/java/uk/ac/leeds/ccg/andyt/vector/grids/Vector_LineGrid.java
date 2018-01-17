@@ -73,9 +73,7 @@ public class Vector_LineGrid extends Vector_Object {
         gs = new Grids_GridDoubleStats(ge);
 
         Grids_GridDoubleFactory gf;
-        gf = new Grids_GridDoubleFactory(
-                ge,
-                dir,
+        gf = new Grids_GridDoubleFactory(ge,
                 ge.getProcessor().GridChunkDoubleFactory, gcaf, noDataValue,
                 (int) nRows, (int) nCols, dimensions, gs);
         g = gf.create(gs, dir, gcaf, nRows, nCols, dimensions);
