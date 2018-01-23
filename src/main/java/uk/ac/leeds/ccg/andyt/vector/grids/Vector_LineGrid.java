@@ -79,10 +79,7 @@ public class Vector_LineGrid extends Vector_Object {
         g = gf.create(gs, dir, gcaf, nRows, nCols, dimensions);
         // Vector set up
         Vector_Point2D p0;
-        p0 = new Vector_Point2D(
-                ve,
-                new BigDecimal(30.2d),
-                new BigDecimal(30.5d));
+        p0 = new Vector_Point2D(ve, new BigDecimal(30.2d), new BigDecimal(30.5d));
         Vector_Point2D p1;
         p1 = new Vector_Point2D(ve, new BigDecimal(40.5d),
                 new BigDecimal(20.5d));
@@ -94,7 +91,7 @@ public class Vector_LineGrid extends Vector_Object {
         Grids_ImageExporter ie;
         ie = new Grids_ImageExporter(ge);
         Grids_Processor gp;
-        gp = new Grids_Processor(ge, dir);
+        gp = new Grids_Processor(ge);
         File fout = new File(dir, "test.PNG");
         ie.toGreyScaleImage(g, gp, fout, "PNG");
     }
