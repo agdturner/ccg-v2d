@@ -57,7 +57,7 @@ public class Vector_OSGBtoLatLon {
      * @return result double[2] where result[0] is easting, result[1] is
      * northing
      */
-    public double[] latlon2osgb(double lat, double lon) {
+    public static double[] latlon2osgb(double lat, double lon) {
         double[] result = new double[2];
         lat = toRadians(lat);
         lon = toRadians(lon);
@@ -481,7 +481,7 @@ public class Vector_OSGBtoLatLon {
      * @return result double[2] where result[0] is latitude and result[1] is
      * longitude
      */
-    public double[] osgb2latlon(double easting, double northing) {
+    public static double[] osgb2latlon(double easting, double northing) {
         double[] result = new double[2];
 
         double a = 6377563.396;
@@ -915,7 +915,7 @@ public class Vector_OSGBtoLatLon {
         return result;
     }
 
-    public double toRadians(double d) {
+    public static double toRadians(double d) {
         return d * Math.PI / 180D;
     }
 
@@ -930,7 +930,7 @@ public class Vector_OSGBtoLatLon {
                 aRoundingMode);
     }
 
-    public double toDegrees(double d) {
+    public static double toDegrees(double d) {
         return d * 180D / Math.PI;
     }
 

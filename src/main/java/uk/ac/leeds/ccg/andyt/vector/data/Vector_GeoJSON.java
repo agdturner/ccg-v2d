@@ -5,10 +5,16 @@
  */
 package uk.ac.leeds.ccg.andyt.vector.data;
 
+import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
+
 /**
  *
  * @author geoagdt
  */
 public class Vector_GeoJSON {
+    
+    Generic_Environment e;
+    
+    
     
 }
