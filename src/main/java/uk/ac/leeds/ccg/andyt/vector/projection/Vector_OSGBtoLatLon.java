@@ -37,17 +37,17 @@ public class Vector_OSGBtoLatLon {
     protected BigDecimal getPI() {
         return new Generic_BigDecimal().get_PI();
     }
-    
+
     public BigDecimal get_PI() {
         if (PI != null) {
             PI = getPI();
         }
         return PI;
     }
-    
+
     public Vector_OSGBtoLatLon() {
     }
-    
+
     /**
      * Converts WGS84 latitude/longitude coordinate to an Ordnance Survey
      * easting/northing coordinate
@@ -126,7 +126,7 @@ public class Vector_OSGBtoLatLon {
      * @param lat latitude to be converted
      * @param lon longitude to be converted
      * @param decimalPlaces
-     * @param aRoundingMode
+     * @param r
      * @return result double[2] where result[0] is easting, result[1] is
      * northing
      */
@@ -134,77 +134,70 @@ public class Vector_OSGBtoLatLon {
             BigDecimal lat,
             BigDecimal lon,
             int decimalPlaces,
-            RoundingMode aRoundingMode) {
+            RoundingMode r) {
         //int doubleDecimalPlaces = decimalPlaces * 2;
         //int tripleDecimalPlaces = decimalPlaces * 3;
         int hDecimalPlaces = Math.max(decimalPlaces * 10, 100);
 
-        /*
+        /**
          * http://en.wikipedia.org/wiki/World_Geodetic_System#Main_parameters
          * The coordinate origin of WGS 84 is meant to be located at the Earth's
-         * center of mass; the error is believed to be less than 2 cm.
-         * The WGS 84 meridian of zero longitude is the IERS Reference Meridian,
-         * 5.31 arc seconds or 102.5 metres (336.3 ft) east of the Greenwich 
-         * meridian at the latitude of the Royal Observatory.
-         * 
+         * center of mass; the error is believed to be less than 2 cm. The WGS
+         * 84 meridian of zero longitude is the IERS Reference Meridian, 5.31
+         * arc seconds or 102.5 metres (336.3 ft) east of the Greenwich meridian
+         * at the latitude of the Royal Observatory.
+         *
          * The WGS 84 datum surface is an oblate spheroid (ellipsoid) with major
-         * (equatorial) radius a = 6378137 m at the equator and flattening 
-         * f = 1/298.257223563. The polar semi-minor axis b then equals a times 
+         * (equatorial) radius a = 6378137 m at the equator and flattening f =
+         * 1/298.257223563. The polar semi-minor axis b then equals a times
          * (1−f), or 6356752.3142 m.
-         * 
-         * Presently WGS 84 uses the EGM96 (Earth Gravitational Model 1996) 
-         * geoid, revised in 2004. This geoid defines the nominal sea level 
-         * surface by means of a spherical harmonics series of degree 360 (which 
-         * provides about 100 km horizontal resolution). The deviations of the 
-         * EGM96 geoid from the WGS 84 reference ellipsoid range from about 
-         * −105 m to about +85 m. EGM96 differs from the original WGS 84 geoid, 
+         *
+         * Presently WGS 84 uses the EGM96 (Earth Gravitational Model 1996)
+         * geoid, revised in 2004. This geoid defines the nominal sea level
+         * surface by means of a spherical harmonics series of degree 360 (which
+         * provides about 100 km horizontal resolution). The deviations of the
+         * EGM96 geoid from the WGS 84 reference ellipsoid range from about −105
+         * m to about +85 m. EGM96 differs from the original WGS 84 geoid,
          * referred to as EGM84.
          */
-        /*
+        /**
          * http://en.wikipedia.org/wiki/Ordnance_Survey_National_Grid#Datum_shift_between_OSGB_36_and_WGS_84
-         * The difference between the coordinates on different datums varies 
-         * from place to place. The longitude and latitude positions on OSGB 36 
-         * are the same as for WGS 84 at a point in the Atlantic Ocean well to 
-         * the west of Great Britain. In Cornwall, the WGS 84 longitude lines 
-         * are about 70 metres east of their OSGB 36 equivalents, this value 
-         * rising gradually to about 120 m east on the east coast of East 
+         * The difference between the coordinates on different datums varies
+         * from place to place. The longitude and latitude positions on OSGB 36
+         * are the same as for WGS 84 at a point in the Atlantic Ocean well to
+         * the west of Great Britain. In Cornwall, the WGS 84 longitude lines
+         * are about 70 metres east of their OSGB 36 equivalents, this value
+         * rising gradually to about 120 m east on the east coast of East
          * Anglia. The WGS 84 latitude lines are about 70 m south of the OSGB 36
-         * lines in South Cornwall, the difference diminishing to zero in the 
-         * Scottish Borders, and then increasing to about 50 m north on the 
-         * north coast of Scotland. (If the lines are further east, then the 
+         * lines in South Cornwall, the difference diminishing to zero in the
+         * Scottish Borders, and then increasing to about 50 m north on the
+         * north coast of Scotland. (If the lines are further east, then the
          * longitude value of any given point is further west. Similarly, if the
-         * lines are further south, the values will give the point a more 
+         * lines are further south, the values will give the point a more
          * northerly latitude.) The smallest datum shift is on the west coast of
          * Scotland and the greatest in Kent.
-         * 
-         * But Great Britain has not shrunk by 100+ metres; a point near Land's 
-         * End now computes to be 27.6 metres closer to a point near Duncansby 
+         *
+         * But Great Britain has not shrunk by 100+ metres; a point near Land's
+         * End now computes to be 27.6 metres closer to a point near Duncansby
          * Head than it did under OSGB36.
-         * 
+         *
          * http://en.wikipedia.org/wiki/Ordnance_Survey_National_Grid#Summary_parameters_of_the_coordinate_system
-         * Datum: OSGB36
-         * Map projection: Transverse Mercator
-         * True Origin: 49°N, 2°W
-         * False Origin: 400 km west, 100 km north of True Origin
-         * Scale Factor: 0.9996012717 (or exactly log10(0.9998268) - 1)?????
-         * EPSG Code: EPSG:27700
-         * Ellipsoid: Airy 1830
-         * The defining Airy dimensions are a = 20923713 "feet", b = 20853810 "feet". In the Retriangulation the base-10 logarithm of the number of metres in a "foot" was set at (0.48401603 − 1) exactly and the Airy metric dimensions are calculated from that. The flattening is exactly 69903 divided by 20923713.
-         * Semi-major axis a: 6377563.396 m
-         * Semi-minor axis b: 6356256.909 m
-         * Flattening (derived constant): 1/299.3249646
-         * 
+         * Datum: OSGB36 Map projection: Transverse Mercator True Origin: 49°N,
+         * 2°W False Origin: 400 km west, 100 km north of True Origin Scale
+         * Factor: 0.9996012717 (or exactly log10(0.9998268) - 1)????? EPSG
+         * Code: EPSG:27700 Ellipsoid: Airy 1830 The defining Airy dimensions
+         * are a = 20923713 "feet", b = 20853810 "feet". In the Retriangulation
+         * the base-10 logarithm of the number of metres in a "foot" was set at
+         * (0.48401603 − 1) exactly and the Airy metric dimensions are
+         * calculated from that. The flattening is exactly 69903 divided by
+         * 20923713. Semi-major axis a: 6377563.396 m Semi-minor axis b:
+         * 6356256.909 m Flattening (derived constant): 1/299.3249646
+         *
          * http://www.ordnancesurvey.co.uk/docs/support/guide-coordinate-systems-great-britain.pdf
          */
         BigDecimal[] result = new BigDecimal[2];
-        lat = toRadians(
-                lat,
-                hDecimalPlaces,
-                aRoundingMode);
-        lon = toRadians(
-                lon,
-                hDecimalPlaces,
-                aRoundingMode);
+        lat = toRadians(lat, hDecimalPlaces, r);
+        lon = toRadians(lon, hDecimalPlaces, r);
         /*
          * Airy 1830 major semi-axis
          */
@@ -229,25 +222,16 @@ public class Vector_OSGBtoLatLon {
 //                new BigDecimal("0.48401603"),
 //                tripleDecimalPlaces, 
 //                aRoundingMode);
-
-
         //double f02 = Math.pow(10, 0.48401603)/10.0d;
 //        BigDecimal F02 = Generic_BigDecimal.divideRoundIfNecessary(
 //                tenPowow, 
 //                BigDecimal.TEN,
 //                tripleDecimalPlaces, 
 //                aRoundingMode);
-
         //System.out.println("F0 " + F0);
         // NatGrid true origin is 49ºN, 2ºW
-        BigDecimal lat0 = toRadians(
-                new BigDecimal("49"),
-                hDecimalPlaces,
-                aRoundingMode);
-        BigDecimal lon0 = toRadians(
-                new BigDecimal("-2"),
-                hDecimalPlaces,
-                aRoundingMode);
+        BigDecimal lat0 = toRadians(new BigDecimal("49"), hDecimalPlaces, r);
+        BigDecimal lon0 = toRadians(new BigDecimal("-2"), hDecimalPlaces, r);
         // northing & easting of true origin, metres
         BigDecimal N0 = new BigDecimal("-100000");
         BigDecimal E0 = new BigDecimal("400000");
@@ -255,10 +239,7 @@ public class Vector_OSGBtoLatLon {
         BigDecimal b2 = b.multiply(b);
         BigDecimal a2 = a.multiply(a);
         BigDecimal b2overa2 = Generic_BigDecimal.divideRoundIfNecessary(
-                b2,
-                a2,
-                hDecimalPlaces,
-                aRoundingMode);
+                b2, a2, hDecimalPlaces, r);
         // eccentricity squared
         BigDecimal e2 = BigDecimal.ONE.subtract(b2overa2);
         //System.out.println("Eccentricity squared " + e2);
@@ -266,10 +247,7 @@ public class Vector_OSGBtoLatLon {
         BigDecimal aaddb = a.add(b);
         //double n = (a - b) / (a + b);
         BigDecimal n = Generic_BigDecimal.divideRoundIfNecessary(
-                asubtractb,
-                aaddb,
-                hDecimalPlaces,
-                aRoundingMode);
+                asubtractb, aaddb, hDecimalPlaces, r);
         //System.out.println("n " + n);
         //double n2 = n * n;
         BigDecimal n2 = n.multiply(n);
@@ -281,29 +259,18 @@ public class Vector_OSGBtoLatLon {
         Generic_BigDecimal aGeneric_BigDecimal = new Generic_BigDecimal(1000);
         //double cosLat = Math.cos(lat);
         BigDecimal cosLat = Generic_BigDecimal.cos(
-                lat,
-                aGeneric_BigDecimal,
-                hDecimalPlaces,
-                aRoundingMode);
+                lat, aGeneric_BigDecimal, hDecimalPlaces, r);
         //double sinLat = Math.sin(lat);
         BigDecimal sinLat = Generic_BigDecimal.sin(
-                lat,
-                aGeneric_BigDecimal,
-                hDecimalPlaces,
-                aRoundingMode);
+                lat, aGeneric_BigDecimal, hDecimalPlaces, r);
         //double nu = a * F0 / Math.sqrt(1 - e2 * sinLat * sinLat); // transverse radius of curvature
         BigDecimal nunum = a.multiply(F0);
         BigDecimal nubit = BigDecimal.ONE.subtract(e2.multiply(sinLat.multiply(sinLat)));
         BigDecimal nuden = Generic_BigDecimal.sqrt(
-                nubit,
-                hDecimalPlaces,
-                aRoundingMode);
+                nubit, hDecimalPlaces, r);
         // transverse radius of curvature
         BigDecimal nu = Generic_BigDecimal.divideRoundIfNecessary(
-                nunum,
-                nuden,
-                hDecimalPlaces,
-                aRoundingMode);
+                nunum, nuden, hDecimalPlaces, r);
         //System.out.println("Transverse radius of curvature " + nu);
         //double rho = a * F0 * (1 - e2) / Math.pow(1 - e2 * sinLat * sinLat, 1.5); // meridional radius of curvature
         BigDecimal rhonum = nunum.multiply(BigDecimal.ONE.subtract(e2));
@@ -314,78 +281,53 @@ public class Vector_OSGBtoLatLon {
 //                aRoundingMode);
         BigDecimal rhoden = nuden.multiply(nubit);
         BigDecimal rho = Generic_BigDecimal.divideRoundIfNecessary(
-                rhonum,
-                rhoden,
-                hDecimalPlaces,
-                aRoundingMode); // meridional radius of curvature
+                rhonum, rhoden, hDecimalPlaces, r); // meridional radius of curvature
         //double eta2 = nu / rho - 1;
         BigDecimal eta2 = Generic_BigDecimal.divideRoundIfNecessary(
-                nu,
-                rho,
-                hDecimalPlaces,
-                aRoundingMode).subtract(BigDecimal.ONE);
+                nu, rho, hDecimalPlaces, r).subtract(BigDecimal.ONE);
         //double Ma = (1 + n + (5 / 4) * n2 + (5 / 4) * n3) * (lat - lat0);
         BigDecimal three = BigDecimal.valueOf(3);
         BigDecimal four = BigDecimal.valueOf(4);
         BigDecimal five = BigDecimal.valueOf(5);
         BigDecimal fivebyfour = Generic_BigDecimal.divideRoundIfNecessary(
-                five,
-                four,
-                hDecimalPlaces,
-                aRoundingMode);
+                five, four, hDecimalPlaces, r);
         BigDecimal latSubtractLat0 = lat.subtract(lat0);
         BigDecimal Ma = (BigDecimal.ONE.add(n.add(fivebyfour.multiply(n2)).add(fivebyfour.multiply(n3)))).multiply(latSubtractLat0);
         //double Mb = (3 * n + 3 * n * n + (21D / 8D) * n3) * Math.sin(lat - lat0) * Math.cos(lat + lat0);
         BigDecimal twentyOneOverEight = Generic_BigDecimal.divideRoundIfNecessary(
-                BigDecimal.valueOf(21),
-                BigDecimal.valueOf(8),
-                hDecimalPlaces,
-                aRoundingMode);
+                BigDecimal.valueOf(21), BigDecimal.valueOf(8), hDecimalPlaces, r);
         BigDecimal sinLatSubtractLat0 = Generic_BigDecimal.sin(
-                latSubtractLat0,
-                aGeneric_BigDecimal,
-                hDecimalPlaces,
-                aRoundingMode);
+                latSubtractLat0,                aGeneric_BigDecimal,                hDecimalPlaces,                r);
         BigDecimal latAddLat0 = lat.add(lat0);
         BigDecimal cosLatAddLat0 = Generic_BigDecimal.cos(
-                latAddLat0,
-                aGeneric_BigDecimal,
-                hDecimalPlaces,
-                aRoundingMode);
+                latAddLat0,                aGeneric_BigDecimal,                hDecimalPlaces,                r);
         BigDecimal Mb = (((three.multiply(n)).add((three.multiply(n2)))).add(twentyOneOverEight.multiply(n3))).multiply(sinLatSubtractLat0.multiply(cosLatAddLat0));
         //double Mc = ((15D / 8D) * n2 + (15D / 8D) * n3) * Math.sin(2D * (lat - lat0)) * Math.cos(2D * (lat + lat0));
         BigDecimal fifteenOverEight = Generic_BigDecimal.divideRoundIfNecessary(
-                BigDecimal.valueOf(15),
-                BigDecimal.valueOf(8),
-                hDecimalPlaces,
-                aRoundingMode);
+                BigDecimal.valueOf(15),                BigDecimal.valueOf(8),                hDecimalPlaces,                r);
         BigDecimal sin2LatSubtractLat0 = Generic_BigDecimal.sin(
                 BigDecimal.valueOf(2).multiply(latSubtractLat0),
-                aGeneric_BigDecimal,
-                hDecimalPlaces,
-                aRoundingMode);
+                aGeneric_BigDecimal,                hDecimalPlaces,                r);
         BigDecimal cos2LatAddLat0 = Generic_BigDecimal.cos(
                 BigDecimal.valueOf(2).multiply(latAddLat0),
-                aGeneric_BigDecimal,
-                hDecimalPlaces,
-                aRoundingMode);
+                aGeneric_BigDecimal,                hDecimalPlaces,                r);
         BigDecimal Mc = ((fifteenOverEight.multiply(n2)).add(fifteenOverEight.multiply(n3))).multiply(sin2LatSubtractLat0).multiply(cos2LatAddLat0);
         //double Md = (35D / 24D) * n3 * Math.sin(3 * (lat - lat0)) * Math.cos(3D * (lat + lat0));
         BigDecimal thirtyFiveOverTwentyFour = Generic_BigDecimal.divideRoundIfNecessary(
                 BigDecimal.valueOf(35),
                 BigDecimal.valueOf(24),
                 hDecimalPlaces,
-                aRoundingMode);
+                r);
         BigDecimal sin3LatSubtractLat0 = Generic_BigDecimal.sin(
                 BigDecimal.valueOf(3).multiply(latSubtractLat0),
                 aGeneric_BigDecimal,
                 hDecimalPlaces,
-                aRoundingMode);
+                r);
         BigDecimal cos3LatAddLat0 = Generic_BigDecimal.cos(
                 BigDecimal.valueOf(3).multiply(latAddLat0),
                 aGeneric_BigDecimal,
                 hDecimalPlaces,
-                aRoundingMode);
+                r);
         BigDecimal Md = thirtyFiveOverTwentyFour.multiply(n3).multiply(sin3LatSubtractLat0).multiply(cos3LatAddLat0);
         //double M = b * F0 * (Ma - Mb + Mc - Md); // meridional arc
         BigDecimal M = b.multiply(F0).multiply(Ma.subtract(Mb).add(Mc).subtract(Md)); // meridional arc
@@ -398,7 +340,7 @@ public class Vector_OSGBtoLatLon {
                 lat,
                 aGeneric_BigDecimal,
                 hDecimalPlaces,
-                aRoundingMode);
+                r);
         BigDecimal tan2lat = tanLat.multiply(tanLat);
         //double tan4lat = tan2lat * tan2lat;
         BigDecimal tan4lat = tan2lat.multiply(tan2lat);
@@ -410,21 +352,21 @@ public class Vector_OSGBtoLatLon {
                 nu,
                 BigDecimal.valueOf(2),
                 hDecimalPlaces,
-                aRoundingMode);
+                r);
         BigDecimal II = nuBy2.multiply(sinLat).multiply(cosLat);
         //double III = (nu / 24D) * sinLat * cos3lat * (5 - tan2lat + 9 * eta2);
         BigDecimal nuBy24 = Generic_BigDecimal.divideRoundIfNecessary(
                 nu,
                 BigDecimal.valueOf(24),
                 hDecimalPlaces,
-                aRoundingMode);
+                r);
         BigDecimal III = nuBy24.multiply(sinLat).multiply(cos3lat).multiply(BigDecimal.valueOf(5).subtract(tan2lat).add(BigDecimal.valueOf(9).multiply(eta2)));
         //double IIIA = (nu / 720D) * sinLat * cos5lat * (61 - 58 * tan2lat + tan4lat);
         BigDecimal nuBy720 = Generic_BigDecimal.divideRoundIfNecessary(
                 nu,
                 BigDecimal.valueOf(720),
                 hDecimalPlaces,
-                aRoundingMode);
+                r);
         BigDecimal IIIA = nuBy720.multiply(sinLat).multiply(cos5lat).multiply(BigDecimal.valueOf(61).subtract((BigDecimal.valueOf(58).multiply(tan2lat)).add(tan4lat)));
         //double IV = nu * cosLat;
         BigDecimal IV = nu.multiply(cosLat);
@@ -433,19 +375,19 @@ public class Vector_OSGBtoLatLon {
                 nu,
                 BigDecimal.valueOf(6),
                 hDecimalPlaces,
-                aRoundingMode);
+                r);
         BigDecimal nuByRhoSubtractTan2Lat = Generic_BigDecimal.divideRoundIfNecessary(
                 nu,
                 rho.subtract(tan2lat),
                 hDecimalPlaces,
-                aRoundingMode);
+                r);
         BigDecimal V = nuBy6.multiply(cos3lat).multiply(nuByRhoSubtractTan2Lat);
         //double VI = (nu / 120D) * cos5lat * (5 - 18 * tan2lat + tan4lat + 14 * eta2 - 58 * tan2lat * eta2);
         BigDecimal nuBy120 = Generic_BigDecimal.divideRoundIfNecessary(
                 nu,
                 BigDecimal.valueOf(120),
                 hDecimalPlaces,
-                aRoundingMode);
+                r);
         BigDecimal VI = nuBy120.multiply(cos5lat).multiply(BigDecimal.valueOf(5).subtract(BigDecimal.valueOf(18).multiply(tan2lat)).add(tan4lat).add(BigDecimal.valueOf(14).multiply(eta2)).subtract(BigDecimal.valueOf(58).multiply(tan2lat).multiply(eta2)));
 
         //double dLon = lon - lon0;
@@ -466,8 +408,8 @@ public class Vector_OSGBtoLatLon {
         //double E = E0 + IV * dLon + V * dLon3 + VI * dLon5;
         BigDecimal E = E0.add(IV.multiply(dLon)).add(V.multiply(dLon3)).add(VI.multiply(dLon5));
         //System.out.println("E " + E + ", N " + N);
-        result[0] = Generic_BigDecimal.roundIfNecessary(E, decimalPlaces, aRoundingMode);
-        result[1] = Generic_BigDecimal.roundIfNecessary(N, decimalPlaces, aRoundingMode);
+        result[0] = Generic_BigDecimal.roundIfNecessary(E, decimalPlaces, r);
+        result[1] = Generic_BigDecimal.roundIfNecessary(N, decimalPlaces, r);
         return result;
         //return new OsGridRef(E, N);
     }
@@ -482,8 +424,22 @@ public class Vector_OSGBtoLatLon {
      * longitude
      */
     public static double[] osgb2latlon(double easting, double northing) {
-        double[] result = new double[2];
+        return osgb2latlon(easting, northing, false);
+    }
 
+    /**
+     * Convert Ordnance Survey easting-northing coordinate to a WGS84
+     * latitude-longitude coordinate
+     *
+     * @param easting The easting to be converted
+     * @param northing The northing to be converted
+     * @param verbose If verbose is true then intermediate calculations are printed to std.out.
+     * @return result double[2] where result[0] is latitude and result[1] is
+     * longitude
+     */
+    public static double[] osgb2latlon(double easting, double northing,
+            boolean verbose) {
+        double[] result = new double[2];
         double a = 6377563.396;
         double b = 6356256.910;            // Airy 1830 major & minor semi-axes
         double F0 = 0.9996012717;          // NatGrid scale factor on central meridian
@@ -517,44 +473,29 @@ public class Vector_OSGBtoLatLon {
             //System.out.println("northing - N0 - M " + (northing - N0 - M));
 
         } while (northing - N0 - M >= 0.0001);  // ie until < 0.01mm
-        System.out.println("lat " + lat);
+
         double cosLat = Math.cos(lat);
-        System.out.println("cosLat " + cosLat);
         double sinLat = Math.sin(lat);
-        System.out.println("sinLat " + sinLat);
         double sin2Lat = sinLat * sinLat;
-        System.out.println("sin2Lat " + sin2Lat);
         double nu = a * F0 / Math.sqrt(1 - e2 * sin2Lat);                 // transverse radius of curvature
-        System.out.println("nu " + nu);
         double rho = a * F0 * (1 - e2) / Math.pow(1 - e2 * sin2Lat, 1.5); // meridional radius of curvature
-        System.out.println("rho " + rho);
         double eta2 = nu / rho - 1;
-        System.out.println("eta2 " + eta2);
 
         double tanLat = Math.tan(lat);
-        System.out.println("tanLat " + tanLat);
         double tan2lat = tanLat * tanLat;
         double tan4lat = tan2lat * tan2lat;
         double tan6lat = tan4lat * tan2lat;
-        System.out.println("tan6lat " + tan6lat);
         double secLat = 1 / cosLat;
         double nu3 = nu * nu * nu;
         double nu5 = nu3 * nu * nu;
         double nu7 = nu5 * nu * nu;
         double VII = tanLat / (2 * rho * nu);
-        System.out.println("VII " + VII);
         double VIII = tanLat / (24 * rho * nu3) * (5 + 3 * tan2lat + eta2 - 9 * tan2lat * eta2);
-        System.out.println("VIII " + VIII);
         double IX = tanLat / (720 * rho * nu5) * (61 + 90 * tan2lat + 45 * tan4lat);
-        System.out.println("IX " + IX);
         double X = secLat / nu;
-        System.out.println("X " + X);
         double XI = secLat / (6 * nu3) * (nu / rho + 2 * tan2lat);
-        System.out.println("XI " + XI);
         double XII = secLat / (120 * nu5) * (5 + 28 * tan2lat + 24 * tan4lat);
-        System.out.println("XII " + XII);
         double XIIA = secLat / (5040 * nu7) * (61 + 662 * tan2lat + 1320 * tan4lat + 720 * tan6lat);
-        System.out.println("XIIA " + XIIA);
         double dE = (easting - E0);
         double dE2 = dE * dE;
         double dE3 = dE2 * dE;
@@ -566,6 +507,24 @@ public class Vector_OSGBtoLatLon {
         double lon = lon0 + X * dE - XI * dE3 + XII * dE5 - XIIA * dE7;
         result[0] = toDegrees(lat);
         result[1] = toDegrees(lon);
+        if (verbose) {
+            System.out.println("lat " + lat);
+            System.out.println("cosLat " + cosLat);
+            System.out.println("sinLat " + sinLat);
+            System.out.println("sin2Lat " + sin2Lat);
+            System.out.println("nu " + nu);
+            System.out.println("rho " + rho);
+            System.out.println("eta2 " + eta2);
+            System.out.println("tanLat " + tanLat);
+            System.out.println("tan6lat " + tan6lat);
+            System.out.println("VII " + VII);
+            System.out.println("VIII " + VIII);
+            System.out.println("IX " + IX);
+            System.out.println("X " + X);
+            System.out.println("XI " + XI);
+            System.out.println("XII " + XII);
+            System.out.println("XIIA " + XIIA);
+        }
         //System.out.println("lat " + lat + ", lon " + lon);
         return result;
     }
@@ -586,6 +545,23 @@ public class Vector_OSGBtoLatLon {
             BigDecimal northing,
             int decimalPlaces,
             RoundingMode aRoundingMode) {
+        return osgb2latlon(easting, northing, decimalPlaces, aRoundingMode, false);
+    }
+
+    /**
+     * Convert Ordnance Survey easting-northing coordinate to a WGS84
+     * latitude-longitude coordinate
+     *
+     * @param easting The easting to be converted
+     * @param northing The northing to be converted
+     * @param decimalPlaces
+     * @param aRoundingMode
+     * @param verbose If verbose is true then intermediate calculations are printed to std.out.
+     * @return result double[2] where result[0] is latitude and result[1] is
+     * longitude
+     */
+    public BigDecimal[] osgb2latlon(BigDecimal easting, BigDecimal northing,
+            int decimalPlaces, RoundingMode aRoundingMode, boolean verbose) {
         //int doubleDecimalPlaces = decimalPlaces * 2;
         //int tripleDecimalPlaces = decimalPlaces * 3;
         int hDecimalPlaces = Math.max(decimalPlaces * 10, 100);
@@ -682,7 +658,7 @@ public class Vector_OSGBtoLatLon {
         BigDecimal lat = new BigDecimal(lat0.toString());
         BigDecimal previousComparitor = new BigDecimal("100");
         BigDecimal M = BigDecimal.ZERO;
-        boolean loop = true;
+        boolean loop;
         do {
             //lat = (northing - N0 - M) / (a * F0) + lat;
             lat = Generic_BigDecimal.divideRoundIfNecessary(
@@ -754,7 +730,6 @@ public class Vector_OSGBtoLatLon {
                 //System.out.println(comparitor + " <= " + precision);
             }
         } while (loop);  // ie until < 0.01mm
-        System.out.println("lat " + lat);
 
         //double cosLat = Math.cos(lat);
         BigDecimal cosLat = Generic_BigDecimal.cos(
@@ -762,14 +737,12 @@ public class Vector_OSGBtoLatLon {
                 aGeneric_BigDecimal,
                 hDecimalPlaces,
                 aRoundingMode);
-        System.out.println("cosLat " + cosLat);
         //double sinLat = Math.sin(lat);
         BigDecimal sinLat = Generic_BigDecimal.sin(
                 lat,
                 aGeneric_BigDecimal,
                 hDecimalPlaces,
                 aRoundingMode);
-        System.out.println("sinLat " + sinLat);
         //double nu = a * F0 / Math.sqrt(1 - e2 * sinLat * sinLat);                 // transverse radius of curvature
         BigDecimal sin2Lat = sinLat.multiply(sinLat);
         BigDecimal splurge = Generic_BigDecimal.sqrt(
@@ -783,7 +756,6 @@ public class Vector_OSGBtoLatLon {
                 splurge,
                 hDecimalPlaces,
                 aRoundingMode);
-        System.out.println("nu " + nu);
         //double rho = a * F0 * (1 - e2) / Math.pow(1 - e2 * sinLat * sinLat, 1.5); // meridional radius of curvature
         BigDecimal sqrtSplurge = Generic_BigDecimal.sqrt(
                 splurge,
@@ -791,7 +763,7 @@ public class Vector_OSGBtoLatLon {
                 aRoundingMode);
         //BigDecimal denom2 = splurge.multiply(sqrtSplurge);
         BigDecimal denom = Generic_BigDecimal.power(
-                splurge, 
+                splurge,
                 new BigDecimal(1.5),
                 hDecimalPlaces,
                 aRoundingMode);
@@ -801,28 +773,24 @@ public class Vector_OSGBtoLatLon {
                 denom,
                 hDecimalPlaces,
                 aRoundingMode);
-        System.out.println("rho " + rho);
         //double eta2 = nu / rho - 1;
         BigDecimal eta2 = Generic_BigDecimal.divideRoundIfNecessary(
                 nu,
                 rho,
                 hDecimalPlaces,
                 aRoundingMode).subtract(BigDecimal.ONE);
-        System.out.println("eta2 " + eta2);
         //double tanLat = Math.tan(lat);
         BigDecimal tanLat = Generic_BigDecimal.tan(
                 lat,
                 aGeneric_BigDecimal,
                 hDecimalPlaces,
                 aRoundingMode);
-        System.out.println("tanLat " + tanLat);
         //double tan2lat = tanLat * tanLat;
         BigDecimal tan2Lat = tanLat.multiply(tanLat);
         //double tan4lat = tan2lat * tan2lat;
         BigDecimal tan4Lat = tan2Lat.multiply(tan2Lat);
         //double tan6lat = tan4lat * tan2lat;
         BigDecimal tan6Lat = tan4Lat.multiply(tan2Lat);
-        System.out.println("tan6Lat " + tan6Lat);
         //double secLat = 1 / cosLat;
         BigDecimal secLat = Generic_BigDecimal.divideRoundIfNecessary(
                 BigDecimal.ONE,
@@ -842,28 +810,24 @@ public class Vector_OSGBtoLatLon {
                 two.multiply(rho).multiply(nu),
                 hDecimalPlaces,
                 aRoundingMode);
-        System.out.println("VII " + VII);
         //double VIII = tanLat / (24 * rho * nu3) * (5 + 3 * tan2lat + eta2 - 9 * tan2lat * eta2);
         BigDecimal VIII = Generic_BigDecimal.divideRoundIfNecessary(
                 tanLat,
                 (BigDecimal.valueOf(24).multiply(rho).multiply(nu3)).multiply(BigDecimal.valueOf(5).add(three.multiply(tan2Lat)).add(eta2).subtract(BigDecimal.valueOf(9).multiply(tan2Lat).multiply(eta2))),
                 hDecimalPlaces,
                 aRoundingMode);
-        System.out.println("VIII " + VIII);
         //double IX = tanLat / (720 * rho * nu5) * (61 + 90 * tan2lat + 45 * tan4lat);
         BigDecimal IX = Generic_BigDecimal.divideRoundIfNecessary(
                 tanLat,
                 (BigDecimal.valueOf(720).multiply(rho).multiply(nu5)).multiply(BigDecimal.valueOf(61).add(BigDecimal.valueOf(90).multiply(tan2Lat)).add(BigDecimal.valueOf(45).multiply(tan4Lat))),
                 hDecimalPlaces,
                 aRoundingMode);
-        System.out.println("IX " + IX);
         //double X = secLat / nu;
         BigDecimal X = Generic_BigDecimal.divideRoundIfNecessary(
                 secLat,
                 nu,
                 hDecimalPlaces,
                 aRoundingMode);
-        System.out.println("X " + X);
         //double XI = secLat / (6 * nu3) * (nu / rho + 2 * tan2lat);
         BigDecimal nuByRho = Generic_BigDecimal.divideRoundIfNecessary(
                 nu,
@@ -875,22 +839,18 @@ public class Vector_OSGBtoLatLon {
                 BigDecimal.valueOf(6).multiply(nu3).multiply(nuByRho.add(two.multiply(tan2Lat))),
                 hDecimalPlaces,
                 aRoundingMode);
-        System.out.println("XI " + XI);
         //double XII = secLat / (120 * nu5) * (5 + 28 * tan2lat + 24 * tan4lat);
         BigDecimal XII = Generic_BigDecimal.divideRoundIfNecessary(
                 secLat,
                 BigDecimal.valueOf(120).multiply(nu5).multiply(BigDecimal.valueOf(5).add(BigDecimal.valueOf(28).multiply(tan2Lat).add(BigDecimal.valueOf(24).multiply(tan4Lat)))),
                 hDecimalPlaces,
                 aRoundingMode);
-        System.out.println("XII " + XII);
         //double XIIA = secLat / (5040 * nu7) * (61 + 662 * tan2lat + 1320 * tan4lat + 720 * tan6lat);
         BigDecimal XIIA = Generic_BigDecimal.divideRoundIfNecessary(
                 secLat,
                 BigDecimal.valueOf(5040).multiply(nu7).multiply(BigDecimal.valueOf(61).add(BigDecimal.valueOf(662).multiply(tan2Lat).add(BigDecimal.valueOf(1320).multiply(tan4Lat).add(BigDecimal.valueOf(720).multiply(tan6Lat))))),
                 hDecimalPlaces,
                 aRoundingMode);
-        System.out.println("XIIA " + XIIA);
-
         //double dE = (easting - E0);
         BigDecimal dE = easting.subtract(E0);
         //double dE2 = dE * dE;
@@ -911,6 +871,24 @@ public class Vector_OSGBtoLatLon {
         BigDecimal lon = lon0.add(X.multiply(dE)).subtract(XI.multiply(dE3)).add(XII.multiply(dE5)).subtract(XIIA.multiply(dE7));
         result[0] = toDegrees(lat, decimalPlaces, aRoundingMode);
         result[1] = toDegrees(lon, decimalPlaces, aRoundingMode);
+        if (verbose) {
+            System.out.println("lat " + lat);
+            System.out.println("cosLat " + cosLat);
+            System.out.println("sinLat " + sinLat);
+            System.out.println("sin2Lat " + sin2Lat);
+            System.out.println("nu " + nu);
+            System.out.println("rho " + rho);
+            System.out.println("eta2 " + eta2);
+            System.out.println("tanLat " + tanLat);
+            System.out.println("tan6Lat " + tan6Lat);
+            System.out.println("VII " + VII);
+            System.out.println("VIII " + VIII);
+            System.out.println("IX " + IX);
+            System.out.println("X " + X);
+            System.out.println("XI " + XI);
+            System.out.println("XII " + XII);
+            System.out.println("XIIA " + XIIA);
+        }
         //System.out.println("lat " + lat + ", lon " + lon);
         return result;
     }
