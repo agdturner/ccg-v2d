@@ -21,7 +21,7 @@ package uk.ac.leeds.ccg.andyt.vector.projection;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
-import uk.ac.leeds.ccg.andyt.generic.math.Generic_BigDecimal;
+import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
 
 /**
  * Adapted from http://www.movable-type.co.uk/scripts/latlong-gridref.html.

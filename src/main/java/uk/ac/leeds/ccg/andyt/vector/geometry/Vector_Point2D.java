@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import org.ojalgo.constant.BigMath;
 import org.ojalgo.function.implementation.BigFunction;
-import uk.ac.leeds.ccg.andyt.generic.math.Generic_BigDecimal;
+import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
 import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
 
 /**
