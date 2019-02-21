@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import org.ojalgo.constant.BigMath;
 import org.ojalgo.function.implementation.BigFunction;
-import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
+import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
 
 /**
@@ -367,12 +367,12 @@ public class Vector_Point2D
 //        return BigFunction.POW.invoke(
 //                diffx.multiply(diffx).add(diffy.multiply(diffy)),
 //                BigMath.HALF);
-        Generic_BigDecimal t_Generic_BigDecimal
+        Math_BigDecimal t_Generic_BigDecimal
                 = ve.get_Generic_BigDecimal();
-        return Generic_BigDecimal.sqrt(
+        return Math_BigDecimal.sqrt(
                 diffx.multiply(diffx).add(diffy.multiply(diffy)),
                 a_DecimalPlacePrecision,
-                t_Generic_BigDecimal.get_RoundingMode());
+                t_Generic_BigDecimal.getRoundingMode());
     }
 
     /**
