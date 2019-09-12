@@ -32,17 +32,13 @@ import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
  */
 public class Vector_OSGBtoLatLon {
 
-    private BigDecimal PI;
+    private BigDecimal pi;
 
-    protected BigDecimal getPI() {
-        return new Math_BigDecimal().get_PI();
-    }
-
-    public BigDecimal get_PI() {
-        if (PI != null) {
-            PI = getPI();
+    public BigDecimal getPi() {
+        if (pi != null) {
+            pi = new Math_BigDecimal().getPi();
         }
-        return PI;
+        return pi;
     }
 
     public Vector_OSGBtoLatLon() {
@@ -54,8 +50,7 @@ public class Vector_OSGBtoLatLon {
      *
      * @param lat latitude to be converted
      * @param lon longitude to be converted
-     * @return result double[2] where result[0] is easting, result[1] is
-     * northing
+     * @return double[2] r: where r[0] is easting, r[1] is northing.
      */
     public static double[] latlon2osgb(double lat, double lon) {
         double[] result = new double[2];
@@ -125,19 +120,16 @@ public class Vector_OSGBtoLatLon {
      *
      * @param lat latitude to be converted
      * @param lon longitude to be converted
-     * @param decimalPlaces
-     * @param r
-     * @return result double[2] where result[0] is easting, result[1] is
-     * northing
+     * @param dp The number of decimal places the result must be correct to.
+     * @param rm The Rounding Mode to use for calculations.
+     * @return BigDecimal[2] r: where r[0] is easting, r[1] is northing.
      */
-    public BigDecimal[] latlon2osgb(
-            BigDecimal lat,
-            BigDecimal lon,
-            int decimalPlaces,
-            RoundingMode r) {
+    public BigDecimal[] latlon2osgb(BigDecimal lat, BigDecimal lon, int dp, 
+            RoundingMode rm) {
         //int doubleDecimalPlaces = decimalPlaces * 2;
         //int tripleDecimalPlaces = decimalPlaces * 3;
-        int hDecimalPlaces = Math.max(decimalPlaces * 10, 100);
+        // Higher number of decmal places
+        int hdp = Math.max(dp * 10, 100);
 
         /**
          * http://en.wikipedia.org/wiki/World_Geodetic_System#Main_parameters
@@ -196,8 +188,8 @@ public class Vector_OSGBtoLatLon {
          * http://www.ordnancesurvey.co.uk/docs/support/guide-coordinate-systems-great-britain.pdf
          */
         BigDecimal[] result = new BigDecimal[2];
-        lat = toRadians(lat, hDecimalPlaces, r);
-        lon = toRadians(lon, hDecimalPlaces, r);
+        lat = toRadians(lat, hdp, rm);
+        lon = toRadians(lon, hdp, rm);
         /*
          * Airy 1830 major semi-axis
          */
@@ -211,27 +203,10 @@ public class Vector_OSGBtoLatLon {
          * NatGrid scale factor on central meridian
          */
         BigDecimal F0 = new BigDecimal("0.9996012717");
-//        BigDecimal F0 = Math_BigDecimal.log(
-//                10,
-//                new BigDecimal("0.9998268"),
-//                tripleDecimalPlaces,
-//                aRoundingMode).subtract(BigDecimal.ONE);
-
-//        BigDecimal tenPowow = Math_BigDecimal.power(
-//                BigDecimal.TEN, 
-//                new BigDecimal("0.48401603"),
-//                tripleDecimalPlaces, 
-//                aRoundingMode);
-        //double f02 = Math.pow(10, 0.48401603)/10.0d;
-//        BigDecimal F02 = Math_BigDecimal.divideRoundIfNecessary(
-//                tenPowow, 
-//                BigDecimal.TEN,
-//                tripleDecimalPlaces, 
-//                aRoundingMode);
         //System.out.println("F0 " + F0);
         // NatGrid true origin is 49ºN, 2ºW
-        BigDecimal lat0 = toRadians(new BigDecimal("49"), hDecimalPlaces, r);
-        BigDecimal lon0 = toRadians(new BigDecimal("-2"), hDecimalPlaces, r);
+        BigDecimal lat0 = toRadians(new BigDecimal("49"), hdp, rm);
+        BigDecimal lon0 = toRadians(new BigDecimal("-2"), hdp, rm);
         // northing & easting of true origin, metres
         BigDecimal N0 = new BigDecimal("-100000");
         BigDecimal E0 = new BigDecimal("400000");
@@ -239,7 +214,7 @@ public class Vector_OSGBtoLatLon {
         BigDecimal b2 = b.multiply(b);
         BigDecimal a2 = a.multiply(a);
         BigDecimal b2overa2 = Math_BigDecimal.divideRoundIfNecessary(
-                b2, a2, hDecimalPlaces, r);
+                b2, a2, hdp, rm);
         // eccentricity squared
         BigDecimal e2 = BigDecimal.ONE.subtract(b2overa2);
         //System.out.println("Eccentricity squared " + e2);
@@ -247,7 +222,7 @@ public class Vector_OSGBtoLatLon {
         BigDecimal aaddb = a.add(b);
         //double n = (a - b) / (a + b);
         BigDecimal n = Math_BigDecimal.divideRoundIfNecessary(
-                asubtractb, aaddb, hDecimalPlaces, r);
+                asubtractb, aaddb, hdp, rm);
         //System.out.println("n " + n);
         //double n2 = n * n;
         BigDecimal n2 = n.multiply(n);
@@ -256,21 +231,18 @@ public class Vector_OSGBtoLatLon {
         BigDecimal n3 = n2.multiply(n);
         //System.out.println("n3 " + n3);
 
-        Math_BigDecimal aGeneric_BigDecimal = new Math_BigDecimal(1000);
+        Math_BigDecimal bd = new Math_BigDecimal(1000);
         //double cosLat = Math.cos(lat);
-        BigDecimal cosLat = Math_BigDecimal.cos(
-                lat, aGeneric_BigDecimal, hDecimalPlaces, r);
+        BigDecimal cosLat = Math_BigDecimal.cos(lat, bd, hdp, rm);
         //double sinLat = Math.sin(lat);
-        BigDecimal sinLat = Math_BigDecimal.sin(
-                lat, aGeneric_BigDecimal, hDecimalPlaces, r);
+        BigDecimal sinLat = Math_BigDecimal.sin(lat, bd, hdp, rm);
         //double nu = a * F0 / Math.sqrt(1 - e2 * sinLat * sinLat); // transverse radius of curvature
         BigDecimal nunum = a.multiply(F0);
         BigDecimal nubit = BigDecimal.ONE.subtract(e2.multiply(sinLat.multiply(sinLat)));
-        BigDecimal nuden = Math_BigDecimal.sqrt(
-                nubit, hDecimalPlaces, r);
+        BigDecimal nuden = Math_BigDecimal.sqrt(nubit, hdp, rm);
         // transverse radius of curvature
         BigDecimal nu = Math_BigDecimal.divideRoundIfNecessary(
-                nunum, nuden, hDecimalPlaces, r);
+                nunum, nuden, hdp, rm);
         //System.out.println("Transverse radius of curvature " + nu);
         //double rho = a * F0 * (1 - e2) / Math.pow(1 - e2 * sinLat * sinLat, 1.5); // meridional radius of curvature
         BigDecimal rhonum = nunum.multiply(BigDecimal.ONE.subtract(e2));
@@ -281,53 +253,40 @@ public class Vector_OSGBtoLatLon {
 //                aRoundingMode);
         BigDecimal rhoden = nuden.multiply(nubit);
         BigDecimal rho = Math_BigDecimal.divideRoundIfNecessary(
-                rhonum, rhoden, hDecimalPlaces, r); // meridional radius of curvature
+                rhonum, rhoden, hdp, rm); // meridional radius of curvature
         //double eta2 = nu / rho - 1;
         BigDecimal eta2 = Math_BigDecimal.divideRoundIfNecessary(
-                nu, rho, hDecimalPlaces, r).subtract(BigDecimal.ONE);
+                nu, rho, hdp, rm).subtract(BigDecimal.ONE);
         //double Ma = (1 + n + (5 / 4) * n2 + (5 / 4) * n3) * (lat - lat0);
         BigDecimal three = BigDecimal.valueOf(3);
         BigDecimal four = BigDecimal.valueOf(4);
         BigDecimal five = BigDecimal.valueOf(5);
         BigDecimal fivebyfour = Math_BigDecimal.divideRoundIfNecessary(
-                five, four, hDecimalPlaces, r);
+                five, four, hdp, rm);
         BigDecimal latSubtractLat0 = lat.subtract(lat0);
         BigDecimal Ma = (BigDecimal.ONE.add(n.add(fivebyfour.multiply(n2)).add(fivebyfour.multiply(n3)))).multiply(latSubtractLat0);
         //double Mb = (3 * n + 3 * n * n + (21D / 8D) * n3) * Math.sin(lat - lat0) * Math.cos(lat + lat0);
         BigDecimal twentyOneOverEight = Math_BigDecimal.divideRoundIfNecessary(
-                BigDecimal.valueOf(21), BigDecimal.valueOf(8), hDecimalPlaces, r);
-        BigDecimal sinLatSubtractLat0 = Math_BigDecimal.sin(
-                latSubtractLat0,                aGeneric_BigDecimal,                hDecimalPlaces,                r);
+                BigDecimal.valueOf(21), BigDecimal.valueOf(8), hdp, rm);
+        BigDecimal sinLatSubtractLat0 = Math_BigDecimal.sin(latSubtractLat0, bd, hdp, rm);
         BigDecimal latAddLat0 = lat.add(lat0);
-        BigDecimal cosLatAddLat0 = Math_BigDecimal.cos(
-                latAddLat0,                aGeneric_BigDecimal,                hDecimalPlaces,                r);
+        BigDecimal cosLatAddLat0 = Math_BigDecimal.cos(latAddLat0, bd, hdp, rm);
         BigDecimal Mb = (((three.multiply(n)).add((three.multiply(n2)))).add(twentyOneOverEight.multiply(n3))).multiply(sinLatSubtractLat0.multiply(cosLatAddLat0));
         //double Mc = ((15D / 8D) * n2 + (15D / 8D) * n3) * Math.sin(2D * (lat - lat0)) * Math.cos(2D * (lat + lat0));
         BigDecimal fifteenOverEight = Math_BigDecimal.divideRoundIfNecessary(
-                BigDecimal.valueOf(15),                BigDecimal.valueOf(8),                hDecimalPlaces,                r);
+                BigDecimal.valueOf(15), BigDecimal.valueOf(8), hdp, rm);
         BigDecimal sin2LatSubtractLat0 = Math_BigDecimal.sin(
-                BigDecimal.valueOf(2).multiply(latSubtractLat0),
-                aGeneric_BigDecimal,                hDecimalPlaces,                r);
+                BigDecimal.valueOf(2).multiply(latSubtractLat0), bd, hdp, rm);
         BigDecimal cos2LatAddLat0 = Math_BigDecimal.cos(
-                BigDecimal.valueOf(2).multiply(latAddLat0),
-                aGeneric_BigDecimal,                hDecimalPlaces,                r);
+                BigDecimal.valueOf(2).multiply(latAddLat0), bd, hdp, rm);
         BigDecimal Mc = ((fifteenOverEight.multiply(n2)).add(fifteenOverEight.multiply(n3))).multiply(sin2LatSubtractLat0).multiply(cos2LatAddLat0);
         //double Md = (35D / 24D) * n3 * Math.sin(3 * (lat - lat0)) * Math.cos(3D * (lat + lat0));
         BigDecimal thirtyFiveOverTwentyFour = Math_BigDecimal.divideRoundIfNecessary(
-                BigDecimal.valueOf(35),
-                BigDecimal.valueOf(24),
-                hDecimalPlaces,
-                r);
+                BigDecimal.valueOf(35), BigDecimal.valueOf(24), hdp, rm);
         BigDecimal sin3LatSubtractLat0 = Math_BigDecimal.sin(
-                BigDecimal.valueOf(3).multiply(latSubtractLat0),
-                aGeneric_BigDecimal,
-                hDecimalPlaces,
-                r);
+                BigDecimal.valueOf(3).multiply(latSubtractLat0), bd, hdp, rm);
         BigDecimal cos3LatAddLat0 = Math_BigDecimal.cos(
-                BigDecimal.valueOf(3).multiply(latAddLat0),
-                aGeneric_BigDecimal,
-                hDecimalPlaces,
-                r);
+                BigDecimal.valueOf(3).multiply(latAddLat0), bd, hdp, rm);
         BigDecimal Md = thirtyFiveOverTwentyFour.multiply(n3).multiply(sin3LatSubtractLat0).multiply(cos3LatAddLat0);
         //double M = b * F0 * (Ma - Mb + Mc - Md); // meridional arc
         BigDecimal M = b.multiply(F0).multiply(Ma.subtract(Mb).add(Mc).subtract(Md)); // meridional arc
@@ -338,9 +297,9 @@ public class Vector_OSGBtoLatLon {
         //double tan2lat = Math.tan(lat) * Math.tan(lat);
         BigDecimal tanLat = Math_BigDecimal.tan(
                 lat,
-                aGeneric_BigDecimal,
-                hDecimalPlaces,
-                r);
+                bd,
+                hdp,
+                rm);
         BigDecimal tan2lat = tanLat.multiply(tanLat);
         //double tan4lat = tan2lat * tan2lat;
         BigDecimal tan4lat = tan2lat.multiply(tan2lat);
@@ -348,46 +307,28 @@ public class Vector_OSGBtoLatLon {
         //double I = M + N0;
         BigDecimal I = M.add(N0);
         //double II = (nu / 2D) * sinLat * cosLat;
-        BigDecimal nuBy2 = Math_BigDecimal.divideRoundIfNecessary(
-                nu,
-                BigDecimal.valueOf(2),
-                hDecimalPlaces,
-                r);
+        BigDecimal nuBy2 = Math_BigDecimal.divideRoundIfNecessary(nu,
+                BigDecimal.valueOf(2), hdp, rm);
         BigDecimal II = nuBy2.multiply(sinLat).multiply(cosLat);
         //double III = (nu / 24D) * sinLat * cos3lat * (5 - tan2lat + 9 * eta2);
-        BigDecimal nuBy24 = Math_BigDecimal.divideRoundIfNecessary(
-                nu,
-                BigDecimal.valueOf(24),
-                hDecimalPlaces,
-                r);
+        BigDecimal nuBy24 = Math_BigDecimal.divideRoundIfNecessary(nu,
+                BigDecimal.valueOf(24), hdp, rm);
         BigDecimal III = nuBy24.multiply(sinLat).multiply(cos3lat).multiply(BigDecimal.valueOf(5).subtract(tan2lat).add(BigDecimal.valueOf(9).multiply(eta2)));
         //double IIIA = (nu / 720D) * sinLat * cos5lat * (61 - 58 * tan2lat + tan4lat);
-        BigDecimal nuBy720 = Math_BigDecimal.divideRoundIfNecessary(
-                nu,
-                BigDecimal.valueOf(720),
-                hDecimalPlaces,
-                r);
+        BigDecimal nuBy720 = Math_BigDecimal.divideRoundIfNecessary(nu,
+                BigDecimal.valueOf(720), hdp, rm);
         BigDecimal IIIA = nuBy720.multiply(sinLat).multiply(cos5lat).multiply(BigDecimal.valueOf(61).subtract((BigDecimal.valueOf(58).multiply(tan2lat)).add(tan4lat)));
         //double IV = nu * cosLat;
         BigDecimal IV = nu.multiply(cosLat);
         //double V = (nu / 6D) * cos3lat * (nu / rho - tan2lat);
         BigDecimal nuBy6 = Math_BigDecimal.divideRoundIfNecessary(
-                nu,
-                BigDecimal.valueOf(6),
-                hDecimalPlaces,
-                r);
+                nu, BigDecimal.valueOf(6), hdp, rm);
         BigDecimal nuByRhoSubtractTan2Lat = Math_BigDecimal.divideRoundIfNecessary(
-                nu,
-                rho.subtract(tan2lat),
-                hDecimalPlaces,
-                r);
+                nu, rho.subtract(tan2lat), hdp, rm);
         BigDecimal V = nuBy6.multiply(cos3lat).multiply(nuByRhoSubtractTan2Lat);
         //double VI = (nu / 120D) * cos5lat * (5 - 18 * tan2lat + tan4lat + 14 * eta2 - 58 * tan2lat * eta2);
         BigDecimal nuBy120 = Math_BigDecimal.divideRoundIfNecessary(
-                nu,
-                BigDecimal.valueOf(120),
-                hDecimalPlaces,
-                r);
+                nu, BigDecimal.valueOf(120), hdp, rm);
         BigDecimal VI = nuBy120.multiply(cos5lat).multiply(BigDecimal.valueOf(5).subtract(BigDecimal.valueOf(18).multiply(tan2lat)).add(tan4lat).add(BigDecimal.valueOf(14).multiply(eta2)).subtract(BigDecimal.valueOf(58).multiply(tan2lat).multiply(eta2)));
 
         //double dLon = lon - lon0;
@@ -408,8 +349,8 @@ public class Vector_OSGBtoLatLon {
         //double E = E0 + IV * dLon + V * dLon3 + VI * dLon5;
         BigDecimal E = E0.add(IV.multiply(dLon)).add(V.multiply(dLon3)).add(VI.multiply(dLon5));
         //System.out.println("E " + E + ", N " + N);
-        result[0] = Math_BigDecimal.roundIfNecessary(E, decimalPlaces, r);
-        result[1] = Math_BigDecimal.roundIfNecessary(N, decimalPlaces, r);
+        result[0] = Math_BigDecimal.roundIfNecessary(E, dp, rm);
+        result[1] = Math_BigDecimal.roundIfNecessary(N, dp, rm);
         return result;
         //return new OsGridRef(E, N);
     }
@@ -433,7 +374,8 @@ public class Vector_OSGBtoLatLon {
      *
      * @param easting The easting to be converted
      * @param northing The northing to be converted
-     * @param verbose If verbose is true then intermediate calculations are printed to std.out.
+     * @param verbose If verbose is true then intermediate calculations are
+     * printed to std.out.
      * @return result double[2] where result[0] is latitude and result[1] is
      * longitude
      */
@@ -535,17 +477,14 @@ public class Vector_OSGBtoLatLon {
      *
      * @param easting The easting to be converted
      * @param northing The northing to be converted
-     * @param decimalPlaces
-     * @param aRoundingMode
+     * @param dp The number of decimal places the result must be correct to.
+     * @param rm The Rounding Mode to use for calculations.
      * @return result double[2] where result[0] is latitude and result[1] is
      * longitude
      */
-    public BigDecimal[] osgb2latlon(
-            BigDecimal easting,
-            BigDecimal northing,
-            int decimalPlaces,
-            RoundingMode aRoundingMode) {
-        return osgb2latlon(easting, northing, decimalPlaces, aRoundingMode, false);
+    public BigDecimal[] osgb2latlon(BigDecimal easting, BigDecimal northing,
+            int dp, RoundingMode rm) {
+        return osgb2latlon(easting, northing, dp, rm, false);
     }
 
     /**
@@ -554,19 +493,20 @@ public class Vector_OSGBtoLatLon {
      *
      * @param easting The easting to be converted
      * @param northing The northing to be converted
-     * @param decimalPlaces
-     * @param aRoundingMode
-     * @param verbose If verbose is true then intermediate calculations are printed to std.out.
-     * @return result double[2] where result[0] is latitude and result[1] is
-     * longitude
+     * @param dp The number of decimal places the result must be correct to.
+     * @param rm The Rounding Mode to use for calculations.
+     * @param verbose If verbose is true then intermediate calculations are
+     * printed to std.out.
+     * @return double[2] r: where r[0] is latitude and r[1] is longitude
      */
     public BigDecimal[] osgb2latlon(BigDecimal easting, BigDecimal northing,
-            int decimalPlaces, RoundingMode aRoundingMode, boolean verbose) {
+            int dp, RoundingMode rm, boolean verbose) {
         //int doubleDecimalPlaces = decimalPlaces * 2;
         //int tripleDecimalPlaces = decimalPlaces * 3;
-        int hDecimalPlaces = Math.max(decimalPlaces * 10, 100);
-        BigDecimal precision = new BigDecimal(BigInteger.ONE, decimalPlaces);
-        BigDecimal[] result = new BigDecimal[2];
+        // Higher decimal place precision
+        int hdp = Math.max(dp * 10, 100);
+        BigDecimal precision = new BigDecimal(BigInteger.ONE, dp);
+        BigDecimal[] r = new BigDecimal[2];
         /*
          * Airy 1830 major semi-axis
          */
@@ -596,65 +536,39 @@ public class Vector_OSGBtoLatLon {
 //                decimalPlaces,
 //                aRoundingMode);
         // NatGrid true origin is 49ºN,2ºW
-        BigDecimal lat0 = toRadians(
-                new BigDecimal("49"),
-                hDecimalPlaces,
-                aRoundingMode);
+        BigDecimal lat0 = toRadians(new BigDecimal("49"), hdp, rm);
         //System.out.println("lat0 " + lat0);
-        BigDecimal lon0 = toRadians(
-                new BigDecimal("-2"),
-                hDecimalPlaces,
-                aRoundingMode);
+        BigDecimal lon0 = toRadians(new BigDecimal("-2"), hdp, rm);
         // northing & easting of true origin, metres
         BigDecimal N0 = new BigDecimal("-100000");
         BigDecimal E0 = new BigDecimal("400000");
         //double e2 = 1 - (b * b) / (a * a); // eccentricity squared
         BigDecimal b2 = b.multiply(b);
         BigDecimal a2 = a.multiply(a);
-        BigDecimal b2overa2 = Math_BigDecimal.divideRoundIfNecessary(
-                b2,
-                a2,
-                hDecimalPlaces,
-                aRoundingMode);
+        BigDecimal b2overa2 = Math_BigDecimal.divideRoundIfNecessary(b2, a2, hdp, rm);
         BigDecimal e2 = BigDecimal.ONE.subtract(b2overa2); // eccentricity squared
         //System.out.println("e2 " + e2);
         //double n = (a - b) / (a + b);
         BigDecimal asubtractb = a.subtract(b);
         BigDecimal aaddb = a.add(b);
-        BigDecimal n = Math_BigDecimal.divideRoundIfNecessary(
-                asubtractb,
-                aaddb,
-                hDecimalPlaces,
-                aRoundingMode);
+        BigDecimal n = Math_BigDecimal.divideRoundIfNecessary(asubtractb, aaddb, hdp, rm);
         //System.out.println("n " + n);
         //double n2 = n * n;
         BigDecimal n2 = n.multiply(n);
         //double n3 = n * n * n;
         BigDecimal n3 = n2.multiply(n);
 
-        Math_BigDecimal aGeneric_BigDecimal = new Math_BigDecimal(1000);
+        Math_BigDecimal bd = new Math_BigDecimal(1000);
         BigDecimal two = BigDecimal.valueOf(2);
         BigDecimal three = BigDecimal.valueOf(3);
         BigDecimal fiveBy4 = Math_BigDecimal.divideRoundIfNecessary(
-                BigDecimal.valueOf(5),
-                BigDecimal.valueOf(4),
-                hDecimalPlaces,
-                aRoundingMode);
+                BigDecimal.valueOf(5), BigDecimal.valueOf(4), hdp, rm);
         BigDecimal twenty1By8 = Math_BigDecimal.divideRoundIfNecessary(
-                BigDecimal.valueOf(21),
-                BigDecimal.valueOf(8),
-                hDecimalPlaces,
-                aRoundingMode);
+                BigDecimal.valueOf(21), BigDecimal.valueOf(8), hdp, rm);
         BigDecimal fifteenBy8 = Math_BigDecimal.divideRoundIfNecessary(
-                BigDecimal.valueOf(15),
-                BigDecimal.valueOf(8),
-                hDecimalPlaces,
-                aRoundingMode);
+                BigDecimal.valueOf(15), BigDecimal.valueOf(8), hdp, rm);
         BigDecimal thirty5Over24 = Math_BigDecimal.divideRoundIfNecessary(
-                BigDecimal.valueOf(35),
-                BigDecimal.valueOf(24),
-                hDecimalPlaces,
-                aRoundingMode);
+                BigDecimal.valueOf(35), BigDecimal.valueOf(24), hdp, rm);
         BigDecimal lat = new BigDecimal(lat0.toString());
         BigDecimal previousComparitor = new BigDecimal("100");
         BigDecimal M = BigDecimal.ZERO;
@@ -663,9 +577,7 @@ public class Vector_OSGBtoLatLon {
             //lat = (northing - N0 - M) / (a * F0) + lat;
             lat = Math_BigDecimal.divideRoundIfNecessary(
                     northing.subtract(N0).subtract(M),
-                    (a.multiply(F0)),
-                    hDecimalPlaces,
-                    aRoundingMode).add(lat);
+                    (a.multiply(F0)), hdp, rm).add(lat);
             //System.out.println("lat " + lat);
             //double Ma = (1 + n + (5 / 4) * n2 + (5 / 4) * n3) * (lat - lat0);
             BigDecimal latSubtractLat0 = lat.subtract(lat0);
@@ -673,42 +585,23 @@ public class Vector_OSGBtoLatLon {
             //System.out.println("Ma " + Ma);
             //double Mb = (3 * n + 3 * n * n + (21 / 8) * n3) * Math.sin(lat - lat0) * Math.cos(lat + lat0);
             BigDecimal sinLatSubtractLat0 = Math_BigDecimal.sin(
-                    latSubtractLat0,
-                    aGeneric_BigDecimal,
-                    hDecimalPlaces,
-                    aRoundingMode);
+                    latSubtractLat0, bd, hdp, rm);
             BigDecimal latAddLat0 = lat.add(lat0);
-            BigDecimal cosLatAddLat0 = Math_BigDecimal.cos(
-                    latAddLat0,
-                    aGeneric_BigDecimal,
-                    hDecimalPlaces,
-                    aRoundingMode);
+            BigDecimal cosLatAddLat0 = Math_BigDecimal.cos(latAddLat0, bd, hdp, rm);
             BigDecimal Mb = (three.multiply(n).add(three.multiply(n2)).add(twenty1By8.multiply(n3))).multiply(sinLatSubtractLat0).multiply(cosLatAddLat0);
             //System.out.println("Mb " + Mb);
             //double Mc = ((15 / 8) * n2 + (15 / 8) * n3) * Math.sin(2 * (lat - lat0)) * Math.cos(2 * (lat + lat0));
             BigDecimal sin2LatSubtractLat0 = Math_BigDecimal.sin(
-                    two.multiply(latSubtractLat0),
-                    aGeneric_BigDecimal,
-                    hDecimalPlaces,
-                    aRoundingMode);
+                    two.multiply(latSubtractLat0), bd, hdp, rm);
             BigDecimal cos2LatAddLat0 = Math_BigDecimal.cos(
-                    two.multiply(latAddLat0),
-                    aGeneric_BigDecimal,
-                    hDecimalPlaces,
-                    aRoundingMode);
+                    two.multiply(latAddLat0), bd, hdp, rm);
             BigDecimal Mc = ((fifteenBy8.multiply(n2)).add(fifteenBy8.multiply(n3))).multiply(sin2LatSubtractLat0).multiply(cos2LatAddLat0);
             //System.out.println("Mc " + Mc);
             //double Md = (35 / 24) * n3 * Math.sin(3 * (lat - lat0)) * Math.cos(3 * (lat + lat0));
             BigDecimal sin3LatSubtractLat0 = Math_BigDecimal.sin(
-                    three.multiply(latSubtractLat0),
-                    aGeneric_BigDecimal,
-                    hDecimalPlaces,
-                    aRoundingMode);
+                    three.multiply(latSubtractLat0), bd, hdp, rm);
             BigDecimal cos3LatAddLat0 = Math_BigDecimal.cos(
-                    three.multiply(latAddLat0),
-                    aGeneric_BigDecimal,
-                    hDecimalPlaces,
-                    aRoundingMode);
+                    three.multiply(latAddLat0), bd, hdp, rm);
             BigDecimal Md = thirty5Over24.multiply(n3).multiply(sin3LatSubtractLat0).multiply(cos3LatAddLat0);
             //System.out.println("Md " + Md);
             //M = b * F0 * (Ma - Mb + Mc - Md);    // meridional arc
@@ -732,59 +625,30 @@ public class Vector_OSGBtoLatLon {
         } while (loop);  // ie until < 0.01mm
 
         //double cosLat = Math.cos(lat);
-        BigDecimal cosLat = Math_BigDecimal.cos(
-                lat,
-                aGeneric_BigDecimal,
-                hDecimalPlaces,
-                aRoundingMode);
+        BigDecimal cosLat = Math_BigDecimal.cos(lat, bd, hdp, rm);
         //double sinLat = Math.sin(lat);
-        BigDecimal sinLat = Math_BigDecimal.sin(
-                lat,
-                aGeneric_BigDecimal,
-                hDecimalPlaces,
-                aRoundingMode);
+        BigDecimal sinLat = Math_BigDecimal.sin(lat, bd, hdp, rm);
         //double nu = a * F0 / Math.sqrt(1 - e2 * sinLat * sinLat);                 // transverse radius of curvature
         BigDecimal sin2Lat = sinLat.multiply(sinLat);
         BigDecimal splurge = Math_BigDecimal.sqrt(
-                BigDecimal.ONE.subtract(e2.multiply(sin2Lat)),
-                hDecimalPlaces,
-                aRoundingMode);
+                BigDecimal.ONE.subtract(e2.multiply(sin2Lat)), hdp, rm);
         BigDecimal aMultiplyF0 = a.multiply(F0);
         // transverse radius of curvature
-        BigDecimal nu = Math_BigDecimal.divideRoundIfNecessary(
-                aMultiplyF0,
-                splurge,
-                hDecimalPlaces,
-                aRoundingMode);
+        BigDecimal nu = Math_BigDecimal.divideRoundIfNecessary(aMultiplyF0,
+                splurge, hdp, rm);
         //double rho = a * F0 * (1 - e2) / Math.pow(1 - e2 * sinLat * sinLat, 1.5); // meridional radius of curvature
-        BigDecimal sqrtSplurge = Math_BigDecimal.sqrt(
-                splurge,
-                hDecimalPlaces,
-                aRoundingMode);
-        //BigDecimal denom2 = splurge.multiply(sqrtSplurge);
-        BigDecimal denom = Math_BigDecimal.power(
-                splurge,
-                new BigDecimal(1.5),
-                hDecimalPlaces,
-                aRoundingMode);
+        //BigDecimal sqrtSplurge = Math_BigDecimal.sqrt(splurge, hdp, rm);
+        //BigDecimal denom = splurge.multiply(sqrtSplurge);
+        BigDecimal denom = Math_BigDecimal.power(splurge, new BigDecimal(1.5),
+                hdp, rm);
         // meridional radius of curvature
         BigDecimal rho = Math_BigDecimal.divideRoundIfNecessary(
-                aMultiplyF0.multiply(BigDecimal.ONE.subtract(e2)),
-                denom,
-                hDecimalPlaces,
-                aRoundingMode);
+                aMultiplyF0.multiply(BigDecimal.ONE.subtract(e2)), denom, hdp, rm);
         //double eta2 = nu / rho - 1;
-        BigDecimal eta2 = Math_BigDecimal.divideRoundIfNecessary(
-                nu,
-                rho,
-                hDecimalPlaces,
-                aRoundingMode).subtract(BigDecimal.ONE);
+        BigDecimal eta2 = Math_BigDecimal.divideRoundIfNecessary(nu, rho, hdp,
+                rm).subtract(BigDecimal.ONE);
         //double tanLat = Math.tan(lat);
-        BigDecimal tanLat = Math_BigDecimal.tan(
-                lat,
-                aGeneric_BigDecimal,
-                hDecimalPlaces,
-                aRoundingMode);
+        BigDecimal tanLat = Math_BigDecimal.tan(lat, bd, hdp, rm);
         //double tan2lat = tanLat * tanLat;
         BigDecimal tan2Lat = tanLat.multiply(tanLat);
         //double tan4lat = tan2lat * tan2lat;
@@ -793,10 +657,7 @@ public class Vector_OSGBtoLatLon {
         BigDecimal tan6Lat = tan4Lat.multiply(tan2Lat);
         //double secLat = 1 / cosLat;
         BigDecimal secLat = Math_BigDecimal.divideRoundIfNecessary(
-                BigDecimal.ONE,
-                cosLat,
-                hDecimalPlaces,
-                aRoundingMode);
+                BigDecimal.ONE, cosLat, hdp, rm);
         //double nu3 = nu * nu * nu;
         BigDecimal nu2 = nu.multiply(nu);
         BigDecimal nu3 = nu.multiply(nu2);
@@ -805,52 +666,31 @@ public class Vector_OSGBtoLatLon {
         //double nu7 = nu5 * nu * nu;
         BigDecimal nu7 = nu5.multiply(nu2);
         //double VII = tanLat / (2 * rho * nu);
-        BigDecimal VII = Math_BigDecimal.divideRoundIfNecessary(
-                tanLat,
-                two.multiply(rho).multiply(nu),
-                hDecimalPlaces,
-                aRoundingMode);
+        BigDecimal VII = Math_BigDecimal.divideRoundIfNecessary(tanLat,
+                two.multiply(rho).multiply(nu), hdp, rm);
         //double VIII = tanLat / (24 * rho * nu3) * (5 + 3 * tan2lat + eta2 - 9 * tan2lat * eta2);
-        BigDecimal VIII = Math_BigDecimal.divideRoundIfNecessary(
-                tanLat,
+        BigDecimal VIII = Math_BigDecimal.divideRoundIfNecessary(tanLat,
                 (BigDecimal.valueOf(24).multiply(rho).multiply(nu3)).multiply(BigDecimal.valueOf(5).add(three.multiply(tan2Lat)).add(eta2).subtract(BigDecimal.valueOf(9).multiply(tan2Lat).multiply(eta2))),
-                hDecimalPlaces,
-                aRoundingMode);
+                hdp, rm);
         //double IX = tanLat / (720 * rho * nu5) * (61 + 90 * tan2lat + 45 * tan4lat);
-        BigDecimal IX = Math_BigDecimal.divideRoundIfNecessary(
-                tanLat,
+        BigDecimal IX = Math_BigDecimal.divideRoundIfNecessary(tanLat,
                 (BigDecimal.valueOf(720).multiply(rho).multiply(nu5)).multiply(BigDecimal.valueOf(61).add(BigDecimal.valueOf(90).multiply(tan2Lat)).add(BigDecimal.valueOf(45).multiply(tan4Lat))),
-                hDecimalPlaces,
-                aRoundingMode);
+                hdp, rm);
         //double X = secLat / nu;
-        BigDecimal X = Math_BigDecimal.divideRoundIfNecessary(
-                secLat,
-                nu,
-                hDecimalPlaces,
-                aRoundingMode);
+        BigDecimal X = Math_BigDecimal.divideRoundIfNecessary(secLat, nu, hdp, rm);
         //double XI = secLat / (6 * nu3) * (nu / rho + 2 * tan2lat);
-        BigDecimal nuByRho = Math_BigDecimal.divideRoundIfNecessary(
-                nu,
-                rho,
-                hDecimalPlaces,
-                aRoundingMode);
-        BigDecimal XI = Math_BigDecimal.divideRoundIfNecessary(
-                secLat,
+        BigDecimal nuByRho = Math_BigDecimal.divideRoundIfNecessary(nu, rho, hdp, rm);
+        BigDecimal XI = Math_BigDecimal.divideRoundIfNecessary(secLat,
                 BigDecimal.valueOf(6).multiply(nu3).multiply(nuByRho.add(two.multiply(tan2Lat))),
-                hDecimalPlaces,
-                aRoundingMode);
+                hdp, rm);
         //double XII = secLat / (120 * nu5) * (5 + 28 * tan2lat + 24 * tan4lat);
-        BigDecimal XII = Math_BigDecimal.divideRoundIfNecessary(
-                secLat,
+        BigDecimal XII = Math_BigDecimal.divideRoundIfNecessary(secLat,
                 BigDecimal.valueOf(120).multiply(nu5).multiply(BigDecimal.valueOf(5).add(BigDecimal.valueOf(28).multiply(tan2Lat).add(BigDecimal.valueOf(24).multiply(tan4Lat)))),
-                hDecimalPlaces,
-                aRoundingMode);
+                hdp, rm);
         //double XIIA = secLat / (5040 * nu7) * (61 + 662 * tan2lat + 1320 * tan4lat + 720 * tan6lat);
-        BigDecimal XIIA = Math_BigDecimal.divideRoundIfNecessary(
-                secLat,
+        BigDecimal XIIA = Math_BigDecimal.divideRoundIfNecessary(secLat,
                 BigDecimal.valueOf(5040).multiply(nu7).multiply(BigDecimal.valueOf(61).add(BigDecimal.valueOf(662).multiply(tan2Lat).add(BigDecimal.valueOf(1320).multiply(tan4Lat).add(BigDecimal.valueOf(720).multiply(tan6Lat))))),
-                hDecimalPlaces,
-                aRoundingMode);
+                hdp, rm);
         //double dE = (easting - E0);
         BigDecimal dE = easting.subtract(E0);
         //double dE2 = dE * dE;
@@ -869,8 +709,8 @@ public class Vector_OSGBtoLatLon {
         lat = lat.subtract(VII.multiply(dE2)).add(VIII.multiply(dE4)).subtract(IX.multiply(dE6));
         //double lon = lon0 + X * dE - XI * dE3 + XII * dE5 - XIIA * dE7;
         BigDecimal lon = lon0.add(X.multiply(dE)).subtract(XI.multiply(dE3)).add(XII.multiply(dE5)).subtract(XIIA.multiply(dE7));
-        result[0] = toDegrees(lat, decimalPlaces, aRoundingMode);
-        result[1] = toDegrees(lon, decimalPlaces, aRoundingMode);
+        r[0] = toDegrees(lat, dp, rm);
+        r[1] = toDegrees(lon, dp, rm);
         if (verbose) {
             System.out.println("lat " + lat);
             System.out.println("cosLat " + cosLat);
@@ -890,126 +730,53 @@ public class Vector_OSGBtoLatLon {
             System.out.println("XIIA " + XIIA);
         }
         //System.out.println("lat " + lat + ", lon " + lon);
-        return result;
+        return r;
     }
 
-    public static double toRadians(double d) {
-        return d * Math.PI / 180D;
+    /**
+     * Calculate at return the x*Math.PI/180.
+     *
+     * @param x The angle in decimal degrees to convert to radians.
+     * @return The angle of x in radians.
+     */
+    public static double toRadians(double x) {
+        return x * Math.PI / 180D;
     }
 
-    public BigDecimal toRadians(
-            BigDecimal d,
-            int decimalPlaces,
-            RoundingMode aRoundingMode) {
+    /**
+     * Calculate at return the x*Pi/180.
+     *
+     * @param x The angle in decimal degrees to convert to radians.
+     * @param dp The number of decimal places the result should be correct to.
+     * @param rm The rounding mode to use if necessary.
+     * @return The angle of x in radians.
+     */
+    public BigDecimal toRadians(BigDecimal x, int dp, RoundingMode rm) {
+        return Math_BigDecimal.divideRoundIfNecessary(x.multiply(getPi()),
+                BigDecimal.valueOf(180L), dp, rm);
+    }
+
+    /**
+     * Calculate at return the x*180/Pi.
+     *
+     * @param x The angle in radians to convert to decimal degrees.
+     * @return The angle of x in decimal degrees.
+     */
+    public static double toDegrees(double x) {
+        return x * 180D / Math.PI;
+    }
+
+    /**
+     * Calculate at return the x*180/Pi.
+     *
+     * @param x The angle in radians to convert to decimal degrees.
+     * @param dp The number of decimal places the result should be correct to.
+     * @param rm The rounding mode to use if necessary.
+     * @return The angle of x in decimal degrees.
+     */
+    public BigDecimal toDegrees(BigDecimal x, int dp, RoundingMode rm) {
         return Math_BigDecimal.divideRoundIfNecessary(
-                d.multiply(getPI()),
-                BigDecimal.valueOf(180L),
-                decimalPlaces,
-                aRoundingMode);
+                x.multiply(BigDecimal.valueOf(180L)), getPi(), dp, rm);
     }
 
-    public static double toDegrees(double d) {
-        return d * 180D / Math.PI;
-    }
-
-    public BigDecimal toDegrees(
-            BigDecimal d,
-            int decimalPlaces,
-            RoundingMode aRoundingMode) {
-        return Math_BigDecimal.divideRoundIfNecessary(
-                d.multiply(BigDecimal.valueOf(180L)),
-                getPI(),
-                decimalPlaces,
-                aRoundingMode);
-    }
-///**
-// * Converts standard grid reference ('SU387148') to fully numeric ref ([438700,114800]);
-// *   returned co-ordinates are in metres, centred on supplied grid square;
-// *
-// * @param {String} gridref: Standard format OS grid reference
-// * @returns {OsGridRef}     Numeric version of grid reference in metres from false origin
-// */
-//OsGridRef.parse = function(gridref) {
-//  gridref = gridref.trim();
-//  // get numeric values of letter references, mapping A->0, B->1, C->2, etc:
-//  double l1 = gridref.toUpperCase().charCodeAt(0) - 'A'.charCodeAt(0);
-//  double l2 = gridref.toUpperCase().charCodeAt(1) - 'A'.charCodeAt(0);
-//  // shuffle down letters after 'I' since 'I' is not used in grid:
-//  if (l1 > 7) l1--;
-//  if (l2 > 7) l2--;
-//
-//  // convert grid letters into 100km-square indexes from false origin (grid square SV):
-//  double e = ((l1-2)%5)*5 + (l2%5);
-//  double n = (19-Math.floor(l1/5)*5) - Math.floor(l2/5);
-//  if (e<0 || e>6 || n<0 || n>12) return new OsGridRef(NaN, NaN);
-//
-//  // skip grid letters to get numeric part of ref, stripping any spaces:
-//  gridref = gridref.slice(2).replace(/ /g,'');
-//
-//  // append numeric part of references to grid index:
-//  e += gridref.slice(0, gridref.length/2);
-//  n += gridref.slice(gridref.length/2);
-//
-//  // normalise to 1m grid, rounding up to centre of grid square:
-//  switch (gridref.length) {
-//    case 0: e += '50000'; n += '50000'; break;
-//    case 2: e += '5000'; n += '5000'; break;
-//    case 4: e += '500'; n += '500'; break;
-//    case 6: e += '50'; n += '50'; break;
-//    case 8: e += '5'; n += '5'; break;
-//    case 10: break; // 10-digit refs are already 1m
-//    default: return new OsGridRef(NaN, NaN);
-//  }
-//
-//  return new OsGridRef(e, n);
-//}
-///**
-// * Converts this numeric grid reference to standard OS grid reference
-// *
-// * @param {Number} [digits=6] Precision of returned grid reference (6 digits = metres)
-// * @return {String)           This grid reference in standard format
-// */
-//OsGridRef.prototype.toString = function(digits) {
-//  digits = (typeof digits == 'undefined') ? 10 : digits;
-//  e = this.easting, n = this.northing;
-//  if (e==NaN || n==NaN) return '??';
-//  
-//  // get the 100km-grid indices
-//  var e100k = Math.floor(e/100000), n100k = Math.floor(n/100000);
-//  
-//  if (e100k<0 || e100k>6 || n100k<0 || n100k>12) return '';
-//
-//  // translate those into numeric equivalents of the grid letters
-//  var l1 = (19-n100k) - (19-n100k)%5 + Math.floor((e100k+10)/5);
-//  var l2 = (19-n100k)*5%25 + e100k%5;
-//
-//  // compensate for skipped 'I' and build grid letter-pairs
-//  if (l1 > 7) l1++;
-//  if (l2 > 7) l2++;
-//  var letPair = String.fromCharCode(l1+'A'.charCodeAt(0), l2+'A'.charCodeAt(0));
-//
-//  // strip 100km-grid indices from easting & northing, and reduce precision
-//  e = Math.floor((e%100000)/Math.pow(10,5-digits/2));
-//  n = Math.floor((n%100000)/Math.pow(10,5-digits/2));
-//
-//  var gridRef = letPair + ' ' + e.padLz(digits/2) + ' ' + n.padLz(digits/2);
-//
-//  return gridRef;
-//}
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-///** Trims whitespace from string (q.v. blog.stevenlevithan.com/archives/faster-trim-javascript) */
-//if (typeof String.prototype.trim == 'undefined') {
-//  String.prototype.trim = function() {
-//    return this.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-//  }
-//}
-///** Pads a number with sufficient leading zeros to make it w chars wide */
-//if (typeof String.prototype.padLz == 'undefined') {
-//  Number.prototype.padLz = function(w) {
-//    var n = this.toString();
-//    var l = n.length;
-//    for (var i=0; i<w-l; i++) n = '0' + n;
-//    return n;
-//  }
-//}
 }
