@@ -367,12 +367,10 @@ public class Vector_Point2D
 //        return BigFunction.POW.invoke(
 //                diffx.multiply(diffx).add(diffy.multiply(diffy)),
 //                BigMath.HALF);
-        Math_BigDecimal t_Generic_BigDecimal
-                = ve.get_Generic_BigDecimal();
         return Math_BigDecimal.sqrt(
                 diffx.multiply(diffx).add(diffy.multiply(diffy)),
                 a_DecimalPlacePrecision,
-                t_Generic_BigDecimal.getRoundingMode());
+                ve.bd.getRoundingMode());
     }
 
     /**

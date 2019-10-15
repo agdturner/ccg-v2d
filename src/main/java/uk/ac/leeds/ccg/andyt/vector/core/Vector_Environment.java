@@ -18,9 +18,9 @@
  */
 package uk.ac.leeds.ccg.andyt.vector.core;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
 import uk.ac.leeds.ccg.andyt.vector.io.Vector_Files;
@@ -32,50 +32,36 @@ import uk.ac.leeds.ccg.andyt.vector.projection.Vector_OSGBtoLatLon;
  */
 public class Vector_Environment {
 
-    protected File directory;
+    public Vector_Files files;
     
-    protected Vector_Files vf;
+    public final Generic_Environment env;
+
+    public final Grids_Environment ge;
     
-    protected Grids_Environment ge;
-    
-    protected Math_BigDecimal bd;
+    public Math_BigDecimal bd;
     
     protected Vector_OSGBtoLatLon OSGBtoLatLon;
 
-    /**
-     * @return the _Generic_BigDecimal
-     */
-    public Math_BigDecimal get_Generic_BigDecimal() {
-        if (bd == null) {
-            bd = new Math_BigDecimal();
-        }
-        return bd;
+    public Vector_Environment(){
+        this(new Grids_Environment());
     }
-
-    /**
-     * @return the _Generic_BigDecimal
-     */
-    public Grids_Environment getGrids_Environment() {
-        if (ge == null) {
-            ge = new Grids_Environment(vf.getGridsDirectory());
-        }
-        return ge;
-    }
-
-    public Vector_Environment(){}
 
     public Vector_Environment(Grids_Environment ge){
+        super();
         this.ge = ge;
+        this.env = ge.env;
+        this.files = new Vector_Files(env.files.getDir());
+        bd = new Math_BigDecimal();
     }
     
     public BigDecimal getRounded_BigDecimal(
             BigDecimal toRoundBigDecimal,
             BigDecimal toRoundToBigDecimal) {
         int scale = toRoundToBigDecimal.scale();
-        BigDecimal result = toRoundBigDecimal.setScale(scale - 1, RoundingMode.FLOOR);
-        result = result.setScale(scale);
-        result = result.add(toRoundToBigDecimal);
-        return result;
+        BigDecimal r = toRoundBigDecimal.setScale(scale - 1, RoundingMode.FLOOR);
+        r = r.setScale(scale);
+        r = r.add(toRoundToBigDecimal);
+        return r;
     }
 
     public Vector_OSGBtoLatLon getOSGBtoLatLon() {

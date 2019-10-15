@@ -7,6 +7,7 @@ package uk.ac.leeds.ccg.andyt.vector.grids;
 
 import java.io.File;
 import java.math.BigDecimal;
+import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_2D_ID_long;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Dimensions;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_GridDouble;
@@ -35,8 +36,8 @@ public class Vector_LineGrid extends Vector_Object {
     }
 
     public static void main(String[] args) {
-        Vector_Environment ve;
-        ve = new Vector_Environment();
+        Generic_Environment ge = new Generic_Environment();
+        Vector_Environment ve = new Vector_Environment();
         new Vector_LineGrid(ve).run();
     }
 
@@ -53,45 +54,41 @@ public class Vector_LineGrid extends Vector_Object {
         noDataValue = -9999.0d;
         boolean handleNoDataValue;
         handleNoDataValue = true;
-        Grids_Environment ge;
-        ge = ve.getGrids_Environment();
+        Grids_Environment ge = ve.ge;
         Grids_GridChunkDoubleArrayFactory gcaf;
         gcaf = new Grids_GridChunkDoubleArrayFactory();
         Grids_GridDouble g;
-        long nRows;
-        nRows = 100;
-        long nCols;
-        nCols = 100;
-        Grids_Dimensions dimensions; // The cellsize, xmin, ymin, xmax and ymax.
+        long nRows = 100;
+        long nCols = 100;
+        // The xmin, ymin, xmax, ymax, and cellsize, .
+        Grids_Dimensions dimensions;
         dimensions = new Grids_Dimensions(
                 new BigDecimal(0.0d),
                 new BigDecimal(0.0d),
                 new BigDecimal(100.0d),
                 new BigDecimal(100.0d),
                 new BigDecimal(1.0d));
-        Grids_GridDoubleStats gs;
-        gs = new Grids_GridDoubleStats(ge);
+        Grids_GridDoubleStats gs = new Grids_GridDoubleStats(ge);
 
-        Grids_GridDoubleFactory gf;
-        gf = new Grids_GridDoubleFactory(ge,
+        Grids_GridDoubleFactory gf = new Grids_GridDoubleFactory(ge,
                 ge.getProcessor().GridChunkDoubleFactory, gcaf, noDataValue,
                 (int) nRows, (int) nCols, dimensions, gs);
         g = gf.create(gs, dir, gcaf, nRows, nCols, dimensions);
         // Vector set up
-        Vector_Point2D p0;
-        p0 = new Vector_Point2D(ve, new BigDecimal(30.2d), new BigDecimal(30.5d));
-        Vector_Point2D p1;
-        p1 = new Vector_Point2D(ve, new BigDecimal(40.5d),
-                new BigDecimal(20.5d));
-        Vector_LineSegment2D l;
-        l = new Vector_LineSegment2D(p0, p1);
+        BigDecimal x;
+        BigDecimal y;
+        x = new BigDecimal(30.2d);
+        y = new BigDecimal(30.5d);
+        Vector_Point2D p0 = new Vector_Point2D(ve, x, y);
+        x = new BigDecimal(40.5d);
+        y = new BigDecimal(20.5d);
+        Vector_Point2D p1 = new Vector_Point2D(ve, x, y);
+        Vector_LineSegment2D l = new Vector_LineSegment2D(p0, p1);
         System.out.println("line " + l);
         addToGrid(g, l, factor, tollerance, handleNoDataValue);
         System.out.println(g.toString());
-        Grids_ImageExporter ie;
-        ie = new Grids_ImageExporter(ge);
-        Grids_Processor gp;
-        gp = new Grids_Processor(ge);
+        Grids_ImageExporter ie  = new Grids_ImageExporter(ge);
+        Grids_Processor gp  = new Grids_Processor(ge);
         File fout = new File(dir, "test.PNG");
         ie.toGreyScaleImage(g, gp, fout, "PNG");
     }

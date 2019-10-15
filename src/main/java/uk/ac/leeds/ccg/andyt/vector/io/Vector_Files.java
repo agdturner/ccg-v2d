@@ -19,41 +19,47 @@
 package uk.ac.leeds.ccg.andyt.vector.io;
 
 import java.io.File;
+import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
+import uk.ac.leeds.ccg.andyt.grids.io.Grids_Files;
 import uk.ac.leeds.ccg.andyt.vector.core.Vector_Strings;
 
 /**
  *
  * @author geoagdt
  */
-public class Vector_Files {
+public class Vector_Files extends Generic_Files {
 
-    protected Vector_Strings vs;
-
-    File Directory;
-    File GridsDirectory;
+    protected Grids_Files gf;
 
     protected Vector_Files() {
+        this(getDefaultDir(), new Grids_Files());        
+    }
+    
+    /**
+     * @return A default directory called {@link Vector_Strings#s_Vector} 
+     * in the Generic_Files.getDefaultDir().
+     */
+    public static File getDefaultDir() {
+        return new File(Generic_Files.getDefaultDir(), Vector_Strings.s_Vector);
+    }
+    
+    /**
+     * @param dataDir
+     * @return A directory called {@link Vector_Strings#String_s_Vector} 
+     * in {@code dataDir}.
+     */
+    public static File getDir(File dataDir) {
+        File r = new File(dataDir, Vector_Strings.s_Vector);
+        r.mkdir();
+        return r;
+    }
+    
+    public Vector_Files(File dir) {
+        this(getDir(dir), new Grids_Files(dir));
     }
 
-    public Vector_Files(File Directory) {
-        this.vs = new Vector_Strings();
-        this.Directory = Directory;
+    public Vector_Files(File dir, Grids_Files gf) {
+        super(dir);
     }
 
-    public final void setDirectory(File Directory) {
-        this.Directory = Directory;
-    }
-
-    public final File getDirectory() {
-        return Directory;
-    }
-
-    public final File getGridsDirectory() {
-        if (GridsDirectory == null) {
-            GridsDirectory = new File(
-                    getDirectory(),
-                    vs.getString_Grids());
-        }
-        return GridsDirectory;
-    }
 }

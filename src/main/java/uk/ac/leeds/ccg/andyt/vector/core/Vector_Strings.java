@@ -18,13 +18,13 @@
  */
 package uk.ac.leeds.ccg.andyt.vector.core;
 
+import uk.ac.leeds.ccg.andyt.generic.core.Generic_Strings;
+
 /**
  * For commonly referred to Strings.
  */
-public class Vector_Strings {
-    protected String String_Grids = "Grids";
+public class Vector_Strings extends Generic_Strings {
     
-    public String getString_Grids() {
-        return String_Grids;
-    }
+    public static String s_Vector = "Vector";
+    
 }
