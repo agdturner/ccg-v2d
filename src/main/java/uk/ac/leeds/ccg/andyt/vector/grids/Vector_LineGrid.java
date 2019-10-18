@@ -6,8 +6,8 @@
 package uk.ac.leeds.ccg.andyt.vector.grids;
 
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
-import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_2D_ID_long;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Dimensions;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_GridDouble;
@@ -36,12 +36,15 @@ public class Vector_LineGrid extends Vector_Object {
     }
 
     public static void main(String[] args) {
-        Generic_Environment ge = new Generic_Environment();
-        Vector_Environment ve = new Vector_Environment();
-        new Vector_LineGrid(ve).run();
+        try {
+            Vector_Environment ve = new Vector_Environment();
+            new Vector_LineGrid(ve).run();
+        } catch (IOException ex) {
+            ex.printStackTrace(System.err);
+        }
     }
 
-    public void run() {
+    public void run() throws IOException {
         // Grids set up
         BigDecimal tollerance;
         tollerance = new BigDecimal("0.0000001");

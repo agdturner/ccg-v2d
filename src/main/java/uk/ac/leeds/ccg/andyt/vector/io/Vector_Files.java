@@ -19,6 +19,7 @@
 package uk.ac.leeds.ccg.andyt.vector.io;
 
 import java.io.File;
+import uk.ac.leeds.ccg.andyt.generic.io.Generic_Defaults;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
 import uk.ac.leeds.ccg.andyt.grids.io.Grids_Files;
 import uk.ac.leeds.ccg.andyt.vector.core.Vector_Strings;
@@ -40,7 +41,7 @@ public class Vector_Files extends Generic_Files {
      * in the Generic_Files.getDefaultDir().
      */
     public static File getDefaultDir() {
-        return new File(Generic_Files.getDefaultDir(), Vector_Strings.s_Vector);
+        return new File(Generic_Defaults.getDefaultDir(), Vector_Strings.s_Vector);
     }
     
     /**

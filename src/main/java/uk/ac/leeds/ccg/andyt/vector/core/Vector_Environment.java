@@ -18,6 +18,7 @@
  */
 package uk.ac.leeds.ccg.andyt.vector.core;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
@@ -42,8 +43,8 @@ public class Vector_Environment {
     
     protected Vector_OSGBtoLatLon OSGBtoLatLon;
 
-    public Vector_Environment(){
-        this(new Grids_Environment());
+    public Vector_Environment() throws IOException {
+        this(new Grids_Environment(new Generic_Environment()));
     }
 
     public Vector_Environment(Grids_Environment ge){
