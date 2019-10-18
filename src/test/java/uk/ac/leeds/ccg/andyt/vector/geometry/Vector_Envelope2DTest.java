@@ -4,6 +4,7 @@
  */
 package uk.ac.leeds.ccg.andyt.vector.geometry;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -19,6 +20,8 @@ import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
  */
 public class Vector_Envelope2DTest {
 
+    Vector_Environment env;
+    
     public Vector_Envelope2DTest() {
     }
 
@@ -32,6 +35,11 @@ public class Vector_Envelope2DTest {
 
     @Before
     public void setUp() {
+        try {
+            env = new Vector_Environment();
+        } catch (IOException ex) {
+            ex.printStackTrace(System.err);
+        }
     }
 
     @After
@@ -101,7 +109,7 @@ public class Vector_Envelope2DTest {
         for (int i = 0; i < 1000; i++) {
             aX = aX.divide(ten);
             aY = aY.divide(ten);
-            a = new Vector_Point2D(new Vector_Environment(), aX, aY);
+            a = new Vector_Point2D(env, aX, aY);
             System.out.println("a " + a.toString());
             abe = new Vector_Envelope2D(
                     a,

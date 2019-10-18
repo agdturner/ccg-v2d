@@ -4,6 +4,7 @@
  */
 package uk.ac.leeds.ccg.andyt.vector.geometry;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -18,7 +19,9 @@ import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
  * @author geoagdt
  */
 public class Vector_LineSegment2DTest {
-
+    
+Vector_Environment env;
+    
     public Vector_LineSegment2DTest() {
     }
 
@@ -32,6 +35,11 @@ public class Vector_LineSegment2DTest {
 
     @Before
     public void setUp() {
+        try {
+            env = new Vector_Environment();
+        } catch (IOException ex) {
+            ex.printStackTrace(System.err);
+        }
     }
 
     @After
@@ -175,7 +183,7 @@ public class Vector_LineSegment2DTest {
             System.out.println("DecimalPlacePrecision " + decimalPlacePrecision);
             aX = aX.divide(ten);
             aY = aY.divide(ten);
-            a = new Vector_Point2D(new Vector_Environment(), aX, aY);
+            a = new Vector_Point2D(env, aX, aY);
             System.out.println("a " + a.toString());
             result = ab.getIntersects(
                     a,
