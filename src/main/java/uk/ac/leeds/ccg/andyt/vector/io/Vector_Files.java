@@ -19,6 +19,7 @@
 package uk.ac.leeds.ccg.andyt.vector.io;
 
 import java.io.File;
+import java.io.IOException;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_Defaults;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
 import uk.ac.leeds.ccg.andyt.grids.io.Grids_Files;
@@ -32,10 +33,19 @@ public class Vector_Files extends Generic_Files {
 
     protected Grids_Files gf;
 
-    protected Vector_Files() {
-        this(getDefaultDir(), new Grids_Files());        
+    protected Vector_Files() throws IOException {
+        this(getDefaultDir());
     }
     
+    public Vector_Files(File dir) throws IOException {
+        this(getDir(dir), new Grids_Files(Grids_Files.getDir(dir)));
+    }
+
+    public Vector_Files(File dir, Grids_Files gf) throws IOException {
+        super(dir);
+        this.gf = gf;
+    }
+
     /**
      * @return A default directory called {@link Vector_Strings#s_Vector} 
      * in the Generic_Files.getDefaultDir().
@@ -54,13 +64,4 @@ public class Vector_Files extends Generic_Files {
         r.mkdir();
         return r;
     }
-    
-    public Vector_Files(File dir) {
-        this(getDir(dir), new Grids_Files(dir));
-    }
-
-    public Vector_Files(File dir, Grids_Files gf) {
-        super(dir);
-    }
-
 }

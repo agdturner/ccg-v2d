@@ -47,7 +47,7 @@ public class Vector_Environment {
         this(new Grids_Environment(new Generic_Environment()));
     }
 
-    public Vector_Environment(Grids_Environment ge){
+    public Vector_Environment(Grids_Environment ge) throws IOException{
         super();
         this.ge = ge;
         this.env = ge.env;
