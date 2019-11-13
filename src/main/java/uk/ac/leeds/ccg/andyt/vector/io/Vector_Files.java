@@ -47,20 +47,19 @@ public class Vector_Files extends Generic_Files {
     }
 
     /**
-     * @return A default directory called {@link Vector_Strings#s_Vector} 
-     * in the Generic_Files.getDefaultDir().
+     * @return {@code new File(getDefaultGenericDir(), Vector_Strings.s_vector)}.
      */
     public static File getDefaultDir() {
-        return new File(Generic_Defaults.getDefaultDir(), Vector_Strings.s_Vector);
+        return new File(getDefaultGenericDir(), Vector_Strings.s_vector);
     }
     
     /**
      * @param dataDir
-     * @return A directory called {@link Vector_Strings#String_s_Vector} 
+     * @return A directory called {@link Vector_Strings#String_s_vector} 
      * in {@code dataDir}.
      */
     public static File getDir(File dataDir) {
-        File r = new File(dataDir, Vector_Strings.s_Vector);
+        File r = new File(dataDir, Vector_Strings.s_vector);
         r.mkdir();
         return r;
     }

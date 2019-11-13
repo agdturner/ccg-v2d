@@ -26,5 +26,6 @@ import uk.ac.leeds.ccg.andyt.generic.core.Generic_Strings;
 public class Vector_Strings extends Generic_Strings {
     
     public static String s_Vector = "Vector";
+    public static String s_vector = "vector";
     
 }
