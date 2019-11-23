@@ -2,7 +2,7 @@
 
 https://github.com/agdturner/agdt-java-generic-vector
 
-A Java library for 2D vector data processing. The coordinates for each point are stored as BigDecimals - numbers with specified decimal place precision.
+A Java library for 2D vector data processing. The coordinates for each point are stored as BigDecimals - numbers with a specified decimal place precision.
 
 Many vector data handling libraries will use floating point numbers for storing locations. This library uses Java BigDecimal numbers so essentialy all coordinates have the same precision. As such these are similar to a form of raster data. 
 
