@@ -1,20 +1,17 @@
-/**
- * Component of a library for handling spatial vector data.
- * Copyright (C) 2009 Andy Turner, CCG, University of Leeds, UK.
+/*
+ * Copyright 2019 Andy Turner, University of Leeds.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package uk.ac.leeds.ccg.vector.visualisation;
 
@@ -32,12 +29,12 @@ import java.util.Iterator;
 import java.util.Set;
 //import javax.swing.JApplet;
 import javax.swing.JFrame;
-import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
+import uk.ac.leeds.ccg.vector.core.Vector_Environment;
 import uk.ac.leeds.ccg.vector.geometry.Vector_Envelope2D;
-import uk.ac.leeds.ccg.andyt.vector.geometry.Vector_Network2D;
-import uk.ac.leeds.ccg.andyt.vector.geometry.Vector_Network2D.Connection;
-import uk.ac.leeds.ccg.andyt.vector.geometry.Vector_Point2D;
-//import uk.ac.leeds.ccg.andyt.;
+import uk.ac.leeds.ccg.vector.geometry.Vector_Network2D;
+import uk.ac.leeds.ccg.vector.geometry.Vector_Network2D.Connection;
+import uk.ac.leeds.ccg.vector.geometry.Vector_Point2D;
+//import uk.ac.leeds.ccg.;
 
 /**
  * Class for rendering Vector_Network2D instances.
@@ -167,10 +164,10 @@ public class Vector_RenderNetwork2D extends Vector_AbstractRender {
         BigDecimal height_BigDecimal = new BigDecimal(Height);
 
             this._Graphics2D.setPaint(Color.RED);
-        int ax = ((a_Point2D.X.subtract(Envelope.XMin)).divide
+        int ax = ((a_Point2D.x.subtract(Envelope.XMin)).divide
                 (_XRange_BigDecimal,10,RoundingMode.DOWN).multiply
                 (width_BigDecimal)).intValue();
-        int ay = ((a_Point2D.Y.subtract(Envelope.YMin)).divide
+        int ay = ((a_Point2D.y.subtract(Envelope.YMin)).divide
                 (_YRange_BigDecimal,10,RoundingMode.DOWN).multiply
                 (height_BigDecimal)).intValue();
         int bx;
@@ -179,14 +176,14 @@ public class Vector_RenderNetwork2D extends Vector_AbstractRender {
         aIterator = a_Connection_HashSet.iterator();
         while (aIterator.hasNext()) {
             Connection a_Connection = (Connection) aIterator.next();
-            //bx = (int) a_Connection.Location.X.intValue() * _Scale;
-            //by = (int) a_Connection.Location.Y.intValue() * _Scale;
-            //bx = (int) (a_Connection.Location.X.doubleValue() * _Scale);
-            //by = (int) (a_Connection.Location.Y.doubleValue() * _Scale);
-            bx = ((a_Connection.Location.X.subtract(Envelope.XMin)).divide
+            //bx = (int) a_Connection.Location.x.intValue() * _Scale;
+            //by = (int) a_Connection.Location.y.intValue() * _Scale;
+            //bx = (int) (a_Connection.Location.x.doubleValue() * _Scale);
+            //by = (int) (a_Connection.Location.y.doubleValue() * _Scale);
+            bx = ((a_Connection.Location.x.subtract(Envelope.XMin)).divide
                     (_XRange_BigDecimal,10,RoundingMode.DOWN).multiply
                 (width_BigDecimal)).intValue();
-        by = ((a_Connection.Location.Y.subtract(Envelope.YMin)).divide
+        by = ((a_Connection.Location.y.subtract(Envelope.YMin)).divide
                 (_YRange_BigDecimal,10,RoundingMode.DOWN).multiply
                 (height_BigDecimal)).intValue();
             //this._Graphics2D.drawLine(ax, ay, bx, by);

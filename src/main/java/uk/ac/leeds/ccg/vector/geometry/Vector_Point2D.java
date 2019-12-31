@@ -1,48 +1,44 @@
-/**
- * Component of a library for handling spatial vector data. Copyright (C) 2009
- * Andy Turner, CCG, University of Leeds, UK.
+/*
+ * Copyright 2019 Andy Turner, University of Leeds.
  *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package uk.ac.leeds.ccg.vector.geometry;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import org.ojalgo.constant.BigMath;
-import org.ojalgo.function.implementation.BigFunction;
+import org.ojalgo.function.constant.BigMath;
+import org.ojalgo.function.BigFunction;
 import uk.ac.leeds.ccg.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.vector.core.Vector_Environment;
 
 /**
  * Class for points in 2D.
  */
-public class Vector_Point2D
-        extends Vector_AbstractGeometry2D
+public class Vector_Point2D extends Vector_AbstractGeometry2D
         implements Comparable, Serializable {
 
     /**
      * The x coordinate of the Vector_Point2D
      */
-    public BigDecimal X;
+    public BigDecimal x;
     /**
      * The y coordinate of the Vector_Point2D
      */
-    public BigDecimal Y;
+    public BigDecimal y;
 
     /**
-     * Creates a default Vector_Point2D with: X = null; Y = null;
+     * Creates a default Vector_Point2D with: x = null; y = null;
      *
      * @param ve
      */
@@ -53,35 +49,32 @@ public class Vector_Point2D
     /**
      * @param p Vector_Point2D
      */
-    public Vector_Point2D(
-            Vector_Point2D p) {
-        super(p.ve);
-        X = new BigDecimal(p.X.toString());
-        Y = new BigDecimal(p.Y.toString());
+    public Vector_Point2D(Vector_Point2D p) {
+        super(p.e);
+        x = new BigDecimal(p.x.toString());
+        y = new BigDecimal(p.y.toString());
         DecimalPlacePrecision = p.DecimalPlacePrecision;
     }
 
     /**
      * @param p Vector_Point2D
-     * @param decimalPlacePrecision Precision
+     * @param dp What {@link #DecimalPlacePrecision} is set to.
      */
-    public Vector_Point2D(
-            Vector_Point2D p,
-            int decimalPlacePrecision) {
-        super(p.ve);
-        X = new BigDecimal(p.X.toString());
-        Y = new BigDecimal(p.Y.toString());
-        DecimalPlacePrecision = decimalPlacePrecision;
+    public Vector_Point2D(Vector_Point2D p, int dp) {
+        super(p.e);
+        x = new BigDecimal(p.x.toString());
+        y = new BigDecimal(p.y.toString());
+        DecimalPlacePrecision = dp;
         applyDecimalPlacePrecision();
     }
 
     /**
-     * X = new BigDecimal(a_Point2D.X.toString()); Y = new
-     * BigDecimal(a_Point2D.Y.toString()); X =
-     * VectorStaticBigDecimal.getRounded_BigDecimal( X, toRoundToX_BigDecimal);
-     * Y = VectorStaticBigDecimal.getRounded_BigDecimal( Y,
-     * toRoundToY_BigDecimal); setDecimalPlacePrecision( Math.max(
-     * toRoundToX_BigDecimal.scale(), toRoundToY_BigDecimal.scale()));
+     * x = new BigDecimal(a_Point2D.x.toString()); y = new
+ BigDecimal(a_Point2D.y.toString()); x =
+ VectorStaticBigDecimal.getRounded_BigDecimal( x, toRoundToX_BigDecimal);
+ y = VectorStaticBigDecimal.getRounded_BigDecimal( y,
+ toRoundToY_BigDecimal); setDecimalPlacePrecision( Math.max(
+ toRoundToX_BigDecimal.scale(), toRoundToY_BigDecimal.scale()));
      *
      * @param p Vector_Point2D
      * @param toRoundToX_BigDecimal BigDecimal toRoundToX_BigDecimal
@@ -91,12 +84,12 @@ public class Vector_Point2D
             Vector_Point2D p,
             BigDecimal toRoundToX_BigDecimal,
             BigDecimal toRoundToY_BigDecimal) {
-        super(p.ve);
-        X = new BigDecimal(p.X.toString());
-        Y = new BigDecimal(p.Y.toString());
-        X = ve.getRounded_BigDecimal(X,
+        super(p.e);
+        x = new BigDecimal(p.x.toString());
+        y = new BigDecimal(p.y.toString());
+        x = e.getRounded_BigDecimal(x,
                 toRoundToX_BigDecimal);
-        Y = ve.getRounded_BigDecimal(Y,
+        y = e.getRounded_BigDecimal(y,
                 toRoundToY_BigDecimal);
         DecimalPlacePrecision = Math.max(
                 toRoundToX_BigDecimal.scale(),
@@ -104,9 +97,9 @@ public class Vector_Point2D
     }
 
     /**
-     * this.X = new BigDecimal(X.toString()); this.Y = new
-     * BigDecimal(Y.toString());
-     * setDecimalPlacePrecision(Math.max(X.scale(),Y.scale()));
+     * this.x = new BigDecimal(x.toString()); this.y = new
+ BigDecimal(y.toString());
+ setDecimalPlacePrecision(Math.max(x.scale(),y.scale()));
      *
      * @param x BigDecimal
      * @param y BigDecimal
@@ -117,15 +110,15 @@ public class Vector_Point2D
             BigDecimal x,
             BigDecimal y) {
         super(ve);
-        this.X = new BigDecimal(x.toString());
-        this.Y = new BigDecimal(y.toString());
+        this.x = new BigDecimal(x.toString());
+        this.y = new BigDecimal(y.toString());
         DecimalPlacePrecision = Math.max(x.scale(), y.scale());
     }
 
     /**
-     * this.X = new BigDecimal(X.toString()); this.Y = new
-     * BigDecimal(Y.toString());
-     * setDecimalPlacePrecision(DecimalPlacePrecision_Integer);
+     * this.x = new BigDecimal(x.toString()); this.y = new
+ BigDecimal(y.toString());
+ setDecimalPlacePrecision(DecimalPlacePrecision_Integer);
      *
      * @param x BigDecimal
      * @param y BigDecimal
@@ -138,17 +131,17 @@ public class Vector_Point2D
             BigDecimal y,
             int decimalPlacePrecision) {
         super(ve);
-        this.X = new BigDecimal(x.toString());
-        this.Y = new BigDecimal(y.toString());
+        this.x = new BigDecimal(x.toString());
+        this.y = new BigDecimal(y.toString());
         DecimalPlacePrecision = decimalPlacePrecision;
         applyDecimalPlacePrecision();
     }
 
     /**
-     * this.X = VectorStaticBigDecimal.getRounded_BigDecimal( X,
-     * toRoundToX_BigDecimal); this.Y =
-     * VectorStaticBigDecimal.getRounded_BigDecimal( Y, toRoundToY_BigDecimal);
-     * setDecimalPlacePrecision(toRoundTo_BigDecimal.scale());
+     * this.x = VectorStaticBigDecimal.getRounded_BigDecimal( x,
+ toRoundToX_BigDecimal); this.y =
+ VectorStaticBigDecimal.getRounded_BigDecimal( y, toRoundToY_BigDecimal);
+ setDecimalPlacePrecision(toRoundTo_BigDecimal.scale());
      *
      * @param x BigDecimal
      * @param y BigDecimal
@@ -163,16 +156,16 @@ public class Vector_Point2D
             BigDecimal toRoundToX_BigDecimal,
             BigDecimal toRoundToY_BigDecimal) {
         super(ve);
-        this.X = ve.getRounded_BigDecimal(x, toRoundToX_BigDecimal);
-        this.Y = ve.getRounded_BigDecimal(y, toRoundToY_BigDecimal);
+        this.x = ve.getRounded_BigDecimal(x, toRoundToX_BigDecimal);
+        this.y = ve.getRounded_BigDecimal(y, toRoundToY_BigDecimal);
         DecimalPlacePrecision = Math.max(
                 toRoundToX_BigDecimal.scale(),
                 toRoundToY_BigDecimal.scale());
     }
 
     /**
-     * X = new BigDecimal(x); Y = new BigDecimal(y);
-     * setDecimalPlacePrecision(Math.max(X.scale(),Y.scale()));
+     * x = new BigDecimal(x); y = new BigDecimal(y);
+ setDecimalPlacePrecision(Math.max(x.scale(),y.scale()));
      *
      * @param ve
      * @param x String
@@ -183,14 +176,14 @@ public class Vector_Point2D
             String x,
             String y) {
         super(ve);
-        X = new BigDecimal(x);
-        Y = new BigDecimal(y);
-        DecimalPlacePrecision = Math.max(X.scale(), Y.scale());
+        this.x = new BigDecimal(x);
+        this.y = new BigDecimal(y);
+        DecimalPlacePrecision = Math.max(this.x.scale(), this.y.scale());
     }
 
     /**
-     * X = new BigDecimal(x); Y = new BigDecimal(y);
-     * setDecimalPlacePrecision(DecimalPlacePrecision_Integer);
+     * x = new BigDecimal(x); y = new BigDecimal(y);
+ setDecimalPlacePrecision(DecimalPlacePrecision_Integer);
      *
      * @param ve
      * @param x String
@@ -203,15 +196,15 @@ public class Vector_Point2D
             String y,
             int decimalPlacePrecision) {
         super(ve);
-        X = new BigDecimal(x);
-        Y = new BigDecimal(y);
+        this.x = new BigDecimal(x);
+        this.y = new BigDecimal(y);
         DecimalPlacePrecision = decimalPlacePrecision;
         applyDecimalPlacePrecision();
     }
 
     /**
-     * X = new BigDecimal(x); Y = new BigDecimal(y);
-     * setDecimalPlacePrecision(Math.max(X.scale(),Y.scale()));
+     * x = new BigDecimal(x); y = new BigDecimal(y);
+ setDecimalPlacePrecision(Math.max(x.scale(),y.scale()));
      *
      * @param ve
      * @param x double
@@ -222,14 +215,14 @@ public class Vector_Point2D
             double x,
             double y) {
         super(ve);
-        X = new BigDecimal(x);
-        Y = new BigDecimal(y);
-        DecimalPlacePrecision = Math.max(X.scale(), Y.scale());
+        this.x = new BigDecimal(x);
+        this.y = new BigDecimal(y);
+        DecimalPlacePrecision = Math.max(this.x.scale(), this.y.scale());
     }
 
     /**
-     * X = new BigDecimal(x); Y = new BigDecimal(y);
-     * setDecimalPlacePrecision(DecimalPlacePrecision_Integer);
+     * x = new BigDecimal(x); y = new BigDecimal(y);
+ setDecimalPlacePrecision(DecimalPlacePrecision_Integer);
      *
      * @param ve
      * @param x double
@@ -242,18 +235,18 @@ public class Vector_Point2D
             double y,
             int decimalPlacePrecision) {
         super(ve);
-        X = new BigDecimal(x);
-        Y = new BigDecimal(y);
+        this.x = new BigDecimal(x);
+        this.y = new BigDecimal(y);
         DecimalPlacePrecision = decimalPlacePrecision;
         applyDecimalPlacePrecision();
     }
 
     /**
-     * this.X = VectorStaticBigDecimal.getRounded_BigDecimal( new BigDecimal(x),
-     * toRoundToX_BigDecimal); this.Y =
-     * VectorStaticBigDecimal.getRounded_BigDecimal( new BigDecimal(y),
-     * toRoundToY_BigDecimal); setDecimalPlacePrecision( Math.max(
-     * toRoundToX_BigDecimal.scale(), toRoundToY_BigDecimal.scale()));
+     * this.x = VectorStaticBigDecimal.getRounded_BigDecimal( new BigDecimal(x),
+ toRoundToX_BigDecimal); this.y =
+ VectorStaticBigDecimal.getRounded_BigDecimal( new BigDecimal(y),
+ toRoundToY_BigDecimal); setDecimalPlacePrecision( Math.max(
+ toRoundToX_BigDecimal.scale(), toRoundToY_BigDecimal.scale()));
      *
      * @param ve
      * @param x double
@@ -268,10 +261,10 @@ public class Vector_Point2D
             BigDecimal toRoundToX_BigDecimal,
             BigDecimal toRoundToY_BigDecimal) {
         super(ve);
-        X = ve.getRounded_BigDecimal(
+        this.x = ve.getRounded_BigDecimal(
                 new BigDecimal(x),
                 toRoundToX_BigDecimal);
-        Y = ve.getRounded_BigDecimal(
+        this.y = ve.getRounded_BigDecimal(
                 new BigDecimal(y),
                 toRoundToY_BigDecimal);
         DecimalPlacePrecision = Math.max(
@@ -280,8 +273,8 @@ public class Vector_Point2D
     }
 
     public void roundTo(BigDecimal toRoundTo_BigDecimal) {
-        X = ve.getRounded_BigDecimal(X, toRoundTo_BigDecimal);
-        Y = ve.getRounded_BigDecimal(Y, toRoundTo_BigDecimal);
+        x = e.getRounded_BigDecimal(x, toRoundTo_BigDecimal);
+        y = e.getRounded_BigDecimal(y, toRoundTo_BigDecimal);
         setDecimalPlacePrecision(toRoundTo_BigDecimal.scale());
     }
 
@@ -289,8 +282,8 @@ public class Vector_Point2D
     public String toString() {
         return "Point2D("
                 + super.toString()
-                + "X(" + X.toString() + "),"
-                + "Y(" + Y.toString() + "))";
+                + "X(" + x.toString() + "),"
+                + "Y(" + y.toString() + "))";
     }
 
     @Override
@@ -308,8 +301,8 @@ public class Vector_Point2D
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 67 * hash + (this.X != null ? this.X.hashCode() : 0);
-        hash = 67 * hash + (this.Y != null ? this.Y.hashCode() : 0);
+        hash = 67 * hash + (this.x != null ? this.x.hashCode() : 0);
+        hash = 67 * hash + (this.y != null ? this.y.hashCode() : 0);
         return hash;
     }
 
@@ -323,11 +316,11 @@ public class Vector_Point2D
     public int compareTo(Object o) {
         if (o instanceof Vector_Point2D) {
             Vector_Point2D p = (Vector_Point2D) o;
-            int compareTo_y = Y.compareTo(p.Y);
+            int compareTo_y = y.compareTo(p.y);
             if (compareTo_y != 0) {
                 return compareTo_y;
             } else {
-                return X.compareTo(p.X);
+                return x.compareTo(p.x);
             }
         }
         return 1;
@@ -362,26 +355,25 @@ public class Vector_Point2D
         if (this.equals(a_VectorPoint2D)) {
             return BigDecimal.ZERO;
         }
-        BigDecimal diffx = this.X.subtract(a_VectorPoint2D.X);
-        BigDecimal diffy = this.Y.subtract(a_VectorPoint2D.Y);
+        BigDecimal diffx = this.x.subtract(a_VectorPoint2D.x);
+        BigDecimal diffy = this.y.subtract(a_VectorPoint2D.y);
 //        return BigFunction.POW.invoke(
 //                diffx.multiply(diffx).add(diffy.multiply(diffy)),
 //                BigMath.HALF);
         return Math_BigDecimal.sqrt(
                 diffx.multiply(diffx).add(diffy.multiply(diffy)),
                 a_DecimalPlacePrecision,
-                ve.bd.getRoundingMode());
+                e.bd.getRoundingMode());
     }
 
     /**
-     * Imprecise: Uses Java double precision for all calculations
-     *
-     * @param a_Point2D Vector_Point2D
-     * @return Angle to the y axis clockwise. Default 0.0d.
+     * Get the angle from {@code p} to the Y-Axis clockwise.
+     * @param p A point.
+     * @return Angle to the y axis clockwise.
      */
-    public double getAngle_double(Vector_Point2D a_Point2D) {
-        double dx = a_Point2D.X.doubleValue() - X.doubleValue();
-        double dy = a_Point2D.Y.doubleValue() - Y.doubleValue();
+    public double getAngle_double(Vector_Point2D p) {
+        double dx = p.x.doubleValue() - x.doubleValue();
+        double dy = p.y.doubleValue() - y.doubleValue();
         if (dy == 0.0d) {
             if (dx == 0.0d) {
                 return 0.0d;
@@ -419,14 +411,15 @@ public class Vector_Point2D
     }
 
     /**
-     * Imprecise, but uses BigMath and BigFunction default precision
+     * Get the angle from {@code p} to the Y-Axis clockwise.
+     * Uses BigMath and BigFunction default precision
      *
-     * @param a_Point2D Vector_Point2D
-     * @return Angle to the y axis clockwise. Default 0.0d.
+     * @param p A point.
+     * @return Angle to the Y-Axis clockwise. Default 0.0d.
      */
-    public BigDecimal getAngle_BigDecimal(Vector_Point2D a_Point2D) {
-        BigDecimal dx = a_Point2D.X.subtract(X);
-        BigDecimal dy = a_Point2D.Y.subtract(Y);
+    public BigDecimal getAngle_BigDecimal(Vector_Point2D p) {
+        BigDecimal dx = p.x.subtract(x);
+        BigDecimal dy = p.y.subtract(y);
         if (dy.compareTo(BigDecimal.ZERO) == 0) {
             if (dx.compareTo(BigDecimal.ZERO) == 0) {
                 return BigDecimal.ZERO;
@@ -475,8 +468,8 @@ public class Vector_Point2D
     public BigDecimal getGradient(
             Vector_Point2D p,
             int decimalPlacePrecision) {
-        BigDecimal xDiff0 = X.subtract(p.X);
-        BigDecimal yDiff0 = Y.subtract(p.Y);
+        BigDecimal xDiff0 = x.subtract(p.x);
+        BigDecimal yDiff0 = y.subtract(p.y);
         if (yDiff0.compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ONE;
         } else {
@@ -492,29 +485,29 @@ public class Vector_Point2D
 
     @Override
     public Vector_Envelope2D getEnvelope2D() {
-        return new Vector_Envelope2D(ve, X, Y);
+        return new Vector_Envelope2D(e, x, y);
     }
 
     @Override
     public final void applyDecimalPlacePrecision() {
-        X = X.setScale(
+        x = x.setScale(
                 getDecimalPlacePrecision(),
                 get_RoundingMode());
-        Y = Y.setScale(
+        y = y.setScale(
                 getDecimalPlacePrecision(),
                 get_RoundingMode());
     }
 
     /**
-     * double[] result = new double[2]; result[0] = this.X.doubleValue();
-     * result[1] = this.Y.doubleValue(); return result;
+     * double[] result = new double[2]; result[0] = this.x.doubleValue();
+ result[1] = this.y.doubleValue(); return result;
      *
      * @return double[}
      */
     public double[] to_doubleArray() {
         double[] result = new double[2];
-        result[0] = X.doubleValue();
-        result[1] = Y.doubleValue();
+        result[0] = x.doubleValue();
+        result[1] = y.doubleValue();
         return result;
     }
 }

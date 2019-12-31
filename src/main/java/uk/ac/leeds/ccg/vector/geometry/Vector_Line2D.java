@@ -1,30 +1,27 @@
-/**
- * Component of a library for handling spatial vector data. Copyright (C) 2009
- * Andy Turner, CCG, University of Leeds, UK.
+/*
+ * Copyright 2019 Andy Turner, University of Leeds.
  *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package uk.ac.leeds.ccg.vector.geometry;
 
 import java.math.BigDecimal;
 //import java.math.MathContext;
 //import org.ojalgo.constant.BigMath;
-import org.ojalgo.function.implementation.BigFunction;
-import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
-import uk.ac.leeds.ccg.andyt.vector.geometry.Vector_LineSegment2D;
-import uk.ac.leeds.ccg.andyt.vector.geometry.Vector_Point2D;
+import org.ojalgo.function.BigFunction;
+import uk.ac.leeds.ccg.vector.core.Vector_Environment;
+import uk.ac.leeds.ccg.vector.geometry.Vector_LineSegment2D;
+import uk.ac.leeds.ccg.vector.geometry.Vector_Point2D;
 //import org.ojalgo.function.implementation.FunctionSet;
 //import org.ojalgo.function.implementation.PrimitiveFunction;
 //import org.ojalgo.function.UnaryFunction;
@@ -53,7 +50,7 @@ public class Vector_Line2D extends Vector_AbstractGeometry2D {
     public Vector_Line2D(
             double angleClockwiseFromYAxis,
             Vector_Point2D a_Point2D) {
-        ve = a_Point2D.ve;
+       super(a_Point2D.e);
         this._AngleClockwiseFromYAxis = new BigDecimal(angleClockwiseFromYAxis);
         this._Point2D = new Vector_Point2D(a_Point2D);
         setDecimalPlacePrecision(
@@ -65,7 +62,7 @@ public class Vector_Line2D extends Vector_AbstractGeometry2D {
     public Vector_Line2D(
             BigDecimal a_AngleClockwiseFromYAxis,
             Vector_Point2D a_Point2D) {
-        ve = a_Point2D.ve;
+        super(a_Point2D.e);
         this._AngleClockwiseFromYAxis = new BigDecimal(a_AngleClockwiseFromYAxis.toString());
         this._Point2D = new Vector_Point2D(a_Point2D);
         setDecimalPlacePrecision(
@@ -83,9 +80,9 @@ public class Vector_Line2D extends Vector_AbstractGeometry2D {
         BigDecimal minusALot = new BigDecimal(Double.MIN_VALUE);
         BigDecimal plusALot = new BigDecimal(Double.MAX_VALUE);
         Vector_Point2D a_Point2D = new Vector_Point2D(
-                ve, minusALot, minusALot);
+                e, minusALot, minusALot);
         Vector_Point2D b_Point2D = new Vector_Point2D(
-                ve, plusALot, plusALot);
+                e, plusALot, plusALot);
         return new Vector_Envelope2D(a_Point2D, b_Point2D);
     }
 
@@ -100,13 +97,13 @@ public class Vector_Line2D extends Vector_AbstractGeometry2D {
         BigDecimal xdiff_BigDecimal
                 = BigFunction.TAN.invoke(_AngleClockwiseFromYAxis).multiply(ydiff_BigDecimal);
         result[0] = new Vector_Point2D(
-                ve,
-                this._Point2D.X.add(xdiff_BigDecimal),
-                this._Point2D.Y.add(ydiff_BigDecimal));
+                e,
+                this._Point2D.x.add(xdiff_BigDecimal),
+                this._Point2D.y.add(ydiff_BigDecimal));
         result[1] = new Vector_Point2D(
-                ve,
-                this._Point2D.X.subtract(xdiff_BigDecimal),
-                this._Point2D.Y.subtract(ydiff_BigDecimal));
+                e,
+                this._Point2D.x.subtract(xdiff_BigDecimal),
+                this._Point2D.y.subtract(ydiff_BigDecimal));
         return result;
     }
 
@@ -115,11 +112,11 @@ public class Vector_Line2D extends Vector_AbstractGeometry2D {
 //        BigDecimal ydiff_BigDecimal = new BigDecimal(ydiffExtremity);
 //        BigDecimal xdiff_BigDecimal = new BigDecimal(Math.tan(_AngleClockwiseFromYAxis.doubleValue()) * ydiffExtremity);
 //        result[0] = new Point2D(
-//                this._Point2D.X.add(xdiff_BigDecimal),
-//                this._Point2D.Y.add(ydiff_BigDecimal));
+//                this._Point2D.x.add(xdiff_BigDecimal),
+//                this._Point2D.y.add(ydiff_BigDecimal));
 //       result[1] = new Point2D(
-//                this._Point2D.X.subtract(xdiff_BigDecimal),
-//                this._Point2D.Y.subtract(ydiff_BigDecimal));
+//                this._Point2D.x.subtract(xdiff_BigDecimal),
+//                this._Point2D.y.subtract(ydiff_BigDecimal));
 //        return result;
 //    }
     public Vector_AbstractGeometry2D getIntersection(

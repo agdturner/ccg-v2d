@@ -1,20 +1,17 @@
-/**
- * Component of a library for handling spatial vector data. Copyright (C) 2009
- * Andy Turner, CCG, University of Leeds, UK.
+/*
+ * Copyright 2019 Andy Turner, University of Leeds.
  *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package uk.ac.leeds.ccg.vector.geometry;
 
@@ -23,7 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import uk.ac.leeds.ccg.grids.core.grid.Grids_AbstractGridNumber;
+import uk.ac.leeds.ccg.grids.d2.grid.Grids_GridNumber;
 import uk.ac.leeds.ccg.vector.core.Vector_Environment;
 
 /**
@@ -40,29 +37,26 @@ public class Vector_Network2D
     private static boolean HandleOutOfMemoryError = false;
     public HashMap<Vector_Point2D, HashSet<Connection>> Connections;
 
-    public Vector_Network2D(
-            Vector_Environment ve) {
-        this.ve = ve;
-        Connections = new HashMap<Vector_Point2D, HashSet<Connection>>();
+    public Vector_Network2D(Vector_Environment e) {
+        super(e);
+        Connections = new HashMap<>();
     }
 
-    public Vector_Network2D(
-            Vector_Environment ve,
-            Grids_AbstractGridNumber aGrid2DSquareCell) {
-        this.ve = ve;
-        Connections = new HashMap<Vector_Point2D, HashSet<Connection>>();
+    public Vector_Network2D(Vector_Environment ve, Grids_GridNumber g) {
+        super(ve);
+        Connections = new HashMap<>();
         Vector_Point2D a_Point2D;
         HashSet<Vector_Point2D> neighbouringPoints;
-        for (long row = 0; row < aGrid2DSquareCell.getNRows(); row++) {
-            for (long col = 0; col < aGrid2DSquareCell.getNCols(); col++) {
+        for (long row = 0; row < g.getNRows(); row++) {
+            for (long col = 0; col < g.getNCols(); col++) {
                 a_Point2D = new Vector_Point2D(
                         ve,
-                        aGrid2DSquareCell.getCellXBigDecimal(col),
-                        aGrid2DSquareCell.getCellYBigDecimal(row));
+                        g.getCellX(col),
+                        g.getCellY(row));
                 HashSet<Connection> a_Connection_HashSet = new HashSet<>();
                 neighbouringPoints = getNeighbouringPoints(
                         ve,
-                        aGrid2DSquareCell,
+                        g,
                         row,
                         col);
                 for (Vector_Point2D b_Point2D : neighbouringPoints) {
@@ -182,7 +176,7 @@ public class Vector_Network2D
                 }
             }
         } else {
-            HashSet<Connection> a_Connection_HashSet = new HashSet<Connection>();
+            HashSet<Connection> a_Connection_HashSet = new HashSet<>();
             a_Connection_HashSet.add(a_Connection);
             Connections.put(
                     toConnect_Point2D,
@@ -237,67 +231,54 @@ public class Vector_Network2D
     }
 
     public static HashSet<Vector_Point2D> getNeighbouringPoints(
-            Vector_Environment ve,
-            Grids_AbstractGridNumber g,
-            long row,
-            long col) {
-        HashSet<Vector_Point2D> result = new HashSet<Vector_Point2D>();
-        long arow;
-        long acol;
-        arow = row - 1;
-        acol = col - 1;
+            Vector_Environment ve, Grids_GridNumber g, long row, long col) {
+        HashSet<Vector_Point2D> r = new HashSet<>();
+        long arow = row - 1;
+        long acol = col - 1;
         if (g.isInGrid(arow, acol)) {
-            result.add(new Vector_Point2D(ve, g.getCellXBigDecimal(acol),
-                    g.getCellYBigDecimal(arow)));
+            r.add(new Vector_Point2D(ve, g.getCellX(acol), g.getCellY(arow)));
         }
         arow = row - 1;
         acol = col;
         if (g.isInGrid(arow, acol)) {
-            result.add(new Vector_Point2D(ve, g.getCellXBigDecimal(acol),
-                    g.getCellYBigDecimal(arow)));
+            r.add(new Vector_Point2D(ve, g.getCellX(acol), g.getCellY(arow)));
         }
         arow = row - 1;
         acol = col + 1;
         if (g.isInGrid(arow, acol)) {
-            result.add(new Vector_Point2D(ve, g.getCellXBigDecimal(acol),
-                    g.getCellYBigDecimal(arow)));
+            r.add(new Vector_Point2D(ve, g.getCellX(acol), g.getCellY(arow)));
         }
         arow = row;
         acol = col - 1;
         if (g.isInGrid(arow, acol)) {
-            result.add(new Vector_Point2D(ve, g.getCellXBigDecimal(acol),
-                    g.getCellYBigDecimal(arow)));
+            r.add(new Vector_Point2D(ve, g.getCellX(acol),  g.getCellY(arow)));
         }
         arow = row;
         acol = col + 1;
         if (g.isInGrid(arow, acol)) {
-            result.add(new Vector_Point2D(ve, g.getCellXBigDecimal(acol),
-                    g.getCellYBigDecimal(arow)));
+            r.add(new Vector_Point2D(ve, g.getCellX(acol), g.getCellY(arow)));
         }
         arow = row + 1;
         acol = col - 1;
         if (g.isInGrid(arow, acol)) {
-            result.add(new Vector_Point2D(ve, g.getCellXBigDecimal(acol),
-                    g.getCellYBigDecimal(arow)));
+            r.add(new Vector_Point2D(ve, g.getCellX(acol), g.getCellY(arow)));
         }
         arow = row + 1;
         acol = col;
         if (g.isInGrid(arow, acol)) {
-            result.add(new Vector_Point2D(ve, g.getCellXBigDecimal(acol),
-                    g.getCellYBigDecimal(arow)));
+            r.add(new Vector_Point2D(ve, g.getCellX(acol), g.getCellY(arow)));
         }
         arow = row + 1;
         acol = col + 1;
         if (g.isInGrid(arow, acol)) {
-            result.add(new Vector_Point2D(ve, g.getCellXBigDecimal(acol), 
-                    g.getCellYBigDecimal(arow)));
+            r.add(new Vector_Point2D(ve, g.getCellX(acol), g.getCellY(arow)));
         }
-        return result;
+        return r;
     }
 
     @Override
     public Vector_Envelope2D getEnvelope2D() {
-        Vector_Envelope2D result = new Vector_Envelope2D();
+        Vector_Envelope2D r = new Vector_Envelope2D(e);
         Vector_Point2D a_Point2D;
         Vector_Point2D b_Point2D;
         Set<Vector_Point2D> a_Connection_HashMap_Key_Set = Connections.keySet();
@@ -307,16 +288,16 @@ public class Vector_Network2D
         Connection a_Connection;
         while (a_Connection_HashMap_Key_Set_Iterator.hasNext()) {
             a_Point2D = a_Connection_HashMap_Key_Set_Iterator.next();
-            result = result.envelope(a_Point2D.getEnvelope2D());
+            r = r.envelope(a_Point2D.getEnvelope2D());
             a_Connection_HashMap_HashSet = Connections.get(a_Point2D);
             a_Connection_HashMap_HashSet_Iterator = a_Connection_HashMap_HashSet.iterator();
             while (a_Connection_HashMap_HashSet_Iterator.hasNext()) {
                 a_Connection = a_Connection_HashMap_HashSet_Iterator.next();
                 b_Point2D = a_Connection.Location;
-                result = result.envelope(b_Point2D.getEnvelope2D());
+                r = r.envelope(b_Point2D.getEnvelope2D());
             }
         }
-        return result;
+        return r;
     }
 
     @Override

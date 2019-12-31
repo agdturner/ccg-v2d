@@ -1,53 +1,44 @@
-/**
- * Component of a library for handling spatial vector data. Copyright (C) 2009
- * Andy Turner, CCG, University of Leeds, UK.
+/*
+ * Copyright 2019 Andy Turner, University of Leeds.
  *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package uk.ac.leeds.ccg.vector.geometry;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
-import uk.ac.leeds.ccg.andyt.vector.geometry.Vector_LineSegment2D;
-import uk.ac.leeds.ccg.andyt.vector.geometry.Vector_Point2D;
+import uk.ac.leeds.ccg.vector.core.Vector_Environment;
+import uk.ac.leeds.ccg.vector.geometry.Vector_LineSegment2D;
+import uk.ac.leeds.ccg.vector.geometry.Vector_Point2D;
 
 /**
  * A class for simplifying geometry in 2D. For any AbstractGeometry an
  * Vector_Envelope2D can be retrieved via getEnvelope(). It is to contain the
  * extreme values with respect to the X and Y axes.
  */
-public class Vector_Envelope2D
-        extends Vector_AbstractGeometry2D
-        implements Serializable {
+public class Vector_Envelope2D extends Vector_AbstractGeometry2D {
 
     public BigDecimal XMin;
     public BigDecimal XMax;
     public BigDecimal YMin;
     public BigDecimal YMax;
 
-    protected Vector_Envelope2D() {
-    }
-
     public Vector_Envelope2D(Vector_Environment ve) {
         super(ve);        
     }
 
-    public Vector_Envelope2D(
-            Vector_Envelope2D e) {
-        super(e.ve);
+    public Vector_Envelope2D(Vector_Envelope2D e) {
+        super(e.e);
         YMin = new BigDecimal(e.YMin.toString());
         YMax = new BigDecimal(e.YMax.toString());
         XMin = new BigDecimal(e.XMin.toString());
@@ -58,7 +49,7 @@ public class Vector_Envelope2D
 
     public Vector_Envelope2D(
             Vector_AbstractGeometry2D g) {
-        super(g.ve);
+        super(g.e);
         Vector_Envelope2D e = g.getEnvelope2D();
         XMin = e.XMin;
         XMax = e.XMin;
@@ -71,20 +62,20 @@ public class Vector_Envelope2D
     public Vector_Envelope2D(
             Vector_Point2D a,
             Vector_Point2D b) {
-        super(a.ve);
-        if (a.Y.compareTo(b.Y) == 1) {
-            YMin = b.Y;
-            YMax = a.Y;
+        super(a.e);
+        if (a.y.compareTo(b.y) == 1) {
+            YMin = b.y;
+            YMax = a.y;
         } else {
-            YMin = a.Y;
-            YMax = b.Y;
+            YMin = a.y;
+            YMax = b.y;
         }
-        if (a.X.compareTo(b.X) == 1) {
-            XMin = b.X;
-            XMax = a.X;
+        if (a.x.compareTo(b.x) == 1) {
+            XMin = b.x;
+            XMax = a.x;
         } else {
-            XMin = a.X;
-            XMax = b.X;
+            XMin = a.x;
+            XMax = b.x;
         }
         DecimalPlacePrecision = Math.max(
                 a.getDecimalPlacePrecision(),
@@ -109,7 +100,7 @@ public class Vector_Envelope2D
 
     public Vector_Envelope2D(
             Vector_AbstractGeometry2D[] g) {
-        super(g[0].ve);
+        super(g[0].e);
         Vector_Envelope2D e = g[0].getEnvelope2D();
         XMin = e.XMin;
         DecimalPlacePrecision = XMin.scale();
@@ -162,12 +153,12 @@ public class Vector_Envelope2D
 //        return result;
 //    }
     public Vector_Envelope2D envelope(Vector_Envelope2D e) {
-        Vector_Envelope2D result = new Vector_Envelope2D();
-        result.XMin = e.XMin.min(this.XMin);
-        result.YMin = e.YMin.min(this.YMin);
-        result.XMax = e.XMax.max(this.XMax);
-        result.YMax = e.YMax.max(this.YMax);
-        return result;
+        Vector_Envelope2D r = new Vector_Envelope2D(e.e);
+        r.XMin = e.XMin.min(this.XMin);
+        r.YMin = e.YMin.min(this.YMin);
+        r.XMax = e.XMax.max(this.XMax);
+        r.YMax = e.YMax.max(this.YMax);
+        return r;
     }
 
     /**
@@ -283,10 +274,10 @@ public class Vector_Envelope2D
     }
 
     public boolean getIntersects(Vector_Point2D p) {
-        return p.X.compareTo(XMin) != -1
-                && p.X.compareTo(XMax) != 1
-                && p.Y.compareTo(YMin) != -1
-                && p.Y.compareTo(YMax) != 1;
+        return p.x.compareTo(XMin) != -1
+                && p.x.compareTo(XMax) != 1
+                && p.y.compareTo(YMin) != -1
+                && p.y.compareTo(YMax) != 1;
     }
 
     public boolean getIntersects(

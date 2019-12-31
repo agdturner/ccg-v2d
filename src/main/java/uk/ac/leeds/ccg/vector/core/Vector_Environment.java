@@ -1,62 +1,88 @@
-/**
- * Component of a library for handling spatial vector data.
- * Copyright (C) 2009 Andy Turner, CCG, University of Leeds, UK.
+/*
+ * Copyright 2019 Andy Turner, University of Leeds.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package uk.ac.leeds.ccg.vector.core;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
+import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
+import uk.ac.leeds.ccg.generic.io.Generic_Path;
 import uk.ac.leeds.ccg.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.grids.core.Grids_Environment;
 import uk.ac.leeds.ccg.vector.io.Vector_Files;
+import uk.ac.leeds.ccg.vector.memory.Vector_Memory;
+import uk.ac.leeds.ccg.vector.memory.Vector_MemoryManager;
 import uk.ac.leeds.ccg.vector.projection.Vector_OSGBtoLatLon;
 
 /**
+ * Vector Environment.
  *
- * @author geoagdt
+ * @author Andy Turner
+ * @version 1.0.0
  */
-public class Vector_Environment {
+public class Vector_Environment extends Vector_MemoryManager
+        implements Vector_Memory {
 
-    public Vector_Files files;
+    private static final long serialVersionUID = 1L;
     
+    public Vector_Files files;
+
+    /**
+     * Generic Environment
+     */
     public final Generic_Environment env;
 
+    /**
+     * Grids Environment
+     */
     public final Grids_Environment ge;
-    
+
+    /**
+     * MathBigDecimal
+     */
     public Math_BigDecimal bd;
-    
+
     protected Vector_OSGBtoLatLon OSGBtoLatLon;
 
-    public Vector_Environment() throws IOException {
-        this(new Grids_Environment(new Generic_Environment()));
+    public Vector_Environment() throws IOException, Exception {
+        this(new Generic_Environment(new Generic_Defaults()));
     }
 
-    public Vector_Environment(Grids_Environment ge) throws IOException{
-        super();
-        this.ge = ge;
-        this.env = ge.env;
-        this.files = new Vector_Files(env.files.getDir());
-        bd = new Math_BigDecimal();
+    public Vector_Environment(Generic_Environment e) throws IOException, 
+            Exception {
+        this(e, e.files.getDir());
     }
     
-    public BigDecimal getRounded_BigDecimal(
-            BigDecimal toRoundBigDecimal,
+    public Vector_Environment(Generic_Environment e, Generic_Path dir)
+            throws IOException, Exception {
+        super();
+        this.env = e;
+        bd = new Math_BigDecimal();
+        initMemoryReserve(Default_Memory_Threshold, e);
+        Path p = e.getLogDir(Vector_Strings.s_vector);
+        e.files.setDir(p);
+        files = new Vector_Files(new Generic_Defaults(Paths.get(dir.toString(),
+                Vector_Strings.s_vector)));
+        ge = new Grids_Environment();
+    }
+            
+    public BigDecimal getRounded_BigDecimal(BigDecimal toRoundBigDecimal,
             BigDecimal toRoundToBigDecimal) {
         int scale = toRoundToBigDecimal.scale();
         BigDecimal r = toRoundBigDecimal.setScale(scale - 1, RoundingMode.FLOOR);
@@ -70,6 +96,21 @@ public class Vector_Environment {
             OSGBtoLatLon = new Vector_OSGBtoLatLon();
         }
         return OSGBtoLatLon;
+    }
+
+    @Override
+    public boolean swapSomeData() throws IOException, Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean swapSomeData(boolean hoome) throws IOException, Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean checkAndMaybeFreeMemory() throws IOException, Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

@@ -1,99 +1,38 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2019 Andy Turner, University of Leeds.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package uk.ac.leeds.ccg.vector.grids;
 
-import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
-import uk.ac.leeds.ccg.andyt.grids.core.Grids_2D_ID_long;
-import uk.ac.leeds.ccg.andyt.grids.core.Grids_Dimensions;
-import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_GridDouble;
-import uk.ac.leeds.ccg.andyt.grids.core.grid.chunk.Grids_GridChunkDoubleArrayFactory;
-import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_GridDoubleFactory;
-import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
-import uk.ac.leeds.ccg.andyt.grids.core.grid.stats.Grids_GridDoubleStats;
-import uk.ac.leeds.ccg.andyt.grids.io.Grids_ImageExporter;
-import uk.ac.leeds.ccg.andyt.grids.process.Grids_Processor;
-import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
+import uk.ac.leeds.ccg.grids.d2.Grids_2D_ID_long;
+import uk.ac.leeds.ccg.grids.d2.Grids_Dimensions;
+import uk.ac.leeds.ccg.grids.d2.grid.d.Grids_GridDouble;
+import uk.ac.leeds.ccg.vector.core.Vector_Environment;
 import uk.ac.leeds.ccg.vector.core.Vector_Object;
-import uk.ac.leeds.ccg.andyt.vector.geometry.Vector_LineSegment2D;
-import uk.ac.leeds.ccg.andyt.vector.geometry.Vector_Point2D;
+import uk.ac.leeds.ccg.vector.geometry.Vector_LineSegment2D;
 
 /**
- *
- * @author geoagdt
+ * Vector Line Grid
+ * 
+ * @author Andy Turner
+ * @version 1.0.0
  */
 public class Vector_LineGrid extends Vector_Object {
 
-    protected Vector_LineGrid() {
-    }
-
     protected Vector_LineGrid(Vector_Environment ve) {
         super(ve);
-    }
-
-    public static void main(String[] args) {
-        try {
-            Vector_Environment ve = new Vector_Environment();
-            new Vector_LineGrid(ve).run();
-        } catch (IOException ex) {
-            ex.printStackTrace(System.err);
-        }
-    }
-
-    public void run() throws IOException {
-        // Grids set up
-        BigDecimal tollerance;
-        tollerance = new BigDecimal("0.0000001");
-        double factor;
-        factor = 1;
-        File dir;
-        dir = new File(
-                "/scratch02/DigitalWelfare/Output/LCC/SHBE/");
-        double noDataValue;
-        noDataValue = -9999.0d;
-        boolean handleNoDataValue;
-        handleNoDataValue = true;
-        Grids_Environment ge = ve.ge;
-        Grids_GridChunkDoubleArrayFactory gcaf;
-        gcaf = new Grids_GridChunkDoubleArrayFactory();
-        Grids_GridDouble g;
-        long nRows = 100;
-        long nCols = 100;
-        // The xmin, ymin, xmax, ymax, and cellsize, .
-        Grids_Dimensions dimensions;
-        dimensions = new Grids_Dimensions(
-                new BigDecimal(0.0d),
-                new BigDecimal(0.0d),
-                new BigDecimal(100.0d),
-                new BigDecimal(100.0d),
-                new BigDecimal(1.0d));
-        Grids_GridDoubleStats gs = new Grids_GridDoubleStats(ge);
-
-        Grids_GridDoubleFactory gf = new Grids_GridDoubleFactory(ge,
-                ge.getProcessor().GridChunkDoubleFactory, gcaf, noDataValue,
-                (int) nRows, (int) nCols, dimensions, gs);
-        g = gf.create(gs, dir, gcaf, nRows, nCols, dimensions);
-        // Vector set up
-        BigDecimal x;
-        BigDecimal y;
-        x = new BigDecimal(30.2d);
-        y = new BigDecimal(30.5d);
-        Vector_Point2D p0 = new Vector_Point2D(ve, x, y);
-        x = new BigDecimal(40.5d);
-        y = new BigDecimal(20.5d);
-        Vector_Point2D p1 = new Vector_Point2D(ve, x, y);
-        Vector_LineSegment2D l = new Vector_LineSegment2D(p0, p1);
-        System.out.println("line " + l);
-        addToGrid(g, l, factor, tollerance, handleNoDataValue);
-        System.out.println(g.toString());
-        Grids_ImageExporter ie  = new Grids_ImageExporter(ge);
-        Grids_Processor gp  = new Grids_Processor(ge);
-        File fout = new File(dir, "test.PNG");
-        ie.toGreyScaleImage(g, gp, fout, "PNG");
     }
 
     /**
@@ -110,7 +49,7 @@ public class Vector_LineGrid extends Vector_Object {
             Vector_LineSegment2D l,
             double factor,
             BigDecimal tollerance,
-            boolean handleOutOfMemoryError) {
+            boolean handleOutOfMemoryError) throws Exception {
         int decimalPlacePrecision;
         decimalPlacePrecision = 10;
 //        int chunkNRows;
@@ -140,12 +79,11 @@ public class Vector_LineGrid extends Vector_Object {
         if (Vector_LineSegment2D.getIntersects(xmin, ymin, xmax, ymax, l,
                 tollerance, decimalPlacePrecision, handleOutOfMemoryError)) {
             long row;
-            row = g.getRow(l.Start.Y);
+            row = g.getRow(l.Start.y);
             long col;
-            col = g.getCol(l.Start.X);
+            col = g.getCol(l.Start.x);
             Grids_2D_ID_long cellID = g.getCellID(row, col);
-            Grids_Dimensions cellBounds;
-            cellBounds = g.getCellDimensions(halfCellsize, row, col);
+            BigDecimal[] cellBounds = g.getCellBounds(halfCellsize, row, col);
             Object[] lineToIntersectIntersectPointDirection;
             lineToIntersectIntersectPointDirection = Vector_LineSegment2D.getLineToIntersectLineRemainingDirection(
                     tollerance, xmin, ymin, xmax, ymax, l, directionIn, decimalPlacePrecision,
@@ -208,7 +146,7 @@ public class Vector_LineGrid extends Vector_Object {
                 }
                 //System.out.println("cellRowIndex " + cellRowIndex + ", cellColIndex " + cellColIndex);
                 cellID = g.getCellID(row, col);
-                cellBounds = g.getCellDimensions(halfCellsize, row, col);
+                cellBounds = g.getCellBounds(halfCellsize, row, col);
                 lineToIntersectIntersectPointDirection = Vector_LineSegment2D.getLineToIntersectLineRemainingDirection(
                         tollerance, xmin, ymin, xmax, ymax, remainingLine, directionOut, decimalPlacePrecision, handleOutOfMemoryError);
                 lineToIntersect = (Vector_LineSegment2D) lineToIntersectIntersectPointDirection[0];

@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.leeds.ccg.vector.core;
+package uk.ac.leeds.ccg.vector.memory;
 
-import uk.ac.leeds.ccg.generic.core.Generic_Strings;
+import uk.ac.leeds.ccg.generic.memory.Generic_Memory;
 
 /**
- * For commonly referred to Strings.
+ *
+ * @author Andy Turner
+ * @version 1.0.0
  */
-public class Vector_Strings extends Generic_Strings {
-    
-    public static String s_Vector = "Vector";
-    public static String s_vector = "vector";
-    
+public interface Vector_Memory extends Generic_Memory {
+
 }
