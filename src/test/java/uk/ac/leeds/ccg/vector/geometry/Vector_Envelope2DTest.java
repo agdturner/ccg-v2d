@@ -1,19 +1,29 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2019 Andy Turner, University of Leeds.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package uk.ac.leeds.ccg.vector.geometry;
 
-import uk.ac.leeds.ccg.vector.geometry.Vector_Envelope2D;
 import java.io.IOException;
 import java.math.BigDecimal;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import uk.ac.leeds.ccg.vector.core.Vector_Environment;
 
 /**
  *
@@ -26,69 +36,25 @@ public class Vector_Envelope2DTest {
     public Vector_Envelope2DTest() {
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws Exception {
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownClass() throws Exception {
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         try {
             env = new Vector_Environment();
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
-    }
-
-    /**
-     * Test of toString method, of class Vector_Envelope2D.
-     */
-    @Test
-    public void testToString() {
-//        System.out.println("toString");
-//        Vector_Envelope2D instance = new Vector_Envelope2D();
-//        String expResult = "";
-//        String result = instance.toString();
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of envelope method, of class Vector_Envelope2D.
-     */
-    @Test
-    public void testEnvelope_VectorEnvelope2D_VectorEnvelope2D() {
-//        System.out.println("envelope");
-//        Vector_Envelope2D a_Envelope2D = null;
-//        Vector_Envelope2D b_Envelope2D = null;
-//        Vector_Envelope2D expResult = null;
-//        Vector_Envelope2D result = Vector_Envelope2D.envelope(a_Envelope2D, b_Envelope2D);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of envelope method, of class Vector_Envelope2D.
-     */
-    @Test
-    public void testEnvelope_VectorEnvelope2D() {
-//        System.out.println("envelope");
-//        Vector_Envelope2D a_Envelope2D = null;
-//        Vector_Envelope2D instance = new Vector_Envelope2D();
-//        Vector_Envelope2D expResult = null;
-//        Vector_Envelope2D result = instance.envelope(a_Envelope2D);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
     }
 
     /**
@@ -118,81 +84,9 @@ public class Vector_Envelope2DTest {
             expResult = true;
             result = abe.getIntersects(a.getEnvelope2D());
             System.out.println("abe.getIntersects(a.getEnvelope2D()) " + result);
-            assertEquals(expResult, result);
+            Assertions.assertEquals(expResult, result);
             result = abe.getIntersects(be);
-            assertEquals(expResult, result);
+            Assertions.assertEquals(expResult, result);
         }
-    }
-
-    /**
-     * Test of getIntersectsFailFast method, of class Vector_Envelope2D.
-     */
-    @Test
-    public void testGetIntersects_VectorLineSegment2D() {
-//        System.out.println("getIntersectsFailFast");
-//        VectorLineSegment2D a_LineSegment2D = null;
-//        Vector_Envelope2D instance = new Vector_Envelope2D();
-//        int expResult = 0;
-//        int result = instance.getIntersectsFailFast(a_LineSegment2D);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getIntersectsFailFast method, of class Vector_Envelope2D.
-     */
-    @Test
-    public void testGetIntersects_VectorPoint2D() {
-//        System.out.println("getIntersectsFailFast");
-//        Vector_Point2D aPoint = null;
-//        Vector_Envelope2D instance = new Vector_Envelope2D();
-//        boolean expResult = false;
-//        boolean result = instance.getIntersectsFailFast(aPoint);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getIntersectsFailFast method, of class Vector_Envelope2D.
-     */
-    @Test
-    public void testGetIntersects_BigDecimal_BigDecimal() {
-//        System.out.println("getIntersectsFailFast");
-//        BigDecimal x = null;
-//        BigDecimal y = null;
-//        Vector_Envelope2D instance = new Vector_Envelope2D();
-//        boolean expResult = false;
-//        boolean result = instance.getIntersectsFailFast(x, y);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getEnvelope2D method, of class Vector_Envelope2D.
-     */
-    @Test
-    public void testGetEnvelope2D() {
-//        System.out.println("getEnvelope2D");
-//        Vector_Envelope2D instance = new Vector_Envelope2D();
-//        Vector_Envelope2D expResult = null;
-//        Vector_Envelope2D result = instance.getEnvelope2D();
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of applyDecimalPlacePrecision method, of class Vector_Envelope2D.
-     */
-    @Test
-    public void testApplyDecimalPlacePrecision() {
-//        System.out.println("applyDecimalPlacePrecision");
-//        Vector_Envelope2D instance = new Vector_Envelope2D();
-//        instance.applyDecimalPlacePrecision();
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
     }
 }
