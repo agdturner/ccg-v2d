@@ -23,7 +23,7 @@ import org.ojalgo.function.BigFunction;
  * @author Andy Turner
  * @version 1.0.0
  */
-public class Vector_Line2D extends Vector_AbstractGeometry2D {
+public class Vector_Line2D extends Vector_Geometry2D {
 
     /**
      * The angle clockwise from the Y-Axis which defines the line.
@@ -97,12 +97,12 @@ public class Vector_Line2D extends Vector_AbstractGeometry2D {
 //                this._Point2D.y.subtract(ydiff_BigDecimal));
 //        return result;
 //    }
-    public Vector_AbstractGeometry2D getIntersection(
+    public Vector_Geometry2D getIntersection(
             Vector_Line2D a_Line2D,
             double ydiffExtremity,
             BigDecimal tollerance,
             int a_DecimalPlacePrecision) {
-        Vector_AbstractGeometry2D result;
+        Vector_Geometry2D result;
         Vector_Point2D[] extremePointsOnThis = this.getExtremePointsOnLine(
                 ydiffExtremity);
         Vector_LineSegment2D extremePointsOnThis_LineSegment2D = new Vector_LineSegment2D(

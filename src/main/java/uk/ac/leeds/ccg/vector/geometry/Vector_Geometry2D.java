@@ -25,7 +25,7 @@ import uk.ac.leeds.ccg.vector.core.Vector_Object;
  * @author Andy Turner
  * @version 1.0.0
  */
-public abstract class Vector_AbstractGeometry2D extends Vector_Object {
+public abstract class Vector_Geometry2D extends Vector_Object {
 
     /**
      * Decimal places.
@@ -37,7 +37,7 @@ public abstract class Vector_AbstractGeometry2D extends Vector_Object {
      */
     public RoundingMode rm = RoundingMode.FLOOR;
 
-    public Vector_AbstractGeometry2D(Vector_Environment e) {
+    public Vector_Geometry2D(Vector_Environment e) {
         super(e);
     }
 

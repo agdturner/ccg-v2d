@@ -24,7 +24,7 @@ import uk.ac.leeds.ccg.vector.core.Vector_Environment;
  * @author Andy Turner
  * @version 1.0.0
  */
-public class Vector_Envelope2D extends Vector_AbstractGeometry2D {
+public class Vector_Envelope2D extends Vector_Geometry2D {
 
     /**
      * The minimum x-coordinate.
@@ -69,7 +69,7 @@ public class Vector_Envelope2D extends Vector_AbstractGeometry2D {
     /**
      * @param g A geometry.
      */
-    public Vector_Envelope2D(Vector_AbstractGeometry2D g) {
+    public Vector_Envelope2D(Vector_Geometry2D g) {
         super(g.e);
         Vector_Envelope2D env = g.getEnvelope2D();
         xMin = env.xMin;
@@ -121,7 +121,7 @@ public class Vector_Envelope2D extends Vector_AbstractGeometry2D {
      *
      * @param g The geometries.
      */
-    public Vector_Envelope2D(Vector_AbstractGeometry2D[] g) {
+    public Vector_Envelope2D(Vector_Geometry2D[] g) {
         super(g[0].e);
         Vector_Envelope2D env = g[0].getEnvelope2D();
         xMin = env.xMin;

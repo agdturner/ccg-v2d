@@ -30,7 +30,7 @@ import uk.ac.leeds.ccg.vector.core.Vector_Environment;
  * segment explicitly has a direction. Two Vector_LineSegment2D instances are
  * regarded as equal iff their start and end points are the same.
  */
-public class Vector_LineSegment2D extends Vector_AbstractGeometry2D
+public class Vector_LineSegment2D extends Vector_Geometry2D
         implements Comparable, Serializable {
 
     public Vector_Point2D start;
@@ -243,7 +243,7 @@ public class Vector_LineSegment2D extends Vector_AbstractGeometry2D
      * @return {@code true} if {@code l} intersects this.
      */
     public boolean getIntersects(Vector_LineSegment2D l, BigDecimal t, int dpp) {
-        Vector_AbstractGeometry2D intersection = getIntersection(l, t, dpp);
+        Vector_Geometry2D intersection = getIntersection(l, t, dpp);
         return intersection != null;
     }
 
@@ -386,7 +386,7 @@ public class Vector_LineSegment2D extends Vector_AbstractGeometry2D
      * handle arithmetic exceptions and provide another method into which a
      * MathContext can be passed...
      */
-    public Vector_AbstractGeometry2D getIntersection(Vector_LineSegment2D l,
+    public Vector_Geometry2D getIntersection(Vector_LineSegment2D l,
             BigDecimal t, int dpp) {
         // Special cases
         if (this.start.y.compareTo(l.start.y) == 1
@@ -1094,7 +1094,7 @@ public class Vector_LineSegment2D extends Vector_AbstractGeometry2D
         result = new Object[2];
         Vector_LineSegment2D lineToIntersect = null;
         Vector_Point2D intersectPoint = null;
-        Vector_AbstractGeometry2D intersection;
+        Vector_Geometry2D intersection;
         intersection = l.getIntersection(section, tollerance, a_DecimalPlacePrecision);
         if (intersection instanceof Vector_Point2D) {
             intersectPoint = (Vector_Point2D) intersection;

@@ -27,7 +27,7 @@ import uk.ac.leeds.ccg.vector.core.Vector_Environment;
  * @author Andy Turner
  * @version 1.0.0
  */
-public class Vector_Point2D extends Vector_AbstractGeometry2D
+public class Vector_Point2D extends Vector_Geometry2D
         implements Comparable, Serializable {
 
     /**

@@ -119,14 +119,14 @@ public class Vector_RenderNetwork2D extends Vector_AbstractRender {
         Vector_Network2D a_Network2D;
         while (a_Iterator.hasNext()) {
             a_Network2D = (Vector_Network2D) a_Iterator.next();
-            Set<Vector_Point2D> keys = a_Network2D.Connections.keySet();
+            Set<Vector_Point2D> keys = a_Network2D.connections.keySet();
             Iterator bIterator;
             bIterator = keys.iterator();
             Vector_Point2D a_Point2D;
             HashSet<Connection> a_Connection_HashSet;
             while (bIterator.hasNext()) {
                 a_Point2D = (Vector_Point2D) bIterator.next();
-                a_Connection_HashSet = (HashSet<Connection>) a_Network2D.Connections.get(a_Point2D);
+                a_Connection_HashSet = (HashSet<Connection>) a_Network2D.connections.get(a_Point2D);
                 draw(
                         a_Point2D,
                         a_Connection_HashSet);
@@ -176,14 +176,14 @@ public class Vector_RenderNetwork2D extends Vector_AbstractRender {
         aIterator = a_Connection_HashSet.iterator();
         while (aIterator.hasNext()) {
             Connection a_Connection = (Connection) aIterator.next();
-            //bx = (int) a_Connection.Location.x.intValue() * _Scale;
-            //by = (int) a_Connection.Location.y.intValue() * _Scale;
-            //bx = (int) (a_Connection.Location.x.doubleValue() * _Scale);
-            //by = (int) (a_Connection.Location.y.doubleValue() * _Scale);
-            bx = ((a_Connection.Location.x.subtract(Envelope.xMin)).divide
+            //bx = (int) a_Connection.location.x.intValue() * _Scale;
+            //by = (int) a_Connection.location.y.intValue() * _Scale;
+            //bx = (int) (a_Connection.location.x.doubleValue() * _Scale);
+            //by = (int) (a_Connection.location.y.doubleValue() * _Scale);
+            bx = ((a_Connection.location.x.subtract(Envelope.xMin)).divide
                     (_XRange_BigDecimal,10,RoundingMode.DOWN).multiply
                 (width_BigDecimal)).intValue();
-        by = ((a_Connection.Location.y.subtract(Envelope.yMin)).divide
+        by = ((a_Connection.location.y.subtract(Envelope.yMin)).divide
                 (_YRange_BigDecimal,10,RoundingMode.DOWN).multiply
                 (height_BigDecimal)).intValue();
             //this._Graphics2D.drawLine(ax, ay, bx, by);

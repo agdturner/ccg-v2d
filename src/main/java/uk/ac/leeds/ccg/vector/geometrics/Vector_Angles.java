@@ -32,8 +32,7 @@ public class Vector_Angles {
      * @param p Points for which the angles to the Y-Axis are wanted.
      * @return Angles to the Y-Axis for each point in {@code p}.
      */
-    public static double[] getAnglesToYAxisClockwise_doubleArray(
-            Vector_Point2D[] p) {
+    public static double[] getAnglesToYAxisClockwise(Vector_Point2D[] p) {
         double[] r = new double[p.length];
         for (int i = 0; i < p.length - 1; i++) {
             r[i] = p[i].getAngle_double(p[i + 1]);
@@ -43,23 +42,17 @@ public class Vector_Angles {
     }
 
     /**
-     * @param lr A line ring for which the angles to the YAxis are wanted.
-     * @return The Clockwise inside angles for a_LineRing.
+     * @param lr A line ring for which the angles to the Y-Axis are wanted.
+     * @return The Clockwise inside angles for {@code lr}.
      */
-    public static double[] getInsideAnglesClockwise_doubleArray(
-            Vector_Point2D[] lr) {
+    public static double[] getInsideAnglesClockwise(Vector_Point2D[] lr) {
         double[] r = new double[lr.length];
-        r[0] = getInsideAngleClockwise_doubleArray(lr[lr.length - 1], lr[0], lr[1]);
+        r[0] = getInsideAngleClockwise(lr[lr.length - 1], lr[0], lr[1]);
         for (int i = 1; i < lr.length - 1; i++) {
-            r[i] = getInsideAngleClockwise_doubleArray(
-                    lr[i - 1],
-                    lr[i],
-                    lr[i + 1]);
+            r[i] = getInsideAngleClockwise(lr[i - 1], lr[i], lr[i + 1]);
         }
-        r[lr.length - 1] = getInsideAngleClockwise_doubleArray(
-                lr[lr.length - 2],
-                lr[lr.length - 1],
-                lr[0]);
+        r[lr.length - 1] = getInsideAngleClockwise(lr[lr.length - 2],
+                lr[lr.length - 1], lr[0]);
         return r;
     }
 
@@ -70,30 +63,25 @@ public class Vector_Angles {
      * @return The inside Angle at b_Point for a Linear Ring assuming the ring
      * is clockwise and the Linear Ring Sequence is a_Point, b_Point, c_Point.
      */
-    public static double getInsideAngleClockwise_doubleArray(
-            Vector_Point2D a,
-            Vector_Point2D b,
-            Vector_Point2D c) {
+    public static double getInsideAngleClockwise(Vector_Point2D a,
+            Vector_Point2D b, Vector_Point2D c) {
         double angle_aby = (Math.PI * 2.0d) - a.getAngle_double(b);
-        //double angle_aby_deg = getRadToDeg_double(angle_aby);
+        //double angle_aby_deg = getRadToDeg(angle_aby);
         double angle_bcy = Math.PI - b.getAngle_double(c);
-        //double angle_bcy_deg = getRadToDeg_double(angle_bcy);
-        double result = angle_bcy - angle_aby;
-        if (result < 0) {
-            result = (Math.PI * 2.0d) + result;
+        //double angle_bcy_deg = getRadToDeg(angle_bcy);
+        double r = angle_bcy - angle_aby;
+        if (r < 0) {
+            r = (Math.PI * 2.0d) + r;
         }
-        //double result_deg = getRadToDeg_double(result);
-        return result;
+        //double result_deg = getRadToDeg(result);
+        return r;
     }
 
     /**
-     * This is a basic operation working with double precision.
-     *
-     * @param angleInRadians The angleInRadians to be returned in degrees.
-     * @return The angle in degrees for the angleInRadians.
+     * @param a The angle in radians to be returned in degrees.
+     * @return The angle {@code a} in degrees.
      */
-    public static double getRadToDeg_double(
-            double angleInRadians) {
-        return (angleInRadians / Math.PI) * 180.0d;
+    public static double getRadToDeg(double a) {
+        return (a / Math.PI) * 180.0d;
     }
 }
