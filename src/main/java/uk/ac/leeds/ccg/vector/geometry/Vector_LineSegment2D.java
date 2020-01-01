@@ -30,41 +30,35 @@ import uk.ac.leeds.ccg.vector.core.Vector_Environment;
  * segment explicitly has a direction. Two Vector_LineSegment2D instances are
  * regarded as equal iff their start and end points are the same.
  */
-public class Vector_LineSegment2D
-        extends Vector_AbstractGeometry2D
+public class Vector_LineSegment2D extends Vector_AbstractGeometry2D
         implements Comparable, Serializable {
 
-    public Vector_Point2D Start;
-    public Vector_Point2D End;
+    public Vector_Point2D start;
+    public Vector_Point2D end;
 
     /**
-     * Creates a default Vector_LineSegment2D with: Start = null; End = null;
+     * Creates a default Vector_LineSegment2D with: start = null; end = null;
      *
-     * @param ve
+     * @param e Vector environment.
      */
-    public Vector_LineSegment2D(
-            Vector_Environment ve) {
-        super(ve);
+    public Vector_LineSegment2D(Vector_Environment e) {
+        super(e);
     }
 
     /**
-     * Creates a Vector_LineSegment2D with: this.Start = new
-     * Point2D(_StartPoint); this.End = new Point2D(_EndPoint);
-     * setDecimalPlacePrecision(Math.max( Start.getDecimalPlacePrecision(),
-     * End.getDecimalPlacePrecision()));
+     * Creates a Vector_LineSegment2D with: this.start = new
+     * Point2D(_StartPoint); this.end = new Point2D(_EndPoint);
+     * setDecimalPlacePrecision(Math.max( start.getDecimalPlacePrecision(),
+     * end.getDecimalPlacePrecision()));
      *
      * @param start Vector_Point2D
      * @param end Vector_Point2D
      */
-    public Vector_LineSegment2D(
-            Vector_Point2D start,
-            Vector_Point2D end) {
+    public Vector_LineSegment2D(Vector_Point2D start, Vector_Point2D end) {
         super(start.e);
-        Start = new Vector_Point2D(start);
-        End = new Vector_Point2D(end);
-        DecimalPlacePrecision = Math.max(
-                Start.getDecimalPlacePrecision(),
-                End.getDecimalPlacePrecision());
+        this.start = new Vector_Point2D(start);
+        this.end = new Vector_Point2D(end);
+        dp = Math.max(this.start.dp, this.end.dp);
     }
 
     /**
@@ -81,9 +75,9 @@ public class Vector_LineSegment2D
             Vector_Point2D end,
             int decimalPlacePrecision) {
         super(start.e);
-        Start = new Vector_Point2D(start, decimalPlacePrecision);
-        End = new Vector_Point2D(end, decimalPlacePrecision);
-        DecimalPlacePrecision = decimalPlacePrecision;
+        this.start = new Vector_Point2D(start, decimalPlacePrecision);
+        this.end = new Vector_Point2D(end, decimalPlacePrecision);
+        dp = decimalPlacePrecision;
     }
 
     /**
@@ -93,16 +87,16 @@ public class Vector_LineSegment2D
     public Vector_LineSegment2D(
             Vector_LineSegment2D l) {
         super(l.e);
-        this.Start = new Vector_Point2D(l.Start);
-        this.End = new Vector_Point2D(l.End);
-        this.DecimalPlacePrecision = l.DecimalPlacePrecision;
+        this.start = new Vector_Point2D(l.start);
+        this.end = new Vector_Point2D(l.end);
+        this.dp = l.dp;
     }
 
     @Override
     public String toString() {
         return "LineSegment2D(" + super.toString()
-                + "Start(" + Start.toString() + ")"
-                + "End(" + End.toString() + "))";
+                + "Start(" + start.toString() + ")"
+                + "End(" + end.toString() + "))";
     }
 
     /**
@@ -115,9 +109,9 @@ public class Vector_LineSegment2D
     public int compareTo(Object o) {
         if (o instanceof Vector_LineSegment2D) {
             Vector_LineSegment2D a_LineSegment2D = (Vector_LineSegment2D) o;
-            int compareStart = Start.compareTo(a_LineSegment2D.Start);
+            int compareStart = start.compareTo(a_LineSegment2D.start);
             if (compareStart == 0) {
-                return Start.compareTo(a_LineSegment2D.Start);
+                return start.compareTo(a_LineSegment2D.start);
             } else {
                 return compareStart;
             }
@@ -132,7 +126,7 @@ public class Vector_LineSegment2D
      */
     public BigDecimal getLength(int a_DecimalPlacePrecision) {
         BigDecimal length;
-        length = Start.getDistance(End,
+        length = start.getDistance(end,
                 a_DecimalPlacePrecision);
         return length;
     }
@@ -145,8 +139,8 @@ public class Vector_LineSegment2D
     @Override
     public Vector_Envelope2D getEnvelope2D() {
         return new Vector_Envelope2D(
-                Start,
-                End);
+                start,
+                end);
     }
 
     /**
@@ -155,23 +149,13 @@ public class Vector_LineSegment2D
      * @param l
      * @param tollerance
      * @param dp
-     * @param hoome
      * @return true iff l intersects g
      */
     public static boolean getIntersects(Grids_GridNumber g,
-            Vector_LineSegment2D l, BigDecimal tollerance, int dp,
-            boolean hoome) {
-        Grids_Dimensions dimensions;
-        dimensions = g.getDimensions();
-        return getIntersects(
-                dimensions.getXMin(),
-                dimensions.getYMin(),
-                dimensions.getXMax(),
-                dimensions.getYMax(),
-                l,
-                tollerance,
-                dp,
-                hoome);
+            Vector_LineSegment2D l, BigDecimal tollerance, int dp) {
+        Grids_Dimensions dim = g.getDimensions();
+        return getIntersects(dim.getXMin(), dim.getYMin(), dim.getXMax(),
+                dim.getYMax(), l, tollerance, dp);
     }
 
     /**
@@ -181,56 +165,35 @@ public class Vector_LineSegment2D
      * @param ymax
      * @param l
      * @param tollerance
-     * @param a_DecimalPlacePrecision
-     * @param handleOutOfMemoryError
+     * @param dp Decimal places for BigDecimal arithmetic.
      * @return true iff l intersects the envelope defined by minx, miny, maxx,
      * maxy.
      */
-    public static boolean getIntersects(
-            BigDecimal xmin,
-            BigDecimal ymin,
-            BigDecimal xmax,
-            BigDecimal ymax,
-            Vector_LineSegment2D l,
-            BigDecimal tollerance,
-            int a_DecimalPlacePrecision,
-            boolean handleOutOfMemoryError) {
-        if (l.Start.x.compareTo(xmin) != -1
-                && l.Start.x.compareTo(xmax) != 1
-                && l.Start.y.compareTo(ymin) != -1
-                && l.Start.y.compareTo(ymax) != 1) {
+    public static boolean getIntersects(BigDecimal xmin, BigDecimal ymin,
+            BigDecimal xmax, BigDecimal ymax, Vector_LineSegment2D l,
+            BigDecimal tollerance, int dp) {
+        if (l.start.x.compareTo(xmin) != -1 && l.start.x.compareTo(xmax) != 1
+                && l.start.y.compareTo(ymin) != -1
+                && l.start.y.compareTo(ymax) != 1) {
             return true;
         }
-        if (l.End.x.compareTo(xmin) != -1
-                && l.End.x.compareTo(xmax) != 1
-                && l.End.y.compareTo(ymin) != -1
-                && l.End.y.compareTo(ymax) != 1) {
+        if (l.end.x.compareTo(xmin) != -1 && l.end.x.compareTo(xmax) != 1
+                && l.end.y.compareTo(ymin) != -1
+                && l.end.y.compareTo(ymax) != 1) {
             return true;
         }
-        Vector_Point2D bottomLeft;
-        bottomLeft = new Vector_Point2D(
-                l.e,
-                xmin,
-                ymin);
-        Vector_Point2D bottomRight;
-        bottomRight = new Vector_Point2D(
-                l.e, xmax, ymin);
+        Vector_Point2D bottomLeft = new Vector_Point2D(l.e, xmin, ymin);
+        Vector_Point2D bottomRight = new Vector_Point2D(l.e, xmax, ymin);
         // Check bottom
-        Vector_LineSegment2D section;
-        section = new Vector_LineSegment2D(
-                bottomLeft, bottomRight, a_DecimalPlacePrecision);
-        if (l.getIntersects(section, tollerance, a_DecimalPlacePrecision, handleOutOfMemoryError)) {
+        Vector_LineSegment2D section = new Vector_LineSegment2D(
+                bottomLeft, bottomRight, dp);
+        if (l.getIntersects(section, tollerance, dp)) {
             return true;
         }
-        Vector_Point2D topRight;
-        topRight = new Vector_Point2D(
-                l.e,
-                xmax,
-                ymax);
+        Vector_Point2D topRight = new Vector_Point2D(l.e, xmax, ymax);
         // Check right
-        section = new Vector_LineSegment2D(
-                bottomRight, topRight, a_DecimalPlacePrecision);
-        if (l.getIntersects(section, tollerance, a_DecimalPlacePrecision, handleOutOfMemoryError)) {
+        section = new Vector_LineSegment2D(bottomRight, topRight, dp);
+        if (l.getIntersects(section, tollerance, dp)) {
             return true;
         }
         Vector_Point2D topLeft;
@@ -238,30 +201,30 @@ public class Vector_LineSegment2D
                 l.e, xmin, ymax);
         // Check left
         section = new Vector_LineSegment2D(
-                bottomLeft, topLeft, a_DecimalPlacePrecision);
-        if (l.getIntersects(section, tollerance, a_DecimalPlacePrecision, handleOutOfMemoryError)) {
+                bottomLeft, topLeft, dp);
+        if (l.getIntersects(section, tollerance, dp)) {
             return true;
         }
         // Check top
         Vector_LineSegment2D top;
         section = new Vector_LineSegment2D(
-                topLeft, topRight, a_DecimalPlacePrecision);
-        return l.getIntersects(section, tollerance, a_DecimalPlacePrecision, handleOutOfMemoryError);
+                topLeft, topRight, dp);
+        return l.getIntersects(section, tollerance, dp);
     }
 
-    public static boolean getIntersects(
-            Vector_LineSegment2D l,
-            Vector_LineSegment2D[] lines,
-            BigDecimal tollerance,
-            int decimalPlacePrecision,
-            boolean handleOutOfMemoryError) {
+    /**
+     *
+     * @param l The line
+     * @param lines
+     * @param t tolerance
+     * @param dpp decimal place precision
+     * @return
+     */
+    public static boolean getIntersects(Vector_LineSegment2D l,
+            Vector_LineSegment2D[] lines, BigDecimal t,
+            int dpp) {
         for (int i = 0; i < lines.length; i++) {
-            boolean intersects;
-            intersects = l.getIntersects(
-                    lines[i],
-                    tollerance,
-                    decimalPlacePrecision,
-                    handleOutOfMemoryError);
+            boolean intersects = l.getIntersects(lines[i], t, dpp);
             if (intersects) {
                 return true;
             }
@@ -270,26 +233,17 @@ public class Vector_LineSegment2D
     }
 
     /**
-     * Intersection done by first seeing if Envelope intersects....
+     * Intersection done by first seeing if envelope intersects.
      *
-     * @param l A Vector_LineSegment2D to test.
-     * @param tollerance
-     * @param decimalPlacePrecision The decimal place precision to be used for
-     * this.
-     * @param handleOutOfMemoryError
+     * @param l A line segment to test.
+     * @param t tolerance
+     * @param dpp decimalPlacePrecision The decimal place precision to be used
+     * for this.
      *
-     * @return True iff a_LineSegment2D getIntersects this.
+     * @return {@code true} if {@code l} intersects this.
      */
-    public boolean getIntersects(
-            Vector_LineSegment2D l,
-            BigDecimal tollerance,
-            int decimalPlacePrecision,
-            boolean handleOutOfMemoryError) {
-        Vector_AbstractGeometry2D intersection;
-        intersection = getIntersection(
-                l,
-                tollerance,
-                decimalPlacePrecision);
+    public boolean getIntersects(Vector_LineSegment2D l, BigDecimal t, int dpp) {
+        Vector_AbstractGeometry2D intersection = getIntersection(l, t, dpp);
         return intersection != null;
     }
 
@@ -297,39 +251,23 @@ public class Vector_LineSegment2D
      * For optimisation reasons, intersection done by first seeing if there is
      * Envelope intersection...
      *
-     * @param l Vector_LineSegment2D to test for intersection.
+     * @param l line segment to test for intersection.
      * @param ignoreThisStartPoint2D if true then if
-     * this.Start.getIntersects(a_LineSegment2D) return false
-     * @param tollerance
-     * @param decimalPlacePrecision The decimal place precision to be used for
-     * this.
-     * @param handleOutOfMemoryError
-     * @return true iff a_LineSegment2D getIntersects this.
+     * this.start.getIntersects(a_LineSegment2D) return false
+     * @param t tolerance
+     * @param dpp The decimal place precision to be used for this.
+     * @return {@code true} if {@code l} intersects this.
      */
-    public boolean getIntersects(
-            Vector_LineSegment2D l,
-            boolean ignoreThisStartPoint2D,
-            BigDecimal tollerance,
-            int decimalPlacePrecision,
-            boolean handleOutOfMemoryError) {
+    public boolean getIntersects(Vector_LineSegment2D l,
+            boolean ignoreThisStartPoint2D, BigDecimal t, int dpp) {
         if (ignoreThisStartPoint2D) {
-            if (this.Start.getIntersects(
-                    l,
-                    decimalPlacePrecision)) {
+            if (this.start.getIntersects(l, dpp)) {
                 return false;
             } else {
-                return getIntersects(
-                        l,
-                        tollerance,
-                        decimalPlacePrecision,
-                        handleOutOfMemoryError);
+                return getIntersects(l, t, dpp);
             }
         } else {
-            return getIntersects(
-                    l,
-                    tollerance,
-                    decimalPlacePrecision,
-                    handleOutOfMemoryError);
+            return getIntersects(l, t, dpp);
         }
     }
 
@@ -337,83 +275,76 @@ public class Vector_LineSegment2D
      * Intersection done by calculating angle or gradient of the line and
      * comparing this with that of a_Point.
      *
-     * @param a_Point2D A Vector_Point2D to test for intersection.
-     * @param a_DecimalPlacePrecision The decimal place precision to be used for
-     * this.
-     * @return true iff a_Point2D getIntersects this.
+     * @param p A point to test for intersection.
+     * @param dpp The decimal place precision to be used for * this.
+     * @return {@code true} iff {@code p} intersects this.
      */
-    public boolean getIntersects(
-            Vector_Point2D a_Point2D,
-            int a_DecimalPlacePrecision) {
-        if (getEnvelope2D().getIntersects(a_Point2D) == false) {
+    public boolean getIntersects(Vector_Point2D p, int dpp) {
+        if (getEnvelope2D().getIntersects(p) == false) {
             return false;
         }
-        if (Start.y.compareTo(End.y) == -1) {
+        if (start.y.compareTo(end.y) == -1) {
             // StartPoint is Below EndPoint
-            if (Start.x.compareTo(End.x) == -1) {
+            if (start.x.compareTo(end.x) == -1) {
                 // StartPoint is Left of EndPoint
-                return isOnGradient(
-                        a_Point2D,
-                        a_DecimalPlacePrecision);
+                return isOnGradient(p, dpp);
             } else {
-                if (Start.x.compareTo(End.x) == 0) {
+                if (start.x.compareTo(end.x) == 0) {
                     // StartPoint has same x as EndPoint
                     return true;
                 } else {
                     // StartPoint is Right of EndPoint
-                    return isOnGradient(
-                            a_Point2D,
-                            a_DecimalPlacePrecision);
+                    return isOnGradient(p, dpp);
                 }
             }
         } else {
-            if (Start.y.compareTo(End.y) == 0) {
+            if (start.y.compareTo(end.y) == 0) {
                 // StartPoint has same y as EndPoint
                 return true;
             } else {
                 // StartPoint is Above EndPoint
-                if (Start.x.compareTo(End.x) == -1) {
+                if (start.x.compareTo(end.x) == -1) {
                     // StartPoint is Left of EndPoint
-                    return isOnGradient(
-                            a_Point2D,
-                            a_DecimalPlacePrecision);
+                    return isOnGradient(p, dpp);
                 } else {
-                    if (Start.x.compareTo(End.x) == 0) {
+                    if (start.x.compareTo(end.x) == 0) {
                         // StartPoint has same x as EndPoint
                         return true;
                     } else {
                         // StartPoint is Right of EndPoint
-                        return isOnGradient(
-                                a_Point2D,
-                                a_DecimalPlacePrecision);
+                        return isOnGradient(p, dpp);
                     }
                 }
             }
         }
     }
 
-    protected BigDecimal getGradient(
-            int a_DecimalPlacePrecision) {
-        return Start.getGradient(End,
-                a_DecimalPlacePrecision);
+    /**
+     * @param dpp decimal place precision
+     * @return The gradient.
+     */
+    protected BigDecimal getGradient(int dpp) {
+        return start.getGradient(end, dpp);
     }
 
-    protected boolean isOnGradient(
-            Vector_Point2D a_Point2D,
-            int a_DecimalPlacePrecision) {
-        //Point2D b_Point2D = a_Point2D.
-        //MathContext a_MathContext = new MathContext(DecimalPlacePrecision_Integer + 5);
-        BigDecimal xDiff0 = End.x.subtract(Start.x);
-        BigDecimal yDiff0 = End.y.subtract(Start.y);
-        BigDecimal xDiff1 = a_Point2D.x.subtract(Start.x);
-        BigDecimal yDiff1 = a_Point2D.y.subtract(Start.y);
+    /**
+     * 
+     * @param p The point.
+     * @param dpp decimal place precision
+     * @return 
+     */
+    protected boolean isOnGradient(Vector_Point2D p, int dpp) {
+        BigDecimal xDiff0 = end.x.subtract(start.x);
+        BigDecimal yDiff0 = end.y.subtract(start.y);
+        BigDecimal xDiff1 = p.x.subtract(start.x);
+        BigDecimal yDiff1 = p.y.subtract(start.y);
         BigDecimal gradient0;
         if (yDiff0.compareTo(BigDecimal.ZERO) == 0) {
             return yDiff1.compareTo(BigDecimal.ZERO) == 0;
         } else {
             gradient0 = xDiff0.divide(
                     yDiff0,
-                    a_DecimalPlacePrecision + 2, // + 2 sufficient?
+                    dpp + 2, // + 2 sufficient?
                     RoundingMode.CEILING);
         }
         BigDecimal gradient1;
@@ -422,35 +353,32 @@ public class Vector_LineSegment2D
         } else {
             gradient1 = xDiff1.divide(
                     yDiff1,
-                    a_DecimalPlacePrecision + 2, // + 2 sufficient?
+                    dpp + 2, // + 2 sufficient?
                     RoundingMode.CEILING);
         }
         return gradient0.compareTo(gradient1) == 0;
     }
 
     public Vector_LineSegment2D getOrderedLineSegment2D() {
-        if (Start.y.compareTo(End.y) == -1) {
+        if (start.y.compareTo(end.y) == -1) {
             return new Vector_LineSegment2D(this);
         } else {
-            if (Start.y.compareTo(End.y) == 0) {
-                if (Start.x.compareTo(End.x) != 1) {
+            if (start.y.compareTo(end.y) == 0) {
+                if (start.x.compareTo(end.x) != 1) {
                     return new Vector_LineSegment2D(this);
                 }
             }
         }
-        return new Vector_LineSegment2D(
-                this.End,
-                this.Start,
-                this.getDecimalPlacePrecision());
+        return new Vector_LineSegment2D(this.end, this.start, dp);
     }
 
     /**
-     * Intersection method adapted from
-     * <a href="http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline2d/">http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline2d/</a>
+     * Intersection method adapted from:
+     * http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline2d/
      *
      * @param l Vector_LineSegment2D
-     * @param tollerance
-     * @param decimalPlacePrecision Precision...
+     * @param t tolerance
+     * @param dpp decimalPlacePrecision Precision...
      * @return null if this does not intersect a_LineSegment2D; a Point2D if
      * this getIntersects a_LineSegment2D at a point; and, a
      * Vector_LineSegment2D if this getIntersects a_LineSegment2D in a line.
@@ -458,87 +386,76 @@ public class Vector_LineSegment2D
      * handle arithmetic exceptions and provide another method into which a
      * MathContext can be passed...
      */
-    public Vector_AbstractGeometry2D getIntersection(
-            Vector_LineSegment2D l,
-            BigDecimal tollerance,
-            int decimalPlacePrecision) {
+    public Vector_AbstractGeometry2D getIntersection(Vector_LineSegment2D l,
+            BigDecimal t, int dpp) {
         // Special cases
-        if (this.Start.y.compareTo(l.Start.y) == 1
-                && this.Start.y.compareTo(l.End.y) == 1
-                && this.End.y.compareTo(l.Start.y) == 1
-                && this.End.y.compareTo(l.End.y) == 1) {
+        if (this.start.y.compareTo(l.start.y) == 1
+                && this.start.y.compareTo(l.end.y) == 1
+                && this.end.y.compareTo(l.start.y) == 1
+                && this.end.y.compareTo(l.end.y) == 1) {
             return null;
         }
-        if (this.Start.x.compareTo(l.Start.x) == 1
-                && this.Start.x.compareTo(l.End.x) == 1
-                && this.End.x.compareTo(l.Start.x) == 1
-                && this.End.x.compareTo(l.End.x) == 1) {
+        if (this.start.x.compareTo(l.start.x) == 1
+                && this.start.x.compareTo(l.end.x) == 1
+                && this.end.x.compareTo(l.start.x) == 1
+                && this.end.x.compareTo(l.end.x) == 1) {
             return null;
         }
-        if (this.Start.y.compareTo(l.Start.y) == -1
-                && this.Start.y.compareTo(l.End.y) == -1
-                && this.End.y.compareTo(l.Start.y) == -1
-                && this.End.y.compareTo(l.End.y) == -1) {
+        if (this.start.y.compareTo(l.start.y) == -1
+                && this.start.y.compareTo(l.end.y) == -1
+                && this.end.y.compareTo(l.start.y) == -1
+                && this.end.y.compareTo(l.end.y) == -1) {
             return null;
         }
-        if (this.Start.x.compareTo(l.Start.x) == -1
-                && this.Start.x.compareTo(l.End.x) == -1
-                && this.End.x.compareTo(l.Start.x) == -1
-                && this.End.x.compareTo(l.End.x) == -1) {
+        if (this.start.x.compareTo(l.start.x) == -1
+                && this.start.x.compareTo(l.end.x) == -1
+                && this.end.x.compareTo(l.start.x) == -1
+                && this.end.x.compareTo(l.end.x) == -1) {
             return null;
         }
         //MathContext a_MathContext = new MathContext(this.DecimalPlacePrecision_Integer + 100);
-        BigDecimal x2minusx1 = End.x.subtract(Start.x);
-        BigDecimal y2minusy1 = End.y.subtract(Start.y);
-        BigDecimal x4minusx3 = l.End.x.subtract(l.Start.x);
-        BigDecimal y4minusy3 = l.End.y.subtract(l.Start.y);
-        BigDecimal denominator = (y4minusy3.multiply(x2minusx1)).subtract(x4minusx3.multiply(y2minusy1));
+        BigDecimal x2minusx1 = end.x.subtract(start.x);
+        BigDecimal y2minusy1 = end.y.subtract(start.y);
+        BigDecimal x4minusx3 = l.end.x.subtract(l.start.x);
+        BigDecimal y4minusy3 = l.end.y.subtract(l.start.y);
+        BigDecimal denominator = (y4minusy3.multiply(x2minusx1))
+                .subtract(x4minusx3.multiply(y2minusy1));
         boolean parallel = false;
         // Not sure about use of RoundingMode here!!
-        if (denominator.setScale(decimalPlacePrecision, RoundingMode.FLOOR).compareTo(BigDecimal.ZERO) == 0) {
+        if (denominator.setScale(dpp, RoundingMode.FLOOR).compareTo(
+                BigDecimal.ZERO) == 0) {
             //System.out.println("parallel lines");
             parallel = true;
         }
-        BigDecimal y1minusy3 = Start.y.subtract(l.Start.y);
-        BigDecimal x1minusx3 = Start.x.subtract(l.Start.x);
-        BigDecimal uamultiplicand = (x4minusx3.multiply(y1minusy3)).subtract(y4minusy3.multiply(x1minusx3));
-        BigDecimal ubmultiplicand = (x2minusx1.multiply(y1minusy3)).subtract(y2minusy1.multiply(x1minusx3));
-        if (uamultiplicand.setScale(decimalPlacePrecision, RoundingMode.FLOOR).compareTo(BigDecimal.ZERO) == 0
-                && ubmultiplicand.setScale(decimalPlacePrecision, RoundingMode.FLOOR).compareTo(BigDecimal.ZERO) == 0
+        BigDecimal y1minusy3 = start.y.subtract(l.start.y);
+        BigDecimal x1minusx3 = start.x.subtract(l.start.x);
+        BigDecimal uamultiplicand = (x4minusx3.multiply(y1minusy3))
+                .subtract(y4minusy3.multiply(x1minusx3));
+        BigDecimal ubmultiplicand = (x2minusx1.multiply(y1minusy3))
+                .subtract(y2minusy1.multiply(x1minusx3));
+        if (uamultiplicand.setScale(dpp, RoundingMode.FLOOR).compareTo(BigDecimal.ZERO) == 0
+                && ubmultiplicand.setScale(dpp, RoundingMode.FLOOR).compareTo(BigDecimal.ZERO) == 0
                 && parallel) {
             //System.out.println("lines coincident");
             Vector_LineSegment2D ot = getOrderedLineSegment2D();
             Vector_LineSegment2D oa = l.getOrderedLineSegment2D();
-            boolean ts = ot.Start.getIntersects(
-                    oa,
-                    decimalPlacePrecision);
-            boolean te = ot.End.getIntersects(
-                    oa,
-                    decimalPlacePrecision);
-            boolean as = oa.Start.getIntersects(
-                    ot,
-                    decimalPlacePrecision);
-            boolean ae = oa.End.getIntersects(
-                    ot,
-                    decimalPlacePrecision);
+            boolean ts = ot.start.getIntersects(oa, dpp);
+            boolean te = ot.end.getIntersects(oa, dpp);
+            boolean as = oa.start.getIntersects(ot, dpp);
+            boolean ae = oa.end.getIntersects(ot, dpp);
             if (ts) {
                 if (te) {
                     if (as) {
                         if (ae) {
                             return new Vector_LineSegment2D(l);
                         } else {
-                            return new Vector_LineSegment2D(
-                                    ot.Start,
-                                    ot.End);
+                            return new Vector_LineSegment2D(ot.start, ot.end);
                         }
                     } else {
                         if (ae) {
-                            return new Vector_LineSegment2D(
-                                    ot.Start,
-                                    oa.End);
+                            return new Vector_LineSegment2D(ot.start, oa.end);
                         } else {
-                            return new Vector_LineSegment2D(
-                                    this);
+                            return new Vector_LineSegment2D(this);
                         }
                     }
                 } else {
@@ -546,7 +463,7 @@ public class Vector_LineSegment2D
                         if (ae) {
                             return new Vector_LineSegment2D(l);
                         } else {
-                            return new Vector_Point2D(ot.Start);
+                            return new Vector_Point2D(ot.start);
                         }
                     } else {
                         System.out.println("Wierd...");
@@ -557,13 +474,9 @@ public class Vector_LineSegment2D
                 if (te) {
                     if (as) {
                         if (ae) {
-                            return new Vector_LineSegment2D(
-                                    oa.Start,
-                                    oa.End);
+                            return new Vector_LineSegment2D(oa.start, oa.end);
                         } else {
-                            return new Vector_LineSegment2D(
-                                    oa.Start,
-                                    ot.End);
+                            return new Vector_LineSegment2D(oa.start, ot.end);
                         }
                     } else {
                         System.out.println("Wierd...");
@@ -577,42 +490,34 @@ public class Vector_LineSegment2D
         if (parallel) {
             return null;
         }
-        BigDecimal ua = uamultiplicand.divide(
-                denominator,
-                decimalPlacePrecision,
+        BigDecimal ua = uamultiplicand.divide(denominator, dpp,
                 RoundingMode.CEILING);
         if (ua.compareTo(BigDecimal.ONE) != 1
                 && ua.compareTo(BigDecimal.ZERO) != -1) {
-            BigDecimal intersectx = Start.x.add(
-                    ua.multiply(x2minusx1));
-            BigDecimal intersecty = Start.y.add(
-                    ua.multiply(y2minusy1));
-            BigDecimal deltaXEndX;
-            deltaXEndX = intersectx.subtract(l.End.x);
-            BigDecimal deltaXStartX;
-            deltaXStartX = intersectx.subtract(l.Start.x);
-            BigDecimal deltaYEndY;
-            deltaYEndY = intersecty.subtract(l.End.y);
-            BigDecimal deltaYStartY;
-            deltaYStartY = intersecty.subtract(l.Start.y);
-            if (((deltaXEndX.compareTo(tollerance) == 1 && deltaXEndX.compareTo(tollerance.negate()) == 1)
-                    && (deltaXStartX.compareTo(tollerance) == 1 && deltaXStartX.compareTo(tollerance.negate()) == 1))
-                    || ((deltaXEndX.compareTo(tollerance) == -1 && deltaXEndX.compareTo(tollerance.negate()) == -1)
-                    && (deltaXStartX.compareTo(tollerance) == -1) && deltaXStartX.compareTo(tollerance.negate()) == -1)
-                    || ((deltaYEndY.compareTo(tollerance) == 1 && deltaYEndY.compareTo(tollerance.negate()) == 1)
-                    && deltaYStartY.compareTo(tollerance) == 1 && deltaYStartY.compareTo(tollerance.negate()) == 1)
-                    || ((deltaYEndY.compareTo(tollerance) == -1 && deltaYEndY.compareTo(tollerance.negate()) == -1)
-                    && (deltaYStartY.compareTo(tollerance) == -1 && deltaYStartY.compareTo(tollerance.negate()) == -1))) {
+            BigDecimal intersectx = start.x.add(ua.multiply(x2minusx1));
+            BigDecimal intersecty = start.y.add(ua.multiply(y2minusy1));
+            BigDecimal deltaXEndX = intersectx.subtract(l.end.x);
+            BigDecimal deltaXStartX = intersectx.subtract(l.start.x);
+            BigDecimal deltaYEndY = intersecty.subtract(l.end.y);
+            BigDecimal deltaYStartY = intersecty.subtract(l.start.y);
+            if (((deltaXEndX.compareTo(t) == 1 && deltaXEndX.compareTo(t.negate()) == 1)
+                    && (deltaXStartX.compareTo(t) == 1 && deltaXStartX.compareTo(t.negate()) == 1))
+                    || ((deltaXEndX.compareTo(t) == -1 && deltaXEndX.compareTo(t.negate()) == -1)
+                    && (deltaXStartX.compareTo(t) == -1) && deltaXStartX.compareTo(t.negate()) == -1)
+                    || ((deltaYEndY.compareTo(t) == 1 && deltaYEndY.compareTo(t.negate()) == 1)
+                    && deltaYStartY.compareTo(t) == 1 && deltaYStartY.compareTo(t.negate()) == 1)
+                    || ((deltaYEndY.compareTo(t) == -1 && deltaYEndY.compareTo(t.negate()) == -1)
+                    && (deltaYStartY.compareTo(t) == -1 && deltaYStartY.compareTo(t.negate()) == -1))) {
                 return null;
             }
-//            if ((intersectx1.compareTo(a_LineSegment2D.End.x) == 1
-//                    && intersectx1.compareTo(a_LineSegment2D.Start.x) == 1)
-//                    || (intersectx1.compareTo(a_LineSegment2D.End.x) == -1
-//                    && intersectx1.compareTo(a_LineSegment2D.Start.x) == -1)
-//                    || (intersecty1.compareTo(a_LineSegment2D.End.y) == 1
-//                    && intersecty1.compareTo(a_LineSegment2D.Start.y) == 1)
-//                    || (intersecty1.compareTo(a_LineSegment2D.End.y) == -1
-//                    && intersecty1.compareTo(a_LineSegment2D.Start.y) == -1)) {
+//            if ((intersectx1.compareTo(a_LineSegment2D.end.x) == 1
+//                    && intersectx1.compareTo(a_LineSegment2D.start.x) == 1)
+//                    || (intersectx1.compareTo(a_LineSegment2D.end.x) == -1
+//                    && intersectx1.compareTo(a_LineSegment2D.start.x) == -1)
+//                    || (intersecty1.compareTo(a_LineSegment2D.end.y) == 1
+//                    && intersecty1.compareTo(a_LineSegment2D.start.y) == 1)
+//                    || (intersecty1.compareTo(a_LineSegment2D.end.y) == -1
+//                    && intersecty1.compareTo(a_LineSegment2D.start.y) == -1)) {
 //                return null;
 //            }
 //            BigDecimal ub = ubmultiplicand.divide(
@@ -623,34 +528,34 @@ public class Vector_LineSegment2D
                     e,
                     intersectx,
                     intersecty,
-                    decimalPlacePrecision);
+                    dpp);
         } else {
             BigDecimal ub = ubmultiplicand.divide(
                     denominator,
-                    decimalPlacePrecision,
+                    dpp,
                     RoundingMode.CEILING);
             if (ub.compareTo(BigDecimal.ONE) != 1
                     && ub.compareTo(BigDecimal.ZERO) != -1) {
-                BigDecimal intersectx = l.Start.x.add(
+                BigDecimal intersectx = l.start.x.add(
                         ub.multiply(x4minusx3));
-                BigDecimal intersecty = l.Start.y.add(
+                BigDecimal intersecty = l.start.y.add(
                         ub.multiply(y4minusy3));
                 BigDecimal deltaXEndX;
-                deltaXEndX = intersectx.subtract(l.End.x);
+                deltaXEndX = intersectx.subtract(l.end.x);
                 BigDecimal deltaXStartX;
-                deltaXStartX = intersectx.subtract(l.Start.x);
+                deltaXStartX = intersectx.subtract(l.start.x);
                 BigDecimal deltaYEndY;
-                deltaYEndY = intersecty.subtract(l.End.y);
+                deltaYEndY = intersecty.subtract(l.end.y);
                 BigDecimal deltaYStartY;
-                deltaYStartY = intersecty.subtract(l.Start.y);
-                if (((deltaXEndX.compareTo(tollerance) == 1 && deltaXEndX.compareTo(tollerance.negate()) == 1)
-                        && (deltaXStartX.compareTo(tollerance) == 1 && deltaXStartX.compareTo(tollerance.negate()) == 1))
-                        || ((deltaXEndX.compareTo(tollerance) == -1 && deltaXEndX.compareTo(tollerance.negate()) == -1)
-                        && (deltaXStartX.compareTo(tollerance) == -1) && deltaXStartX.compareTo(tollerance.negate()) == -1)
-                        || ((deltaYEndY.compareTo(tollerance) == 1 && deltaYEndY.compareTo(tollerance.negate()) == 1)
-                        && deltaYStartY.compareTo(tollerance) == 1 && deltaYStartY.compareTo(tollerance.negate()) == 1)
-                        || ((deltaYEndY.compareTo(tollerance) == -1 && deltaYEndY.compareTo(tollerance.negate()) == -1)
-                        && (deltaYStartY.compareTo(tollerance) == -1 && deltaYStartY.compareTo(tollerance.negate()) == -1))) {
+                deltaYStartY = intersecty.subtract(l.start.y);
+                if (((deltaXEndX.compareTo(t) == 1 && deltaXEndX.compareTo(t.negate()) == 1)
+                        && (deltaXStartX.compareTo(t) == 1 && deltaXStartX.compareTo(t.negate()) == 1))
+                        || ((deltaXEndX.compareTo(t) == -1 && deltaXEndX.compareTo(t.negate()) == -1)
+                        && (deltaXStartX.compareTo(t) == -1) && deltaXStartX.compareTo(t.negate()) == -1)
+                        || ((deltaYEndY.compareTo(t) == 1 && deltaYEndY.compareTo(t.negate()) == 1)
+                        && deltaYStartY.compareTo(t) == 1 && deltaYStartY.compareTo(t.negate()) == 1)
+                        || ((deltaYEndY.compareTo(t) == -1 && deltaYEndY.compareTo(t.negate()) == -1)
+                        && (deltaYStartY.compareTo(t) == -1 && deltaYStartY.compareTo(t.negate()) == -1))) {
                     return null;
                 }
 
@@ -664,133 +569,126 @@ public class Vector_LineSegment2D
 //                        && deltaYStartY.compareTo(tollerance) == -1)) {
 //                    return null;
 //                }
-//                if ((intersectx2.compareTo(a_LineSegment2D.End.x) == 1
-//                        && intersectx2.compareTo(a_LineSegment2D.Start.x) == 1)
-//                        || (intersectx2.compareTo(a_LineSegment2D.End.x) == -1
-//                        && intersectx2.compareTo(a_LineSegment2D.Start.x) == -1)
-//                        || (intersecty2.compareTo(a_LineSegment2D.End.y) == 1
-//                        && intersecty2.compareTo(a_LineSegment2D.Start.y) == 1)
-//                        || (intersecty2.compareTo(a_LineSegment2D.End.y) == -1
-//                        && intersecty2.compareTo(a_LineSegment2D.Start.y) == -1)) {
+//                if ((intersectx2.compareTo(a_LineSegment2D.end.x) == 1
+//                        && intersectx2.compareTo(a_LineSegment2D.start.x) == 1)
+//                        || (intersectx2.compareTo(a_LineSegment2D.end.x) == -1
+//                        && intersectx2.compareTo(a_LineSegment2D.start.x) == -1)
+//                        || (intersecty2.compareTo(a_LineSegment2D.end.y) == 1
+//                        && intersecty2.compareTo(a_LineSegment2D.start.y) == 1)
+//                        || (intersecty2.compareTo(a_LineSegment2D.end.y) == -1
+//                        && intersecty2.compareTo(a_LineSegment2D.start.y) == -1)) {
 //                    return null;
 //                }
                 return new Vector_Point2D(
                         e,
                         intersectx,
                         intersecty,
-                        decimalPlacePrecision);
+                        dpp);
             }
         }
         return null;
     }
 
     /**
-     * l.Start.x >= xmin && l.Start.x < xmax &&
- l.Start.y >= ymin && l.Start.y < ymax
+     * l.start.x >= xmin && l.start.x < xmax &&
+     * l.start.y >= ymin && l.start.y < ymax
      *
-     * @param tollerance
+     * @param t tolerance
      * @param xmin
      * @param ymin
      * @param xmax
      * @param ymax
      * @param l
      * @param directionIn
-     * @param a_DecimalPlacePrecision
-     * @param handleOutOfMemoryError
+     * @param dpp decimal place precision
      * @return
      */
     public static Object[] getLineToIntersectLineRemainingDirection(
-            BigDecimal tollerance,
-            BigDecimal xmin,
-            BigDecimal ymin,
-            BigDecimal xmax,
-            BigDecimal ymax,
-            Vector_LineSegment2D l,
-            Integer directionIn,
-            int a_DecimalPlacePrecision,
-            boolean handleOutOfMemoryError) {
-        Object[] result;
-        result = new Object[3];
+            BigDecimal t, BigDecimal xmin, BigDecimal ymin, BigDecimal xmax,
+            BigDecimal ymax, Vector_LineSegment2D l, Integer directionIn,
+            int dpp) {
+        Object[] r = new Object[3];
         if (directionIn == null) {
-            //if (l.Start.x == xmin) {
+            //if (l.start.x == xmin) {
             BigDecimal deltaXmin;
-            deltaXmin = l.Start.x.subtract(xmin);
-            if (deltaXmin.compareTo(tollerance) == -1 && deltaXmin.compareTo(tollerance.negate()) == 1) {
-                //if (l.Start.y == ymin) {
+            deltaXmin = l.start.x.subtract(xmin);
+            if (deltaXmin.compareTo(t) == -1 && deltaXmin.compareTo(t.negate()) == 1) {
+                //if (l.start.y == ymin) {
                 BigDecimal deltaYmin;
-                deltaYmin = l.Start.y.subtract(ymin);
-                if (deltaYmin.compareTo(tollerance) == -1 && deltaYmin.compareTo(tollerance.negate()) == 1) {
+                deltaYmin = l.start.y.subtract(ymin);
+                if (deltaYmin.compareTo(t) == -1 && deltaYmin.compareTo(t.negate()) == 1) {
                     directionIn = 1;
                 } else {
-                    //if (l.Start.y == ymax) {
+                    //if (l.start.y == ymax) {
                     BigDecimal deltaYmax;
-                    deltaYmax = l.Start.y.subtract(ymax);
-                    if (deltaYmax.compareTo(tollerance) == -1 && deltaYmax.compareTo(tollerance.negate()) == 1) {
+                    deltaYmax = l.start.y.subtract(ymax);
+                    if (deltaYmax.compareTo(t) == -1 && deltaYmax.compareTo(t.negate()) == 1) {
                         directionIn = 3;
                     } else {
                         directionIn = 2;
                     }
                 }
             } else {
-                //if (l.Start.x == xmax) {
-                BigDecimal deltaXmax;
-                deltaXmax = l.Start.y.subtract(xmax);
-                if (deltaXmax.compareTo(tollerance) == -1 && deltaXmax.compareTo(tollerance.negate()) == 1) {
-                    //if (l.Start.y == ymin) {
-                    BigDecimal deltaYmin;
-                    deltaYmin = l.Start.y.subtract(ymin);
-                    if (deltaYmin.compareTo(tollerance) == -1 && deltaYmin.compareTo(tollerance.negate()) == 1) {
+                //if (l.start.x == xmax) {
+                BigDecimal deltaXmax = l.start.y.subtract(xmax);
+                if (deltaXmax.compareTo(t) == -1
+                        && deltaXmax.compareTo(t.negate()) == 1) {
+                    //if (l.start.y == ymin) {
+                    BigDecimal deltaYmin = l.start.y.subtract(ymin);
+                    if (deltaYmin.compareTo(t) == -1
+                            && deltaYmin.compareTo(t.negate()) == 1) {
                         directionIn = 7;
                     } else {
-                        //if (l.Start.y == ymax) {
-                        BigDecimal deltaYmax;
-                        deltaYmax = l.Start.y.subtract(ymax);
-                        if (deltaYmax.compareTo(tollerance) == -1 && deltaYmax.compareTo(tollerance.negate()) == 1) {
+                        //if (l.start.y == ymax) {
+                        BigDecimal deltaYmax = l.start.y.subtract(ymax);
+                        if (deltaYmax.compareTo(t) == -1
+                                && deltaYmax.compareTo(t.negate()) == 1) {
                             directionIn = 5;
                         } else {
                             directionIn = 6;
                         }
                     }
                 } else {
-                    //if (l.Start.y == ymin) {
+                    //if (l.start.y == ymin) {
                     BigDecimal deltaYmin;
-                    deltaYmin = l.Start.y.subtract(ymin);
-                    if (deltaYmin.compareTo(tollerance) == -1 && deltaYmin.compareTo(tollerance.negate()) == 1) {
+                    deltaYmin = l.start.y.subtract(ymin);
+                    if (deltaYmin.compareTo(t) == -1
+                            && deltaYmin.compareTo(t.negate()) == 1) {
                         directionIn = 4;
                     } else {
-                        //if (l.Start.y == ymax) {
+                        //if (l.start.y == ymax) {
                         BigDecimal deltaYmax;
-                        deltaYmax = l.Start.y.subtract(ymax);
-                        if (deltaYmax.compareTo(tollerance) == -1 && deltaYmax.compareTo(tollerance.negate()) == 1) {
+                        deltaYmax = l.start.y.subtract(ymax);
+                        if (deltaYmax.compareTo(t) == -1 && deltaYmax.compareTo(t.negate()) == 1) {
                             directionIn = 0;
                         } else {
-                            if (l.Start.y.compareTo(l.End.y) == -1) {
-                                if (l.Start.x.compareTo(l.End.x) == -1) {
+                            if (l.start.y.compareTo(l.end.y) == -1) {
+                                if (l.start.x.compareTo(l.end.x) == -1) {
                                     directionIn = 1;
                                 } else {
-                                    if (l.Start.x.compareTo(l.End.x) == 0) {
+                                    if (l.start.x.compareTo(l.end.x) == 0) {
                                         directionIn = 0;
                                     } else {
                                         directionIn = 7;
                                     }
                                 }
                             } else {
-                                if (l.Start.y.compareTo(l.End.y) == 0) {
-                                    if (l.Start.x.compareTo(l.End.x) == -1) {
+                                if (l.start.y.compareTo(l.end.y) == 0) {
+                                    if (l.start.x.compareTo(l.end.x) == -1) {
                                         directionIn = 2;
                                     } else {
-                                        if (l.Start.x.compareTo(l.End.x) == 0) {
+                                        if (l.start.x.compareTo(l.end.x) == 0) {
                                             directionIn = 0; // This should not happen
                                         } else {
                                             directionIn = 6;
                                         }
                                     }
                                 } else {
-                                    if (l.Start.x.compareTo(l.End.x) == -1) {
+                                    if (l.start.x.compareTo(l.end.x) == -1) {
                                         directionIn = 3;
                                         //directionIn = 7;
                                     } else {
-                                        if (l.Start.x.compareTo(l.End.x) == 0) {
+                                        if (l.start.x.compareTo(l.end.x) == 0) {
                                             directionIn = 4;
                                         } else {
                                             directionIn = 5;
@@ -803,40 +701,31 @@ public class Vector_LineSegment2D
                 }
             }
         }
-        Vector_Point2D bottomLeft;
-        Vector_Point2D bottomRight;
-        Vector_Point2D topRight;
-        Vector_Point2D topLeft;
-        bottomLeft = new Vector_Point2D(
-                l.e, xmin, ymin);
-        bottomRight = new Vector_Point2D(
-                l.e, xmax, ymin);
-        topLeft = new Vector_Point2D(
-                l.e, xmin, ymax);
-        topRight = new Vector_Point2D(
-                l.e, xmax, ymax);
+        Vector_Point2D bottomLeft = new Vector_Point2D(l.e, xmin, ymin);
+        Vector_Point2D bottomRight = new Vector_Point2D(l.e, xmax, ymin);
+        Vector_Point2D topLeft = new Vector_Point2D(l.e, xmin, ymax);
+        Vector_Point2D topRight = new Vector_Point2D(l.e, xmax, ymax);
         Object[] lineToIntersectLineRemainingDirection = null;
         if (directionIn == 0) {
             // check top
             lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckTop(
-                    tollerance,
+                    t,
                     xmin, ymin, xmax, ymax, l,
-                    a_DecimalPlacePrecision, handleOutOfMemoryError,
-                    topLeft, topRight);
+                    dpp, topLeft, topRight);
             if (lineToIntersectLineRemainingDirection[2] == null) {
                 // check right
                 lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckRight(
-                        tollerance,
+                        t,
                         xmin, ymin, xmax, ymax, l,
-                        a_DecimalPlacePrecision, handleOutOfMemoryError,
+                        dpp,
                         topRight, bottomRight);
             }
             if (lineToIntersectLineRemainingDirection[2] == null) {
                 // check left
                 lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckLeft(
-                        tollerance,
+                        t,
                         xmin, ymin, xmax, ymax, l,
-                        a_DecimalPlacePrecision, handleOutOfMemoryError,
+                        dpp,
                         topLeft, bottomLeft);
             }
         }
@@ -844,16 +733,16 @@ public class Vector_LineSegment2D
         if (directionIn == 1) {
             // check top
             lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckTop(
-                    tollerance,
+                    t,
                     xmin, ymin, xmax, ymax, l,
-                    a_DecimalPlacePrecision, handleOutOfMemoryError,
+                    dpp,
                     topLeft, topRight);
             if (lineToIntersectLineRemainingDirection[2] == null) {
                 // check right
                 lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckRight(
-                        tollerance,
+                        t,
                         xmin, ymin, xmax, ymax, l,
-                        a_DecimalPlacePrecision, handleOutOfMemoryError,
+                        dpp,
                         topRight, bottomRight);
             }
         }
@@ -861,133 +750,103 @@ public class Vector_LineSegment2D
         if (directionIn == 2) {
             // check top
             lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckTop(
-                    tollerance,
-                    xmin, ymin, xmax, ymax, l,
-                    a_DecimalPlacePrecision, handleOutOfMemoryError,
-                    topLeft, topRight);
+                    t, xmin, ymin, xmax, ymax, l, dpp, topLeft, topRight);
             if (lineToIntersectLineRemainingDirection[2] == null) {
                 // check right
                 lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckRight(
-                        tollerance,
-                        xmin, ymin, xmax, ymax, l,
-                        a_DecimalPlacePrecision, handleOutOfMemoryError,
-                        topRight, bottomRight);
+                        t, xmin, ymin, xmax, ymax, l, dpp, topRight, bottomRight);
             }
             if (lineToIntersectLineRemainingDirection[2] == null) {
                 // check bottom
                 lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckBottom(
-                        tollerance,
-                        xmin, ymin, xmax, ymax, l,
-                        a_DecimalPlacePrecision, handleOutOfMemoryError,
-                        bottomLeft, bottomRight);
+                        t, xmin, ymin, xmax, ymax, l, dpp, bottomLeft, bottomRight);
             }
         }
 
         if (directionIn == 3) {
             // check right
             lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckRight(
-                    tollerance,
-                    xmin, ymin, xmax, ymax, l,
-                    a_DecimalPlacePrecision, handleOutOfMemoryError,
-                    topRight, bottomRight);
+                    t, xmin, ymin, xmax, ymax, l, dpp, topRight, bottomRight);
             if (lineToIntersectLineRemainingDirection[2] == null) {
                 // check bottom
                 lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckBottom(
-                        tollerance,
-                        xmin, ymin, xmax, ymax, l,
-                        a_DecimalPlacePrecision, handleOutOfMemoryError,
-                        bottomLeft, bottomRight);
+                        t, xmin, ymin, xmax, ymax, l, dpp, bottomLeft, bottomRight);
             }
         }
         if (directionIn == 4) {
             // check right
             lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckRight(
-                    tollerance,
-                    xmin, ymin, xmax, ymax, l,
-                    a_DecimalPlacePrecision, handleOutOfMemoryError,
-                    topRight, bottomRight);
+                    t, xmin, ymin, xmax, ymax, l, dpp, topRight, bottomRight);
             if (lineToIntersectLineRemainingDirection[2] == null) {
                 // check bottom
                 lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckBottom(
-                        tollerance,
-                        xmin, ymin, xmax, ymax, l,
-                        a_DecimalPlacePrecision, handleOutOfMemoryError,
-                        bottomLeft, bottomRight);
+                        t, xmin, ymin, xmax, ymax, l, dpp, bottomLeft, bottomRight);
             }
             if (lineToIntersectLineRemainingDirection[2] == null) {
                 // check left
                 lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckLeft(
-                        tollerance,
-                        xmin, ymin, xmax, ymax, l,
-                        a_DecimalPlacePrecision, handleOutOfMemoryError,
-                        topLeft, bottomLeft);
+                        t, xmin, ymin, xmax, ymax, l, dpp, topLeft, bottomLeft);
             }
         }
 
         if (directionIn == 5) {
             // check bottom
             lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckBottom(
-                    tollerance,
-                    xmin, ymin, xmax, ymax, l,
-                    a_DecimalPlacePrecision, handleOutOfMemoryError,
-                    bottomLeft, bottomRight);
+                    t, xmin, ymin, xmax, ymax, l, dpp, bottomLeft, bottomRight);
             if (lineToIntersectLineRemainingDirection[2] == null) {
                 // check left
                 lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckLeft(
-                        tollerance,
-                        xmin, ymin, xmax, ymax, l,
-                        a_DecimalPlacePrecision, handleOutOfMemoryError,
-                        topLeft, bottomLeft);
+                        t, xmin, ymin, xmax, ymax, l, dpp, topLeft, bottomLeft);
             }
         }
 
         if (directionIn == 6) {
             // check bottom
             lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckBottom(
-                    tollerance,
+                    t,
                     xmin, ymin, xmax, ymax, l,
-                    a_DecimalPlacePrecision, handleOutOfMemoryError, bottomLeft, bottomRight);
+                    dpp, bottomLeft, bottomRight);
             if (lineToIntersectLineRemainingDirection[2] == null) {
                 // check left
                 lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckLeft(
-                        tollerance,
+                        t,
                         xmin, ymin, xmax, ymax, l,
-                        a_DecimalPlacePrecision, handleOutOfMemoryError,
+                        dpp,
                         topLeft, bottomLeft);
             }
             if (lineToIntersectLineRemainingDirection[2] == null) {
                 // check top
                 lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckTop(
-                        tollerance,
-                        xmin, ymin, xmax, ymax, l, a_DecimalPlacePrecision, handleOutOfMemoryError, topLeft, topRight);
+                        t,
+                        xmin, ymin, xmax, ymax, l, dpp, topLeft, topRight);
             }
         }
 
         if (directionIn == 7) {
             // check left
             lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckLeft(
-                    tollerance,
+                    t,
                     xmin, ymin, xmax, ymax, l,
-                    a_DecimalPlacePrecision, handleOutOfMemoryError,
+                    dpp,
                     topLeft, bottomLeft);
             if (lineToIntersectLineRemainingDirection[2] == null) {
                 // check top
                 lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckTop(
-                        tollerance,
+                        t,
                         xmin, ymin, xmax, ymax, l,
-                        a_DecimalPlacePrecision, handleOutOfMemoryError,
+                        dpp,
                         topLeft, topRight);
             }
         }
         // Do remainder
         if (lineToIntersectLineRemainingDirection[2] == null) {
-            result[0] = l;
-            result[1] = null;
-            result[2] = null;
+            r[0] = l;
+            r[1] = null;
+            r[2] = null;
         } else {
-            result = lineToIntersectLineRemainingDirection;
+            r = lineToIntersectLineRemainingDirection;
         }
-        return result;
+        return r;
     }
 
     protected static Object[] doLineToIntersectLineRemainingDirectionCheckRight(
@@ -998,7 +857,6 @@ public class Vector_LineSegment2D
             BigDecimal ymax,
             Vector_LineSegment2D l,
             int a_DecimalPlacePrecision,
-            boolean handleOutOfMemoryError,
             Vector_Point2D topRight,
             Vector_Point2D bottomRight) {
         Object[] result;
@@ -1012,7 +870,7 @@ public class Vector_LineSegment2D
                 l.e, xmax, ymax);
         section = new Vector_LineSegment2D(
                 bottomRight, topRight, a_DecimalPlacePrecision);
-        if (l.getIntersects(section, tollerance, a_DecimalPlacePrecision, handleOutOfMemoryError)) {
+        if (l.getIntersects(section, tollerance, a_DecimalPlacePrecision)) {
             lineToIntersectIntersectPoint = getLineToIntersectIntersectPoint(
                     l,
                     section,
@@ -1045,7 +903,7 @@ public class Vector_LineSegment2D
             }
             remainingLine = new Vector_LineSegment2D(
                     (Vector_Point2D) lineToIntersectIntersectPoint[1],
-                    l.End, a_DecimalPlacePrecision);
+                    l.end, a_DecimalPlacePrecision);
         }
         result[0] = line;
         result[1] = remainingLine;
@@ -1061,7 +919,6 @@ public class Vector_LineSegment2D
             BigDecimal ymax,
             Vector_LineSegment2D l,
             int a_DecimalPlacePrecision,
-            boolean handleOutOfMemoryError,
             Vector_Point2D topLeft,
             Vector_Point2D bottomLeft) {
         Object[] result;
@@ -1073,7 +930,7 @@ public class Vector_LineSegment2D
         Object[] lineToIntersectIntersectPoint;
         section = new Vector_LineSegment2D(
                 bottomLeft, topLeft, a_DecimalPlacePrecision);
-        if (l.getIntersects(section, tollerance, a_DecimalPlacePrecision, handleOutOfMemoryError)) {
+        if (l.getIntersects(section, tollerance, a_DecimalPlacePrecision)) {
             lineToIntersectIntersectPoint = getLineToIntersectIntersectPoint(
                     l,
                     section,
@@ -1106,7 +963,7 @@ public class Vector_LineSegment2D
             }
             remainingLine = new Vector_LineSegment2D(
                     (Vector_Point2D) lineToIntersectIntersectPoint[1],
-                    l.End, a_DecimalPlacePrecision);
+                    l.end, a_DecimalPlacePrecision);
         }
         result[0] = line;
         result[1] = remainingLine;
@@ -1115,16 +972,9 @@ public class Vector_LineSegment2D
     }
 
     protected static Object[] doLineToIntersectLineRemainingDirectionCheckTop(
-            BigDecimal tollerance,
-            BigDecimal xmin,
-            BigDecimal ymin,
-            BigDecimal xmax,
-            BigDecimal ymax,
-            Vector_LineSegment2D l,
-            int a_DecimalPlacePrecision,
-            boolean handleOutOfMemoryError,
-            Vector_Point2D topLeft,
-            Vector_Point2D topRight) {
+            BigDecimal tollerance, BigDecimal xmin, BigDecimal ymin,
+            BigDecimal xmax, BigDecimal ymax, Vector_LineSegment2D l,
+            int a_DecimalPlacePrecision, Vector_Point2D topLeft, Vector_Point2D topRight) {
         Object[] result;
         result = new Object[3];
         Vector_LineSegment2D line = null;
@@ -1134,7 +984,7 @@ public class Vector_LineSegment2D
         Object[] lineToIntersectIntersectPoint;
         section = new Vector_LineSegment2D(
                 topLeft, topRight, a_DecimalPlacePrecision);
-        if (l.getIntersects(section, tollerance, a_DecimalPlacePrecision, handleOutOfMemoryError)) {
+        if (l.getIntersects(section, tollerance, a_DecimalPlacePrecision)) {
             lineToIntersectIntersectPoint = getLineToIntersectIntersectPoint(
                     l,
                     section,
@@ -1167,7 +1017,7 @@ public class Vector_LineSegment2D
             }
             remainingLine = new Vector_LineSegment2D(
                     (Vector_Point2D) lineToIntersectIntersectPoint[1],
-                    l.End, a_DecimalPlacePrecision);
+                    l.end, a_DecimalPlacePrecision);
         }
         result[0] = line;
         result[1] = remainingLine;
@@ -1183,7 +1033,6 @@ public class Vector_LineSegment2D
             BigDecimal ymax,
             Vector_LineSegment2D l,
             int a_DecimalPlacePrecision,
-            boolean handleOutOfMemoryError,
             Vector_Point2D bottomLeft,
             Vector_Point2D bottomRight) {
         Object[] result;
@@ -1195,7 +1044,7 @@ public class Vector_LineSegment2D
         Object[] lineToIntersectIntersectPoint;
         section = new Vector_LineSegment2D(
                 bottomLeft, bottomRight, a_DecimalPlacePrecision);
-        if (l.getIntersects(section, tollerance, a_DecimalPlacePrecision, handleOutOfMemoryError)) {
+        if (l.getIntersects(section, tollerance, a_DecimalPlacePrecision)) {
             lineToIntersectIntersectPoint = getLineToIntersectIntersectPoint(
                     l,
                     section,
@@ -1228,7 +1077,7 @@ public class Vector_LineSegment2D
             }
             remainingLine = new Vector_LineSegment2D(
                     (Vector_Point2D) lineToIntersectIntersectPoint[1],
-                    l.End, a_DecimalPlacePrecision);
+                    l.end, a_DecimalPlacePrecision);
         }
         result[0] = line;
         result[1] = remainingLine;
@@ -1250,12 +1099,12 @@ public class Vector_LineSegment2D
         if (intersection instanceof Vector_Point2D) {
             intersectPoint = (Vector_Point2D) intersection;
             lineToIntersect = new Vector_LineSegment2D(
-                    l.Start,
+                    l.start,
                     intersectPoint,
                     a_DecimalPlacePrecision);
         } else {
             lineToIntersect = (Vector_LineSegment2D) intersection;
-            intersectPoint = lineToIntersect.End;
+            intersectPoint = lineToIntersect.end;
         }
         result[0] = lineToIntersect;
         result[1] = intersectPoint;
@@ -1264,13 +1113,13 @@ public class Vector_LineSegment2D
 
     /**
      * TODO: Control precision! The angle returned is the smallest angle between
- this and the x axis and so is between Math.PI and -Math.PI.
+     * this and the x axis and so is between Math.PI and -Math.PI.
      *
      * @return The angle in radians to the x axis
      */
     public double getAngleToX_double() {
-        BigDecimal dx = this.End.x.subtract(this.Start.x);
-        BigDecimal dy = this.End.y.subtract(this.Start.y);
+        BigDecimal dx = this.end.x.subtract(this.start.x);
+        BigDecimal dy = this.end.y.subtract(this.start.y);
         return Math.atan2(dy.doubleValue(), dx.doubleValue());
     }
 
@@ -1281,10 +1130,10 @@ public class Vector_LineSegment2D
 //     */
 //    public double getAngleToX_double(){
 //        double result;
-//        BigDecimal dx = this.End.x.subtract(this.Start.x);
-//        BigDecimal dy = this.End.y.subtract(this.Start.y);
+//        BigDecimal dx = this.end.x.subtract(this.start.x);
+//        BigDecimal dy = this.end.y.subtract(this.start.y);
 //        double angleToX = Math.atan2(dy.doubleValue(),dx.doubleValue());
-//        if (this.Start.x.compareTo(this.End.x) == -1 ){
+//        if (this.start.x.compareTo(this.end.x) == -1 ){
 //            result = Math.PI - angleToX;
 //        } else {
 //            result = angleToX;
@@ -1293,16 +1142,16 @@ public class Vector_LineSegment2D
 //    }
     /**
      * TODO: Control precision! The angle returned is the smallest angle between
- this and the y axis and so is between Math.PI and -Math.PI.
+     * this and the y axis and so is between Math.PI and -Math.PI.
      *
      * @return The angle in radians to the y axis
      */
     public double getAngleToY_double() {
         double result;
-        BigDecimal dx = this.End.x.subtract(this.Start.x);
-        BigDecimal dy = this.End.y.subtract(this.Start.y);
+        BigDecimal dx = this.end.x.subtract(this.start.x);
+        BigDecimal dy = this.end.y.subtract(this.start.y);
         double angleToY = Math.atan2(dx.doubleValue(), dy.doubleValue());
-        if (this.Start.y.compareTo(this.End.y) == -1) {
+        if (this.start.y.compareTo(this.end.y) == -1) {
             result = Math.PI - angleToY;
         } else {
             result = angleToY;
@@ -1318,13 +1167,13 @@ public class Vector_LineSegment2D
      */
     public BigDecimal getScalarProduct(
             Vector_LineSegment2D a_LineSegment2D) {
-        if (a_LineSegment2D.Start.compareTo(this.Start) != 0) {
+        if (a_LineSegment2D.start.compareTo(this.start) != 0) {
             System.out.println(
                     "a_LineSegment2D._Start_Point2D.compareTo(this._Start_Point2D) != 0 in "
                     + this.getClass().getName()
                     + ".getScalarProduct(LineSegment2D)");
         }
-        return (a_LineSegment2D.End.x.multiply(this.End.x)).add((a_LineSegment2D.End.y.multiply(this.End.y)));
+        return (a_LineSegment2D.end.x.multiply(this.end.x)).add((a_LineSegment2D.end.y.multiply(this.end.y)));
     }
 
     /**
@@ -1335,18 +1184,18 @@ public class Vector_LineSegment2D
      */
     public BigDecimal getCrossProduct(
             Vector_LineSegment2D a_LineSegment2D) {
-        if (a_LineSegment2D.Start.compareTo(this.Start) != 0) {
+        if (a_LineSegment2D.start.compareTo(this.start) != 0) {
             System.out.println(
                     "a_LineSegment2D._Start_Point2D.compareTo(this._Start_Point2D) != 0 in "
                     + this.getClass().getName()
                     + ".getCrossProduct(LineSegment2D)");
         }
-        return (a_LineSegment2D.End.x.multiply(this.End.y)).subtract((this.End.x.multiply(a_LineSegment2D.End.y)));
+        return (a_LineSegment2D.end.x.multiply(this.end.y)).subtract((this.end.x.multiply(a_LineSegment2D.end.y)));
     }
 
     @Override
     public void applyDecimalPlacePrecision() {
-        this.Start.applyDecimalPlacePrecision();
-        this.End.applyDecimalPlacePrecision();
+        this.start.applyDecimalPlacePrecision();
+        this.end.applyDecimalPlacePrecision();
     }
 }

@@ -16,59 +16,37 @@
 package uk.ac.leeds.ccg.vector.geometry;
 
 import java.math.BigDecimal;
-//import java.math.MathContext;
-//import org.ojalgo.constant.BigMath;
 import org.ojalgo.function.BigFunction;
-import uk.ac.leeds.ccg.vector.core.Vector_Environment;
-import uk.ac.leeds.ccg.vector.geometry.Vector_LineSegment2D;
-import uk.ac.leeds.ccg.vector.geometry.Vector_Point2D;
-//import org.ojalgo.function.implementation.FunctionSet;
-//import org.ojalgo.function.implementation.PrimitiveFunction;
-//import org.ojalgo.function.UnaryFunction;
 
-//import org.ojalgo.function.mu
 /**
- *
- * @author geoagdt
+ * Vector Line2D
+ * @author Andy Turner
+ * @version 1.0.0
  */
 public class Vector_Line2D extends Vector_AbstractGeometry2D {
 
-//    /**
-//     * The angle defining the line
-//     */
-//    double _AngleClockwiseFromYAxis;
     /**
-     * The angle defining the line
+     * The angle clockwise from the Y-Axis which defines the line.
      */
-    BigDecimal _AngleClockwiseFromYAxis;
+    BigDecimal angle;
 
     /**
      * A point on the line
      */
     Vector_Point2D _Point2D;
 
-    public Vector_Line2D(
-            double angleClockwiseFromYAxis,
-            Vector_Point2D a_Point2D) {
-       super(a_Point2D.e);
-        this._AngleClockwiseFromYAxis = new BigDecimal(angleClockwiseFromYAxis);
-        this._Point2D = new Vector_Point2D(a_Point2D);
-        setDecimalPlacePrecision(
-                Math.max(
-                        this._AngleClockwiseFromYAxis.scale(),
-                        this._Point2D.getDecimalPlacePrecision()));
+    public Vector_Line2D(double angleClockwiseFromYAxis, Vector_Point2D p) {
+        super(p.e);
+        this.angle = new BigDecimal(angleClockwiseFromYAxis);
+        this._Point2D = new Vector_Point2D(p);
+        dp = Math.max(this.angle.scale(), this._Point2D.dp);
     }
 
-    public Vector_Line2D(
-            BigDecimal a_AngleClockwiseFromYAxis,
-            Vector_Point2D a_Point2D) {
-        super(a_Point2D.e);
-        this._AngleClockwiseFromYAxis = new BigDecimal(a_AngleClockwiseFromYAxis.toString());
-        this._Point2D = new Vector_Point2D(a_Point2D);
-        setDecimalPlacePrecision(
-                Math.max(
-                        this._AngleClockwiseFromYAxis.scale(),
-                        this._Point2D.getDecimalPlacePrecision()));
+    public Vector_Line2D(BigDecimal a_AngleClockwiseFromYAxis, Vector_Point2D p) {
+        super(p.e);
+        this.angle = new BigDecimal(a_AngleClockwiseFromYAxis.toString());
+        this._Point2D = new Vector_Point2D(p);
+        dp = Math.max(this.angle.scale(), this._Point2D.dp);
     }
 
     /**
@@ -95,7 +73,7 @@ public class Vector_Line2D extends Vector_AbstractGeometry2D {
         Vector_Point2D[] result = new Vector_Point2D[2];
         BigDecimal ydiff_BigDecimal = new BigDecimal(ydiffExtremity);
         BigDecimal xdiff_BigDecimal
-                = BigFunction.TAN.invoke(_AngleClockwiseFromYAxis).multiply(ydiff_BigDecimal);
+                = BigFunction.TAN.invoke(angle).multiply(ydiff_BigDecimal);
         result[0] = new Vector_Point2D(
                 e,
                 this._Point2D.x.add(xdiff_BigDecimal),
@@ -110,7 +88,7 @@ public class Vector_Line2D extends Vector_AbstractGeometry2D {
 //    public Point2D[] getExtremePointsOnLine(double ydiffExtremity){
 //        Point2D[] result = new Point2D[2];
 //        BigDecimal ydiff_BigDecimal = new BigDecimal(ydiffExtremity);
-//        BigDecimal xdiff_BigDecimal = new BigDecimal(Math.tan(_AngleClockwiseFromYAxis.doubleValue()) * ydiffExtremity);
+//        BigDecimal xdiff_BigDecimal = new BigDecimal(Math.tan(angle.doubleValue()) * ydiffExtremity);
 //        result[0] = new Point2D(
 //                this._Point2D.x.add(xdiff_BigDecimal),
 //                this._Point2D.y.add(ydiff_BigDecimal));
@@ -137,8 +115,8 @@ public class Vector_Line2D extends Vector_AbstractGeometry2D {
                 extremePointsOna_Line2D[1]);
         result = extremePointsOnThis_LineSegment2D.getIntersection(
                 extremePointsOna_LineSegment2D,
-                 tollerance,
-            a_DecimalPlacePrecision);
+                tollerance,
+                a_DecimalPlacePrecision);
         return result;
     }
 }

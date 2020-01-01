@@ -25,7 +25,7 @@ import uk.ac.leeds.ccg.vector.geometry.Vector_LineSegment2D;
 
 /**
  * Vector Line Grid
- * 
+ *
  * @author Andy Turner
  * @version 1.0.0
  */
@@ -36,22 +36,18 @@ public class Vector_LineGrid extends Vector_Object {
     }
 
     /**
-     * Adds the length of l to each cell of g
+     * Adds the intersection length of {@code l} to each cell of {@code g}.
      *
-     * @param g
-     * @param l
-     * @param factor Value to multiply length by
+     * @param g The grid.
+     * @param l The line.
+     * @param factor Value to multiply the length of {@code l} by.
      * @param tollerance
-     * @param handleOutOfMemoryError
+     * @param hoome
+     * @throws Exception If encountered.
      */
-    public static void addToGrid(
-            Grids_GridDouble g,
-            Vector_LineSegment2D l,
-            double factor,
-            BigDecimal tollerance,
-            boolean handleOutOfMemoryError) throws Exception {
-        int decimalPlacePrecision;
-        decimalPlacePrecision = 10;
+    public static void addToGrid(Grids_GridDouble g, Vector_LineSegment2D l, 
+            double factor, BigDecimal tollerance) throws Exception {
+        int decimalPlacePrecision = 10;
 //        int chunkNRows;
 //        chunkNRows = g.getChunkNRows();
 //        int chunkNCols;
@@ -60,16 +56,11 @@ public class Vector_LineGrid extends Vector_Object {
         dimensions = g.getDimensions();
 //        BigDecimal cellsize;
 //        cellsize = dimensions[0];
-        BigDecimal xmin;
-        xmin = dimensions.getXMin();
-        BigDecimal ymin;
-        ymin = dimensions.getYMin();
-        BigDecimal xmax;
-        xmax = dimensions.getXMax();
-        BigDecimal ymax;
-        ymax = dimensions.getYMax();
-        BigDecimal halfCellsize;
-        halfCellsize = dimensions.getHalfCellsize();
+        BigDecimal xmin = dimensions.getXMin();
+        BigDecimal ymin = dimensions.getYMin();
+        BigDecimal xmax = dimensions.getXMax();
+        BigDecimal ymax = dimensions.getYMax();
+        BigDecimal halfCellsize = dimensions.getHalfCellsize();
         Integer directionIn;
         directionIn = null;
         //System.out.println("line length " + l.getLength(decimalPlacePrecision));
@@ -77,24 +68,20 @@ public class Vector_LineGrid extends Vector_Object {
         long ncols = g.getNCols();
         // Check if line intersect grid and if not return fast.
         if (Vector_LineSegment2D.getIntersects(xmin, ymin, xmax, ymax, l,
-                tollerance, decimalPlacePrecision, handleOutOfMemoryError)) {
+                tollerance, decimalPlacePrecision)) {
             long row;
-            row = g.getRow(l.Start.y);
+            row = g.getRow(l.start.y);
             long col;
-            col = g.getCol(l.Start.x);
+            col = g.getCol(l.start.x);
             Grids_2D_ID_long cellID = g.getCellID(row, col);
             BigDecimal[] cellBounds = g.getCellBounds(halfCellsize, row, col);
-            Object[] lineToIntersectIntersectPointDirection;
-            lineToIntersectIntersectPointDirection = Vector_LineSegment2D.getLineToIntersectLineRemainingDirection(
-                    tollerance, xmin, ymin, xmax, ymax, l, directionIn, decimalPlacePrecision,
-                    handleOutOfMemoryError);
-            Vector_LineSegment2D lineToIntersect;
-            lineToIntersect = (Vector_LineSegment2D) lineToIntersectIntersectPointDirection[0];
+            Object[] lineToIntersectIntersectPointDirection
+            = Vector_LineSegment2D.getLineToIntersectLineRemainingDirection(
+                    tollerance, xmin, ymin, xmax, ymax, l, directionIn, decimalPlacePrecision);
+            Vector_LineSegment2D lineToIntersect = (Vector_LineSegment2D) lineToIntersectIntersectPointDirection[0];
             //System.out.println("lineToIntersect " + lineToIntersect);
-            double length;
-            length = lineToIntersect.getLength(decimalPlacePrecision).doubleValue();
-            double v;
-            v = length * factor;
+            double length = lineToIntersect.getLength(decimalPlacePrecision).doubleValue();
+            double v = length * factor;
             //System.out.println("lineToIntersect length " + length);
             g.addToCell(cellID, v);
             if (lineToIntersectIntersectPointDirection[2] == null) {
@@ -148,7 +135,7 @@ public class Vector_LineGrid extends Vector_Object {
                 cellID = g.getCellID(row, col);
                 cellBounds = g.getCellBounds(halfCellsize, row, col);
                 lineToIntersectIntersectPointDirection = Vector_LineSegment2D.getLineToIntersectLineRemainingDirection(
-                        tollerance, xmin, ymin, xmax, ymax, remainingLine, directionOut, decimalPlacePrecision, handleOutOfMemoryError);
+                        tollerance, xmin, ymin, xmax, ymax, remainingLine, directionOut, decimalPlacePrecision);
                 lineToIntersect = (Vector_LineSegment2D) lineToIntersectIntersectPointDirection[0];
                 //System.out.println("lineToIntersect " + lineToIntersect);
                 length = lineToIntersect.getLength(decimalPlacePrecision).doubleValue();

@@ -20,13 +20,22 @@ import uk.ac.leeds.ccg.vector.core.Vector_Environment;
 import uk.ac.leeds.ccg.vector.core.Vector_Object;
 
 /**
- * An abstract class defining a geometrical object and the methods it must
- * implement.
+ * For 2D geometrical objects.
+ * 
+ * @author Andy Turner
+ * @version 1.0.0
  */
 public abstract class Vector_AbstractGeometry2D extends Vector_Object {
 
-    protected int DecimalPlacePrecision = 0;
-    protected RoundingMode _RoundingMode = RoundingMode.FLOOR;
+    /**
+     * Decimal places.
+     */
+    public int dp = 0;
+    
+    /**
+     * RoundingMode
+     */
+    public RoundingMode rm = RoundingMode.FLOOR;
 
     public Vector_AbstractGeometry2D(Vector_Environment e) {
         super(e);
@@ -34,37 +43,9 @@ public abstract class Vector_AbstractGeometry2D extends Vector_Object {
 
     @Override
     public String toString() {
-        return "DecimalPlacePrecision(" + DecimalPlacePrecision + "),"
-                + "RoundingMode(" + _RoundingMode + "),";
+        return "dp=" + dp + ", rm=" + rm;
     }
 
-    public int getDecimalPlacePrecision() {
-        return DecimalPlacePrecision;
-    }
-
-    /**
-     * Default method probably best overridden to determine what setting
-     * DecimalPlacePrecision_Integer involves
-     *
-     * @param precision The number of decimal places set for
-     * DecimalPlacePrecision_Integer.
-     * @return The current value of DecimalPlacePrecision_Integer.
-     */
-    protected int setDecimalPlacePrecision(int precision) {
-        int result = getDecimalPlacePrecision();
-        DecimalPlacePrecision = precision;
-        applyDecimalPlacePrecision();
-        return result;
-    }
-
-    public RoundingMode get_RoundingMode() {
-        return _RoundingMode;
-    }
-
-    public void set_RoundingMode(RoundingMode r) {
-        _RoundingMode = r;
-    }
-    
     public abstract Vector_Envelope2D getEnvelope2D();
     
     public abstract void applyDecimalPlacePrecision();

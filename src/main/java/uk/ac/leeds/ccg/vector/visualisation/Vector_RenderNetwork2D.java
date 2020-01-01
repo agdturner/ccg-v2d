@@ -154,8 +154,8 @@ public class Vector_RenderNetwork2D extends Vector_AbstractRender {
             if (Envelope == null){
                 init_Envelope2D();
             }
-            _YRange_BigDecimal = Envelope.YMax.subtract(Envelope.YMin);
-            _XRange_BigDecimal = Envelope.XMax.subtract(Envelope.XMin);
+            _YRange_BigDecimal = Envelope.yMax.subtract(Envelope.yMin);
+            _XRange_BigDecimal = Envelope.xMax.subtract(Envelope.xMin);
 //        boolean handleOutOfMemoryError = _Environment._HandleOutOfMemoryError;
 //        BigDecimal[] reportingDimensions = _Environment._reportingPopulationDensityAggregate_Grid2DSquareCellDouble.get_Dimensions(handleOutOfMemoryError);
 //        BigDecimal[] networkDimensions = _Environment._network_Grid2DSquareCellDouble.get_Dimensions(handleOutOfMemoryError);
@@ -164,10 +164,10 @@ public class Vector_RenderNetwork2D extends Vector_AbstractRender {
         BigDecimal height_BigDecimal = new BigDecimal(Height);
 
             this._Graphics2D.setPaint(Color.RED);
-        int ax = ((a_Point2D.x.subtract(Envelope.XMin)).divide
+        int ax = ((a_Point2D.x.subtract(Envelope.xMin)).divide
                 (_XRange_BigDecimal,10,RoundingMode.DOWN).multiply
                 (width_BigDecimal)).intValue();
-        int ay = ((a_Point2D.y.subtract(Envelope.YMin)).divide
+        int ay = ((a_Point2D.y.subtract(Envelope.yMin)).divide
                 (_YRange_BigDecimal,10,RoundingMode.DOWN).multiply
                 (height_BigDecimal)).intValue();
         int bx;
@@ -180,10 +180,10 @@ public class Vector_RenderNetwork2D extends Vector_AbstractRender {
             //by = (int) a_Connection.Location.y.intValue() * _Scale;
             //bx = (int) (a_Connection.Location.x.doubleValue() * _Scale);
             //by = (int) (a_Connection.Location.y.doubleValue() * _Scale);
-            bx = ((a_Connection.Location.x.subtract(Envelope.XMin)).divide
+            bx = ((a_Connection.Location.x.subtract(Envelope.xMin)).divide
                     (_XRange_BigDecimal,10,RoundingMode.DOWN).multiply
                 (width_BigDecimal)).intValue();
-        by = ((a_Connection.Location.y.subtract(Envelope.YMin)).divide
+        by = ((a_Connection.Location.y.subtract(Envelope.yMin)).divide
                 (_YRange_BigDecimal,10,RoundingMode.DOWN).multiply
                 (height_BigDecimal)).intValue();
             //this._Graphics2D.drawLine(ax, ay, bx, by);

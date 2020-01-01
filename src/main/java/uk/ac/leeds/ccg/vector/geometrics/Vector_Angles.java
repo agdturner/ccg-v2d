@@ -43,28 +43,24 @@ public class Vector_Angles {
     }
 
     /**
-     * @param a_LineRing A Vector_Point2D[] for which the angles to the YAxis 
-     * are wanted.
+     * @param lr A line ring for which the angles to the YAxis are wanted.
      * @return The Clockwise inside angles for a_LineRing.
      */
     public static double[] getInsideAnglesClockwise_doubleArray(
-            Vector_Point2D[] a_LineRing) {
-        double[] result = new double[a_LineRing.length];
-        result[0] = getInsideAngleClockwise_doubleArray(
-                a_LineRing[a_LineRing.length - 1],
-                a_LineRing[0],
-                a_LineRing[1]);
-        for (int i = 1; i < a_LineRing.length - 1; i++) {
-            result[i] = getInsideAngleClockwise_doubleArray(
-                    a_LineRing[i - 1],
-                    a_LineRing[i],
-                    a_LineRing[i + 1]);
+            Vector_Point2D[] lr) {
+        double[] r = new double[lr.length];
+        r[0] = getInsideAngleClockwise_doubleArray(lr[lr.length - 1], lr[0], lr[1]);
+        for (int i = 1; i < lr.length - 1; i++) {
+            r[i] = getInsideAngleClockwise_doubleArray(
+                    lr[i - 1],
+                    lr[i],
+                    lr[i + 1]);
         }
-        result[a_LineRing.length - 1] = getInsideAngleClockwise_doubleArray(
-                a_LineRing[a_LineRing.length - 2],
-                a_LineRing[a_LineRing.length - 1],
-                a_LineRing[0]);
-        return result;
+        r[lr.length - 1] = getInsideAngleClockwise_doubleArray(
+                lr[lr.length - 2],
+                lr[lr.length - 1],
+                lr[0]);
+        return r;
     }
 
     /**
@@ -92,6 +88,7 @@ public class Vector_Angles {
 
     /**
      * This is a basic operation working with double precision.
+     *
      * @param angleInRadians The angleInRadians to be returned in degrees.
      * @return The angle in degrees for the angleInRadians.
      */
