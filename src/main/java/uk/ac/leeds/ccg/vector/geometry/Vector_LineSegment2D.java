@@ -19,7 +19,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import uk.ac.leeds.ccg.grids.d2.Grids_Dimensions;
-import uk.ac.leeds.ccg.grids.d2.grid.Grids_GridNumber;
+import uk.ac.leeds.ccg.grids.d2.grid.Grids_Grid;
 import uk.ac.leeds.ccg.vector.core.Vector_Environment;
 //import org.ojalgo.function.implementation.BigFunction;
 //import org.ojalgo.constant.BigMath;
@@ -95,15 +95,15 @@ public class Vector_LineSegment2D extends Vector_Geometry2D
     @Override
     public String toString() {
         return "LineSegment2D(" + super.toString()
-                + "Start(" + start.toString() + ")"
-                + "End(" + end.toString() + "))";
+                + "start=" + start.toString() + ", end=" + end.toString() + ")";
     }
 
     /**
      * Default is 1. Calls compareTo on the _StartPoint.
      *
-     * @param o
-     * @return
+     * @param o The object to compare with.
+     * @return -1, 0, 1 If this is less than, equal to, or greater than
+     * {@code o}.
      */
     @Override
     public int compareTo(Object o) {
@@ -120,58 +120,51 @@ public class Vector_LineSegment2D extends Vector_Geometry2D
     }
 
     /**
-     * @param a_DecimalPlacePrecision The decimal place precision to be used for
-     * this.
+     * @param dp The decimal place precision.
      * @return The length of this as a BigDecimal
      */
-    public BigDecimal getLength(int a_DecimalPlacePrecision) {
-        BigDecimal length;
-        length = start.getDistance(end,
-                a_DecimalPlacePrecision);
-        return length;
+    public BigDecimal getLength(int dp) {
+        return start.getDistance(end, dp);
     }
 
     /**
-     * TODO: Correct with regard DecimalPlacePrecision_Integer!?
-     *
-     * @return Vector_Envelope2D
+     * @return {@code new Vector_Envelope2D(start, end)}
      */
     @Override
     public Vector_Envelope2D getEnvelope2D() {
-        return new Vector_Envelope2D(
-                start,
-                end);
+        return new Vector_Envelope2D(start, end);
     }
 
     /**
-     *
-     * @param g
-     * @param l
-     * @param tollerance
-     * @param dp
-     * @return true iff l intersects g
+     * @param g A grid.
+     * @param l A line segment.
+     * @param t The tollerance.
+     * @param dp The number of decimal places.
+     * @return {@code true} if {@code g} and {@code l} intersect.
      */
-    public static boolean getIntersects(Grids_GridNumber g,
-            Vector_LineSegment2D l, BigDecimal tollerance, int dp) {
+    public static boolean getIntersects(Grids_Grid g, Vector_LineSegment2D l,
+            BigDecimal t, int dp) {
         Grids_Dimensions dim = g.getDimensions();
         return getIntersects(dim.getXMin(), dim.getYMin(), dim.getXMax(),
-                dim.getYMax(), l, tollerance, dp);
+                dim.getYMax(), l, t, dp);
     }
 
     /**
-     * @param xmin
-     * @param ymin
-     * @param xmax
-     * @param ymax
-     * @param l
-     * @param tollerance
-     * @param dp Decimal places for BigDecimal arithmetic.
-     * @return true iff l intersects the envelope defined by minx, miny, maxx,
-     * maxy.
+     * A bounding box intersection test.
+     *
+     * @param xmin The minimum x-coordinate of the bounding box.
+     * @param ymin The minimum y-coordinate of the bounding box.
+     * @param xmax The maximum x-coordinate of the bounding box.
+     * @param ymax The maximum y-coordinate of the bounding box.
+     * @param l The line segment to test for intersection.
+     * @param t The tolerance.
+     * @param dp The number of decimal places.
+     * @return {code true} if {@code l} intersects the envelope defined by
+     * {@code minx}, {@code miny}, {@code maxx}, {@code maxy}.
      */
     public static boolean getIntersects(BigDecimal xmin, BigDecimal ymin,
             BigDecimal xmax, BigDecimal ymax, Vector_LineSegment2D l,
-            BigDecimal tollerance, int dp) {
+            BigDecimal t, int dp) {
         if (l.start.x.compareTo(xmin) != -1 && l.start.x.compareTo(xmax) != 1
                 && l.start.y.compareTo(ymin) != -1
                 && l.start.y.compareTo(ymax) != 1) {
@@ -182,49 +175,44 @@ public class Vector_LineSegment2D extends Vector_Geometry2D
                 && l.end.y.compareTo(ymax) != 1) {
             return true;
         }
-        Vector_Point2D bottomLeft = new Vector_Point2D(l.e, xmin, ymin);
-        Vector_Point2D bottomRight = new Vector_Point2D(l.e, xmax, ymin);
+        Vector_Point2D ll = new Vector_Point2D(l.e, xmin, ymin);
+        Vector_Point2D lr = new Vector_Point2D(l.e, xmax, ymin);
         // Check bottom
-        Vector_LineSegment2D section = new Vector_LineSegment2D(
-                bottomLeft, bottomRight, dp);
-        if (l.getIntersects(section, tollerance, dp)) {
+        Vector_LineSegment2D section = new Vector_LineSegment2D(ll, lr, dp);
+        if (l.getIntersects(section, t, dp)) {
             return true;
         }
-        Vector_Point2D topRight = new Vector_Point2D(l.e, xmax, ymax);
+        Vector_Point2D ur = new Vector_Point2D(l.e, xmax, ymax);
         // Check right
-        section = new Vector_LineSegment2D(bottomRight, topRight, dp);
-        if (l.getIntersects(section, tollerance, dp)) {
+        section = new Vector_LineSegment2D(lr, ur, dp);
+        if (l.getIntersects(section, t, dp)) {
             return true;
         }
-        Vector_Point2D topLeft;
-        topLeft = new Vector_Point2D(
-                l.e, xmin, ymax);
+        Vector_Point2D ul = new Vector_Point2D(l.e, xmin, ymax);
         // Check left
-        section = new Vector_LineSegment2D(
-                bottomLeft, topLeft, dp);
-        if (l.getIntersects(section, tollerance, dp)) {
+        section = new Vector_LineSegment2D(ll, ul, dp);
+        if (l.getIntersects(section, t, dp)) {
             return true;
         }
         // Check top
-        Vector_LineSegment2D top;
-        section = new Vector_LineSegment2D(
-                topLeft, topRight, dp);
-        return l.getIntersects(section, tollerance, dp);
+        section = new Vector_LineSegment2D(ul, ur, dp);
+        return l.getIntersects(section, t, dp);
     }
 
     /**
+     * Test whether {@code l} intersects any {@code lines}.
      *
-     * @param l The line
-     * @param lines
-     * @param t tolerance
-     * @param dpp decimal place precision
-     * @return
+     * @param l The line to test for intersection with and lines in
+     * {@code lines}.
+     * @param lines The lines to test for intersection with {@code l}.
+     * @param t tolerance.
+     * @param dpp The decimal place precision.
+     * @return {@code true if {@code l} intersects any lines in {@code lines}.
      */
     public static boolean getIntersects(Vector_LineSegment2D l,
-            Vector_LineSegment2D[] lines, BigDecimal t,
-            int dpp) {
-        for (int i = 0; i < lines.length; i++) {
-            boolean intersects = l.getIntersects(lines[i], t, dpp);
+            Vector_LineSegment2D[] lines, BigDecimal t, int dpp) {
+        for (Vector_LineSegment2D line : lines) {
+            boolean intersects = l.getIntersects(line, t, dpp);
             if (intersects) {
                 return true;
             }
@@ -236,9 +224,8 @@ public class Vector_LineSegment2D extends Vector_Geometry2D
      * Intersection done by first seeing if envelope intersects.
      *
      * @param l A line segment to test.
-     * @param t tolerance
-     * @param dpp decimalPlacePrecision The decimal place precision to be used
-     * for this.
+     * @param t The tolerance.
+     * @param dpp The decimal place precision to be used for this.
      *
      * @return {@code true} if {@code l} intersects this.
      */
@@ -328,10 +315,10 @@ public class Vector_LineSegment2D extends Vector_Geometry2D
     }
 
     /**
-     * 
+     *
      * @param p The point.
      * @param dpp decimal place precision
-     * @return 
+     * @return
      */
     protected boolean isOnGradient(Vector_Point2D p, int dpp) {
         BigDecimal xDiff0 = end.x.subtract(start.x);
@@ -1092,8 +1079,8 @@ public class Vector_LineSegment2D extends Vector_Geometry2D
             int a_DecimalPlacePrecision) {
         Object[] result;
         result = new Object[2];
-        Vector_LineSegment2D lineToIntersect = null;
-        Vector_Point2D intersectPoint = null;
+        Vector_LineSegment2D lineToIntersect;
+        Vector_Point2D intersectPoint;
         Vector_Geometry2D intersection;
         intersection = l.getIntersection(section, tollerance, a_DecimalPlacePrecision);
         if (intersection instanceof Vector_Point2D) {
