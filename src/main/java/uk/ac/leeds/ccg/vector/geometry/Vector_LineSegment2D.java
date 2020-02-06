@@ -18,7 +18,7 @@ package uk.ac.leeds.ccg.vector.geometry;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import uk.ac.leeds.ccg.grids.d2.Grids_Dimensions;
+import uk.ac.leeds.ccg.grids.d2.grid.Grids_Dimensions;
 import uk.ac.leeds.ccg.grids.d2.grid.Grids_Grid;
 import uk.ac.leeds.ccg.vector.core.Vector_Environment;
 //import org.ojalgo.function.implementation.BigFunction;

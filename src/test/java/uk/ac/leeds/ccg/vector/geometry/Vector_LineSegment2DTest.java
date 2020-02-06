@@ -23,6 +23,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import uk.ac.leeds.ccg.generic.core.Generic_Environment;
+import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
+import uk.ac.leeds.ccg.grids.core.Grids_Environment;
 import uk.ac.leeds.ccg.vector.core.Vector_Environment;
 
 /**
@@ -47,7 +50,8 @@ public class Vector_LineSegment2DTest {
     @BeforeEach
     public void setUp() {
         try {
-            env = new Vector_Environment();
+            env = new Vector_Environment(new Grids_Environment(
+                    new Generic_Environment(new Generic_Defaults())));
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }
@@ -80,7 +84,7 @@ public class Vector_LineSegment2DTest {
             a = new Vector_Point2D(env, aX, aY);
             System.out.println("a " + a.toString());
             result = ab.getIntersects(a, dp);
-            System.out.println("ab.getIntersects(a,DecimalPlacePrecision)" 
+            System.out.println("ab.getIntersects(a,DecimalPlacePrecision)"
                     + result);
             Assertions.assertEquals(expResult, result);
         }

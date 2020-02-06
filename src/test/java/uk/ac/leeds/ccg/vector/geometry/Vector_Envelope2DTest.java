@@ -23,6 +23,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import uk.ac.leeds.ccg.generic.core.Generic_Environment;
+import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
+import uk.ac.leeds.ccg.grids.core.Grids_Environment;
 import uk.ac.leeds.ccg.vector.core.Vector_Environment;
 
 /**
@@ -47,7 +50,8 @@ public class Vector_Envelope2DTest {
     @BeforeEach
     public void setUp() {
         try {
-            env = new Vector_Environment();
+            env = new Vector_Environment(new Grids_Environment(
+                    new Generic_Environment(new Generic_Defaults())));
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }

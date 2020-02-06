@@ -17,7 +17,7 @@ package uk.ac.leeds.ccg.vector.grids;
 
 import java.math.BigDecimal;
 import uk.ac.leeds.ccg.grids.d2.Grids_2D_ID_long;
-import uk.ac.leeds.ccg.grids.d2.Grids_Dimensions;
+import uk.ac.leeds.ccg.grids.d2.grid.Grids_Dimensions;
 import uk.ac.leeds.ccg.grids.d2.grid.d.Grids_GridDouble;
 import uk.ac.leeds.ccg.vector.core.Vector_Environment;
 import uk.ac.leeds.ccg.vector.core.Vector_Object;

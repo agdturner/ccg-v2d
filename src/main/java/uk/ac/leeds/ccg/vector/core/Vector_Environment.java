@@ -60,26 +60,20 @@ public class Vector_Environment extends Vector_MemoryManager
 
     protected Vector_OSGBtoLatLon OSGBtoLatLon;
 
-    public Vector_Environment() throws IOException, Exception {
-        this(new Generic_Environment(new Generic_Defaults()));
-    }
-
-    public Vector_Environment(Generic_Environment e) throws IOException, 
+    public Vector_Environment(Grids_Environment e) throws IOException, 
             Exception {
         this(e, e.files.getDir());
     }
     
-    public Vector_Environment(Generic_Environment e, Generic_Path dir)
+    public Vector_Environment(Grids_Environment e, Generic_Path dir)
             throws IOException, Exception {
         super();
-        this.env = e;
+        this.ge = e;
+        this.env = ge.env;
         bd = new Math_BigDecimal();
-        initMemoryReserve(Default_Memory_Threshold, e);
-        Path p = e.getLogDir(Vector_Strings.s_vector);
-        e.files.setDir(p);
+        initMemoryReserve(Default_Memory_Threshold, env);
         files = new Vector_Files(new Generic_Defaults(Paths.get(dir.toString(),
                 Vector_Strings.s_vector)));
-        ge = new Grids_Environment();
     }
             
     public BigDecimal getRounded_BigDecimal(BigDecimal toRoundBigDecimal,
