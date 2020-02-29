@@ -15,7 +15,6 @@
  */
 package uk.ac.leeds.ccg.vector.geometry;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import uk.ac.leeds.ccg.grids.d2.grid.Grids_Dimensions;
@@ -31,7 +30,7 @@ import uk.ac.leeds.ccg.vector.core.Vector_Environment;
  * regarded as equal iff their start and end points are the same.
  */
 public class Vector_LineSegment2D extends Vector_Geometry2D
-        implements Comparable, Serializable {
+        implements Comparable {
 
     public Vector_Point2D start;
     public Vector_Point2D end;

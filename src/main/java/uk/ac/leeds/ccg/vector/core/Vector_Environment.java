@@ -40,7 +40,7 @@ public class Vector_Environment extends Vector_MemoryManager
         implements Vector_Memory {
 
     private static final long serialVersionUID = 1L;
-    
+
     public Vector_Files files;
 
     /**
@@ -60,11 +60,11 @@ public class Vector_Environment extends Vector_MemoryManager
 
     protected Vector_OSGBtoLatLon OSGBtoLatLon;
 
-    public Vector_Environment(Grids_Environment e) throws IOException, 
+    public Vector_Environment(Grids_Environment e) throws IOException,
             Exception {
         this(e, e.files.getDir());
     }
-    
+
     public Vector_Environment(Grids_Environment e, Generic_Path dir)
             throws IOException, Exception {
         super();
@@ -75,13 +75,12 @@ public class Vector_Environment extends Vector_MemoryManager
         files = new Vector_Files(new Generic_Defaults(Paths.get(dir.toString(),
                 Vector_Strings.s_vector)));
     }
-            
-    public BigDecimal getRounded_BigDecimal(BigDecimal toRoundBigDecimal,
-            BigDecimal toRoundToBigDecimal) {
-        int scale = toRoundToBigDecimal.scale();
-        BigDecimal r = toRoundBigDecimal.setScale(scale - 1, RoundingMode.FLOOR);
+
+    public BigDecimal round(BigDecimal toRound, BigDecimal toRoundTo) {
+        int scale = toRoundTo.scale();
+        BigDecimal r = toRound.setScale(scale - 1, RoundingMode.FLOOR);
         r = r.setScale(scale);
-        r = r.add(toRoundToBigDecimal);
+        r = r.add(toRoundTo);
         return r;
     }
 

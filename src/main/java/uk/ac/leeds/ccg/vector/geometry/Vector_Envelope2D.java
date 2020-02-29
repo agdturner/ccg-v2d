@@ -47,7 +47,7 @@ public class Vector_Envelope2D extends Vector_Geometry2D {
     public BigDecimal yMax;
 
     /**
-     * @param e The vector enviornment.
+     * @param e The vector environment.
      */
     public Vector_Envelope2D(Vector_Environment e) {
         super(e);
@@ -58,10 +58,10 @@ public class Vector_Envelope2D extends Vector_Geometry2D {
      */
     public Vector_Envelope2D(Vector_Envelope2D e) {
         super(e.e);
-        yMin = new BigDecimal(e.yMin.toString());
-        yMax = new BigDecimal(e.yMax.toString());
-        xMin = new BigDecimal(e.xMin.toString());
-        xMax = new BigDecimal(e.xMax.toString());
+        yMin = e.yMin;
+        yMax = e.yMax;
+        xMin = e.xMin;
+        xMax = e.xMax;
         dp = e.dp;
         //applyDecimalPlacePrecision();
     }

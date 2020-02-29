@@ -15,7 +15,6 @@
  */
 package uk.ac.leeds.ccg.vector.geometry;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import org.ojalgo.function.constant.BigMath;
 import uk.ac.leeds.ccg.math.Math_BigDecimal;
@@ -27,15 +26,15 @@ import uk.ac.leeds.ccg.vector.core.Vector_Environment;
  * @author Andy Turner
  * @version 1.0.0
  */
-public class Vector_Point2D extends Vector_Geometry2D
-        implements Comparable, Serializable {
+public class Vector_Point2D extends Vector_Geometry2D implements Comparable {
 
     /**
-     * The x coordinate of the Vector_Point2D
+     * The x coordinate.
      */
     public BigDecimal x;
+
     /**
-     * The y coordinate of the Vector_Point2D
+     * The y coordinate.
      */
     public BigDecimal y;
 
@@ -53,8 +52,8 @@ public class Vector_Point2D extends Vector_Geometry2D
      */
     public Vector_Point2D(Vector_Point2D p) {
         super(p.e);
-        x = new BigDecimal(p.x.toString());
-        y = new BigDecimal(p.y.toString());
+        x = p.x;
+        y = p.y;
         dp = p.dp;
     }
 
@@ -64,31 +63,22 @@ public class Vector_Point2D extends Vector_Geometry2D
      */
     public Vector_Point2D(Vector_Point2D p, int dp) {
         super(p.e);
-        x = new BigDecimal(p.x.toString());
-        y = new BigDecimal(p.y.toString());
+        x = p.x;
+        y = p.y;
         this.dp = dp;
         applyDecimalPlacePrecision();
     }
 
     /**
-     * x = new BigDecimal(a_Point2D.x.toString()); y = new
-     * BigDecimal(a_Point2D.y.toString()); x =
-     * VectorStaticBigDecimal.getRounded_BigDecimal( x, toRoundToX_BigDecimal);
-     * y = VectorStaticBigDecimal.getRounded_BigDecimal( y,
-     * toRoundToY_BigDecimal); setDecimalPlacePrecision( Math.max(
-     * toRoundToX_BigDecimal.scale(), toRoundToY_BigDecimal.scale()));
-     *
      * @param p Vector_Point2D
-     * @param toRoundToX BigDecimal toRoundToX_BigDecimal
-     * @param toRoundToY BigDecimal toRoundToY_BigDecimal
+     * @param toRoundToX BigDecimal toRound {@code p.x} to.
+     * @param toRoundToY BigDecimal toRound {@code p.y} to.
      */
     public Vector_Point2D(Vector_Point2D p, BigDecimal toRoundToX,
             BigDecimal toRoundToY) {
         super(p.e);
-        x = new BigDecimal(p.x.toString());
-        y = new BigDecimal(p.y.toString());
-        x = e.getRounded_BigDecimal(x, toRoundToX);
-        y = e.getRounded_BigDecimal(y, toRoundToY);
+        x = e.round(p.x, toRoundToX);
+        y = e.round(p.y, toRoundToY);
         dp = Math.max(toRoundToX.scale(), toRoundToY.scale());
     }
 
@@ -133,8 +123,8 @@ public class Vector_Point2D extends Vector_Geometry2D
     public Vector_Point2D(Vector_Environment e, BigDecimal x, BigDecimal y,
             BigDecimal toRoundToX, BigDecimal toRoundToY) {
         super(e);
-        this.x = e.getRounded_BigDecimal(x, toRoundToX);
-        this.y = e.getRounded_BigDecimal(y, toRoundToY);
+        this.x = e.round(x, toRoundToX);
+        this.y = e.round(y, toRoundToY);
         dp = Math.max(toRoundToX.scale(), toRoundToY.scale());
     }
 
@@ -200,8 +190,8 @@ public class Vector_Point2D extends Vector_Geometry2D
     public Vector_Point2D(Vector_Environment e, double x, double y,
             BigDecimal toRoundToX, BigDecimal toRoundToY) {
         super(e);
-        this.x = e.getRounded_BigDecimal(new BigDecimal(x), toRoundToX);
-        this.y = e.getRounded_BigDecimal(new BigDecimal(y), toRoundToY);
+        this.x = e.round(new BigDecimal(x), toRoundToX);
+        this.y = e.round(new BigDecimal(y), toRoundToY);
         dp = Math.max(toRoundToX.scale(), toRoundToY.scale());
     }
 
@@ -211,14 +201,14 @@ public class Vector_Point2D extends Vector_Geometry2D
      * @param r The number to round to.
      */
     public void roundTo(BigDecimal r) {
-        x = e.getRounded_BigDecimal(x, r);
-        y = e.getRounded_BigDecimal(y, r);
+        x = e.round(x, r);
+        y = e.round(y, r);
         dp = r.scale();
     }
 
     @Override
     public String toString() {
-        return "Point2D(" + super.toString() + "x=" + x.toString() + " y=" 
+        return "Point2D(" + super.toString() + "x=" + x.toString() + " y="
                 + y.toString() + ")";
     }
 
@@ -330,7 +320,8 @@ public class Vector_Point2D extends Vector_Geometry2D
     }
 
     /**
-     * Get the angle from {@code p} to the Y-Axis clockwise. Uses BigMath default precision.
+     * Get the angle from {@code p} to the Y-Axis clockwise. Uses BigMath
+     * default precision.
      *
      * @param p A point.
      * @return Angle to the Y-Axis clockwise. Default 0.0d.

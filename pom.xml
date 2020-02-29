@@ -51,6 +51,16 @@
     
     <dependencies>
         <dependency>
+            <groupId>ch.obermuhlner</groupId>
+            <artifactId>big-math</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+        <dependency>
+  <groupId>org.georegression</groupId>
+  <artifactId>georegression</artifactId>
+  <version>0.21</version>
+</dependency>
+        <dependency>
             <groupId>io.github.agdturner</groupId>
             <artifactId>agdt-java-generic</artifactId>
             <version>${agdt-java-generic.version}</version>
