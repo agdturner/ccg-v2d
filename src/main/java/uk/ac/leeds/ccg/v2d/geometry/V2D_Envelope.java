@@ -24,7 +24,7 @@ import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
  * @author Andy Turner
  * @version 1.0.0
  */
-public class V2D_Envelope extends V2D_Geometry {
+public class V2D_Envelope extends V2D_Geometry implements V2D_FiniteGeometry {
 
     /**
      * The minimum x-coordinate.
@@ -62,22 +62,6 @@ public class V2D_Envelope extends V2D_Geometry {
         yMax = e.yMax;
         xMin = e.xMin;
         xMax = e.xMax;
-        dp = e.dp;
-        //applyDecimalPlacePrecision();
-    }
-
-    /**
-     * @param g A geometry.
-     */
-    public V2D_Envelope(V2D_Geometry g) {
-        super(g.e);
-        V2D_Envelope env = g.getEnvelope2D();
-        xMin = env.xMin;
-        xMax = env.xMin;
-        yMin = env.yMin;
-        yMax = env.yMax;
-        dp = env.dp;
-        //applyDecimalPlacePrecision();
     }
 
     /**
@@ -100,7 +84,6 @@ public class V2D_Envelope extends V2D_Geometry {
             xMin = a.x;
             xMax = b.x;
         }
-        dp = Math.max(a.dp, b.dp);
     }
 
     /**
@@ -114,45 +97,43 @@ public class V2D_Envelope extends V2D_Geometry {
         yMax = new BigDecimal(y.toString());
         xMin = new BigDecimal(x.toString());
         xMax = new BigDecimal(x.toString());
-        dp = Math.max(x.scale(), y.scale());
     }
 
-    /**
-     *
-     * @param g The geometries.
-     */
-    public V2D_Envelope(V2D_Geometry[] g) {
-        super(g[0].e);
-        V2D_Envelope env = g[0].getEnvelope2D();
-        xMin = env.xMin;
-        dp = xMin.scale();
-        xMax = env.xMin;
-        dp = Math.max(dp, xMax.scale());
-        yMin = env.yMin;
-        dp = Math.max(dp, yMin.scale());
-        yMax = env.yMax;
-        dp = Math.max(dp, yMax.scale());
-        for (int i = 1; i < g.length; i++) {
-            env = g[i].getEnvelope2D();
-            if (env.xMin.compareTo(xMin) == -1) {
-                xMin = env.xMin;
-                dp = Math.max(dp, xMin.scale());
-            }
-            if (env.xMax.compareTo(xMax) == 1) {
-                xMax = env.xMax;
-                dp = Math.max(dp, xMax.scale());
-            }
-            if (env.yMin.compareTo(yMin) == -1) {
-                yMin = env.yMin;
-                dp = Math.max(dp, yMin.scale());
-            }
-            if (env.yMax.compareTo(yMax) == 1) {
-                yMax = env.yMax;
-                dp = Math.max(dp, yMax.scale());
-            }
-        }
-        applyDecimalPlacePrecision();
-    }
+//    /**
+//     *
+//     * @param g The geometries.
+//     */
+//    public V2D_Envelope(V2D_Geometry[] g) {
+//        super(g[0].e);
+//        V2D_Envelope env = g[0].getEnvelope2D();
+//        xMin = env.xMin;
+//        dp = xMin.scale();
+//        xMax = env.xMin;
+//        dp = Math.max(dp, xMax.scale());
+//        yMin = env.yMin;
+//        dp = Math.max(dp, yMin.scale());
+//        yMax = env.yMax;
+//        dp = Math.max(dp, yMax.scale());
+//        for (int i = 1; i < g.length; i++) {
+//            env = g[i].getEnvelope2D();
+//            if (env.xMin.compareTo(xMin) == -1) {
+//                xMin = env.xMin;
+//                dp = Math.max(dp, xMin.scale());
+//            }
+//            if (env.xMax.compareTo(xMax) == 1) {
+//                xMax = env.xMax;
+//                dp = Math.max(dp, xMax.scale());
+//            }
+//            if (env.yMin.compareTo(yMin) == -1) {
+//                yMin = env.yMin;
+//                dp = Math.max(dp, yMin.scale());
+//            }
+//            if (env.yMax.compareTo(yMax) == 1) {
+//                yMax = env.yMax;
+//                dp = Math.max(dp, yMax.scale());
+//            }
+//        }
+//    }
 
     @Override
     public String toString() {
@@ -161,16 +142,6 @@ public class V2D_Envelope extends V2D_Geometry {
                 + "yMin=" + yMin.toString() + ", yMax=" + yMax.toString() + ")";
     }
 
-//    public static V2D_Envelope envelope(
-//            V2D_Envelope a,
-//            V2D_Envelope b) {
-//        V2D_Envelope result = new V2D_Envelope();
-//        result.xMin = a.xMin.min(b.xMin);
-//        result.yMin = a.yMin.min(b.yMin);
-//        result.xMax = a.xMax.max(b.xMax);
-//        result.yMax = a.yMax.max(b.yMax);
-//        return result;
-//    }
     public V2D_Envelope envelope(V2D_Envelope e) {
         V2D_Envelope r = new V2D_Envelope(e.e);
         r.xMin = e.xMin.min(this.xMin);
@@ -277,8 +248,7 @@ public class V2D_Envelope extends V2D_Geometry {
      * @return {@code true} if this intersects with {@code l}.
      */
     public boolean getIntersects(V2D_LineSegment l, BigDecimal t) {
-        return V2D_LineSegment.getIntersects(xMin, yMin, xMax, yMax, l, t,
-                dp);
+        return V2D_LineSegment.getIntersects(xMin, yMin, xMax, yMax, l, t);
     }
 
     /**
@@ -303,13 +273,5 @@ public class V2D_Envelope extends V2D_Geometry {
     @Override
     public V2D_Envelope getEnvelope2D() {
         return this;
-    }
-
-    @Override
-    public final void applyDecimalPlacePrecision() {
-        xMin = xMin.setScale(dp, rm);
-        xMax = xMax.setScale(dp, rm);
-        yMin = yMin.setScale(dp, rm);
-        yMax = yMax.setScale(dp, rm);
     }
 }

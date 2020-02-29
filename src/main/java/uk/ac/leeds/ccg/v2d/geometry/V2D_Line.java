@@ -39,34 +39,12 @@ public class V2D_Line extends V2D_Geometry {
         super(p.e);
         this.angle = new BigDecimal(angleClockwiseFromYAxis);
         this._Point2D = new V2D_Point(p);
-        dp = Math.max(this.angle.scale(), this._Point2D.dp);
     }
 
     public V2D_Line(BigDecimal a_AngleClockwiseFromYAxis, V2D_Point p) {
         super(p.e);
         this.angle = new BigDecimal(a_AngleClockwiseFromYAxis.toString());
         this._Point2D = new V2D_Point(p);
-        dp = Math.max(this.angle.scale(), this._Point2D.dp);
-    }
-
-    /**
-     * Potential precision issues with Envelope extent...
-     */
-    @Override
-    public V2D_Envelope getEnvelope2D() {
-        //throw new UnsupportedOperationException("Not supported yet.");
-        BigDecimal minusALot = new BigDecimal(Double.MIN_VALUE);
-        BigDecimal plusALot = new BigDecimal(Double.MAX_VALUE);
-        V2D_Point a_Point2D = new V2D_Point(
-                e, minusALot, minusALot);
-        V2D_Point b_Point2D = new V2D_Point(
-                e, plusALot, plusALot);
-        return new V2D_Envelope(a_Point2D, b_Point2D);
-    }
-
-    @Override
-    public void applyDecimalPlacePrecision() {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public V2D_Point[] getExtremePointsOnLine(double ydiffExtremity) {
@@ -100,7 +78,7 @@ public class V2D_Line extends V2D_Geometry {
     public V2D_Geometry getIntersection(
             V2D_Line a_Line2D,
             double ydiffExtremity,
-            BigDecimal tollerance,
+            BigDecimal t,
             int a_DecimalPlacePrecision) {
         V2D_Geometry result;
         V2D_Point[] extremePointsOnThis = this.getExtremePointsOnLine(
@@ -115,8 +93,7 @@ public class V2D_Line extends V2D_Geometry {
                 extremePointsOna_Line2D[1]);
         result = extremePointsOnThis_LineSegment2D.getIntersection(
                 extremePointsOna_LineSegment2D,
-                tollerance,
-                a_DecimalPlacePrecision);
+                t);
         return result;
     }
 }

@@ -16,6 +16,7 @@
 package uk.ac.leeds.ccg.v2d.geometry;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import org.ojalgo.function.constant.BigMath;
 import uk.ac.leeds.ccg.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
@@ -26,7 +27,8 @@ import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
  * @author Andy Turner
  * @version 1.0.0
  */
-public class V2D_Point extends V2D_Geometry implements Comparable {
+public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry,
+        Comparable {
 
     /**
      * The x coordinate.
@@ -41,10 +43,10 @@ public class V2D_Point extends V2D_Geometry implements Comparable {
     /**
      * Creates a default Vector_Point2D with: x = null; y = null;
      *
-     * @param ve
+     * @param e
      */
-    public V2D_Point(V2D_Environment ve) {
-        super(ve);
+    public V2D_Point(V2D_Environment e) {
+        super(e);
     }
 
     /**
@@ -54,19 +56,6 @@ public class V2D_Point extends V2D_Geometry implements Comparable {
         super(p.e);
         x = p.x;
         y = p.y;
-        dp = p.dp;
-    }
-
-    /**
-     * @param p Vector_Point2D
-     * @param dp What {@link #dp} is set to.
-     */
-    public V2D_Point(V2D_Point p, int dp) {
-        super(p.e);
-        x = p.x;
-        y = p.y;
-        this.dp = dp;
-        applyDecimalPlacePrecision();
     }
 
     /**
@@ -79,7 +68,6 @@ public class V2D_Point extends V2D_Geometry implements Comparable {
         super(p.e);
         x = e.round(p.x, toRoundToX);
         y = e.round(p.y, toRoundToY);
-        dp = Math.max(toRoundToX.scale(), toRoundToY.scale());
     }
 
     /**
@@ -95,7 +83,6 @@ public class V2D_Point extends V2D_Geometry implements Comparable {
         super(ve);
         this.x = new BigDecimal(x.toString());
         this.y = new BigDecimal(y.toString());
-        dp = Math.max(x.scale(), y.scale());
     }
 
     /**
@@ -109,8 +96,6 @@ public class V2D_Point extends V2D_Geometry implements Comparable {
         super(e);
         this.x = new BigDecimal(x.toString());
         this.y = new BigDecimal(y.toString());
-        this.dp = dp;
-        applyDecimalPlacePrecision();
     }
 
     /**
@@ -125,7 +110,6 @@ public class V2D_Point extends V2D_Geometry implements Comparable {
         super(e);
         this.x = e.round(x, toRoundToX);
         this.y = e.round(y, toRoundToY);
-        dp = Math.max(toRoundToX.scale(), toRoundToY.scale());
     }
 
     /**
@@ -137,7 +121,6 @@ public class V2D_Point extends V2D_Geometry implements Comparable {
         super(e);
         this.x = new BigDecimal(x);
         this.y = new BigDecimal(y);
-        dp = Math.max(this.x.scale(), this.y.scale());
     }
 
     /**
@@ -150,8 +133,6 @@ public class V2D_Point extends V2D_Geometry implements Comparable {
         super(e);
         this.x = new BigDecimal(x);
         this.y = new BigDecimal(y);
-        this.dp = dp;
-        applyDecimalPlacePrecision();
     }
 
     /**
@@ -161,23 +142,8 @@ public class V2D_Point extends V2D_Geometry implements Comparable {
      */
     public V2D_Point(V2D_Environment e, double x, double y) {
         super(e);
-        this.x = new BigDecimal(x);
-        this.y = new BigDecimal(y);
-        dp = Math.max(this.x.scale(), this.y.scale());
-    }
-
-    /**
-     * @param e The vector environment.
-     * @param x The x-coordinate.
-     * @param y The y-coordinate.
-     * @param dp The decimal places.
-     */
-    public V2D_Point(V2D_Environment e, double x, double y, int dp) {
-        super(e);
-        this.x = new BigDecimal(x);
-        this.y = new BigDecimal(y);
-        this.dp = dp;
-        applyDecimalPlacePrecision();
+        this.x = BigDecimal.valueOf(x);
+        this.y = BigDecimal.valueOf(y);
     }
 
     /**
@@ -190,9 +156,8 @@ public class V2D_Point extends V2D_Geometry implements Comparable {
     public V2D_Point(V2D_Environment e, double x, double y,
             BigDecimal toRoundToX, BigDecimal toRoundToY) {
         super(e);
-        this.x = e.round(new BigDecimal(x), toRoundToX);
-        this.y = e.round(new BigDecimal(y), toRoundToY);
-        dp = Math.max(toRoundToX.scale(), toRoundToY.scale());
+        this.x = e.round(BigDecimal.valueOf(x), toRoundToX);
+        this.y = e.round(BigDecimal.valueOf(y), toRoundToY);
     }
 
     /**
@@ -203,12 +168,11 @@ public class V2D_Point extends V2D_Geometry implements Comparable {
     public void roundTo(BigDecimal r) {
         x = e.round(x, r);
         y = e.round(y, r);
-        dp = r.scale();
     }
 
     @Override
     public String toString() {
-        return "Point2D(" + super.toString() + "x=" + x.toString() + " y="
+        return "Point2D(x=" + x.toString() + " y="
                 + y.toString() + ")";
     }
 
@@ -250,8 +214,14 @@ public class V2D_Point extends V2D_Geometry implements Comparable {
         return 1;
     }
 
-    public boolean getIntersects(V2D_LineSegment l, int dpc) {
-        return l.getIntersects(this, dpc);
+    /**
+     * 
+     * @param l
+     * @param t tolerance
+     * @return 
+     */
+    public boolean getIntersects(V2D_LineSegment l, BigDecimal t) {
+        return l.getIntersects(this, t);
     }
 
     /**
@@ -374,7 +344,7 @@ public class V2D_Point extends V2D_Geometry implements Comparable {
         }
     }
 
-    public BigDecimal getGradient(V2D_Point p, int decimalPlacePrecision) {
+    public BigDecimal getGradient(V2D_Point p, int scale, RoundingMode rm) {
         BigDecimal xDiff0 = x.subtract(p.x);
         BigDecimal yDiff0 = y.subtract(p.y);
         if (yDiff0.compareTo(BigDecimal.ZERO) == 0) {
@@ -383,19 +353,13 @@ public class V2D_Point extends V2D_Geometry implements Comparable {
             if (xDiff0.compareTo(BigDecimal.ZERO) == 0) {
                 return BigDecimal.ZERO;
             }
-            return xDiff0.divide(yDiff0, decimalPlacePrecision, rm);
+            return xDiff0.divide(yDiff0, scale, rm);
         }
     }
 
     @Override
     public V2D_Envelope getEnvelope2D() {
         return new V2D_Envelope(e, x, y);
-    }
-
-    @Override
-    public final void applyDecimalPlacePrecision() {
-        x = x.setScale(dp, rm);
-        y = y.setScale(dp, rm);
     }
 
     /**

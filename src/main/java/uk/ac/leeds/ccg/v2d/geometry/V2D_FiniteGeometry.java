@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Andy Turner, University of Leeds.
+ * Copyright 2020 Andy Turner, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +15,14 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry;
 
-import java.math.RoundingMode;
-import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
-import uk.ac.leeds.ccg.v2d.core.V2D_Object;
-
 /**
- * For 2D geometrical objects.
+ * V2D_FiniteGeometry
  * 
  * @author Andy Turner
- * @version 1.0.0
+ * @version 1.0
  */
-public abstract class V2D_Geometry extends V2D_Object {
-
-    public V2D_Geometry(V2D_Environment e) {
-        super(e);
-    }
+public interface V2D_FiniteGeometry {
+    
+    public abstract V2D_Envelope getEnvelope2D();
+    
 }

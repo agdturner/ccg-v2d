@@ -75,15 +75,15 @@ public class Vector_LineSegment2DTest {
         BigDecimal ten = new BigDecimal("10");
         BigDecimal aX = new BigDecimal("1");
         BigDecimal aY = new BigDecimal("1");
-        int dp = 0;
+        BigDecimal t = new BigDecimal("0.1");
         for (int i = 0; i < 1000; i++) {
-            dp++;
-            System.out.println("Decimal Places " + dp);
+            t.setScale(i+2);
+            System.out.println("t=" + t.toString());
             aX = aX.divide(ten);
             aY = aY.divide(ten);
             a = new V2D_Point(env, aX, aY);
             System.out.println("a " + a.toString());
-            result = ab.getIntersects(a, dp);
+            result = ab.getIntersects(a, t);
             System.out.println("ab.getIntersects(a,DecimalPlacePrecision)"
                     + result);
             Assertions.assertEquals(expResult, result);

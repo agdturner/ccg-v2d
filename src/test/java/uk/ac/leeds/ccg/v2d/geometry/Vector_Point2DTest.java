@@ -72,14 +72,14 @@ public class Vector_Point2DTest {
         expResult = false;
         Assertions.assertEquals(expResult, result);
 
-        c = new V2D_Point(a, 1);
+        c = new V2D_Point(a);
         System.out.println("c = new VectorPoint2D(a,1); " + c.toString());
         result = a.equals(c);
         System.out.println("a.equals(c); " + result);
         expResult = false;
         Assertions.assertEquals(expResult, result);
 
-        d = new V2D_Point(b, 1);
+        d = new V2D_Point(b);
         System.out.println("d = new VectorPoint2D(b,1); " + d.toString());
 
         result = b.equals(d);
