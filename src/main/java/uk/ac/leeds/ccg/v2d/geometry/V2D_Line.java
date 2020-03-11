@@ -75,18 +75,25 @@ public class V2D_Line extends V2D_Geometry {
 //                this._Point2D.y.subtract(ydiff_BigDecimal));
 //        return result;
 //    }
-    public V2D_Geometry getIntersection(
-            V2D_Line a_Line2D,
+    /**
+     * 
+     * @param l
+     * @param ydiffExtremity
+     * @param t
+     * @param dp DecimalPlacePrecision
+     * @return 
+     */
+    public V2D_Geometry getIntersection(V2D_Line l,
             double ydiffExtremity,
             BigDecimal t,
-            int a_DecimalPlacePrecision) {
+            int dp) {
         V2D_Geometry result;
         V2D_Point[] extremePointsOnThis = this.getExtremePointsOnLine(
                 ydiffExtremity);
         V2D_LineSegment extremePointsOnThis_LineSegment2D = new V2D_LineSegment(
                 extremePointsOnThis[0],
                 extremePointsOnThis[1]);
-        V2D_Point[] extremePointsOna_Line2D = a_Line2D.getExtremePointsOnLine(
+        V2D_Point[] extremePointsOna_Line2D = l.getExtremePointsOnLine(
                 ydiffExtremity);
         V2D_LineSegment extremePointsOna_LineSegment2D = new V2D_LineSegment(
                 extremePointsOna_Line2D[0],

@@ -30,6 +30,8 @@ import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
 public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry,
         Comparable {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * The x coordinate.
      */
