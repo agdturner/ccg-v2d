@@ -102,7 +102,7 @@ public class V2D_LineSegment extends V2D_Geometry
      * @return {@code new V2D_Envelope(start, end)}
      */
     @Override
-    public V2D_Envelope getEnvelope2D() {
+    public V2D_Envelope getEnvelope() {
         return new V2D_Envelope(start, end);
     }
 
@@ -222,7 +222,7 @@ public class V2D_LineSegment extends V2D_Geometry
      * @return {@code true} if {@code p} intersects this.
      */
     public boolean getIntersects(V2D_Point p, BigDecimal t) {
-        if (getEnvelope2D().getIntersects(p) == false) {
+        if (getEnvelope().getIntersects(p) == false) {
             return false;
         }
         if (start.y.compareTo(end.y) == -1) {

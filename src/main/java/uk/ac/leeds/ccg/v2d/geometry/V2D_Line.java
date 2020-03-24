@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Andy Turner, University of Leeds.
+ * Copyright 2020 Andy Turner, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,92 +15,319 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry;
 
+import ch.obermuhlner.math.big.BigRational;
 import java.math.BigDecimal;
-import org.ojalgo.function.BigFunction;
+import java.math.RoundingMode;
+import java.util.Objects;
+import uk.ac.leeds.ccg.math.Math_BigDecimal;
 
 /**
- * Vector Line2D
+ * 2D representation of an infinite length line. The line passes through the
+ * point {@link #p} and is travelling in the direction {@link #v}.
+ * <ul>
+ * <li>Vector Form
+ * <ul>
+ * <li>(x,y) = (p.x,p.y) + t(v.dx,v.dy)</li>
+ * </ul>
+ * <li>Parametric Form (where t describes a particular point on the line)
+ * <ul>
+ * <li>x = p.x + t(v.dx)</li>
+ * <li>y = p.y + t(v.dy)</li>
+ * </ul>
+ * <li>Symmetric Form (assume v.dx and v.dy are nonzero)
+ * <ul>
+ * <li>(x−p.x)/v.dx = (y−p.y)/v.dy</li>
+ * </ul></li>
+ * </ul>
+ *
  * @author Andy Turner
- * @version 1.0.0
+ * @version 1.0
  */
 public class V2D_Line extends V2D_Geometry {
 
-    /**
-     * The angle clockwise from the Y-Axis which defines the line.
-     */
-    BigDecimal angle;
+    private static final long serialVersionUID = 1L;
 
     /**
-     * A point on the line
+     * A point defining the line.
      */
-    V2D_Point _Point2D;
+    public V2D_Point p;
 
-    public V2D_Line(double angleClockwiseFromYAxis, V2D_Point p) {
+    /**
+     * A point defining the line.
+     */
+    public V2D_Point q;
+
+    /**
+     * The direction vector from {@link #p} in the direction of {@link #q}.
+     */
+    public V2D_Vector v;
+
+    /**
+     * @param p What {@link #p} is set to.
+     * @param q What {@link #q} is set to.
+     * @param checkCoincidence If true a check for coincidence of {@link #p} and
+     * {@link #q} is done otherwise it is not done (as in the case when the line
+     * is a line segment defining the edge of an envelope which is allowed to be
+     * a point).
+     * @throws RuntimeException If {@code p} and {@code q} are coincident and
+     * {@code checkCoincidence} is {@code true}.
+     */
+    public V2D_Line(V2D_Point p, V2D_Point q, boolean checkCoincidence) {
         super(p.e);
-        this.angle = new BigDecimal(angleClockwiseFromYAxis);
-        this._Point2D = new V2D_Point(p);
+        if (checkCoincidence) {
+            if (p.equals(q)) {
+                throw new RuntimeException("The inputs p and q are the same point "
+                        + "and do not define a line.");
+            }
+        }
+        init(p, q);
     }
 
-    public V2D_Line(BigDecimal a_AngleClockwiseFromYAxis, V2D_Point p) {
-        super(p.e);
-        this.angle = new BigDecimal(a_AngleClockwiseFromYAxis.toString());
-        this._Point2D = new V2D_Point(p);
+    private void init(V2D_Point p, V2D_Point q) {
+        this.p = new V2D_Point(p);
+        this.q = new V2D_Point(q);
+        v = new V2D_Vector(q.x.subtract(p.x), q.y.subtract(p.y));
     }
 
-    public V2D_Point[] getExtremePointsOnLine(double ydiffExtremity) {
-        V2D_Point[] result = new V2D_Point[2];
-        BigDecimal ydiff_BigDecimal = new BigDecimal(ydiffExtremity);
-        BigDecimal xdiff_BigDecimal
-                = BigFunction.TAN.invoke(angle).multiply(ydiff_BigDecimal);
-        result[0] = new V2D_Point(
-                e,
-                this._Point2D.x.add(xdiff_BigDecimal),
-                this._Point2D.y.add(ydiff_BigDecimal));
-        result[1] = new V2D_Point(
-                e,
-                this._Point2D.x.subtract(xdiff_BigDecimal),
-                this._Point2D.y.subtract(ydiff_BigDecimal));
-        return result;
-    }
-
-//    public Point2D[] getExtremePointsOnLine(double ydiffExtremity){
-//        Point2D[] result = new Point2D[2];
-//        BigDecimal ydiff_BigDecimal = new BigDecimal(ydiffExtremity);
-//        BigDecimal xdiff_BigDecimal = new BigDecimal(Math.tan(angle.doubleValue()) * ydiffExtremity);
-//        result[0] = new Point2D(
-//                this._Point2D.x.add(xdiff_BigDecimal),
-//                this._Point2D.y.add(ydiff_BigDecimal));
-//       result[1] = new Point2D(
-//                this._Point2D.x.subtract(xdiff_BigDecimal),
-//                this._Point2D.y.subtract(ydiff_BigDecimal));
-//        return result;
-//    }
     /**
-     * 
-     * @param l
-     * @param ydiffExtremity
-     * @param t
-     * @param dp DecimalPlacePrecision
-     * @return 
+     * {@code p} should not be equal to {@code q} unless the line is a line
+     * segment which is part of an envelope. If unsure the use
+     * {@link #V2D_Line(V2D_Point, V2D_Point, boolean)}.
+     *
+     * @param p What {@link #p} is set to.
+     * @param q What {@link #q} is set to.
      */
-    public V2D_Geometry getIntersection(V2D_Line l,
-            double ydiffExtremity,
-            BigDecimal t,
-            int dp) {
-        V2D_Geometry result;
-        V2D_Point[] extremePointsOnThis = this.getExtremePointsOnLine(
-                ydiffExtremity);
-        V2D_LineSegment extremePointsOnThis_LineSegment2D = new V2D_LineSegment(
-                extremePointsOnThis[0],
-                extremePointsOnThis[1]);
-        V2D_Point[] extremePointsOna_Line2D = l.getExtremePointsOnLine(
-                ydiffExtremity);
-        V2D_LineSegment extremePointsOna_LineSegment2D = new V2D_LineSegment(
-                extremePointsOna_Line2D[0],
-                extremePointsOna_Line2D[1]);
-        result = extremePointsOnThis_LineSegment2D.getIntersection(
-                extremePointsOna_LineSegment2D,
-                t);
-        return result;
+    public V2D_Line(V2D_Point p, V2D_Point q) {
+        super(p.e);
+        init(p, q);
+    }
+
+    /**
+     * @param p What {@link #p} is set to.
+     * @param v What {@link #v} is set to.
+     */
+    public V2D_Line(V2D_Point p, V2D_Vector v) {
+        super(p.e);
+        this.p = new V2D_Point(p);
+        this.v = v;
+        q = p.apply(v);
+    }
+
+    /**
+     * @param l Vector_LineSegment3D
+     */
+    public V2D_Line(V2D_Line l) {
+        super(l.e);
+        this.p = l.p;
+        this.q = l.q;
+    }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + "(p=" + p.toString()
+                + ", q=" + q.toString() + ", v=" + v.toString() + ")";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof V2D_Line) {
+            V2D_Line l = (V2D_Line) o;
+            if (this.isIntersectedBy(l.p) && this.isIntersectedBy(l.q)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + Objects.hashCode(this.p);
+        hash = 17 * hash + Objects.hashCode(this.v);
+        return hash;
+    }
+
+    /**
+     * @param pt A point to test for intersection.
+     * @return {@code true} if p is on the line.
+     */
+    public boolean isIntersectedBy(V2D_Point pt) {
+        V2D_Vector ppt = new V2D_Vector(pt.x.subtract(p.x), pt.y.subtract(p.y));
+        V2D_Vector cp = v.getCrossProduct(ppt);
+        return cp.dx.isZero() && cp.dy.isZero();
+    }
+
+    /**
+     * @param l The line to test this with to see if they are parallel.
+     * @return {@code true} If this and {@code l} are parallel.
+     */
+    public boolean isParallel(V2D_Line l) {
+        V2D_Vector cp = v.getCrossProduct(l.v);
+        return cp.dx.isZero() && cp.dy.isZero();
+    }
+
+    /**
+     * This computes the intersection and tests if it is {@code null}
+     *
+     * @param l The line to test if it isIntersectedBy with this.
+     * @return {@code true} If this and {@code l} intersect.
+     */
+    public boolean isIntersectedBy(V2D_Line l) {
+        return this.getIntersection(l) != null;
+    }
+
+    /**
+     * Intersects {@code this} with {@code l}. If they are equivalent then
+     * return {@code this}.
+     *
+     * @param l The line to get intersection with this.
+     * @return The intersection between {@code this} and {@code l}.
+     */
+    public V2D_Geometry getIntersection(V2D_Line l) {
+        return getIntersection(this, l);
+    }
+
+    public static V2D_Geometry getIntersection(V2D_Line l0, V2D_Line l1) {
+        // Check the points.
+        if (l0.isIntersectedBy(l1.p)) {
+            if (l0.isIntersectedBy(l1.q)) {
+                return l0; // The lines are coincident.
+            } else {
+                return l1.p;
+            }
+        } else {
+            if (l0.isIntersectedBy(l1.q)) {
+                return l1.q;
+            }
+        }
+        if (l1.isIntersectedBy(l0.p)) {
+            return l0.p;
+        }
+        if (l1.isIntersectedBy(l0.q)) {
+            return l0.q;
+        }
+        // Case of parallel and non equal lines.
+        if (l0.isParallel(l1)) {
+            return null;
+        }
+        /**
+         * Find the intersection point where the two equations of the lines
+         * meet. (x(t)−x0)/a = (y(t)−y0)/b = (z(t)−z0)/c
+         */
+        // (x−p.x)/a = (y−p.y)/b = (z−p.z)/c
+        // t = (v.dx - x0)/p.x;
+        // t = (v.dy - y0)/p.y;
+        // t = (v.dz - z0)/p.z;
+        // x(t) = t(dx)+q.x
+        // y(t) = t(dy)+q.y
+        // z(t) = t(dz)+q.z
+        // 1: t(v.dx)+q.x = s(l.v.dx)+l.q.x
+        // 2: t(v.dy)+q.y = s(l.v.dy)+l.q.y
+        // 3: t(v.dz)+q.z = s(l.v.dz)+l.q.z
+        // Let:
+        // l.v.dx = k; l.v.dy = l; l.v.dz = m;
+        // From 1:
+        // t = ((s(k)+l.q.x-q.x)/(v.dx))
+        // Let:
+        // l.q.x-q.x = e; l.q.y-q.y = f; l.q.z-q.z = g
+        // v.dx = a; v.dy = b; v.dz = c
+        // t = (sk+e)/a
+        // Sub into 2:
+        // ((sk+e)/a)b+q.y = sl + l.q.y
+        // skb/a +eb/a - s1 = l.q.y - q.y
+        // s(kb/a - l) = l.q.y - q.y - eb/a
+        // s = (l.q.y - q.y - eb/a) / ((kb/a) - l)
+        BigRational t;
+        if (l0.v.dx.isZero()) {
+            // Line has constant x                    
+            if (l0.v.dy.isZero()) {
+                // Line has constant y
+                // Line is parallel to z axis
+                /*
+                 * x = p.x + t(v.dx)
+                 * y = p.y + t(v.dy)
+                 * z = p.z + t(v.dz)
+                 */
+                BigRational num = l1.q.x.subtract(l0.q.x).subtract(l1.q.z
+                        .subtract(l0.q.z).multiply(l0.v.dx).divide(l0.v.dz));
+                BigRational den = l1.v.dz.multiply(l0.v.dx).divide(l0.v.dz)
+                        .subtract(l1.v.dx);
+                t = num.divide(den).multiply(l1.v.dz).add(l1.q.z)
+                        .subtract(l0.q.z).divide(l0.v.dz);
+            } else if (l0.v.dz.isZero()) {
+                // Line has constant z
+                BigRational num = l1.q.z.subtract(l0.q.z).subtract(l1.q.y
+                        .subtract(l0.q.y).multiply(l0.v.dz).divide(l0.v.dy));
+                BigRational den = l1.v.dy.multiply(l0.v.dz).divide(l0.v.dy)
+                        .subtract(l1.v.dz);
+                t = num.divide(den).multiply(l1.v.dz).add(l1.q.z)
+                        .subtract(l0.q.z).divide(l0.v.dz);
+            } else {
+                BigRational den = l1.v.dy.multiply(l0.v.dx).divide(l0.v.dy)
+                        .subtract(l1.v.dx);
+                BigRational num = l1.q.x.subtract(l0.q.x).subtract(l1.q.y
+                        .subtract(l0.q.y).multiply(l0.v.dx).divide(l0.v.dy));
+                t = num.divide(den).multiply(l1.v.dy).add(l1.q.y)
+                        .subtract(l0.q.y).divide(l0.v.dy);
+            }
+        } else {
+            if (l0.v.dy.isZero()) {
+                if (l0.v.dz.isZero()) {
+                    BigRational num = l1.q.y.subtract(l0.q.y).subtract(l1.q.x
+                            .subtract(l0.q.z).multiply(l0.v.dy).divide(l0.v.dx));
+                    BigRational den = l1.v.dz.multiply(l0.v.dy).divide(l0.v.dx)
+                            .subtract(l1.v.dy);
+                    t = num.divide(den).multiply(l1.v.dy).add(l1.q.x)
+                            .subtract(l0.q.x).divide(l0.v.dx);
+                } else {
+                    BigRational num = l1.q.y.subtract(l0.q.y).subtract(l1.q.z
+                            .subtract(l0.q.z).multiply(l0.v.dy).divide(l0.v.dz));
+                    BigRational den = l1.v.dz.multiply(l0.v.dy).divide(l0.v.dz)
+                            .subtract(l1.v.dy);
+                    t = num.divide(den).multiply(l1.v.dx).add(l1.q.x)
+                            .subtract(l0.q.x).divide(l0.v.dx);
+                }
+            } else if (l0.v.dz.isZero()) {
+                BigRational num = l1.q.z.subtract(l0.q.z).subtract(l1.q.y
+                        .subtract(l0.q.y).multiply(l0.v.dz).divide(l0.v.dy));
+                BigRational den = l1.v.dy.multiply(l0.v.dz).divide(l0.v.dy)
+                        .subtract(l1.v.dz);
+                t = num.divide(den).multiply(l1.v.dx).add(l1.q.x)
+                        .subtract(l0.q.x).divide(l0.v.dx);
+            } else {
+                //dy dz nonzero
+                BigRational den = l1.v.dx.multiply(l0.v.dy).divide(l0.v.dx)
+                        .subtract(l1.v.dy);
+                BigRational num = l1.q.y.subtract(l0.q.y).subtract(l1.q.x
+                        .subtract(l0.q.x).multiply(l0.v.dy).divide(l0.v.dx));
+                t = num.divide(den).multiply(l1.v.dx).add(l1.q.x)
+                        .subtract(l0.q.x).divide(l0.v.dx);
+            }
+        }
+        return new V2D_Point(l0.e,
+                t.multiply(l0.v.dx).add(l0.q.x),
+                t.multiply(l0.v.dy).add(l0.q.y));
+    }
+
+    /**
+     * @param l A line.
+     * @param scale The scale for the precision of the result.
+     * @param rm The RoundingMode for any rounding.
+     * @return The shortest distance between this and {@code l}.
+     */
+    public BigDecimal getDistance(V2D_Line l, int scale, RoundingMode rm) {
+        // The coordinates of points along the lines are given by:
+        // p = <p.x, p.y, p.z> + t<v.dx, v.dy, v.dz>
+        // lp = <l.p.x, l.p.y, l.p.z> + t<l.v.dx, l.v.dy, l.v.dz>
+        // p2 = r2+t2e2
+        // The line connecting the closest points has direction vector:
+        // n = v.l.v
+        V2D_Vector n = v.getCrossProduct(l.v);
+        // d = n.(p−l.p)/||n||
+        V2D_Vector p_sub_lp = new V2D_Vector(p.x.subtract(l.p.x),
+                p.y.subtract(l.p.y));
+        BigRational m = BigRational.valueOf(n.getMagnitude(scale, rm));
+        BigRational d = n.getDotProduct(p_sub_lp).divide(m);
+        return Math_BigDecimal.roundIfNecessary(d.toBigDecimal(), scale, rm);
     }
 }

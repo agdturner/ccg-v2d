@@ -15,6 +15,7 @@
  */
 package uk.ac.leeds.ccg.v2d.core;
 
+import ch.obermuhlner.math.big.BigRational;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -24,6 +25,7 @@ import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
 import uk.ac.leeds.ccg.generic.io.Generic_Path;
 import uk.ac.leeds.ccg.generic.memory.Generic_MemoryManager;
 import uk.ac.leeds.ccg.math.Math_BigDecimal;
+import uk.ac.leeds.ccg.v2d.geometry.V2D_Vector;
 import uk.ac.leeds.ccg.v2d.io.V2D_Files;
 import uk.ac.leeds.ccg.v2d.projection.V2D_OSGBtoLatLon;
 
@@ -37,18 +39,32 @@ public class V2D_Environment extends Generic_MemoryManager {
 
     private static final long serialVersionUID = 1L;
 
-    public V2D_Files files;
-
     /**
      * Generic Environment
      */
     public final Generic_Environment env;
 
     /**
-     * MathBigDecimal
+     * zero Vector
+     */
+    public static final V2D_Vector ZERO_VECTOR = new V2D_Vector(BigRational.ZERO, BigRational.ZERO); 
+    
+    /**
+     * For code brevity.
+     */
+    public final BigRational P0 = BigRational.ZERO;
+    public final BigRational P1 = BigRational.ONE;
+    public final BigRational P2 = BigRational.valueOf(2);
+    public final BigRational P3 = BigRational.valueOf(3);
+    public final BigRational N1 = BigRational.ONE.negate();
+
+    public V2D_Files files;
+
+    /**
+     * Math_BigDecimal
      */
     public Math_BigDecimal bd;
-
+    
     protected V2D_OSGBtoLatLon OSGBtoLatLon;
 
     public V2D_Environment(Generic_Environment e) throws IOException,
@@ -64,6 +80,7 @@ public class V2D_Environment extends Generic_MemoryManager {
         initMemoryReserve(Default_Memory_Threshold, env);
         files = new V2D_Files(new Generic_Defaults(Paths.get(dir.toString(),
                 V2D_Strings.s_vector)));
+        
     }
 
     public BigDecimal round(BigDecimal toRound, BigDecimal toRoundTo) {

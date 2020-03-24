@@ -4,6 +4,9 @@
     <groupId>io.github.agdturner</groupId>
     <artifactId>agdt-java-vector2d</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <!--
+    <version>0.1</version>
+    -->
     <packaging>jar</packaging>
     
     <name>agdt-java-vector2d</name>
@@ -39,8 +42,8 @@
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <agdt-java-generic.version>1.2-SNAPSHOT</agdt-java-generic.version>
-        <agdt-java-math.version>1.2</agdt-java-math.version>
+        <agdt-java-generic.version>1.5</agdt-java-generic.version>
+        <agdt-java-math.version>1.6-SNAPSHOT</agdt-java-math.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <maven.version>3.0.1</maven.version>
@@ -49,11 +52,13 @@
     </properties>
     
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/io.github.agdturner/agdt-java-generic -->
         <dependency>
             <groupId>io.github.agdturner</groupId>
             <artifactId>agdt-java-generic</artifactId>
             <version>${agdt-java-generic.version}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/io.github.agdturner/agdt-java-math -->
         <dependency>
             <groupId>io.github.agdturner</groupId>
             <artifactId>agdt-java-math</artifactId>

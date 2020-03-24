@@ -13,16 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.leeds.ccg.v2d.geometry;
+
+package uk.ac.leeds.ccg.v2d.geometry.envelope;
+
+import uk.ac.leeds.ccg.v2d.geometry.V2D_LineSegment;
+import uk.ac.leeds.ccg.v2d.geometry.V2D_Point;
 
 /**
- * V2D_FiniteGeometry
+ * A class for a line segment aligned with axes. 
+ * 
+ * The rectangles may be infinitesimally small in terms of one (line segment) or 
+ * two dimensions (point).
  * 
  * @author Andy Turner
  * @version 1.0
  */
-public interface V2D_FiniteGeometry {
-    
-    public abstract V2D_Envelope getEnvelope();
-    
+public abstract class V2D_EnvelopeEdge extends V2D_LineSegment {
+
+    /**
+     * @param p One of the four corners of the envelope.
+     * @param q One of the four corners of the envelope.
+     */
+    public V2D_EnvelopeEdge(V2D_Point p, V2D_Point q) {
+        super(p, q);
+    }
 }

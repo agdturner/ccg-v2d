@@ -15,19 +15,14 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry;
 
-import java.math.RoundingMode;
-import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
-import uk.ac.leeds.ccg.v2d.core.V2D_Object;
+import java.io.Serializable;
 
 /**
  * For 2D geometrical objects.
  * 
  * @author Andy Turner
- * @version 1.0.0
+ * @version 1.0
  */
-public abstract class V2D_Geometry extends V2D_Object {
+public abstract class V2D_Geometry implements Serializable {
 
-    public V2D_Geometry(V2D_Environment e) {
-        super(e);
-    }
 }

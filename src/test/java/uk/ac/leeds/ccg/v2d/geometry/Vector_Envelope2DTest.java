@@ -72,7 +72,7 @@ public class Vector_Envelope2DTest {
 
         V2D_Point a;
         V2D_Point b = new V2D_Point(null, "1", "1");
-        V2D_Envelope be = b.getEnvelope2D();
+        V2D_Envelope be = b.getEnvelope();
         V2D_Envelope abe;
         BigDecimal aX = new BigDecimal("1");
         BigDecimal aY = new BigDecimal("1");
@@ -86,7 +86,7 @@ public class Vector_Envelope2DTest {
                     a,
                     b);
             expResult = true;
-            result = abe.getIntersects(a.getEnvelope2D());
+            result = abe.getIntersects(a.getEnvelope());
             System.out.println("abe.getIntersects(a.getEnvelope2D()) " + result);
             Assertions.assertEquals(expResult, result);
             result = abe.getIntersects(be);
