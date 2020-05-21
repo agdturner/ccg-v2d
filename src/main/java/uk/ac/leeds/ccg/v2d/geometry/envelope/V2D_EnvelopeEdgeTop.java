@@ -38,11 +38,11 @@ public class V2D_EnvelopeEdgeTop extends V2D_EnvelopeEdge {
     }
 
     public V2D_Point getTl() {
-        return p;
+        return start;
     }
 
     public V2D_Point getTr() {
-        return q;
+        return end;
     }
 
 }

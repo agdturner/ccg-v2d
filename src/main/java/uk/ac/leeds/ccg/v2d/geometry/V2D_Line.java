@@ -73,7 +73,6 @@ public class V2D_Line extends V2D_Geometry {
      * {@code checkCoincidence} is {@code true}.
      */
     public V2D_Line(V2D_Point p, V2D_Point q, boolean checkCoincidence) {
-        super(p.e);
         if (checkCoincidence) {
             if (p.equals(q)) {
                 throw new RuntimeException("The inputs p and q are the same point "
@@ -98,26 +97,22 @@ public class V2D_Line extends V2D_Geometry {
      * @param q What {@link #q} is set to.
      */
     public V2D_Line(V2D_Point p, V2D_Point q) {
-        super(p.e);
         init(p, q);
     }
 
-    /**
-     * @param p What {@link #p} is set to.
-     * @param v What {@link #v} is set to.
-     */
-    public V2D_Line(V2D_Point p, V2D_Vector v) {
-        super(p.e);
-        this.p = new V2D_Point(p);
-        this.v = v;
-        q = p.apply(v);
-    }
-
+//    /**
+//     * @param p What {@link #p} is set to.
+//     * @param v What {@link #v} is set to.
+//     */
+//    public V2D_Line(V2D_Point p, V2D_Vector v) {
+//        this.p = new V2D_Point(p);
+//        this.v = v;
+//        q = p.apply(v);
+//    }
     /**
      * @param l Vector_LineSegment3D
      */
     public V2D_Line(V2D_Line l) {
-        super(l.e);
         this.p = l.p;
         this.q = l.q;
     }
@@ -212,25 +207,22 @@ public class V2D_Line extends V2D_Geometry {
         }
         /**
          * Find the intersection point where the two equations of the lines
-         * meet. (x(t)−x0)/a = (y(t)−y0)/b = (z(t)−z0)/c
+         * meet. (x(t)−x0)/a = (y(t)−y0)/b
          */
-        // (x−p.x)/a = (y−p.y)/b = (z−p.z)/c
+        // (x−p.x)/a = (y−p.y)/b
         // t = (v.dx - x0)/p.x;
         // t = (v.dy - y0)/p.y;
-        // t = (v.dz - z0)/p.z;
         // x(t) = t(dx)+q.x
         // y(t) = t(dy)+q.y
-        // z(t) = t(dz)+q.z
         // 1: t(v.dx)+q.x = s(l.v.dx)+l.q.x
         // 2: t(v.dy)+q.y = s(l.v.dy)+l.q.y
-        // 3: t(v.dz)+q.z = s(l.v.dz)+l.q.z
         // Let:
-        // l.v.dx = k; l.v.dy = l; l.v.dz = m;
+        // l.v.dx = k; l.v.dy = l
         // From 1:
         // t = ((s(k)+l.q.x-q.x)/(v.dx))
         // Let:
-        // l.q.x-q.x = e; l.q.y-q.y = f; l.q.z-q.z = g
-        // v.dx = a; v.dy = b; v.dz = c
+        // l.q.x-q.x = e; l.q.y-q.y = f
+        // v.dx = a; v.dy = b
         // t = (sk+e)/a
         // Sub into 2:
         // ((sk+e)/a)b+q.y = sl + l.q.y
@@ -240,71 +232,22 @@ public class V2D_Line extends V2D_Geometry {
         BigRational t;
         if (l0.v.dx.isZero()) {
             // Line has constant x                    
-            if (l0.v.dy.isZero()) {
-                // Line has constant y
-                // Line is parallel to z axis
-                /*
-                 * x = p.x + t(v.dx)
-                 * y = p.y + t(v.dy)
-                 * z = p.z + t(v.dz)
-                 */
-                BigRational num = l1.q.x.subtract(l0.q.x).subtract(l1.q.z
-                        .subtract(l0.q.z).multiply(l0.v.dx).divide(l0.v.dz));
-                BigRational den = l1.v.dz.multiply(l0.v.dx).divide(l0.v.dz)
-                        .subtract(l1.v.dx);
-                t = num.divide(den).multiply(l1.v.dz).add(l1.q.z)
-                        .subtract(l0.q.z).divide(l0.v.dz);
-            } else if (l0.v.dz.isZero()) {
-                // Line has constant z
-                BigRational num = l1.q.z.subtract(l0.q.z).subtract(l1.q.y
-                        .subtract(l0.q.y).multiply(l0.v.dz).divide(l0.v.dy));
-                BigRational den = l1.v.dy.multiply(l0.v.dz).divide(l0.v.dy)
-                        .subtract(l1.v.dz);
-                t = num.divide(den).multiply(l1.v.dz).add(l1.q.z)
-                        .subtract(l0.q.z).divide(l0.v.dz);
-            } else {
-                BigRational den = l1.v.dy.multiply(l0.v.dx).divide(l0.v.dy)
-                        .subtract(l1.v.dx);
-                BigRational num = l1.q.x.subtract(l0.q.x).subtract(l1.q.y
-                        .subtract(l0.q.y).multiply(l0.v.dx).divide(l0.v.dy));
-                t = num.divide(den).multiply(l1.v.dy).add(l1.q.y)
-                        .subtract(l0.q.y).divide(l0.v.dy);
-            }
+            BigRational den = l1.v.dy.multiply(l0.v.dx).divide(l0.v.dy)
+                    .subtract(l1.v.dx);
+            BigRational num = l1.q.x.subtract(l0.q.x).subtract(l1.q.y
+                    .subtract(l0.q.y).multiply(l0.v.dx).divide(l0.v.dy));
+            t = num.divide(den).multiply(l1.v.dy).add(l1.q.y)
+                    .subtract(l0.q.y).divide(l0.v.dy);
         } else {
-            if (l0.v.dy.isZero()) {
-                if (l0.v.dz.isZero()) {
-                    BigRational num = l1.q.y.subtract(l0.q.y).subtract(l1.q.x
-                            .subtract(l0.q.z).multiply(l0.v.dy).divide(l0.v.dx));
-                    BigRational den = l1.v.dz.multiply(l0.v.dy).divide(l0.v.dx)
-                            .subtract(l1.v.dy);
-                    t = num.divide(den).multiply(l1.v.dy).add(l1.q.x)
-                            .subtract(l0.q.x).divide(l0.v.dx);
-                } else {
-                    BigRational num = l1.q.y.subtract(l0.q.y).subtract(l1.q.z
-                            .subtract(l0.q.z).multiply(l0.v.dy).divide(l0.v.dz));
-                    BigRational den = l1.v.dz.multiply(l0.v.dy).divide(l0.v.dz)
-                            .subtract(l1.v.dy);
-                    t = num.divide(den).multiply(l1.v.dx).add(l1.q.x)
-                            .subtract(l0.q.x).divide(l0.v.dx);
-                }
-            } else if (l0.v.dz.isZero()) {
-                BigRational num = l1.q.z.subtract(l0.q.z).subtract(l1.q.y
-                        .subtract(l0.q.y).multiply(l0.v.dz).divide(l0.v.dy));
-                BigRational den = l1.v.dy.multiply(l0.v.dz).divide(l0.v.dy)
-                        .subtract(l1.v.dz);
-                t = num.divide(den).multiply(l1.v.dx).add(l1.q.x)
-                        .subtract(l0.q.x).divide(l0.v.dx);
-            } else {
-                //dy dz nonzero
-                BigRational den = l1.v.dx.multiply(l0.v.dy).divide(l0.v.dx)
-                        .subtract(l1.v.dy);
-                BigRational num = l1.q.y.subtract(l0.q.y).subtract(l1.q.x
-                        .subtract(l0.q.x).multiply(l0.v.dy).divide(l0.v.dx));
-                t = num.divide(den).multiply(l1.v.dx).add(l1.q.x)
-                        .subtract(l0.q.x).divide(l0.v.dx);
-            }
+            //dy dz nonzero
+            BigRational den = l1.v.dx.multiply(l0.v.dy).divide(l0.v.dx)
+                    .subtract(l1.v.dy);
+            BigRational num = l1.q.y.subtract(l0.q.y).subtract(l1.q.x
+                    .subtract(l0.q.x).multiply(l0.v.dy).divide(l0.v.dx));
+            t = num.divide(den).multiply(l1.v.dx).add(l1.q.x)
+                    .subtract(l0.q.x).divide(l0.v.dx);
         }
-        return new V2D_Point(l0.e,
+        return new V2D_Point(
                 t.multiply(l0.v.dx).add(l0.q.x),
                 t.multiply(l0.v.dy).add(l0.q.y));
     }

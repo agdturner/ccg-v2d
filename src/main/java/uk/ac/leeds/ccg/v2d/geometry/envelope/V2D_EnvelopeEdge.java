@@ -30,6 +30,8 @@ import uk.ac.leeds.ccg.v2d.geometry.V2D_Point;
  */
 public abstract class V2D_EnvelopeEdge extends V2D_LineSegment {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * @param p One of the four corners of the envelope.
      * @param q One of the four corners of the envelope.

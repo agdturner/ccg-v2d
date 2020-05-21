@@ -48,49 +48,49 @@ public class Vector_Point2DTest {
     public void tearDown() {
     }
 
-    /**
-     * Test of equals method, of class V2D_Point.
-     */
-    @Test
-    public void testEquals() {
-        System.out.println("equals");
-        V2D_Point a;
-        V2D_Point b;
-        V2D_Point c;
-        V2D_Point d;
-        boolean result;
-        boolean expResult;
-        a = new V2D_Point(null, 0.1d, 0.3d);
-        System.out.println("a = new VectorPoint2D(0.1d,0.3d); " + a.toString());
-
-        b = new V2D_Point(null, "0.1", "0.3");
-        System.out.println("b = new VectorPoint2D(\"0.1\",\"0.3\"); "
-                + b.toString());
-
-        result = a.equals(b);
-        System.out.println("a.equals(b); " + result);
-        expResult = false;
-        Assertions.assertEquals(expResult, result);
-
-        c = new V2D_Point(a);
-        System.out.println("c = new VectorPoint2D(a,1); " + c.toString());
-        result = a.equals(c);
-        System.out.println("a.equals(c); " + result);
-        expResult = false;
-        Assertions.assertEquals(expResult, result);
-
-        d = new V2D_Point(b);
-        System.out.println("d = new VectorPoint2D(b,1); " + d.toString());
-
-        result = b.equals(d);
-        System.out.println("b.equals(d); " + result);
-        expResult = true;
-        Assertions.assertEquals(expResult, result);
-
-        result = c.equals(d);
-        System.out.println("c.equals(d); " + result);
-        expResult = false;
-        Assertions.assertEquals(expResult, result);
-    }
+//    /**
+//     * Test of equals method, of class V2D_Point.
+//     */
+//    @Test
+//    public void testEquals() {
+//        System.out.println("equals");
+//        V2D_Point a;
+//        V2D_Point b;
+//        V2D_Point c;
+//        V2D_Point d;
+//        boolean result;
+//        boolean expResult;
+//        a = new V2D_Point(0.1d, 0.3d);
+//        System.out.println("a = new VectorPoint2D(0.1d,0.3d); " + a.toString());
+//
+//        b = new V2D_Point("0.1", "0.3");
+//        System.out.println("b = new VectorPoint2D(\"0.1\",\"0.3\"); "
+//                + b.toString());
+//
+//        result = a.equals(b);
+//        System.out.println("a.equals(b); " + result);
+//        expResult = false;
+//        Assertions.assertEquals(expResult, result);
+//
+//        c = new V2D_Point(a);
+//        System.out.println("c = new VectorPoint2D(a,1); " + c.toString());
+//        result = a.equals(c);
+//        System.out.println("a.equals(c); " + result);
+//        expResult = false;
+//        Assertions.assertEquals(expResult, result);
+//
+//        d = new V2D_Point(b);
+//        System.out.println("d = new VectorPoint2D(b,1); " + d.toString());
+//
+//        result = b.equals(d);
+//        System.out.println("b.equals(d); " + result);
+//        expResult = true;
+//        Assertions.assertEquals(expResult, result);
+//
+//        result = c.equals(d);
+//        System.out.println("c.equals(d); " + result);
+//        expResult = false;
+//        Assertions.assertEquals(expResult, result);
+//    }
 
 }

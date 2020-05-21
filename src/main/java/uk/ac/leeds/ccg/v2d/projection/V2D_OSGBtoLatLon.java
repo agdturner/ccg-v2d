@@ -33,7 +33,7 @@ public class V2D_OSGBtoLatLon {
 
     public BigDecimal getPi() {
         if (pi != null) {
-            pi = new Math_BigDecimal().getPi();
+            pi = new Math_BigDecimal().getPi(10, RoundingMode.HALF_UP);
         }
         return pi;
     }

@@ -15,6 +15,7 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry;
 
+import uk.ac.leeds.ccg.v2d.geometry.envelope.V2D_Envelope;
 /**
  * V2D_FiniteGeometry
  * 

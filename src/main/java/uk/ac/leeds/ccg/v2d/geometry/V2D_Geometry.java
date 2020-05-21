@@ -25,4 +25,6 @@ import java.io.Serializable;
  */
 public abstract class V2D_Geometry implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
 }

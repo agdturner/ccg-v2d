@@ -39,11 +39,11 @@ public class V2D_EnvelopeEdgeBottom extends V2D_EnvelopeEdge {
     }
 
     public V2D_Point getBl() {
-        return p;
+        return start;
     }
 
     public V2D_Point getBr() {
-        return q;
+        return end;
     }
 
 }

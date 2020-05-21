@@ -11,7 +11,7 @@
     
     <name>agdt-java-vector2d</name>
     <url>https://github.com/agdturner/agdt-java-vector2d</url>
-    <description>A Java Library for handling 2D spatial vector2d data.</description>
+    <description>A Java Library for handling 2D spatial vector data.</description>
     <scm>
         <url>git@github.com:agdturner/agdt-java-vector2d.git</url>
         <connection>scm:git:git@github.com:agdturner/agdt-java-vector2d.git</connection>
@@ -47,8 +47,6 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <maven.version>3.0.1</maven.version>
-        <junit.version>5.5.2</junit.version>
-        <hamcrest.version>2.2</hamcrest.version>
     </properties>
     
     <dependencies>
@@ -70,39 +68,46 @@
             <artifactId>ojalgo</artifactId>
             <version>48.0.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/ch.obermuhlner/big-math -->
         <dependency>
             <groupId>ch.obermuhlner</groupId>
             <artifactId>big-math</artifactId>
             <version>2.3.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.georegression/georegression -->
         <dependency>
             <groupId>org.georegression</groupId>
             <artifactId>georegression</artifactId>
-            <version>0.21</version>
+            <version>0.22</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.version}</version>
+            <version>5.6.2</version>
             <scope>test</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
+            <version>5.6.2</version>
             <scope>test</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.hamcrest/hamcrest-library -->
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
-            <version>${hamcrest.version}</version>
+            <version>2.2</version>
             <scope>test</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
             <scope>test</scope>
             <version>2.44.0</version>
+            <!--<version>3.141.59</version>-->
         </dependency>
         <dependency>
             <groupId>com.opera</groupId>

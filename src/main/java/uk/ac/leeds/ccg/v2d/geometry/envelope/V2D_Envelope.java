@@ -80,7 +80,6 @@ public class V2D_Envelope extends V2D_Geometry implements V2D_FiniteGeometry {
      * @param e An envelop.
      */
     public V2D_Envelope(V2D_Envelope e) {
-        super(e.e);
         yMin = e.yMin;
         yMax = e.yMax;
         xMin = e.xMin;
@@ -89,10 +88,10 @@ public class V2D_Envelope extends V2D_Geometry implements V2D_FiniteGeometry {
     }
 
     private void init() {
-        V2D_Point tl = new V2D_Point(e, getxMin(), getyMax());
-        V2D_Point tr = new V2D_Point(e, getxMax(), getyMax());
-        V2D_Point bl = new V2D_Point(e, getxMax(), getyMin());
-        V2D_Point br = new V2D_Point(e, getxMin(), getyMin());
+        V2D_Point tl = new V2D_Point(getxMin(), getyMax());
+        V2D_Point tr = new V2D_Point(getxMax(), getyMax());
+        V2D_Point bl = new V2D_Point(getxMax(), getyMin());
+        V2D_Point br = new V2D_Point(getxMin(), getyMin());
         t = new V2D_EnvelopeEdgeTop(tl, tr);
         r = new V2D_EnvelopeEdgeRight(tr, br);
         b = new V2D_EnvelopeEdgeBottom(br, bl);
@@ -100,11 +99,9 @@ public class V2D_Envelope extends V2D_Geometry implements V2D_FiniteGeometry {
     }
 
     /**
-     * @param e An envelop.
      * @param points The points used to form the envelop.
      */
-    public V2D_Envelope(V2D_Environment e, V2D_Point... points) {
-        super(e);
+    public V2D_Envelope(V2D_Point... points) {
         if (points.length > 0) {
             xMin = points[0].x;
             xMax = points[0].x;
@@ -121,14 +118,10 @@ public class V2D_Envelope extends V2D_Geometry implements V2D_FiniteGeometry {
     }
 
     /**
-     * @param e The vector environment.
      * @param x The x-coordinate of a point.
      * @param y The y-coordinate of a point.
-     * @param z The z-coordinate of a point.
      */
-    public V2D_Envelope(V2D_Environment e, BigRational x, BigRational y,
-            BigRational z) {
-        super(e);
+    public V2D_Envelope(BigRational x, BigRational y) {
         xMin = x;
         xMax = x;
         yMin = y;
@@ -137,15 +130,13 @@ public class V2D_Envelope extends V2D_Geometry implements V2D_FiniteGeometry {
     }
 
     /**
-     * @param e The vector environment.
      * @param xMin What {@link xMin} is set to.
      * @param xMax What {@link xMax} is set to.
      * @param yMin What {@link yMin} is set to.
      * @param yMax What {@link yMax} is set to.
      */
-    public V2D_Envelope(V2D_Environment e, BigRational xMin, BigRational xMax,
+    public V2D_Envelope(BigRational xMin, BigRational xMax,
             BigRational yMin, BigRational yMax) {
-        super(e);
         this.xMin = xMin;
         this.xMax = xMax;
         this.yMin = yMin;
@@ -168,7 +159,7 @@ public class V2D_Envelope extends V2D_Geometry implements V2D_FiniteGeometry {
         if (e.isContainedBy(this)) {
             return this;
         } else {
-            return new V2D_Envelope(this.e, BigRational.min(e.getxMin(), getxMin()),
+            return new V2D_Envelope(BigRational.min(e.getxMin(), getxMin()),
                     BigRational.max(e.getxMax(), getxMax()),
                     BigRational.min(e.getyMin(), getyMin()),
                     BigRational.max(e.getyMax(), getyMax()));
@@ -261,21 +252,21 @@ public class V2D_Envelope extends V2D_Geometry implements V2D_FiniteGeometry {
                 && this.getyMin().compareTo(e.getyMin()) != -1;
     }
 
-    /**
-     * @param l Line segment to intersect with {@code this}.
-     * @param flag For distinguishing between this method and
-     * {@link #getIntersection(uk.ac.leeds.ccg.v2d.geometry.V2D_Line)}.
-     * @return either a point or line segment which is the intersection of
-     * {@code l} and {@code this}.
-     */
-    public V2D_Geometry getIntersection(V2D_LineSegment l, boolean flag) {
-        V2D_Envelope le = l.getEnvelope();
-        if (le.isIntersectedBy(this)) {
-            V2D_Envelope ei = le.getIntersection(this);
-            return ei.getIntersection(l);
-        }
-        return null;
-    }
+//    /**
+//     * @param l Line segment to intersect with {@code this}.
+//     * @param flag For distinguishing between this method and
+//     * {@link #getIntersection(uk.ac.leeds.ccg.v2d.geometry.V2D_Line)}.
+//     * @return either a point or line segment which is the intersection of
+//     * {@code l} and {@code this}.
+//     */
+//    public V2D_Geometry getIntersection(V2D_LineSegment l, boolean flag) {
+//        V2D_Envelope le = l.getEnvelope();
+//        if (le.isIntersectedBy(this)) {
+//            V2D_Envelope ei = le.getIntersection(this);
+//            return ei.getIntersection(l);
+//        }
+//        return null;
+//    }
 
     /**
      * @param p The point to test for intersection.
@@ -308,207 +299,207 @@ public class V2D_Envelope extends V2D_Geometry implements V2D_FiniteGeometry {
         if (!this.isIntersectedBy(en)) {
             return null;
         }
-        return new V2D_Envelope(e, BigRational.max(getxMin(), en.getxMin()),
+        return new V2D_Envelope(BigRational.max(getxMin(), en.getxMin()),
                 BigRational.min(getxMax(), en.getxMax()), 
                 BigRational.max(getyMin(), en.getyMin()),
                 BigRational.min(getyMax(), en.getyMax()));
     }
 
-    /**
-     * Returns {@code null} if {@code this} does not intersect {@code l};
-     * otherwise returns the intersection which is either a point or a line
-     * segment.
-     *
-     * @param li The line to intersect.
-     * @return {@code null} if there is no intersection; otherwise returns the
-     * intersection.
-     */
-    public V2D_Geometry getIntersection(V2D_Line li) {
-        V2D_Geometry tli = t.getIntersection(li);
-        if (tli == null) {
-            // Check l, a, r, f, b
-            V2D_Geometry lli = l.getIntersection(li);
-            if (lli == null) {
-                // Check a, r, f, b
-                V2D_Geometry ali = a.getIntersection(li);
-                if (ali == null) {
-                    // Check r, f, b
-                    V2D_Geometry rli = r.getIntersection(li);
-                    if (rli == null) {
-                        // Check f, b
-                        V2D_Geometry fli = f.getIntersection(li);
-                        if (fli == null) {
-                            // null intersection.
-                            return null;
-                        } else if (fli instanceof V2D_LineSegment) {
-                            return fli;
-                        } else {
-                            V2D_Point flip = (V2D_Point) fli;
-                            V2D_Point blip = (V2D_Point) b.getIntersection(li);
-                            if (flip.equals(blip)) {
-                                return blip;
-                            } else {
-                                return new V2D_LineSegment(flip, blip);
-                            }
-                        }
-                    } else if (rli instanceof V2D_LineSegment) {
-                        return rli;
-                    } else {
-                        V2D_Point rlip = (V2D_Point) rli;
-                        // check for intersection with b
-                        V2D_Geometry bli = b.getIntersection(li);
-                        if (bli == null) {
-                            return rlip;
-                        } else {
-                            return new V2D_LineSegment((V2D_Point) bli, rlip);
-                        }
-                    }
-                } else if (ali instanceof V2D_LineSegment) {
-                    return ali;
-                } else {
-                    // Check for intersection with r, f, b
-                    V2D_Point alip = (V2D_Point) ali;
-                    V2D_Geometry rli = r.getIntersection(li);
-                    if (rli == null) {
-                        // Check f, b
-                        V2D_Geometry fli = f.getIntersection(li);
-                        if (fli == null) {
-                            // check for intersection with b
-                            V2D_Geometry bli = b.getIntersection(li);
-                            if (bli == null) {
-                                return alip;
-                            } else if (bli instanceof V2D_LineSegment) {
-                                return bli;
-                            } else {
-                                return new V2D_LineSegment((V2D_Point) bli, alip);
-                            }
-                        } else if (fli instanceof V2D_LineSegment) {
-                            return fli;
-                        } else {
-                            return new V2D_LineSegment((V2D_Point) fli, alip);
-                        }
-                    } else {
-                        return new V2D_LineSegment((V2D_Point) rli, alip);
-                    }
-                }
-            }
-        } else if (tli instanceof V2D_LineSegment) {
-            return tli;
-        } else {
-            V2D_Point tlip = (V2D_Point) tli;
-            // Check l, a, r, f, b
-            V2D_Geometry lli = l.getIntersection(li);
-            if (lli == null) {
-                // Check a, r, f, b
-                V2D_Geometry ali = a.getIntersection(li);
-                if (ali == null) {
-                    // Check r, f, b
-                    V2D_Geometry rli = r.getIntersection(li);
-                    if (rli == null) {
-                        // Check f, b
-                        V2D_Geometry fli = f.getIntersection(li);
-                        if (fli == null) {
-                            // Intersects b
-                            V2D_Point blip = (V2D_Point) b.getIntersection(li);
-                            return new V2D_LineSegment(tlip, blip);
-                        } else if (fli instanceof V2D_LineSegment) {
-                            return fli;
-                        } else {
-                            // Could have a corner so still need to check b
-                            // so far here there is an intersection with t and f
-                            // and there is no intersection with a, r, and l
-                            // check for intersection with b
-                            V2D_Geometry bli = b.getIntersection(li);
-                            if (bli == null) {
-                                V2D_Point blip = (V2D_Point) bli;
-                                if (tlip.equals(blip)) {
-                                    return tlip;
-                                } else {
-                                    return new V2D_LineSegment(tlip, blip);
-                                }
-                            } else if (bli instanceof V2D_LineSegment) {
-                                return bli;
-                            } else {
-                                return new V2D_LineSegment((V2D_Point) bli, tlip);
-                            }
-                        }
-                    } else if (rli instanceof V2D_LineSegment) {
-                        return rli;
-                    } else {
-                        V2D_Point rlip = (V2D_Point) rli;
-                        // check for intersection with b
-                        V2D_Geometry bli = b.getIntersection(li);
-                        if (bli == null) {
-                            return rlip;
-                        } else {
-                            return new V2D_LineSegment((V2D_Point) bli, rlip);
-                        }
-                    }
-                } else if (ali instanceof V2D_LineSegment) {
-                    return ali;
-                } else {
-                    // Check for intersection with r, f, b
-                    V2D_Point alip = (V2D_Point) ali;
-                    V2D_Geometry rli = r.getIntersection(li);
-                    if (rli == null) {
-                        // Check f, b
-                        V2D_Geometry fli = f.getIntersection(li);
-                        if (fli == null) {
-                            // check for intersection with b
-                            V2D_Geometry bli = b.getIntersection(li);
-                            if (bli == null) {
-                                return alip;
-                            } else if (bli instanceof V2D_LineSegment) {
-                                return bli;
-                            } else {
-                                return new V2D_LineSegment((V2D_Point) bli, alip);
-                            }
-                        } else if (fli instanceof V2D_LineSegment) {
-                            return fli;
-                        } else {
-                            return new V2D_LineSegment((V2D_Point) fli, alip);
-                        }
-                    } else {
-                        V2D_Point rlip = (V2D_Point) rli;
-                        if (rlip.equals(alip)) {
-                            // Still more checking to do...
-                            // Check f, b
-                            V2D_Geometry fli = f.getIntersection(li);
-                            if (fli == null) {
-                                // check for intersection with b
-                                V2D_Geometry bli = b.getIntersection(li);
-                                if (bli == null) {
-                                    return alip;
-                                } else if (bli instanceof V2D_LineSegment) {
-                                    return bli;
-                                } else {
-                                    return new V2D_LineSegment((V2D_Point) bli, alip);
-                                }
-                            } else if (fli instanceof V2D_LineSegment) {
-                                return fli;
-                            } else {
-                                return new V2D_LineSegment((V2D_Point) fli, alip);
-                            }
-                        } else {
-                            return new V2D_LineSegment((V2D_Point) rli, alip);
-                        }
-                    }
-                }
-            } else if (lli instanceof V2D_LineSegment) {
-                return lli;
-            } else {
-                // Still more checking to do...
-                // intersection top and left could be at a corner and anyway need to check other edges...
-                V2D_Point llip = (V2D_Point) lli;
-                if (tlip.equals(llip)) {
-                    return tlip;
-                } else {
-                    return new V2D_LineSegment(tlip, llip);
-                }
-            }
-        }
-        return null; // Should not get here remove after writing test cases.
-    }
+//    /**
+//     * Returns {@code null} if {@code this} does not intersect {@code l};
+//     * otherwise returns the intersection which is either a point or a line
+//     * segment.
+//     *
+//     * @param li The line to intersect.
+//     * @return {@code null} if there is no intersection; otherwise returns the
+//     * intersection.
+//     */
+//    public V2D_Geometry getIntersection(V2D_Line li) {
+//        V2D_Geometry tli = t.getIntersection(li);
+//        if (tli == null) {
+//            // Check l, a, r, f, b
+//            V2D_Geometry lli = l.getIntersection(li);
+//            if (lli == null) {
+//                // Check a, r, f, b
+//                V2D_Geometry ali = a.getIntersection(li);
+//                if (ali == null) {
+//                    // Check r, f, b
+//                    V2D_Geometry rli = r.getIntersection(li);
+//                    if (rli == null) {
+//                        // Check f, b
+//                        V2D_Geometry fli = f.getIntersection(li);
+//                        if (fli == null) {
+//                            // null intersection.
+//                            return null;
+//                        } else if (fli instanceof V2D_LineSegment) {
+//                            return fli;
+//                        } else {
+//                            V2D_Point flip = (V2D_Point) fli;
+//                            V2D_Point blip = (V2D_Point) b.getIntersection(li);
+//                            if (flip.equals(blip)) {
+//                                return blip;
+//                            } else {
+//                                return new V2D_LineSegment(flip, blip);
+//                            }
+//                        }
+//                    } else if (rli instanceof V2D_LineSegment) {
+//                        return rli;
+//                    } else {
+//                        V2D_Point rlip = (V2D_Point) rli;
+//                        // check for intersection with b
+//                        V2D_Geometry bli = b.getIntersection(li);
+//                        if (bli == null) {
+//                            return rlip;
+//                        } else {
+//                            return new V2D_LineSegment((V2D_Point) bli, rlip);
+//                        }
+//                    }
+//                } else if (ali instanceof V2D_LineSegment) {
+//                    return ali;
+//                } else {
+//                    // Check for intersection with r, f, b
+//                    V2D_Point alip = (V2D_Point) ali;
+//                    V2D_Geometry rli = r.getIntersection(li);
+//                    if (rli == null) {
+//                        // Check f, b
+//                        V2D_Geometry fli = f.getIntersection(li);
+//                        if (fli == null) {
+//                            // check for intersection with b
+//                            V2D_Geometry bli = b.getIntersection(li);
+//                            if (bli == null) {
+//                                return alip;
+//                            } else if (bli instanceof V2D_LineSegment) {
+//                                return bli;
+//                            } else {
+//                                return new V2D_LineSegment((V2D_Point) bli, alip);
+//                            }
+//                        } else if (fli instanceof V2D_LineSegment) {
+//                            return fli;
+//                        } else {
+//                            return new V2D_LineSegment((V2D_Point) fli, alip);
+//                        }
+//                    } else {
+//                        return new V2D_LineSegment((V2D_Point) rli, alip);
+//                    }
+//                }
+//            }
+//        } else if (tli instanceof V2D_LineSegment) {
+//            return tli;
+//        } else {
+//            V2D_Point tlip = (V2D_Point) tli;
+//            // Check l, a, r, f, b
+//            V2D_Geometry lli = l.getIntersection(li);
+//            if (lli == null) {
+//                // Check a, r, f, b
+//                V2D_Geometry ali = a.getIntersection(li);
+//                if (ali == null) {
+//                    // Check r, f, b
+//                    V2D_Geometry rli = r.getIntersection(li);
+//                    if (rli == null) {
+//                        // Check f, b
+//                        V2D_Geometry fli = f.getIntersection(li);
+//                        if (fli == null) {
+//                            // Intersects b
+//                            V2D_Point blip = (V2D_Point) b.getIntersection(li);
+//                            return new V2D_LineSegment(tlip, blip);
+//                        } else if (fli instanceof V2D_LineSegment) {
+//                            return fli;
+//                        } else {
+//                            // Could have a corner so still need to check b
+//                            // so far here there is an intersection with t and f
+//                            // and there is no intersection with a, r, and l
+//                            // check for intersection with b
+//                            V2D_Geometry bli = b.getIntersection(li);
+//                            if (bli == null) {
+//                                V2D_Point blip = (V2D_Point) bli;
+//                                if (tlip.equals(blip)) {
+//                                    return tlip;
+//                                } else {
+//                                    return new V2D_LineSegment(tlip, blip);
+//                                }
+//                            } else if (bli instanceof V2D_LineSegment) {
+//                                return bli;
+//                            } else {
+//                                return new V2D_LineSegment((V2D_Point) bli, tlip);
+//                            }
+//                        }
+//                    } else if (rli instanceof V2D_LineSegment) {
+//                        return rli;
+//                    } else {
+//                        V2D_Point rlip = (V2D_Point) rli;
+//                        // check for intersection with b
+//                        V2D_Geometry bli = b.getIntersection(li);
+//                        if (bli == null) {
+//                            return rlip;
+//                        } else {
+//                            return new V2D_LineSegment((V2D_Point) bli, rlip);
+//                        }
+//                    }
+//                } else if (ali instanceof V2D_LineSegment) {
+//                    return ali;
+//                } else {
+//                    // Check for intersection with r, f, b
+//                    V2D_Point alip = (V2D_Point) ali;
+//                    V2D_Geometry rli = r.getIntersection(li);
+//                    if (rli == null) {
+//                        // Check f, b
+//                        V2D_Geometry fli = f.getIntersection(li);
+//                        if (fli == null) {
+//                            // check for intersection with b
+//                            V2D_Geometry bli = b.getIntersection(li);
+//                            if (bli == null) {
+//                                return alip;
+//                            } else if (bli instanceof V2D_LineSegment) {
+//                                return bli;
+//                            } else {
+//                                return new V2D_LineSegment((V2D_Point) bli, alip);
+//                            }
+//                        } else if (fli instanceof V2D_LineSegment) {
+//                            return fli;
+//                        } else {
+//                            return new V2D_LineSegment((V2D_Point) fli, alip);
+//                        }
+//                    } else {
+//                        V2D_Point rlip = (V2D_Point) rli;
+//                        if (rlip.equals(alip)) {
+//                            // Still more checking to do...
+//                            // Check f, b
+//                            V2D_Geometry fli = f.getIntersection(li);
+//                            if (fli == null) {
+//                                // check for intersection with b
+//                                V2D_Geometry bli = b.getIntersection(li);
+//                                if (bli == null) {
+//                                    return alip;
+//                                } else if (bli instanceof V2D_LineSegment) {
+//                                    return bli;
+//                                } else {
+//                                    return new V2D_LineSegment((V2D_Point) bli, alip);
+//                                }
+//                            } else if (fli instanceof V2D_LineSegment) {
+//                                return fli;
+//                            } else {
+//                                return new V2D_LineSegment((V2D_Point) fli, alip);
+//                            }
+//                        } else {
+//                            return new V2D_LineSegment((V2D_Point) rli, alip);
+//                        }
+//                    }
+//                }
+//            } else if (lli instanceof V2D_LineSegment) {
+//                return lli;
+//            } else {
+//                // Still more checking to do...
+//                // intersection top and left could be at a corner and anyway need to check other edges...
+//                V2D_Point llip = (V2D_Point) lli;
+//                if (tlip.equals(llip)) {
+//                    return tlip;
+//                } else {
+//                    return new V2D_LineSegment(tlip, llip);
+//                }
+//            }
+//        }
+//        return null; // Should not get here remove after writing test cases.
+//    }
 
     @Override
     public V2D_Envelope getEnvelope() {

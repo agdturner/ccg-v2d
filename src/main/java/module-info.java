@@ -1,11 +1,12 @@
 module uk.ac.leeds.ccg.v2d {
-        /**
+    
+    /**
      * Requirements.
      */
     requires ch.obermuhlner.math.big;
     requires uk.ac.leeds.ccg.generic;
     requires uk.ac.leeds.ccg.math;
-    requires java.awt;
+    requires java.desktop;
     
     /**
      * Exports.

@@ -23,6 +23,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import uk.ac.leeds.ccg.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
+import uk.ac.leeds.ccg.v2d.geometry.envelope.V2D_Envelope;
 
 /**
  * 2D points.
@@ -195,10 +196,11 @@ public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry,
                 return BigDecimal.ZERO;
             } else {
                 if (dx.compareTo(BigRational.ZERO) == 1) {
-                    return Math_BigDecimal.divideRoundIfNecessary(e.bd.getPi(),
+                    return Math_BigDecimal.divideRoundIfNecessary(
+                            e.bd.getPi(dp, rm),
                             BigDecimal.valueOf(2), dp, rm);
                 } else {
-                    return BigDecimal.valueOf(3).multiply(e.bd.getPiBy2());
+                    return BigDecimal.valueOf(3).multiply(e.bd.getPiBy2(dp, rm));
                 }
             }
         } else {
@@ -211,13 +213,8 @@ public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry,
                         return BigDecimalMath.atan(dx.divide(dy).toBigDecimal(),
                                 new MathContext(dp + 1, rm));
                     } else {
-                        return bd.BigMath.TWO_PI
-                        ,
-                                BigDecimalMath.atan(dx.abs().divide(dy))
-                    
-                
-              
-                );
+                        return BigDecimalMath.atan(dx.abs().divide(dy).toBigDecimal(),
+                                new MathContext(dp + 1, rm));
 //                        return BigMath.SUBTRACT.invoke(BigMath.TWO_PI,
 //                                BigMath.ATAN.invoke(BigMath.DIVIDE.invoke(
 //                                        BigMath.ABS.invoke(dx), dy)));
@@ -227,17 +224,26 @@ public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry,
             } else {
                 // dy < 0.0d
                 if (dx.compareTo(BigRational.ZERO) == 0) {
-                    return BigMath.PI;
+                    return new Math_BigDecimal().getPi(dp, rm);
                 } else {
                     if (dx.compareTo(BigRational.ZERO) == 1) {
-                        return BigMath.SUBTRACT.invoke(
-                                BigMath.PI,
-                                BigMath.ATAN.invoke(BigMath.DIVIDE.invoke(dx, BigMath.ABS.invoke(dy))));
+                        return new Math_BigDecimal().getPi(dp, rm).subtract(
+                                BigDecimalMath.atan(dx.divide(dy.abs()).toBigDecimal(),
+                                        new MathContext(dp + 1, rm)));
+//                        return BigMath.SUBTRACT.invoke(
+//                                BigMath.PI,
+//                                BigMath.ATAN.invoke(BigMath.DIVIDE.invoke(dx, BigMath.ABS.invoke(dy))));
                         //return Math.PI - Math.atan(dx / Math.abs(dy));
                     } else {
-                        return BigMath.ADD.invoke(
-                                BigMath.PI,
-                                BigMath.ATAN.invoke(BigMath.DIVIDE.invoke(BigMath.ABS.invoke(dx), BigMath.ABS.invoke(dy))));
+                        return new Math_BigDecimal().getPi(dp, rm).add(
+                                BigDecimalMath.atan(dx.abs().divide(
+                                                dy.abs()).toBigDecimal(),
+                                        new MathContext(dp + 1, rm)));
+//                        return BigMath.ADD.invoke(
+//                                BigMath.PI, BigMath.ATAN.invoke(
+//                                        BigMath.DIVIDE.invoke(
+//                                                BigMath.ABS.invoke(dx),
+//                                                BigMath.ABS.invoke(dy))));
                         //return Math.PI + Math.atan(Math.abs(dx) / Math.abs(dy));
                     }
                 }
