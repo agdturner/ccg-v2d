@@ -4,8 +4,8 @@ module uk.ac.leeds.ccg.v2d {
      * Requirements.
      */
     requires ch.obermuhlner.math.big;
-    requires uk.ac.leeds.ccg.generic;
-    requires uk.ac.leeds.ccg.math;
+    requires transitive uk.ac.leeds.ccg.generic;
+    requires transitive uk.ac.leeds.ccg.math;
     requires java.desktop;
     
     /**
@@ -13,6 +13,7 @@ module uk.ac.leeds.ccg.v2d {
      */
     exports uk.ac.leeds.ccg.v2d.core;
     exports uk.ac.leeds.ccg.v2d.geometry;
-    //exports uk.ac.leeds.ccg.v2d.geometry.envelope;
+    exports uk.ac.leeds.ccg.v2d.geometry.envelope;
     exports uk.ac.leeds.ccg.v2d.io;
+    exports uk.ac.leeds.ccg.v2d.visualisation;
 }

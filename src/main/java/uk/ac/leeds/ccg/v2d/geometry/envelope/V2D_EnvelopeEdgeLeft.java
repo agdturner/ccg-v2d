@@ -28,12 +28,21 @@ import uk.ac.leeds.ccg.v2d.geometry.V2D_Point;
  */
 public class V2D_EnvelopeEdgeLeft extends V2D_EnvelopeEdge {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * @param tl The point in the top-left of an envelope.
      * @param bl The point in the bottom-left of an envelope.
      */
     public V2D_EnvelopeEdgeLeft(V2D_Point tl, V2D_Point bl) {
         super(tl, bl);
+    }
+
+    /**
+     * @param e A V2D_Envelope.
+     */
+    public V2D_EnvelopeEdgeLeft(V2D_Envelope e) {
+        super(new V2D_Point(e.getxMin(), e.getyMin()), new V2D_Point(e.getxMin(), e.getyMax()));
     }
 
     public V2D_Point getTl() {

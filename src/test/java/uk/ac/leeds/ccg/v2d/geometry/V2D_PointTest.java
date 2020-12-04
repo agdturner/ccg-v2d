@@ -27,9 +27,9 @@ import org.junit.jupiter.api.Test;
  *
  * @author geoagdt
  */
-public class Vector_Point2DTest {
+public class V2D_PointTest {
 
-    public Vector_Point2DTest() {
+    public V2D_PointTest() {
     }
 
     @BeforeAll

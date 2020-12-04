@@ -16,6 +16,7 @@
 package uk.ac.leeds.ccg.v2d.geometry.envelope;
 
 import ch.obermuhlner.math.big.BigRational;
+import java.math.BigDecimal;
 import java.util.Objects;
 import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_FiniteGeometry;
@@ -130,6 +131,18 @@ public class V2D_Envelope extends V2D_Geometry implements V2D_FiniteGeometry {
     }
 
     /**
+     * @param x The x-coordinate of a point.
+     * @param y The y-coordinate of a point.
+     */
+    public V2D_Envelope(BigDecimal x, BigDecimal y) {
+        xMin = BigRational.valueOf(x);
+        xMax = BigRational.valueOf(x);
+        yMin = BigRational.valueOf(y);
+        yMax = BigRational.valueOf(y);
+        init();
+    }
+    
+    /**
      * @param xMin What {@link xMin} is set to.
      * @param xMax What {@link xMax} is set to.
      * @param yMin What {@link yMin} is set to.
@@ -141,6 +154,21 @@ public class V2D_Envelope extends V2D_Geometry implements V2D_FiniteGeometry {
         this.xMax = xMax;
         this.yMin = yMin;
         this.yMax = yMax;
+        init();
+    }
+
+    /**
+     * @param xMin What {@link xMin} is set to.
+     * @param xMax What {@link xMax} is set to.
+     * @param yMin What {@link yMin} is set to.
+     * @param yMax What {@link yMax} is set to.
+     */
+    public V2D_Envelope(BigDecimal xMin, BigDecimal xMax,
+            BigDecimal yMin, BigDecimal yMax) {
+        this.xMin = BigRational.valueOf(xMin);
+        this.xMax = BigRational.valueOf(xMax);
+        this.yMin = BigRational.valueOf(yMin);
+        this.yMax = BigRational.valueOf(yMax);
         init();
     }
 
@@ -284,6 +312,30 @@ public class V2D_Envelope extends V2D_Geometry implements V2D_FiniteGeometry {
     public boolean isIntersectedBy(BigRational x, BigRational y) {
         return x.compareTo(getxMin()) != -1 && x.compareTo(getxMax()) != 1
                 && y.compareTo(getyMin()) != -1 && y.compareTo(getyMax()) != 1;
+    }
+
+    /**
+     * @param l The V2D_LineSegment to test for intersection.
+     * @return {@code true} if this intersects with {@code p}
+     */
+    public boolean isIntersectedBy(V2D_LineSegment l) {
+        if (this.isIntersectedBy(l.p) || this.isIntersectedBy(l.q)) {
+            return true;
+        } else {
+            if (l.isIntersectedBy(new V2D_EnvelopeEdgeTop(this))){
+                return true;
+            }
+            if (l.isIntersectedBy(new V2D_EnvelopeEdgeBottom(this))){
+                return true;
+            }
+            if (l.isIntersectedBy(new V2D_EnvelopeEdgeLeft(this))){
+                return true;
+            }
+            if (l.isIntersectedBy(new V2D_EnvelopeEdgeRight(this))){
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

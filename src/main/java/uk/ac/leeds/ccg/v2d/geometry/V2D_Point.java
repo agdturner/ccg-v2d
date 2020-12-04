@@ -63,6 +63,78 @@ public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry,
         this.y = y;
     }
 
+    /**
+     * @param x What {@link #x} is set to.
+     * @param y What {@link #y} is set to.
+     */
+    public V2D_Point(BigDecimal x, BigDecimal y) {
+        this.x = BigRational.valueOf(x);
+        this.y = BigRational.valueOf(y);
+    }
+
+    /**
+     * @param x What {@link #x} is set to.
+     * @param y What {@link #y} is set to.
+     */
+    public V2D_Point(BigInteger x, BigInteger y) {
+        this.x = BigRational.valueOf(x);
+        this.y = BigRational.valueOf(y);
+    }
+
+    /**
+     * @param x What {@link #x} is set to.
+     * @param y What {@link #y} is set to.
+     */
+    public V2D_Point(double x, double y) {
+        this.x = BigRational.valueOf(x);
+        this.y = BigRational.valueOf(y);
+    }
+
+    /**
+     * @param x What {@link #x} is set to.
+     * @param y What {@link #y} is set to.
+     */
+    public V2D_Point(float x, float y) {
+        this.x = BigRational.valueOf(x);
+        this.y = BigRational.valueOf(y);
+    }
+
+    /**
+     * @param x What {@link #x} is set to.
+     * @param y What {@link #y} is set to.
+     */
+    public V2D_Point(long x, long y) {
+        this.x = BigRational.valueOf(x);
+        this.y = BigRational.valueOf(y);
+    }
+
+    /**
+     * @param x What {@link #x} is set to.
+     * @param y What {@link #y} is set to.
+     */
+    public V2D_Point(int x, int y) {
+        this.x = BigRational.valueOf(x);
+        this.y = BigRational.valueOf(y);
+    }
+
+    /**
+     * @param x What {@link #x} is set to.
+     * @param y What {@link #y} is set to.
+     */
+    public V2D_Point(short x, short y) {
+        this.x = BigRational.valueOf(x);
+        this.y = BigRational.valueOf(y);
+    }
+
+    /**
+     * @param x What {@link #x} is set to.
+     * @param y What {@link #y} is set to.
+     */
+    public V2D_Point(byte x, byte y) {
+        this.x = BigRational.valueOf(x);
+        this.y = BigRational.valueOf(y);
+    }
+
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "(x=" + x.toString() + " y="

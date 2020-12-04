@@ -29,9 +29,9 @@ import java.math.RoundingMode;
  *
  * @author geoagdt
  */
-public class Vector_OSBGtoLatLonTest {
+public class V2D_OSBGtoLatLonTest {
 
-    public Vector_OSBGtoLatLonTest() {
+    public V2D_OSBGtoLatLonTest() {
     }
 
     @BeforeAll

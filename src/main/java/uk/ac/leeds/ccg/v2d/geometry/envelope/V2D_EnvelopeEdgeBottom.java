@@ -30,12 +30,21 @@ import uk.ac.leeds.ccg.v2d.geometry.V2D_Point;
  */
 public class V2D_EnvelopeEdgeBottom extends V2D_EnvelopeEdge {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * @param bl The point in the bottom-left of an envelope.
      * @param br The point in the bottom-right of an envelope.
      */
     public V2D_EnvelopeEdgeBottom(V2D_Point bl, V2D_Point br) {
         super(bl, br);
+    }
+
+    /**
+     * @param e A V2D_Envelope.
+     */
+    public V2D_EnvelopeEdgeBottom(V2D_Envelope e) {
+        super(new V2D_Point(e.getxMin(), e.getyMin()), new V2D_Point(e.getxMax(), e.getyMin()));
     }
 
     public V2D_Point getBl() {

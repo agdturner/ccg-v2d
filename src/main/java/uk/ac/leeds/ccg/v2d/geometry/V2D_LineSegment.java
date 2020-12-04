@@ -19,7 +19,6 @@ import ch.obermuhlner.math.big.BigRational;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
 import uk.ac.leeds.ccg.v2d.geometry.envelope.V2D_Envelope;
 //import org.ojalgo.function.implementation.BigFunction;
 //import org.ojalgo.constant.BigMath;
@@ -30,7 +29,7 @@ import uk.ac.leeds.ccg.v2d.geometry.envelope.V2D_Envelope;
  * segment explicitly has a direction. Two Vector_LineSegment2D instances are
  * regarded as equal iff their start and end points are the same.
  */
-public class V2D_LineSegment extends V2D_Geometry
+public class V2D_LineSegment extends V2D_Line
         implements V2D_FiniteGeometry, Comparable {
 
     private static final long serialVersionUID = 1L;
@@ -44,17 +43,16 @@ public class V2D_LineSegment extends V2D_Geometry
      * @param end V2D_Point
      */
     public V2D_LineSegment(V2D_Point start, V2D_Point end) {
+        super(start, end);
         this.start = start;
         this.end = end;
     }
 
     /**
-     *
      * @param l Vector_LineSegment2D
      */
-    public V2D_LineSegment(            V2D_LineSegment l) {
-        this.start = new V2D_Point(l.start);
-        this.end = new V2D_Point(l.end);
+    public V2D_LineSegment(V2D_LineSegment l) {
+        this(l.start, l.end);
     }
 
     @Override
@@ -100,6 +98,18 @@ public class V2D_LineSegment extends V2D_Geometry
         return new V2D_Envelope(start, end);
     }
 
+    /**
+     * @param l A line to test for intersection within the specified tolerance.
+     * @return true if p is within t of this given scale.
+     */
+    public boolean isIntersectedBy(V2D_LineSegment l) {
+        boolean ei = getEnvelope().isIntersectedBy(l.getEnvelope());
+        if (ei) {
+            return super.isIntersectedBy(l);
+        }
+        return false;
+    }
+    
 //    /**
 //     * A bounding box intersection test.
 //     *

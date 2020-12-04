@@ -16,29 +16,29 @@
 package uk.ac.leeds.ccg.v2d.geometry;
 
 import ch.obermuhlner.math.big.BigRational;
+import uk.ac.leeds.ccg.v2d.geometry.V2D_LineSegment;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_Point;
 import java.io.IOException;
 import java.math.BigDecimal;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
 import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
-import uk.ac.leeds.ccg.v2d.geometry.envelope.V2D_Envelope;
 
 /**
  *
  * @author geoagdt
  */
-public class Vector_Envelope2DTest {
+public class V2D_LineSegmentTest {
 
     V2D_Environment env;
-    
-    public Vector_Envelope2DTest() {
+
+    public V2D_LineSegmentTest() {
     }
 
     @BeforeAll
@@ -63,35 +63,32 @@ public class Vector_Envelope2DTest {
     }
 
 //    /**
-//     * Test of getIntersectsFailFast method, of class V2D_Envelope.
+//     * Test of getIntersects method, of class V2D_LineSegment.
 //     */
 //    @Test
-//    public void testGetIntersects_Envelope2D() {
-//        System.out.println("getIntersects");
-//        boolean expResult;
+//    public void testGetIntersects_VectorPoint2D_int() {
 //        boolean result;
 //        BigRational ONE = BigRational.ONE;
-//        BigRational TEN = BigRational.TEN;
-//        V2D_Point a;
+//        BigRational ZERO = BigRational.ZERO;
+//        V2D_Point a = new V2D_Point(ZERO, ZERO);
 //        V2D_Point b = new V2D_Point(ONE, ONE);
-//        V2D_Envelope be = b.getEnvelope();
-//        V2D_Envelope abe;
+//        V2D_LineSegment ab = new V2D_LineSegment(a, b);
+//        System.out.println("ab " + ab);
+//        boolean expResult = true;
+//        BigRational TEN = BigRational.TEN;
 //        BigRational aX = ONE;
 //        BigRational aY = ONE;
+//        BigRational t = ONE.divide(TEN);
 //        for (int i = 0; i < 1000; i++) {
 //            aX = aX.divide(TEN);
 //            aY = aY.divide(TEN);
 //            a = new V2D_Point(aX, aY);
 //            System.out.println("a " + a.toString());
-//            abe = new V2D_Envelope(
-//                    a,
-//                    b);
-//            expResult = true;
-//            result = abe.getIntersects(a.getEnvelope());
-//            System.out.println("abe.getIntersects(a.getEnvelope2D()) " + result);
-//            Assertions.assertEquals(expResult, result);
-//            result = abe.getIntersects(be);
+//            result = ab.getIntersects(a, t);
+//            System.out.println("ab.getIntersects(a,DecimalPlacePrecision)"
+//                    + result);
 //            Assertions.assertEquals(expResult, result);
 //        }
 //    }
+
 }
