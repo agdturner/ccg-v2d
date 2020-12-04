@@ -63,17 +63,84 @@ public class V2D_EnvelopeTest {
      */
     @Test
     public void testAll() {
-        testIsIntersectedBy();
+        //testIsIntersectedBy();
+        //testToString();
+        //testUnion();
+        //testIsIntersectedBy_V2D_Envelope();
+        //testIsContainedBy();
+        //testIsIntersectedBy_V2D_Point();
     }
 
     /**
-     * Test of getIntersectsFailFast method, of class V2D_Envelope.
+     * Test of toString method, of class V2D_Envelope.
      */
     //@Test
-    public void testIsIntersectedBy() {
+    public void testToString() {
+        System.out.println("toString");
+        V2D_Envelope instance = new V2D_Envelope(BigRational.ZERO, BigRational.ONE, BigRational.ZERO, BigRational.ONE);;
+        String expResult = "V2D_Envelope(xMin=0, xMax=1, yMin=0, yMax=1)";
+        String result = instance.toString();
+        Assertions.assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of union method, of class V2D_Envelope.
+     */
+    //@Test
+    public void testUnion() {
+        System.out.println("union");
+        BigRational x0 = BigRational.ZERO;
+        BigRational x1 = BigRational.ONE;
+        BigRational x2 = BigRational.TWO;
+        BigRational x3 = BigRational.valueOf(3);
+        BigRational y0 = BigRational.ZERO;
+        BigRational y1 = BigRational.ONE;
+        BigRational y2 = BigRational.TWO;
+        BigRational y3 = BigRational.valueOf(3);
+        V2D_Envelope e = new V2D_Envelope(x1, x2, y1, y2);
+        V2D_Envelope instance = new V2D_Envelope(x1, x2, y1, y2);
+        V2D_Envelope expResult = new V2D_Envelope(x1, x2, y1, y2);
+        V2D_Envelope result = instance.union(e);
+        Assertions.assertEquals(expResult, result);
+        // Test 2
+        e = new V2D_Envelope(x1, x2, y1, y2);
+        instance = new V2D_Envelope(x0, x1, y1, y2);
+        expResult = new V2D_Envelope(x0, x2, y1, y2);
+        result = instance.union(e);
+        Assertions.assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of isIntersectedBy method, of class V2D_Envelope.
+     */
+    //@Test
+    public void testIsIntersectedBy_V2D_Envelope() {
         System.out.println("isIntersectedBy");
+        BigRational x0 = BigRational.ZERO;
+        BigRational x1 = BigRational.ONE;
+        BigRational x2 = BigRational.TWO;
+        BigRational x3 = BigRational.valueOf(3);
+        BigRational y0 = BigRational.ZERO;
+        BigRational y1 = BigRational.ONE;
+        BigRational y2 = BigRational.TWO;
+        BigRational y3 = BigRational.valueOf(3);
+        V2D_Envelope e = new V2D_Envelope(x1, x2, y1, y2);
+        V2D_Envelope instance = new V2D_Envelope(x1, x2, y1, y2);
+        boolean result = instance.isIntersectedBy(e);
+        Assertions.assertTrue(result);
+        // Test 2
+        e = new V2D_Envelope(x0, x1, y0, y1);
+        instance = new V2D_Envelope(x1, x2, y1, y2);
+        result = instance.isIntersectedBy(e);
+        Assertions.assertTrue(result);
+        // Test 3
+        e = new V2D_Envelope(x0, x1, y0, y1);
+        instance = new V2D_Envelope(x2, x3, y2, y3);
+        result = instance.isIntersectedBy(e);
+        Assertions.assertFalse(result);
+        System.out.println("isIntersectedBy");
+        // Test 4
         boolean expResult;
-        boolean result;
         BigRational ONE = BigRational.ONE;
         BigRational TEN = BigRational.TEN;
         V2D_Point a;
@@ -102,23 +169,11 @@ public class V2D_EnvelopeTest {
     }
 
     /**
-     * Test of toString method, of class V2D_Envelope.
+     * Test of isContainedBy method, of class V2D_Envelope.
      */
-    @Test
-    public void testToString() {
-        System.out.println("toString");
-        V2D_Envelope instance = new V2D_Envelope(BigRational.ZERO, BigRational.ONE, BigRational.ZERO, BigRational.ONE); ;
-        String expResult = "V2D_Envelope(xMin=0, xMax=1, yMin=0, yMax=1)";
-        String result = instance.toString();
-        Assertions.assertEquals(expResult, result);
-    }
-
-    /**
-     * Test of union method, of class V2D_Envelope.
-     */
-    @Test
-    public void testUnion() {
-        System.out.println("union");
+    //@Test
+    public void testIsContainedBy() {
+        System.out.println("isContainedBy");
         BigRational x0 = BigRational.ZERO;
         BigRational x1 = BigRational.ONE;
         BigRational x2 = BigRational.TWO;
@@ -127,64 +182,42 @@ public class V2D_EnvelopeTest {
         BigRational y1 = BigRational.ONE;
         BigRational y2 = BigRational.TWO;
         BigRational y3 = BigRational.valueOf(3);
-        V2D_Envelope e = new V2D_Envelope(x1, x2, y1, y2);
+        V2D_Envelope e = new V2D_Envelope(x0, x3, y0, y3);
         V2D_Envelope instance = new V2D_Envelope(x1, x2, y1, y2);
-        V2D_Envelope expResult = new V2D_Envelope(x1, x2, y1, y2);
-        V2D_Envelope result = instance.union(e);
-        Assertions.assertEquals(expResult, result);
+        boolean result = instance.isContainedBy(e);
+        Assertions.assertTrue(result);
         // Test 2
         e = new V2D_Envelope(x1, x2, y1, y2);
-        instance = new V2D_Envelope(x0, x1, y1, y2);
-        expResult = new V2D_Envelope(x0, x2, y1, y2);
-        result = instance.union(e);
-        Assertions.assertEquals(expResult, result);
+        instance = new V2D_Envelope(x0, x3, y0, y3);
+        result = instance.isContainedBy(e);
+        Assertions.assertFalse(result);
+        // Test 3
+        e = new V2D_Envelope(x0, x3, y0, y3);
+        instance = new V2D_Envelope(x1, x2, y1, BigRational.valueOf(4));
+        result = instance.isContainedBy(e);
+        Assertions.assertFalse(result);
     }
 
-//    /**
-//     * Test of isIntersectedBy method, of class V2D_Envelope.
-//     */
-//    @Test
-//    public void testIsIntersectedBy_V2D_Envelope() {
-//        System.out.println("isIntersectedBy");
-//        V2D_Envelope e = null;
-//        V2D_Envelope instance = null;
-//        boolean expResult = false;
-//        boolean result = instance.isIntersectedBy(e);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of isContainedBy method, of class V2D_Envelope.
-//     */
-//    @Test
-//    public void testIsContainedBy() {
-//        System.out.println("isContainedBy");
-//        V2D_Envelope e = null;
-//        V2D_Envelope instance = null;
-//        boolean expResult = false;
-//        boolean result = instance.isContainedBy(e);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of isIntersectedBy method, of class V2D_Envelope.
-//     */
-//    @Test
-//    public void testIsIntersectedBy_V2D_Point() {
-//        System.out.println("isIntersectedBy");
-//        V2D_Point p = null;
-//        V2D_Envelope instance = null;
-//        boolean expResult = false;
-//        boolean result = instance.isIntersectedBy(p);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
+    /**
+     * Test of isIntersectedBy method, of class V2D_Envelope.
+     */
+    @Test
+    public void testIsIntersectedBy_V2D_Point() {
+        System.out.println("isIntersectedBy");
+        BigRational x0 = BigRational.ZERO;
+        BigRational x1 = BigRational.ONE;
+        BigRational x2 = BigRational.TWO;
+        BigRational x3 = BigRational.valueOf(3);
+        BigRational y0 = BigRational.ZERO;
+        BigRational y1 = BigRational.ONE;
+        BigRational y2 = BigRational.TWO;
+        BigRational y3 = BigRational.valueOf(3);
+        V2D_Point p = new V2D_Point(x0, y0);
+        V2D_Envelope instance = new V2D_Envelope(x0, x1, y0, y1);
+        boolean result = instance.isIntersectedBy(p);
+        Assertions.assertTrue(result);
+    }
+
 //    /**
 //     * Test of isIntersectedBy method, of class V2D_Envelope.
 //     */
