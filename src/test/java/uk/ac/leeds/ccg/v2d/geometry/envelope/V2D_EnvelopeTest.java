@@ -69,12 +69,22 @@ public class V2D_EnvelopeTest {
         //testIsIntersectedBy_V2D_Envelope();
         //testIsContainedBy();
         //testIsIntersectedBy_V2D_Point();
+        //testIsIntersectedBy_V2D_Point();
+        //testIsIntersectedBy_BigRational_BigRational();
+        //testIsIntersectedBy_V2D_LineSegment();
+        //testGetIntersection();
+        //testGetEnvelope();
+        //testEquals();
+        //testGetxMin();
+        //testGetxMax();
+        //testGetyMin();
+        //testGetyMax();
     }
 
     /**
      * Test of toString method, of class V2D_Envelope.
      */
-    //@Test
+    @Test
     public void testToString() {
         System.out.println("toString");
         V2D_Envelope instance = new V2D_Envelope(BigRational.ZERO, BigRational.ONE, BigRational.ZERO, BigRational.ONE);;
@@ -86,7 +96,7 @@ public class V2D_EnvelopeTest {
     /**
      * Test of union method, of class V2D_Envelope.
      */
-    //@Test
+    @Test
     public void testUnion() {
         System.out.println("union");
         BigRational x0 = BigRational.ZERO;
@@ -113,7 +123,7 @@ public class V2D_EnvelopeTest {
     /**
      * Test of isIntersectedBy method, of class V2D_Envelope.
      */
-    //@Test
+    @Test
     public void testIsIntersectedBy_V2D_Envelope() {
         System.out.println("isIntersectedBy");
         BigRational x0 = BigRational.ZERO;
@@ -171,7 +181,7 @@ public class V2D_EnvelopeTest {
     /**
      * Test of isContainedBy method, of class V2D_Envelope.
      */
-    //@Test
+    @Test
     public void testIsContainedBy() {
         System.out.println("isContainedBy");
         BigRational x0 = BigRational.ZERO;
@@ -214,152 +224,224 @@ public class V2D_EnvelopeTest {
         BigRational y3 = BigRational.valueOf(3);
         V2D_Point p = new V2D_Point(x0, y0);
         V2D_Envelope instance = new V2D_Envelope(x0, x1, y0, y1);
-        boolean result = instance.isIntersectedBy(p);
-        Assertions.assertTrue(result);
+        Assertions.assertTrue(instance.isIntersectedBy(p));
+        // Test 2
+        p = new V2D_Point(x1, y0);
+        Assertions.assertTrue(instance.isIntersectedBy(p));
+        // Test 3
+        p = new V2D_Point(x0, y1);
+        Assertions.assertTrue(instance.isIntersectedBy(p));
+        // Test 3
+        p = new V2D_Point(x1, y1);
+        Assertions.assertTrue(instance.isIntersectedBy(p));
+        // Test 4
+        p = new V2D_Point(x3, y1);
+        Assertions.assertFalse(instance.isIntersectedBy(p));
     }
 
-//    /**
-//     * Test of isIntersectedBy method, of class V2D_Envelope.
-//     */
-//    @Test
-//    public void testIsIntersectedBy_BigRational_BigRational() {
-//        System.out.println("isIntersectedBy");
-//        BigRational x = null;
-//        BigRational y = null;
-//        V2D_Envelope instance = null;
-//        boolean expResult = false;
-//        boolean result = instance.isIntersectedBy(x, y);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of isIntersectedBy method, of class V2D_Envelope.
-//     */
-//    @Test
-//    public void testIsIntersectedBy_V2D_LineSegment() {
-//        System.out.println("isIntersectedBy");
-//        V2D_LineSegment l = null;
-//        V2D_Envelope instance = null;
-//        boolean expResult = false;
-//        boolean result = instance.isIntersectedBy(l);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of getIntersection method, of class V2D_Envelope.
-//     */
-//    @Test
-//    public void testGetIntersection() {
-//        System.out.println("getIntersection");
-//        V2D_Envelope en = null;
-//        V2D_Envelope instance = null;
-//        V2D_Envelope expResult = null;
-//        V2D_Envelope result = instance.getIntersection(en);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of getEnvelope method, of class V2D_Envelope.
-//     */
-//    @Test
-//    public void testGetEnvelope() {
-//        System.out.println("getEnvelope");
-//        V2D_Envelope instance = null;
-//        V2D_Envelope expResult = null;
-//        V2D_Envelope result = instance.getEnvelope();
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of equals method, of class V2D_Envelope.
-//     */
-//    @Test
-//    public void testEquals() {
-//        System.out.println("equals");
-//        Object o = null;
-//        V2D_Envelope instance = null;
-//        boolean expResult = false;
-//        boolean result = instance.equals(o);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of hashCode method, of class V2D_Envelope.
-//     */
-//    @Test
-//    public void testHashCode() {
-//        System.out.println("hashCode");
-//        V2D_Envelope instance = null;
-//        int expResult = 0;
-//        int result = instance.hashCode();
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of getxMin method, of class V2D_Envelope.
-//     */
-//    @Test
-//    public void testGetxMin() {
-//        System.out.println("getxMin");
-//        V2D_Envelope instance = null;
-//        BigRational expResult = null;
-//        BigRational result = instance.getxMin();
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of getxMax method, of class V2D_Envelope.
-//     */
-//    @Test
-//    public void testGetxMax() {
-//        System.out.println("getxMax");
-//        V2D_Envelope instance = null;
-//        BigRational expResult = null;
-//        BigRational result = instance.getxMax();
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of getyMin method, of class V2D_Envelope.
-//     */
-//    @Test
-//    public void testGetyMin() {
-//        System.out.println("getyMin");
-//        V2D_Envelope instance = null;
-//        BigRational expResult = null;
-//        BigRational result = instance.getyMin();
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of getyMax method, of class V2D_Envelope.
-//     */
-//    @Test
-//    public void testGetyMax() {
-//        System.out.println("getyMax");
-//        V2D_Envelope instance = null;
-//        BigRational expResult = null;
-//        BigRational result = instance.getyMax();
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
+    /**
+     * Test of isIntersectedBy method, of class V2D_Envelope.
+     */
+    @Test
+    public void testIsIntersectedBy_BigRational_BigRational() {
+        System.out.println("isIntersectedBy");
+        BigRational x0 = BigRational.ZERO;
+        BigRational x1 = BigRational.ONE;
+        BigRational x2 = BigRational.TWO;
+        BigRational x3 = BigRational.valueOf(3);
+        BigRational y0 = BigRational.ZERO;
+        BigRational y1 = BigRational.ONE;
+        BigRational y2 = BigRational.TWO;
+        BigRational y3 = BigRational.valueOf(3);
+        V2D_Envelope instance = new V2D_Envelope(x0, x1, y0, y1);
+        Assertions.assertTrue(instance.isIntersectedBy(x0, y0));
+        // Test 2
+        Assertions.assertTrue(instance.isIntersectedBy(x1, y0));
+        // Test 3
+        Assertions.assertTrue(instance.isIntersectedBy(x0, y1));
+        // Test 3
+        Assertions.assertTrue(instance.isIntersectedBy(x1, y1));
+        // Test 4
+        Assertions.assertFalse(instance.isIntersectedBy(x3, y1));
+    }
+
+    /**
+     * Test of isIntersectedBy method, of class V2D_Envelope.
+     */
+    @Test
+    public void testIsIntersectedBy_V2D_LineSegment() {
+        System.out.println("isIntersectedBy");
+        BigRational x0 = BigRational.ZERO;
+        BigRational x1 = BigRational.ONE;
+        BigRational x2 = BigRational.TWO;
+        BigRational x3 = BigRational.valueOf(3);
+        BigRational y0 = BigRational.ZERO;
+        BigRational y1 = BigRational.ONE;
+        BigRational y2 = BigRational.TWO;
+        BigRational y3 = BigRational.valueOf(3);
+        V2D_Envelope instance = new V2D_Envelope(x0, x2, y0, y2);
+        V2D_Point p0 = new V2D_Point(x0, y0);
+        V2D_Point p1 = new V2D_Point(x0, y1);
+        V2D_LineSegment l = new V2D_LineSegment(p0, p1);
+        Assertions.assertTrue(instance.isIntersectedBy(l));
+        // Test 2
+        p0 = new V2D_Point(x3, y3);
+        p1 = new V2D_Point(x3, y2);
+        l = new V2D_LineSegment(p0, p1);
+        Assertions.assertFalse(instance.isIntersectedBy(l));
+        // Test 3
+        p0 = new V2D_Point(x3, y3);
+        p1 = new V2D_Point(x2, y2);
+        l = new V2D_LineSegment(p0, p1);
+        Assertions.assertTrue(instance.isIntersectedBy(l));
+        // Test 3
+        p0 = new V2D_Point(x3, y3);
+        p1 = new V2D_Point(x0, y3);
+        l = new V2D_LineSegment(p0, p1);
+        Assertions.assertFalse(instance.isIntersectedBy(l));
+        // Test 4
+        p0 = new V2D_Point(x3, y3);
+        p1 = new V2D_Point(x0, y2);
+        l = new V2D_LineSegment(p0, p1);
+        Assertions.assertTrue(instance.isIntersectedBy(l));
+    }
+
+    /**
+     * Test of getIntersection method, of class V2D_Envelope.
+     */
+    @Test
+    public void testGetIntersection() {
+        System.out.println("getIntersection");
+        BigRational x0 = BigRational.ZERO;
+        BigRational x1 = BigRational.ONE;
+        BigRational x2 = BigRational.TWO;
+        BigRational x3 = BigRational.valueOf(3);
+        BigRational y0 = BigRational.ZERO;
+        BigRational y1 = BigRational.ONE;
+        BigRational y2 = BigRational.TWO;
+        BigRational y3 = BigRational.valueOf(3);
+        V2D_Envelope en = new V2D_Envelope(x0, x2, y0, y2);
+        V2D_Envelope instance = new V2D_Envelope(x0, x1, y0, y1);
+        V2D_Envelope expResult = new V2D_Envelope(x0, x1, y0, y1);
+        V2D_Envelope result = instance.getIntersection(en);
+        Assertions.assertEquals(expResult, result);
+        // Test 2
+        en = new V2D_Envelope(x0, x1, y0, y1);
+        instance = new V2D_Envelope(x0, x1, y0, y1);
+        expResult = new V2D_Envelope(x0, x1, y0, y1);
+        result = instance.getIntersection(en);
+        Assertions.assertEquals(expResult, result);
+        // Test 3
+        en = new V2D_Envelope(x0, x1, y0, y1);
+        instance = new V2D_Envelope(x0, x2, y0, y2);
+        expResult = new V2D_Envelope(x0, x1, y0, y1);
+        result = instance.getIntersection(en);
+        Assertions.assertEquals(expResult, result);
+        // Test 4
+        en = new V2D_Envelope(x0, x3, y0, y3);
+        instance = new V2D_Envelope(x0, x2, y0, y2);
+        expResult = new V2D_Envelope(x0, x2, y0, y2);
+        result = instance.getIntersection(en);
+        Assertions.assertEquals(expResult, result);
+        // Test 5
+        en = new V2D_Envelope(x0, x2, y0, y2);
+        instance = new V2D_Envelope(x0, x1, y1, y3);
+        expResult = new V2D_Envelope(x0, x1, y1, y2);
+        result = instance.getIntersection(en);
+        Assertions.assertEquals(expResult, result);
+        // Test 6
+        en = new V2D_Envelope(x0, x2, y0, y3);
+        instance = new V2D_Envelope(x0, x1, y1, y3);
+        expResult = new V2D_Envelope(x0, x1, y1, y3);
+        result = instance.getIntersection(en);
+        Assertions.assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of getEnvelope method, of class V2D_Envelope.
+     */
+    @Test
+    public void testGetEnvelope() {
+        System.out.println("getEnvelope");
+        BigRational z = BigRational.ZERO;
+        V2D_Envelope instance = new V2D_Envelope(z, z, z, z);
+        V2D_Envelope expResult = new V2D_Envelope(z, z, z, z);
+        V2D_Envelope result = instance.getEnvelope();
+        Assertions.assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of equals method, of class V2D_Envelope.
+     */
+    @Test
+    public void testEquals() {
+        System.out.println("equals");
+        BigRational z = BigRational.ZERO;
+        Object o = new V2D_Envelope(z, z, z, z);
+        V2D_Envelope instance = new V2D_Envelope(z, z, z, z);
+        Assertions.assertTrue(instance.equals(o));
+        // Test 2
+        instance = new V2D_Envelope(z, z, z, BigRational.ONE);
+        Assertions.assertFalse(instance.equals(o));
+    }
+
+    /**
+     * Test of hashCode method, of class V2D_Envelope.
+     */
+    @Test
+    public void testHashCode() {
+        System.out.println("hashCode");
+        // Intentionally not tested.
+    }
+
+    /**
+     * Test of getxMin method, of class V2D_Envelope.
+     */
+    @Test
+    public void testGetxMin() {
+        System.out.println("getxMin");
+        BigRational z = BigRational.ZERO;
+        V2D_Envelope instance = new V2D_Envelope(z, z, z, z);
+        BigRational expResult = z;
+        BigRational result = instance.getxMin();
+        Assertions.assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of getxMax method, of class V2D_Envelope.
+     */
+    @Test
+    public void testGetxMax() {
+        System.out.println("getxMax");
+        BigRational z = BigRational.ZERO;
+        V2D_Envelope instance = new V2D_Envelope(z, z, z, z);
+        BigRational expResult = z;
+        BigRational result = instance.getxMax();
+        Assertions.assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of getyMin method, of class V2D_Envelope.
+     */
+    @Test
+    public void testGetyMin() {
+        System.out.println("getyMin");
+        BigRational z = BigRational.ZERO;
+        V2D_Envelope instance = new V2D_Envelope(z, z, z, z);
+        BigRational expResult = z;
+        BigRational result = instance.getyMin();
+        Assertions.assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of getyMax method, of class V2D_Envelope.
+     */
+    @Test
+    public void testGetyMax() {
+        System.out.println("getyMax");
+        BigRational z = BigRational.ZERO;
+        V2D_Envelope instance = new V2D_Envelope(z, z, z, z);
+        BigRational expResult = z;
+        BigRational result = instance.getyMax();
+    }
 }
