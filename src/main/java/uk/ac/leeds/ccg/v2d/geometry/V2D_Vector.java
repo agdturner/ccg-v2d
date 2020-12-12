@@ -243,4 +243,11 @@ public class V2D_Vector implements Serializable {
         BigRational m = BigRational.valueOf(getMagnitude(scale + 2, rm));
         return new V2D_Vector(dx.divide(m), dy.divide(m));
     }
+    
+    /**
+     * @return A vector which is orthogonal to this. 
+     */
+    public V2D_Vector getOrthogonalVector() {
+        return new V2D_Vector(dy, dx);
+    }
 }

@@ -20,10 +20,12 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
 import uk.ac.leeds.ccg.math.Math_BigDecimal;
+import uk.ac.leeds.ccg.v2d.projection.V2D_Project;
 
 /**
  * 2D representation of an infinite length line. The line passes through the
- * point {@link #p} and is travelling in the direction {@link #v}.
+ * points {@link #p} and {@link #q} and is travelling in the direction 
+ * {@link #v}.
  * <ul>
  * <li>Vector Form
  * <ul>
@@ -41,7 +43,7 @@ import uk.ac.leeds.ccg.math.Math_BigDecimal;
  * </ul>
  *
  * @author Andy Turner
- * @version 1.0
+ * @version 1.0.0
  */
 public class V2D_Line extends V2D_Geometry {
 
@@ -100,38 +102,41 @@ public class V2D_Line extends V2D_Geometry {
         init(p, q);
     }
 
-//    /**
-//     * @param p What {@link #p} is set to.
-//     * @param v What {@link #v} is set to.
-//     */
-//    public V2D_Line(V2D_Point p, V2D_Vector v) {
-//        this.p = new V2D_Point(p);
-//        this.v = v;
-//        q = p.apply(v);
-//    }
+    /**
+     * @param p What {@link #p} is set to.
+     * @param v What {@link #v} is set to.
+     */
+    public V2D_Line(V2D_Point p, V2D_Vector v) {
+        this.p = new V2D_Point(p);
+        this.v = v;
+        q = V2D_Project.project(p, v);
+    }
+    
     /**
      * @param l Vector_LineSegment3D
      */
     public V2D_Line(V2D_Line l) {
         this.p = l.p;
         this.q = l.q;
+        this.v = l.v;
     }
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "(p=" + p.toString()
-                + ", q=" + q.toString() + ", v=" + v.toString() + ")";
+        return this.getClass().getSimpleName() + "[p=" + p.toString()
+                + ", q=" + q.toString() + ", v=" + v.toString() + "]";
     }
 
     @Override
     public boolean equals(Object o) {
         if (o instanceof V2D_Line) {
-            V2D_Line l = (V2D_Line) o;
-            if (this.isIntersectedBy(l.p) && this.isIntersectedBy(l.q)) {
-                return true;
-            }
+            return equals((V2D_Line) o);
         }
         return false;
+    }
+    
+    public boolean equals(V2D_Line l) {
+        return this.isIntersectedBy(l.p) && this.isIntersectedBy(l.q);
     }
 
     @Override
@@ -168,7 +173,7 @@ public class V2D_Line extends V2D_Geometry {
      * @return {@code true} If this and {@code l} intersect.
      */
     public boolean isIntersectedBy(V2D_Line l) {
-        return this.getIntersection(l) != null;
+        return getIntersection(l) != null;
     }
 
     /**
@@ -182,6 +187,15 @@ public class V2D_Line extends V2D_Geometry {
         return getIntersection(this, l);
     }
 
+    /**
+     * 
+     * @param l0 Line to intersect with {@code l1}.
+     * @param l1 Line to intersect with {@code l0}.
+     * @return {@code null} if {@code l0} and {@code l1} are parallel. If 
+     * {@code l0} and {@code l1} effectively define the same line, then 
+     * {@code l0} is returned. Otherwise the point of intersection between 
+     * {@code l0} and {@code l1} is returned.
+     */
     public static V2D_Geometry getIntersection(V2D_Line l0, V2D_Line l1) {
         // Check the points.
         if (l0.isIntersectedBy(l1.p)) {
@@ -265,12 +279,18 @@ public class V2D_Line extends V2D_Geometry {
         // p2 = r2+t2e2
         // The line connecting the closest points has direction vector:
         // n = v.l.v
-        V2D_Vector n = v.getCrossProduct(l.v);
-        // d = n.(p−l.p)/||n||
-        V2D_Vector p_sub_lp = new V2D_Vector(p.x.subtract(l.p.x),
-                p.y.subtract(l.p.y));
-        BigRational m = BigRational.valueOf(n.getMagnitude(scale, rm));
-        BigRational d = n.getDotProduct(p_sub_lp).divide(m);
-        return Math_BigDecimal.roundIfNecessary(d.toBigDecimal(), scale, rm);
+        if (this.isParallel(l)) {
+            V2D_Line ol = new V2D_Line(p, v.getOrthogonalVector());
+            return p.getDistance((V2D_Point) ol.getIntersection(l), scale, rm);
+//        V2D_Vector n = v.getCrossProduct(l.v);
+//        v.getDotProduct(l.v);
+//        // d = n.(p−l.p)/||n||
+//        V2D_Vector p_sub_lp = new V2D_Vector(p.x.subtract(l.p.x),
+//                p.y.subtract(l.p.y));
+//        BigRational m = BigRational.valueOf(n.getMagnitude(scale, rm));
+//        BigRational d = n.getDotProduct(p_sub_lp).divide(m);
+//        return Math_BigDecimal.roundIfNecessary(d.toBigDecimal(), scale, rm);
+        }
+        return BigDecimal.ZERO;
     }
 }

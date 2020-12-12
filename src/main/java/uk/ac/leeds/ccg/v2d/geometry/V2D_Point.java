@@ -31,8 +31,7 @@ import uk.ac.leeds.ccg.v2d.geometry.envelope.V2D_Envelope;
  * @author Andy Turner
  * @version 1.0
  */
-public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry,
-        Comparable<V2D_Point> {
+public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry {
 
     private static final long serialVersionUID = 1L;
 
@@ -47,7 +46,7 @@ public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry,
     public BigRational y;
 
     /**
-     * @param p Vector_Point2D
+     * @param p Vector_Point
      */
     public V2D_Point(V2D_Point p) {
         x = p.x;
@@ -144,13 +143,17 @@ public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry,
     @Override
     public boolean equals(Object o) {
         if (o instanceof V2D_Point) {
-            V2D_Point p = (V2D_Point) o;
-            if (p.x.compareTo(x) == 0) {
+            return equals ((V2D_Point) o);
+        }
+        return false;
+    }
+    
+    public boolean equals(V2D_Point p) {
+             if (p.x.compareTo(x) == 0) {
                 if (p.y.compareTo(y) == 0) {
                     return true;
                 }
             }
-        }
         return false;
     }
 
@@ -160,19 +163,6 @@ public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry,
         hash = 67 * hash + (this.x != null ? this.x.hashCode() : 0);
         hash = 67 * hash + (this.y != null ? this.y.hashCode() : 0);
         return hash;
-    }
-
-    /**
-     * @param p V2D_Point to compare to.
-     * @return 0 if this is the same as o and +1 or -1 otherwise.
-     */
-    @Override
-    public int compareTo(V2D_Point p) {
-        int xcomp = x.compareTo(p.x);
-        if (xcomp == 0) {
-            return y.compareTo(p.y);
-        }
-        return xcomp;
     }
 
     /**

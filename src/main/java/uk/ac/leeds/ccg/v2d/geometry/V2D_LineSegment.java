@@ -15,6 +15,7 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry;
 
+import ch.obermuhlner.math.big.BigDecimalMath;
 import ch.obermuhlner.math.big.BigRational;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -24,61 +25,73 @@ import uk.ac.leeds.ccg.v2d.geometry.envelope.V2D_Envelope;
 //import org.ojalgo.constant.BigMath;
 
 /**
- * Class for a line segment in 2D represented by two Point2D instances, one is
- * designated a start point and the other an end point. In this way a line
- * segment explicitly has a direction. Two Vector_LineSegment2D instances are
- * regarded as equal iff their start and end points are the same.
+ * Class for a line segment in 2D. The line segment is defined by the two points
+ * of the {@link V2D_Line}. The line segment is between and includes the points.
+ * The direction of the line is given by the vector and the point designation.
+ *
+ * @author Andy Turner
+ * @version 1.0.0
  */
-public class V2D_LineSegment extends V2D_Line
-        implements V2D_FiniteGeometry, Comparable {
+public class V2D_LineSegment extends V2D_Line implements V2D_FiniteGeometry {
 
     private static final long serialVersionUID = 1L;
 
-    public V2D_Point start;
-    public V2D_Point end;
+    /**
+     * For storing the envelope.
+     */
+    private V2D_Envelope e;
 
     /**
-     *
-     * @param start V2D_Point
-     * @param end V2D_Point
+     * @param p What {@link #p} is set to.
+     * @param q What {@link #q} is set to.
      */
-    public V2D_LineSegment(V2D_Point start, V2D_Point end) {
-        super(start, end);
-        this.start = start;
-        this.end = end;
+    public V2D_LineSegment(V2D_Point p, V2D_Point q) {
+        super(p, q);
+    }
+
+    /**
+     * @param p What {@link #p} is set to.
+     * @param v What {@link #v} is set to.
+     */
+    public V2D_LineSegment(V2D_Point p, V2D_Vector v) {
+        super(p, v);
     }
 
     /**
      * @param l Vector_LineSegment2D
      */
     public V2D_LineSegment(V2D_LineSegment l) {
-        this(l.start, l.end);
+        this(l.p, l.q);
     }
 
     @Override
-    public String toString() {
-        return "LineSegment2D(start=" + start.toString() + ", end=" + end.toString() + ")";
+    public boolean equals(Object o) {
+        if (o instanceof V2D_LineSegment) {
+            return equals((V2D_LineSegment) o);
+        }
+        return false;
     }
 
     /**
-     * Default is 1. Calls compareTo on the _StartPoint.
-     *
-     * @param o The object to compare with.
-     * @return -1, 0, 1 If this is less than, equal to, or greater than
-     * {@code o}.
+     * @param l The line segment to test if it is equal to {@code this}.
+     * @return {@code true} iff {@code this} is equal to {@code l}
      */
-    @Override
-    public int compareTo(Object o) {
-        if (o instanceof V2D_LineSegment) {
-            V2D_LineSegment a_LineSegment2D = (V2D_LineSegment) o;
-            int compareStart = start.compareTo(a_LineSegment2D.start);
-            if (compareStart == 0) {
-                return start.compareTo(a_LineSegment2D.start);
-            } else {
-                return compareStart;
-            }
+    public boolean equals(V2D_LineSegment l) {
+        return p.equals(l.p) && q.equals(l.q);
+    }
+
+    /**
+     *
+     * @param l The line segment to test if it is equal to {@code this}.
+     * @return {@code true} iff {@code this} is equal to {@code l} ignoring the
+     * direction of the vector
+     */
+    public boolean equalsIgnoreDirection(V2D_LineSegment l) {
+        if (equals(l)) {
+            return true;
+        } else {
+            return p.equals(l.q) && q.equals(l.p);
         }
-        return 1;
     }
 
     /**
@@ -87,15 +100,18 @@ public class V2D_LineSegment extends V2D_Line
      * @return The length of this as a BigDecimal
      */
     public BigDecimal getLength(int dp, RoundingMode rm) {
-        return start.getDistance(end, dp, rm);
+        return p.getDistance(q, dp, rm);
     }
 
     /**
-     * @return {@code new V2D_Envelope(start, end)}
+     * @return {@code new V2D_Envelope(p, q)}
      */
     @Override
     public V2D_Envelope getEnvelope() {
-        return new V2D_Envelope(start, end);
+        if (e == null) {
+            e = new V2D_Envelope(p, q);
+        }
+        return e;
     }
 
     /**
@@ -109,984 +125,165 @@ public class V2D_LineSegment extends V2D_Line
         }
         return false;
     }
-    
-//    /**
-//     * A bounding box intersection test.
-//     *
-//     * @param xmin The minimum x-coordinate of the bounding box.
-//     * @param ymin The minimum y-coordinate of the bounding box.
-//     * @param xmax The maximum x-coordinate of the bounding box.
-//     * @param ymax The maximum y-coordinate of the bounding box.
-//     * @param l The line segment to test for intersection.
-//     * @param t The tolerance.
-//     * @return {code true} if {@code l} intersects the envelope defined by
-//     * {@code minx}, {@code miny}, {@code maxx}, {@code maxy}.
-//     */
-//    public static boolean getIntersects(BigRational xmin, BigRational ymin,
-//            BigRational xmax, BigRational ymax, V2D_LineSegment l,
-//            BigRational t) {
-//        if (l.start.x.compareTo(xmin) != -1 && l.start.x.compareTo(xmax) != 1
-//                && l.start.y.compareTo(ymin) != -1
-//                && l.start.y.compareTo(ymax) != 1) {
-//            return true;
-//        }
-//        if (l.end.x.compareTo(xmin) != -1 && l.end.x.compareTo(xmax) != 1
-//                && l.end.y.compareTo(ymin) != -1
-//                && l.end.y.compareTo(ymax) != 1) {
-//            return true;
-//        }
-//        V2D_Point ll = new V2D_Point(xmin, ymin);
-//        V2D_Point lr = new V2D_Point(xmax, ymin);
-//        // Check bottom
-//        V2D_LineSegment section = new V2D_LineSegment(ll, lr);
-//        if (l.getIntersects(section, t)) {
-//            return true;
-//        }
-//        V2D_Point ur = new V2D_Point(xmax, ymax);
-//        // Check right
-//        section = new V2D_LineSegment(lr, ur);
-//        if (l.getIntersects(section, t)) {
-//            return true;
-//        }
-//        V2D_Point ul = new V2D_Point(xmin, ymax);
-//        // Check left
-//        section = new V2D_LineSegment(ll, ul);
-//        if (l.getIntersects(section, t)) {
-//            return true;
-//        }
-//        // Check top
-//        section = new V2D_LineSegment(ul, ur);
-//        return l.getIntersects(section, t);
-//    }
-//
-//    /**
-//     * Test whether {@code l} intersects any {@code lines}.
-//     *
-//     * @param l The line to test for intersection with and lines in
-//     * {@code lines}.
-//     * @param lines The lines to test for intersection with {@code l}.
-//     * @param t tolerance.
-//     * @param dpp The decimal place precision.
-//     * @return {@code true if {@code l} intersects any lines in {@code lines}.
-//     */
-//    public static boolean getIntersects(V2D_LineSegment l,
-//            V2D_LineSegment[] lines, BigRational t) {
-//        for (V2D_LineSegment line : lines) {
-//            boolean intersects = l.getIntersects(line, t);
-//            if (intersects) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
 
-//    /**
-//     * Intersection done by first seeing if envelope intersects.
-//     *
-//     * @param l A line segment to test.
-//     * @param t The tolerance.
-//     *
-//     * @return {@code true} if {@code l} intersects this.
-//     */
-//    public boolean getIntersects(V2D_LineSegment l, BigRational t) {
-//        V2D_Geometry intersection = getIntersection(l, t);
-//        return intersection != null;
-//    }
+    /**
+     * @param p The point to test if it is on this.
+     * @return {@code true} if {@code p} is on this.
+     */
+    @Override
+    public boolean isIntersectedBy(V2D_Point p) {
+        if (getEnvelope().isIntersectedBy(p)) {
+            return super.isIntersectedBy(p);
+        }
+        return false;
+    }
 
-//    /**
-//     * For optimisation reasons, intersection done by first seeing if there is
-//     * Envelope intersection...
-//     *
-//     * @param l line segment to test for intersection.
-//     * @param ignoreThisStartPoint2D if true then if
-//     * this.start.getIntersects(a_LineSegment2D) return false
-//     * @param t tolerance
-//     * @param dpp The decimal place precision to be used for this.
-//     * @return {@code true} if {@code l} intersects this.
-//     */
-//    public boolean getIntersects(V2D_LineSegment l,
-//            boolean ignoreThisStartPoint2D, BigRational t) {
-//        if (ignoreThisStartPoint2D) {
-//            if (this.start.getIntersects(l, t)) {
-//                return false;
-//            } else {
-//                return getIntersects(l, t);
-//            }
-//        } else {
-//            return getIntersects(l, t);
-//        }
-//    }
-
-//    /**
-//     * Intersection done by calculating angle or gradient of the line and
-//     * comparing this with that of a_Point.
-//     *
-//     * @param p A point to test for intersection.
-//     * @param t Tolerance.
-//     * @return {@code true} if {@code p} intersects this.
-//     */
-//    public boolean getIntersects(V2D_Point p, BigRational t) {
-//        if (getEnvelope().getIntersects(p) == false) {
-//            return false;
-//        }
-//        if (start.y.compareTo(end.y) == -1) {
-//            // StartPoint is Below EndPoint
-//            if (start.x.compareTo(end.x) == -1) {
-//                // StartPoint is Left of EndPoint
-//                return isOnGradient(p, t);
-//            } else {
-//                if (start.x.compareTo(end.x) == 0) {
-//                    // StartPoint has same x as EndPoint
-//                    return true;
-//                } else {
-//                    // StartPoint is Right of EndPoint
-//                    return isOnGradient(p, t);
-//                }
-//            }
-//        } else {
-//            if (start.y.compareTo(end.y) == 0) {
-//                // StartPoint has same y as EndPoint
-//                return true;
-//            } else {
-//                // StartPoint is Above EndPoint
-//                if (start.x.compareTo(end.x) == -1) {
-//                    // StartPoint is Left of EndPoint
-//                    return isOnGradient(p, t);
-//                } else {
-//                    if (start.x.compareTo(end.x) == 0) {
-//                        // StartPoint has same x as EndPoint
-//                        return true;
-//                    } else {
-//                        // StartPoint is Right of EndPoint
-//                        return isOnGradient(p, t);
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-//    /**
-//     * @return The gradient.
-//     */
-//    protected BigDecimal getGradient(int scale, RoundingMode rm) {
-//        return start.getGradient(end, scale, rm);
-//    }
-
-//    /**
-//     *
-//     * @param p The point.
-//     * @param t Tolerance
-//     * @return
-//     */
-//    protected boolean isOnGradient(V2D_Point p, BigRational t) {
-//        BigRational xDiff0 = end.x.subtract(start.x);
-//        BigRational yDiff0 = end.y.subtract(start.y);
-//        BigRational xDiff1 = p.x.subtract(start.x);
-//        BigRational yDiff1 = p.y.subtract(start.y);
-//        BigRational gradient0;
-//        if (yDiff0.compareTo(BigRational.ZERO) == 0) {
-//            return yDiff1.compareTo(BigRational.ZERO) == 0;
-//        } else {
-//            gradient0 = xDiff0.divide(
-//                    yDiff0,
-//                    t.scale() + 2, // + 2 sufficient?
-//                    RoundingMode.CEILING);
-//        }
-//        BigRational gradient1;
-//        if (yDiff1.compareTo(BigRational.ZERO) == 0) {
-//            return false;
-//        } else {
-//            gradient1 = xDiff1.divide(
-//                    yDiff1,
-//                    t.scale() + 2, // + 2 sufficient?
-//                    RoundingMode.CEILING);
-//        }
-//        return gradient0.compareTo(gradient1) == 0;
-//    }
-
-    public V2D_LineSegment getOrderedLineSegment2D() {
-        if (start.y.compareTo(end.y) == -1) {
-            return new V2D_LineSegment(this);
-        } else {
-            if (start.y.compareTo(end.y) == 0) {
-                if (start.x.compareTo(end.x) != 1) {
-                    return new V2D_LineSegment(this);
+    /**
+     * Calculate and return the intersection between this and {@code l}.
+     * @param l The line segment to intersect with.
+     * @return {@code null} if this does not intersect {@code l}; the point of
+     * intersection if this intersects {@code l} at a point; and the line
+     * segment if this intersects {@code l} over a line segment.
+     */
+    public V2D_Geometry getIntersection(V2D_LineSegment l) {
+        // Special cases
+        if (equalsIgnoreDirection(l)) {
+            // The two lines are the same.
+            return l;
+        }
+        if (!(getEnvelope().isIntersectedBy(l)
+                && l.getEnvelope().isIntersectedBy(this))) {
+            return null;
+        }
+        BigRational x2minusx1 = q.x.subtract(p.x);
+        BigRational y2minusy1 = q.y.subtract(p.y);
+        BigRational x4minusx3 = l.q.x.subtract(l.p.x);
+        BigRational y4minusy3 = l.q.y.subtract(l.p.y);
+        BigRational denominator = (y4minusy3.multiply(x2minusx1))
+                .subtract(x4minusx3.multiply(y2minusy1));
+        boolean parallel = false;
+        if (denominator.compareTo(BigRational.ZERO) == 0) {
+            //System.out.println("parallel lines");
+            parallel = true;
+        }
+        BigRational y1minusy3 = p.y.subtract(l.p.y);
+        BigRational x1minusx3 = p.x.subtract(l.p.x);
+        BigRational uamultiplicand = (x4minusx3.multiply(y1minusy3))
+                .subtract(y4minusy3.multiply(x1minusx3));
+        BigRational ubmultiplicand = (x2minusx1.multiply(y1minusy3))
+                .subtract(y2minusy1.multiply(x1minusx3));
+        if (uamultiplicand.compareTo(BigRational.ZERO) == 0
+                && ubmultiplicand.compareTo(BigRational.ZERO) == 0
+                && parallel) {
+            //System.out.println("lines coincident");
+            //V2D_LineSegment ot = this.getOrderedLineSegment2D();
+            //V2D_LineSegment oa = l.getOrderedLineSegment2D();
+            boolean ts = l.isIntersectedBy(p);
+            boolean te = l.isIntersectedBy(q);
+            boolean as = isIntersectedBy(l.p);
+            boolean ae = isIntersectedBy(l.q);
+            if (ts) {
+                if (te) {
+                    if (as) {
+                        if (ae) {
+                            return new V2D_LineSegment(l);
+                        } else {
+                            return new V2D_LineSegment(p, q);
+                        }
+                    } else {
+                        if (ae) {
+                            return new V2D_LineSegment(p, l.q);
+                        } else {
+                            return new V2D_LineSegment(this);
+                        }
+                    }
+                } else {
+                    if (as) {
+                        if (ae) {
+                            return new V2D_LineSegment(l);
+                        } else {
+                            return new V2D_Point(p);
+                        }
+                    } else {
+                        System.out.println("Wierd...");
+                        return null;
+                    }
+                }
+            } else {
+                if (te) {
+                    if (as) {
+                        if (ae) {
+                            return new V2D_LineSegment(l.p, l.q);
+                        } else {
+                            return new V2D_LineSegment(l.p, q);
+                        }
+                    } else {
+                        System.out.println("Wierd...");
+                        return null;
+                    }
+                } else {
+                    return new V2D_LineSegment(l);
                 }
             }
         }
-        return new V2D_LineSegment(this.end, this.start);
-    }
-
-//    /**
-//     * Intersection method adapted from:
-//     * http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline2d/
-//     *
-//     * @param l V2D_LineSegment
-//     * @param t tolerance
-//     * @return null if this does not intersect a_LineSegment2D; a Point2D if
-//     * this getIntersects a_LineSegment2D at a point; and, a V2D_LineSegment if
-//     * this getIntersects a_LineSegment2D in a line. TODO: Not sure about using
-//     * Rounding Modes here, it might be best to handle arithmetic exceptions and
-//     * provide another method into which a MathContext can be passed...
-//     */
-//    public V2D_Geometry getIntersection(V2D_LineSegment l,
-//            BigRational t) {
-//        // Special cases
-//        if (this.start.y.compareTo(l.start.y) == 1
-//                && this.start.y.compareTo(l.end.y) == 1
-//                && this.end.y.compareTo(l.start.y) == 1
-//                && this.end.y.compareTo(l.end.y) == 1) {
-//            return null;
-//        }
-//        if (this.start.x.compareTo(l.start.x) == 1
-//                && this.start.x.compareTo(l.end.x) == 1
-//                && this.end.x.compareTo(l.start.x) == 1
-//                && this.end.x.compareTo(l.end.x) == 1) {
-//            return null;
-//        }
-//        if (this.start.y.compareTo(l.start.y) == -1
-//                && this.start.y.compareTo(l.end.y) == -1
-//                && this.end.y.compareTo(l.start.y) == -1
-//                && this.end.y.compareTo(l.end.y) == -1) {
-//            return null;
-//        }
-//        if (this.start.x.compareTo(l.start.x) == -1
-//                && this.start.x.compareTo(l.end.x) == -1
-//                && this.end.x.compareTo(l.start.x) == -1
-//                && this.end.x.compareTo(l.end.x) == -1) {
-//            return null;
-//        }
-//        //MathContext a_MathContext = new MathContext(this.DecimalPlacePrecision_Integer + 100);
-//        BigRational x2minusx1 = end.x.subtract(start.x);
-//        BigRational y2minusy1 = end.y.subtract(start.y);
-//        BigRational x4minusx3 = l.end.x.subtract(l.start.x);
-//        BigRational y4minusy3 = l.end.y.subtract(l.start.y);
-//        BigRational denominator = (y4minusy3.multiply(x2minusx1))
-//                .subtract(x4minusx3.multiply(y2minusy1));
-//        boolean parallel = false;
-//        // Not sure about use of RoundingMode here!!
-//        if (denominator.setScale(t.scale(), RoundingMode.FLOOR).compareTo(
-//                BigDecimal.ZERO) == 0) {
-//            //System.out.println("parallel lines");
-//            parallel = true;
-//        }
-//        BigRational y1minusy3 = start.y.subtract(l.start.y);
-//        BigRational x1minusx3 = start.x.subtract(l.start.x);
-//        BigRational uamultiplicand = (x4minusx3.multiply(y1minusy3))
-//                .subtract(y4minusy3.multiply(x1minusx3));
-//        BigRational ubmultiplicand = (x2minusx1.multiply(y1minusy3))
-//                .subtract(y2minusy1.multiply(x1minusx3));
-//        if (uamultiplicand.setScale(t.scale(), RoundingMode.FLOOR).compareTo(BigDecimal.ZERO) == 0
-//                && ubmultiplicand.setScale(t.scale(), RoundingMode.FLOOR).compareTo(BigDecimal.ZERO) == 0
-//                && parallel) {
-//            //System.out.println("lines coincident");
-//            V2D_LineSegment ot = getOrderedLineSegment2D();
-//            V2D_LineSegment oa = l.getOrderedLineSegment2D();
-//            boolean ts = ot.start.getIntersects(oa, t);
-//            boolean te = ot.end.getIntersects(oa, t);
-//            boolean as = oa.start.getIntersects(ot, t);
-//            boolean ae = oa.end.getIntersects(ot, t);
-//            if (ts) {
-//                if (te) {
-//                    if (as) {
-//                        if (ae) {
-//                            return new V2D_LineSegment(l);
-//                        } else {
-//                            return new V2D_LineSegment(ot.start, ot.end);
-//                        }
-//                    } else {
-//                        if (ae) {
-//                            return new V2D_LineSegment(ot.start, oa.end);
-//                        } else {
-//                            return new V2D_LineSegment(this);
-//                        }
-//                    }
-//                } else {
-//                    if (as) {
-//                        if (ae) {
-//                            return new V2D_LineSegment(l);
-//                        } else {
-//                            return new V2D_Point(ot.start);
-//                        }
-//                    } else {
-//                        System.out.println("Wierd...");
-//                        return null;
-//                    }
-//                }
-//            } else {
-//                if (te) {
-//                    if (as) {
-//                        if (ae) {
-//                            return new V2D_LineSegment(oa.start, oa.end);
-//                        } else {
-//                            return new V2D_LineSegment(oa.start, ot.end);
-//                        }
-//                    } else {
-//                        System.out.println("Wierd...");
-//                        return null;
-//                    }
-//                } else {
-//                    return new V2D_LineSegment(l);
-//                }
-//            }
-//        }
-//        if (parallel) {
-//            return null;
-//        }
-//        BigRational ua = uamultiplicand.divide(denominator, t.scale(),
-//                RoundingMode.CEILING);
-//        if (ua.compareTo(BigDecimal.ONE) != 1
-//                && ua.compareTo(BigDecimal.ZERO) != -1) {
-//            BigDecimal intersectx = start.x.add(ua.multiply(x2minusx1));
-//            BigDecimal intersecty = start.y.add(ua.multiply(y2minusy1));
-//            BigDecimal deltaXEndX = intersectx.subtract(l.end.x);
-//            BigDecimal deltaXStartX = intersectx.subtract(l.start.x);
-//            BigDecimal deltaYEndY = intersecty.subtract(l.end.y);
-//            BigDecimal deltaYStartY = intersecty.subtract(l.start.y);
-//            if (((deltaXEndX.compareTo(t) == 1 && deltaXEndX.compareTo(t.negate()) == 1)
-//                    && (deltaXStartX.compareTo(t) == 1 && deltaXStartX.compareTo(t.negate()) == 1))
-//                    || ((deltaXEndX.compareTo(t) == -1 && deltaXEndX.compareTo(t.negate()) == -1)
-//                    && (deltaXStartX.compareTo(t) == -1) && deltaXStartX.compareTo(t.negate()) == -1)
-//                    || ((deltaYEndY.compareTo(t) == 1 && deltaYEndY.compareTo(t.negate()) == 1)
-//                    && deltaYStartY.compareTo(t) == 1 && deltaYStartY.compareTo(t.negate()) == 1)
-//                    || ((deltaYEndY.compareTo(t) == -1 && deltaYEndY.compareTo(t.negate()) == -1)
-//                    && (deltaYStartY.compareTo(t) == -1 && deltaYStartY.compareTo(t.negate()) == -1))) {
-//                return null;
-//            }
-////            if ((intersectx1.compareTo(a_LineSegment2D.end.x) == 1
-////                    && intersectx1.compareTo(a_LineSegment2D.start.x) == 1)
-////                    || (intersectx1.compareTo(a_LineSegment2D.end.x) == -1
-////                    && intersectx1.compareTo(a_LineSegment2D.start.x) == -1)
-////                    || (intersecty1.compareTo(a_LineSegment2D.end.y) == 1
-////                    && intersecty1.compareTo(a_LineSegment2D.start.y) == 1)
-////                    || (intersecty1.compareTo(a_LineSegment2D.end.y) == -1
-////                    && intersecty1.compareTo(a_LineSegment2D.start.y) == -1)) {
-////                return null;
-////            }
-////            BigDecimal ub = ubmultiplicand.divide(
-////                    denominator,
-////                    a_DecimalPlacePrecision,
-////                RoundingMode.HALF_UP);
-//            return new V2D_Point(
-//                    e,
-//                    intersectx,
-//                    intersecty,
-//                    t.scale());
-//        } else {
-//            BigDecimal ub = ubmultiplicand.divide(
-//                    denominator,
-//                    t.scale(),
-//                    RoundingMode.CEILING);
-//            if (ub.compareTo(BigDecimal.ONE) != 1
-//                    && ub.compareTo(BigDecimal.ZERO) != -1) {
-//                BigDecimal intersectx = l.start.x.add(
-//                        ub.multiply(x4minusx3));
-//                BigDecimal intersecty = l.start.y.add(
-//                        ub.multiply(y4minusy3));
-//                BigDecimal deltaXEndX;
-//                deltaXEndX = intersectx.subtract(l.end.x);
-//                BigDecimal deltaXStartX;
-//                deltaXStartX = intersectx.subtract(l.start.x);
-//                BigDecimal deltaYEndY;
-//                deltaYEndY = intersecty.subtract(l.end.y);
-//                BigDecimal deltaYStartY;
-//                deltaYStartY = intersecty.subtract(l.start.y);
-//                if (((deltaXEndX.compareTo(t) == 1 && deltaXEndX.compareTo(t.negate()) == 1)
-//                        && (deltaXStartX.compareTo(t) == 1 && deltaXStartX.compareTo(t.negate()) == 1))
-//                        || ((deltaXEndX.compareTo(t) == -1 && deltaXEndX.compareTo(t.negate()) == -1)
-//                        && (deltaXStartX.compareTo(t) == -1) && deltaXStartX.compareTo(t.negate()) == -1)
-//                        || ((deltaYEndY.compareTo(t) == 1 && deltaYEndY.compareTo(t.negate()) == 1)
-//                        && deltaYStartY.compareTo(t) == 1 && deltaYStartY.compareTo(t.negate()) == 1)
-//                        || ((deltaYEndY.compareTo(t) == -1 && deltaYEndY.compareTo(t.negate()) == -1)
-//                        && (deltaYStartY.compareTo(t) == -1 && deltaYStartY.compareTo(t.negate()) == -1))) {
-//                    return null;
-//                }
-//
-////                if ((deltaXEndX.compareTo(tollerance) == 1
-////                        && deltaXStartX.compareTo(tollerance) == 1)
-////                        || (deltaXEndX.compareTo(tollerance) == -1
-////                        && deltaXStartX.compareTo(tollerance) == -1)
-////                        || (deltaYEndY.compareTo(tollerance) == 1
-////                        && deltaYStartY.compareTo(tollerance) == 1)
-////                        || (deltaYEndY.compareTo(tollerance) == -1
-////                        && deltaYStartY.compareTo(tollerance) == -1)) {
-////                    return null;
-////                }
-////                if ((intersectx2.compareTo(a_LineSegment2D.end.x) == 1
-////                        && intersectx2.compareTo(a_LineSegment2D.start.x) == 1)
-////                        || (intersectx2.compareTo(a_LineSegment2D.end.x) == -1
-////                        && intersectx2.compareTo(a_LineSegment2D.start.x) == -1)
-////                        || (intersecty2.compareTo(a_LineSegment2D.end.y) == 1
-////                        && intersecty2.compareTo(a_LineSegment2D.start.y) == 1)
-////                        || (intersecty2.compareTo(a_LineSegment2D.end.y) == -1
-////                        && intersecty2.compareTo(a_LineSegment2D.start.y) == -1)) {
-////                    return null;
-////                }
-//                return new V2D_Point(
-//                        e,
-//                        intersectx,
-//                        intersecty,
-//                        t.scale());
-//            }
-//        }
-//        return null;
-//    }
-
-//    /**
-//     * l.start.x >= xmin && l.start.x < xmax &&
-//     * l.start.y >= ymin && l.start.y < ymax
-//     *
-//     * @param t tolerance
-//     * @param xmin
-//     * @param ymin
-//     * @param xmax
-//     * @param ymax
-//     * @param l
-//     * @param directionIn
-//     * @param dpp decimal place precision
-//     * @return
-//     */
-//    public static Object[] getLineToIntersectLineRemainingDirection(
-//            BigDecimal t, BigDecimal xmin, BigDecimal ymin, BigDecimal xmax,
-//            BigDecimal ymax, V2D_LineSegment l, Integer directionIn,
-//            int dpp) {
-//        Object[] r = new Object[3];
-//        if (directionIn == null) {
-//            //if (l.start.x == xmin) {
-//            BigDecimal deltaXmin;
-//            deltaXmin = l.start.x.subtract(xmin);
-//            if (deltaXmin.compareTo(t) == -1 && deltaXmin.compareTo(t.negate()) == 1) {
-//                //if (l.start.y == ymin) {
-//                BigDecimal deltaYmin;
-//                deltaYmin = l.start.y.subtract(ymin);
-//                if (deltaYmin.compareTo(t) == -1 && deltaYmin.compareTo(t.negate()) == 1) {
-//                    directionIn = 1;
-//                } else {
-//                    //if (l.start.y == ymax) {
-//                    BigDecimal deltaYmax;
-//                    deltaYmax = l.start.y.subtract(ymax);
-//                    if (deltaYmax.compareTo(t) == -1 && deltaYmax.compareTo(t.negate()) == 1) {
-//                        directionIn = 3;
-//                    } else {
-//                        directionIn = 2;
-//                    }
-//                }
-//            } else {
-//                //if (l.start.x == xmax) {
-//                BigDecimal deltaXmax = l.start.y.subtract(xmax);
-//                if (deltaXmax.compareTo(t) == -1
-//                        && deltaXmax.compareTo(t.negate()) == 1) {
-//                    //if (l.start.y == ymin) {
-//                    BigDecimal deltaYmin = l.start.y.subtract(ymin);
-//                    if (deltaYmin.compareTo(t) == -1
-//                            && deltaYmin.compareTo(t.negate()) == 1) {
-//                        directionIn = 7;
-//                    } else {
-//                        //if (l.start.y == ymax) {
-//                        BigDecimal deltaYmax = l.start.y.subtract(ymax);
-//                        if (deltaYmax.compareTo(t) == -1
-//                                && deltaYmax.compareTo(t.negate()) == 1) {
-//                            directionIn = 5;
-//                        } else {
-//                            directionIn = 6;
-//                        }
-//                    }
-//                } else {
-//                    //if (l.start.y == ymin) {
-//                    BigDecimal deltaYmin;
-//                    deltaYmin = l.start.y.subtract(ymin);
-//                    if (deltaYmin.compareTo(t) == -1
-//                            && deltaYmin.compareTo(t.negate()) == 1) {
-//                        directionIn = 4;
-//                    } else {
-//                        //if (l.start.y == ymax) {
-//                        BigDecimal deltaYmax;
-//                        deltaYmax = l.start.y.subtract(ymax);
-//                        if (deltaYmax.compareTo(t) == -1 && deltaYmax.compareTo(t.negate()) == 1) {
-//                            directionIn = 0;
-//                        } else {
-//                            if (l.start.y.compareTo(l.end.y) == -1) {
-//                                if (l.start.x.compareTo(l.end.x) == -1) {
-//                                    directionIn = 1;
-//                                } else {
-//                                    if (l.start.x.compareTo(l.end.x) == 0) {
-//                                        directionIn = 0;
-//                                    } else {
-//                                        directionIn = 7;
-//                                    }
-//                                }
-//                            } else {
-//                                if (l.start.y.compareTo(l.end.y) == 0) {
-//                                    if (l.start.x.compareTo(l.end.x) == -1) {
-//                                        directionIn = 2;
-//                                    } else {
-//                                        if (l.start.x.compareTo(l.end.x) == 0) {
-//                                            directionIn = 0; // This should not happen
-//                                        } else {
-//                                            directionIn = 6;
-//                                        }
-//                                    }
-//                                } else {
-//                                    if (l.start.x.compareTo(l.end.x) == -1) {
-//                                        directionIn = 3;
-//                                        //directionIn = 7;
-//                                    } else {
-//                                        if (l.start.x.compareTo(l.end.x) == 0) {
-//                                            directionIn = 4;
-//                                        } else {
-//                                            directionIn = 5;
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        V2D_Point bottomLeft = new V2D_Point(l.e, xmin, ymin);
-//        V2D_Point bottomRight = new V2D_Point(l.e, xmax, ymin);
-//        V2D_Point topLeft = new V2D_Point(l.e, xmin, ymax);
-//        V2D_Point topRight = new V2D_Point(l.e, xmax, ymax);
-//        Object[] lineToIntersectLineRemainingDirection = null;
-//        if (directionIn == 0) {
-//            // check top
-//            lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckTop(
-//                    t, xmin, ymin, xmax, ymax, l, topLeft, topRight);
-//            if (lineToIntersectLineRemainingDirection[2] == null) {
-//                // check right
-//                lineToIntersectLineRemainingDirection
-//                        = doLineToIntersectLineRemainingDirectionCheckRight(t,
-//                                xmin, ymin, xmax, ymax, l,
-//                                topRight, bottomRight);
-//            }
-//            if (lineToIntersectLineRemainingDirection[2] == null) {
-//                // check left
-//                lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckLeft(
-//                        t, xmin, ymin, xmax, ymax, l, topLeft, bottomLeft);
-//            }
-//        }
-//
-//        if (directionIn == 1) {
-//            // check top
-//            lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckTop(
-//                    t, xmin, ymin, xmax, ymax, l, topLeft, topRight);
-//            if (lineToIntersectLineRemainingDirection[2] == null) {
-//                // check right
-//                lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckRight(
-//                        t, xmin, ymin, xmax, ymax, l, topRight, bottomRight);
-//            }
-//        }
-//
-//        if (directionIn == 2) {
-//            // check top
-//            lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckTop(
-//                    t, xmin, ymin, xmax, ymax, l, topLeft, topRight);
-//            if (lineToIntersectLineRemainingDirection[2] == null) {
-//                // check right
-//                lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckRight(
-//                        t, xmin, ymin, xmax, ymax, l, topRight, bottomRight);
-//            }
-//            if (lineToIntersectLineRemainingDirection[2] == null) {
-//                // check bottom
-//                lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckBottom(
-//                        t, xmin, ymin, xmax, ymax, l, bottomLeft, bottomRight);
-//            }
-//        }
-//
-//        if (directionIn == 3) {
-//            // check right
-//            lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckRight(
-//                    t, xmin, ymin, xmax, ymax, l, topRight, bottomRight);
-//            if (lineToIntersectLineRemainingDirection[2] == null) {
-//                // check bottom
-//                lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckBottom(
-//                        t, xmin, ymin, xmax, ymax, l, bottomLeft, bottomRight);
-//            }
-//        }
-//        if (directionIn == 4) {
-//            // check right
-//            lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckRight(
-//                    t, xmin, ymin, xmax, ymax, l, topRight, bottomRight);
-//            if (lineToIntersectLineRemainingDirection[2] == null) {
-//                // check bottom
-//                lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckBottom(
-//                        t, xmin, ymin, xmax, ymax, l, bottomLeft, bottomRight);
-//            }
-//            if (lineToIntersectLineRemainingDirection[2] == null) {
-//                // check left
-//                lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckLeft(
-//                        t, xmin, ymin, xmax, ymax, l, topLeft, bottomLeft);
-//            }
-//        }
-//
-//        if (directionIn == 5) {
-//            // check bottom
-//            lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckBottom(
-//                    t, xmin, ymin, xmax, ymax, l, bottomLeft, bottomRight);
-//            if (lineToIntersectLineRemainingDirection[2] == null) {
-//                // check left
-//                lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckLeft(
-//                        t, xmin, ymin, xmax, ymax, l, topLeft, bottomLeft);
-//            }
-//        }
-//
-//        if (directionIn == 6) {
-//            // check bottom
-//            lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckBottom(
-//                    t, xmin, ymin, xmax, ymax, l, bottomLeft, bottomRight);
-//            if (lineToIntersectLineRemainingDirection[2] == null) {
-//                // check left
-//                lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckLeft(
-//                        t, xmin, ymin, xmax, ymax, l, topLeft, bottomLeft);
-//            }
-//            if (lineToIntersectLineRemainingDirection[2] == null) {
-//                // check top
-//                lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckTop(
-//                        t, xmin, ymin, xmax, ymax, l, topLeft, topRight);
-//            }
-//        }
-//
-//        if (directionIn == 7) {
-//            // check left
-//            lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckLeft(
-//                    t, xmin, ymin, xmax, ymax, l, topLeft, bottomLeft);
-//            if (lineToIntersectLineRemainingDirection[2] == null) {
-//                // check top
-//                lineToIntersectLineRemainingDirection = doLineToIntersectLineRemainingDirectionCheckTop(
-//                        t, xmin, ymin, xmax, ymax, l, topLeft, topRight);
-//            }
-//        }
-//        // Do remainder
-//        if (lineToIntersectLineRemainingDirection[2] == null) {
-//            r[0] = l;
-//            r[1] = null;
-//            r[2] = null;
-//        } else {
-//            r = lineToIntersectLineRemainingDirection;
-//        }
-//        return r;
-//    }
-
-//    protected static Object[] doLineToIntersectLineRemainingDirectionCheckRight(
-//            BigRational t, BigRational xmin, BigRational ymin,
-//            BigRational xmax, BigRational ymax, V2D_LineSegment l,
-//            V2D_Point topRight, V2D_Point bottomRight) {
-//        Object[] r = new Object[3];
-//        V2D_LineSegment line = null;
-//        V2D_LineSegment remainingLine = null;
-//        Integer directionOut = null;
-//        V2D_LineSegment section;
-//        Object[] lineToIntersectIntersectPoint;
-//        topRight = new V2D_Point(xmax, ymax);
-//        section = new V2D_LineSegment(bottomRight, topRight);
-//        if (l.getIntersects(section, t)) {
-//            lineToIntersectIntersectPoint = getLineToIntersectIntersectPoint(
-//                    l, section, t);
-//            line = (V2D_LineSegment) lineToIntersectIntersectPoint[0];
-//            V2D_Point newStartPoint;
-//            newStartPoint = (V2D_Point) lineToIntersectIntersectPoint[1];
-//            //if (newStartPoint.y.compareTo(xmax) == 0) {
-//            BigRational deltaXmax;
-//            deltaXmax = newStartPoint.x.subtract(xmax);
-//            if (deltaXmax.compareTo(t) == -1 && deltaXmax.compareTo(t.negate()) == 1) {
-//                //if (newStartPoint.y.compareTo(ymax) == 0) {
-//                BigRational deltaYmax;
-//                deltaYmax = newStartPoint.y.subtract(ymax);
-//                if (deltaYmax.compareTo(t) == -1 && deltaYmax.compareTo(t.negate()) == 1) {
-//                    directionOut = 1;
-//                } else {
-//                    //if (newStartPoint.y.compareTo(ymin) == 0) {
-//                    BigRational deltaYmin;
-//                    deltaYmin = newStartPoint.y.subtract(ymin);
-//                    if (deltaYmin.compareTo(t) == -1 && deltaYmin.compareTo(t.negate()) == 1) {
-//                        directionOut = 3;
-//                    } else {
-//                        directionOut = 2;
-//                    }
-//                }
-//            } else {
-//                directionOut = 2;
-//            }
-//            remainingLine = new V2D_LineSegment(
-//                    (V2D_Point) lineToIntersectIntersectPoint[1],
-//                    l.end);
-//        }
-//        r[0] = line;
-//        r[1] = remainingLine;
-//        r[2] = directionOut;
-//        return r;
-//    }
-
-//    protected static Object[] doLineToIntersectLineRemainingDirectionCheckLeft(
-//            BigRational t,
-//            BigRational xmin,
-//            BigRational ymin,
-//            BigRational xmax,
-//            BigRational ymax,
-//            V2D_LineSegment l,
-//            V2D_Point topLeft,
-//            V2D_Point bottomLeft) {
-//        Object[] result;
-//        result = new Object[3];
-//        V2D_LineSegment line = null;
-//        V2D_LineSegment remainingLine = null;
-//        Integer directionOut = null;
-//        V2D_LineSegment section = new V2D_LineSegment(bottomLeft, topLeft);
-//        Object[] lineToIntersectIntersectPoint;
-//        if (l.getIntersects(section, t)) {
-//            lineToIntersectIntersectPoint = getLineToIntersectIntersectPoint(
-//                    l, section, t);
-//            line = (V2D_LineSegment) lineToIntersectIntersectPoint[0];
-//            V2D_Point newStartPoint;
-//            newStartPoint = (V2D_Point) lineToIntersectIntersectPoint[1];
-//            //if (newStartPoint.y.compareTo(xmin) == 0) {
-//            BigRational deltaXmin;
-//            deltaXmin = newStartPoint.x.subtract(xmin);
-//            if (deltaXmin.compareTo(t) == -1 && deltaXmin.compareTo(t.negate()) == 1) {
-//                //if (newStartPoint.y.compareTo(ymax) == 0) {
-//                BigRational deltaYmax;
-//                deltaYmax = newStartPoint.y.subtract(ymax);
-//                if (deltaYmax.compareTo(t) == -1 && deltaYmax.compareTo(t.negate()) == 1) {
-//                    directionOut = 7;
-//                } else {
-//                    //if (newStartPoint.y.compareTo(ymin) == 0) {
-//                    BigRational deltaYmin;
-//                    deltaYmin = newStartPoint.y.subtract(ymin);
-//                    if (deltaYmin.compareTo(t) == -1 && deltaYmin.compareTo(t.negate()) == 1) {
-//                        directionOut = 5;
-//                    } else {
-//                        directionOut = 6;
-//                    }
-//                }
-//            } else {
-//                directionOut = 6;
-//            }
-//            remainingLine = new V2D_LineSegment(
-//                    (V2D_Point) lineToIntersectIntersectPoint[1],
-//                    l.end);
-//        }
-//        result[0] = line;
-//        result[1] = remainingLine;
-//        result[2] = directionOut;
-//        return result;
-//    }
-
-//    protected static Object[] doLineToIntersectLineRemainingDirectionCheckTop(
-//            BigRational t, BigRational xmin, BigRational ymin,
-//            BigRational xmax, BigRational ymax, V2D_LineSegment l,
-//            V2D_Point topLeft, V2D_Point topRight) {
-//        Object[] result;
-//        result = new Object[3];
-//        V2D_LineSegment line = null;
-//        V2D_LineSegment remainingLine = null;
-//        Integer directionOut = null;
-//        V2D_LineSegment section;
-//        Object[] lineToIntersectIntersectPoint;
-//        section = new V2D_LineSegment(
-//                topLeft, topRight);
-//        if (l.getIntersects(section, t)) {
-//            lineToIntersectIntersectPoint = getLineToIntersectIntersectPoint(
-//                    l, section, t);
-//            line = (V2D_LineSegment) lineToIntersectIntersectPoint[0];
-//            V2D_Point newStartPoint;
-//            newStartPoint = (V2D_Point) lineToIntersectIntersectPoint[1];
-//            //if (newStartPoint.y.compareTo(ymax) == 0) {
-//            BigRational deltaYmax;
-//            deltaYmax = newStartPoint.x.subtract(ymax);
-//            if (deltaYmax.compareTo(t) == -1 && deltaYmax.compareTo(t.negate()) == 1) {
-//                //if (newStartPoint.y.compareTo(xmax) == 0) {
-//                BigRational deltaXmax;
-//                deltaXmax = newStartPoint.x.subtract(xmax);
-//                if (deltaXmax.compareTo(t) == -1 && deltaXmax.compareTo(t.negate()) == 1) {
-//                    directionOut = 1;
-//                } else {
-//                    //if (newStartPoint.y.compareTo(xmin) == 0) {
-//                    BigRational deltaXmin;
-//                    deltaXmin = newStartPoint.x.subtract(xmin);
-//                    if (deltaXmin.compareTo(t) == -1 && deltaXmin.compareTo(t.negate()) == 1) {
-//                        directionOut = 7;
-//                    } else {
-//                        directionOut = 0;
-//                    }
-//                }
-//            } else {
-//                directionOut = 0;
-//            }
-//            remainingLine = new V2D_LineSegment(
-//                    (V2D_Point) lineToIntersectIntersectPoint[1],
-//                    l.end);
-//        }
-//        result[0] = line;
-//        result[1] = remainingLine;
-//        result[2] = directionOut;
-//        return result;
-//    }
-
-//    protected static Object[] doLineToIntersectLineRemainingDirectionCheckBottom(
-//            BigRational t,
-//            BigRational xmin,
-//            BigRational ymin,
-//            BigRational xmax,
-//            BigRational ymax,
-//            V2D_LineSegment l,
-//            V2D_Point bottomLeft,
-//            V2D_Point bottomRight) {
-//        Object[] result;
-//        result = new Object[3];
-//        V2D_LineSegment line = null;
-//        V2D_LineSegment remainingLine = null;
-//        Integer directionOut = null;
-//        V2D_LineSegment section;
-//        Object[] lineToIntersectIntersectPoint;
-//        section = new V2D_LineSegment(
-//                bottomLeft, bottomRight);
-//        if (l.getIntersects(section, t)) {
-//            lineToIntersectIntersectPoint = getLineToIntersectIntersectPoint(
-//                    l,
-//                    section,
-//                    t);
-//            line = (V2D_LineSegment) lineToIntersectIntersectPoint[0];
-//            V2D_Point newStartPoint;
-//            newStartPoint = (V2D_Point) lineToIntersectIntersectPoint[1];
-//            //if (newStartPoint.y.compareTo(ymin) == 0) {
-//            BigRational deltaYmin;
-//            deltaYmin = newStartPoint.y.subtract(ymin);
-//            if (deltaYmin.compareTo(t) == -1 && deltaYmin.compareTo(t.negate()) == 1) {
-//                //if (newStartPoint.y.compareTo(xmax) == 0) {
-//                BigRational deltaXmax;
-//                deltaXmax = newStartPoint.x.subtract(xmax);
-//                if (deltaXmax.compareTo(t) == -1 && deltaXmax.compareTo(t.negate()) == 1) {
-//                    directionOut = 3;
-//                } else {
-//                    //if (newStartPoint.y.compareTo(xmin) == 0) {
-//                    BigRational deltaXmin;
-//                    deltaXmin = newStartPoint.x.subtract(xmin);
-//                    if (deltaXmin.compareTo(t) == -1 && deltaXmin.compareTo(t.negate()) == 1) {
-//                        directionOut = 5;
-//                    } else {
-//                        directionOut = 4;
-//                    }
-//                }
-//            } else {
-//                directionOut = 4;
-//            }
-//            remainingLine = new V2D_LineSegment(
-//                    (V2D_Point) lineToIntersectIntersectPoint[1],
-//                    l.end);
-//        }
-//        result[0] = line;
-//        result[1] = remainingLine;
-//        result[2] = directionOut;
-//        return result;
-//    }
-
-//    /**
-//     *
-//     * @param l
-//     * @param section
-//     * @param t tolerance
-//     * @return
-//     */
-//    protected static Object[] getLineToIntersectIntersectPoint(
-//            V2D_LineSegment l,
-//            V2D_LineSegment section,
-//            BigRational t) {
-//        Object[] r = new Object[2];
-//        V2D_LineSegment lineToIntersect;
-//        V2D_Point intersectPoint;
-//        V2D_Geometry intersection = l.getIntersection(section, t);
-//        if (intersection instanceof V2D_Point) {
-//            intersectPoint = (V2D_Point) intersection;
-//            lineToIntersect = new V2D_LineSegment(l.start, intersectPoint);
-//        } else {
-//            lineToIntersect = (V2D_LineSegment) intersection;
-//            intersectPoint = lineToIntersect.end;
-//        }
-//        r[0] = lineToIntersect;
-//        r[1] = intersectPoint;
-//        return r;
-//    }
-
-    /**
-     * TODO: Control precision! The angle returned is the smallest angle between
-     * this and the x axis and so is between Math.PI and -Math.PI.
-     *
-     * @return The angle in radians to the x axis
-     */
-    public double getAngleToX_double() {
-        BigRational dx = this.end.x.subtract(this.start.x);
-        BigRational dy = this.end.y.subtract(this.start.y);
-        return Math.atan2(dy.toBigDecimal().doubleValue(), dx.toBigDecimal().doubleValue());
-    }
-
-//    /**
-//     * The angle returned is the smallest angle between this and the x axis and
-//     * so is between Math.PI and -Math.PI.
-//     * @return The angle in radians to the x axis
-//     */
-//    public double getAngleToX_double(){
-//        double result;
-//        BigDecimal dx = this.end.x.subtract(this.start.x);
-//        BigDecimal dy = this.end.y.subtract(this.start.y);
-//        double angleToX = Math.atan2(dy.doubleValue(),dx.doubleValue());
-//        if (this.start.x.compareTo(this.end.x) == -1 ){
-//            result = Math.PI - angleToX;
-//        } else {
-//            result = angleToX;
-//        }
-//        return result;
-//    }
-//    /**
-//     * TODO: Control precision! The angle returned is the smallest angle between
-//     * this and the y axis and so is between Math.PI and -Math.PI.
-//     *
-//     * @return The angle in radians to the y axis
-//     */
-//    public double getAngleToY_double() {
-//        double result;
-//        BigRational dx = this.end.x.subtract(this.start.x);
-//        BigRational dy = this.end.y.subtract(this.start.y);
-//        double angleToY = Math.atan2(dx.doubleValue(), dy.doubleValue());
-//        if (this.start.y.compareTo(this.end.y) == -1) {
-//            result = Math.PI - angleToY;
-//        } else {
-//            result = angleToY;
-//        }
-//        return result;
-//    }
-
-    /**
-     * Assuming a_LineSegment.StartPoint == this.
-     *
-     * @param l V2D_LineSegment
-     * @return BigDecimal
-     */
-    public BigRational getScalarProduct(
-            V2D_LineSegment l) {
-        if (l.start.compareTo(this.start) != 0) {
-            System.out.println(
-                    "l.start.compareTo(this.start) != 0 in "
-                    + this.getClass().getName()
-                    + ".getScalarProduct(LineSegment2D)");
+        if (parallel) {
+            return null;
         }
-        return (l.end.x.multiply(this.end.x)).add((l.end.y.multiply(this.end.y)));
+        BigRational ua = uamultiplicand.divide(denominator);
+        if (ua.compareTo(BigRational.ONE) != 1
+                && ua.compareTo(BigRational.ZERO) != -1) {
+            BigRational dx = p.x.add(ua.multiply(x2minusx1));
+            BigRational dy = p.y.add(ua.multiply(y2minusy1));
+            return new V2D_Point(dx, dy);
+        } else {
+            BigRational ub = ubmultiplicand.divide(denominator);
+            if (ub.compareTo(BigRational.ONE) != 1
+                    && ub.compareTo(BigRational.ZERO) != -1) {
+                BigRational dx = l.p.x.add(ub.multiply(x4minusx3));
+                BigRational dy = l.p.y.add(ub.multiply(y4minusy3));
+                return new V2D_Point(dx, dy);
+            }
+        }
+        return null;
     }
 
     /**
-     * Assuming l.StartPoint == this.
-     *
-     * @param l V2D_LineSegment
-     * @return BigDecimal
+     * @param precision The precision for the {@link MathContext}.
+     * @param rm The rounding mode for the {@link MathContext}.
+     * @return The angle to the x axis.
      */
-    public BigDecimal getCrossProduct(
-            V2D_LineSegment l) {
-        if (l.start.compareTo(this.start) != 0) {
-            System.out.println(
-                    "l.start.compareTo(this.start) != 0 in "
-                    + this.getClass().getName()
-                    + ".getCrossProduct(LineSegment2D)");
-        }
-        return (l.end.x.multiply(this.end.y)).subtract((this.end.x.multiply(l.end.y))).toBigDecimal(MathContext.UNLIMITED);
+    public BigDecimal getAngleToX(int precision, RoundingMode rm) {
+        return getAngleToX(new MathContext(precision, rm));
+    }
+
+    /**
+     * @param mc The MathContext.
+     * @return The angle to the x axis.
+     */
+    public BigDecimal getAngleToX(MathContext mc) {
+        return BigDecimalMath.atan2(v.dy.toBigDecimal(), v.dx.toBigDecimal(), mc);
+    }
+
+    /**
+     * @param precision The precision for the {@link MathContext}.
+     * @param rm The rounding mode for the {@link MathContext}.
+     * @return The angle to the y axis.
+     */
+    public BigDecimal getAngleToY(int precision, RoundingMode rm) {
+        return getAngleToY(new MathContext(precision, rm));
+    }
+
+    /**
+     * @param mc The MathContext.
+     * @return The angle to the x axis.
+     */
+    public BigDecimal getAngleToY(MathContext mc) {
+        return BigDecimalMath.atan2(v.dx.toBigDecimal(), v.dy.toBigDecimal(), mc);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        return hash;
     }
 }

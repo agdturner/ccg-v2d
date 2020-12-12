@@ -46,11 +46,11 @@ public class V2D_EnvelopeEdgeRight extends V2D_EnvelopeEdge {
     }
 
     public V2D_Point getTr() {
-        return start;
+        return p;
     }
 
     public V2D_Point getBr() {
-        return end;
+        return q;
     }
 
 }
