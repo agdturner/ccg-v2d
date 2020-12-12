@@ -152,9 +152,10 @@ public class V2D_Line extends V2D_Geometry {
      * @return {@code true} if p is on the line.
      */
     public boolean isIntersectedBy(V2D_Point pt) {
-        V2D_Vector ppt = new V2D_Vector(pt.x.subtract(p.x), pt.y.subtract(p.y));
-        V2D_Vector cp = v.getCrossProduct(ppt);
-        return cp.dx.isZero() && cp.dy.isZero();
+        return ((p.x.subtract(pt.x)).multiply(q.y.subtract(pt.y))).subtract((p.y.subtract(pt.y)).multiply(q.x.subtract(pt.x))).isZero();
+        //V2D_Vector ppt = new V2D_Vector(pt.x.subtract(p.x), pt.y.subtract(p.y));
+        //V2D_Vector cp = v.getCrossProduct(ppt);
+        //return cp.dx.isZero() && cp.dy.isZero();
     }
 
     /**

@@ -16,19 +16,26 @@
 package uk.ac.leeds.ccg.v2d.geometry;
 
 import ch.obermuhlner.math.big.BigRational;
-import uk.ac.leeds.ccg.v2d.geometry.V2D_LineSegment;
-import uk.ac.leeds.ccg.v2d.geometry.V2D_Point;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.hamcrest.MatcherAssert.assertThat;
+import org.hamcrest.Matchers;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
+import uk.ac.leeds.ccg.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
+import uk.ac.leeds.ccg.v2d.geometry.envelope.V2D_Envelope;
+import uk.ac.leeds.ccg.v2d.geometry.V2D_LineSegment;
+import uk.ac.leeds.ccg.v2d.geometry.V2D_Point;
 
 /**
  *
@@ -62,33 +69,175 @@ public class V2D_LineSegmentTest {
     public void tearDown() {
     }
 
-//    /**
-//     * Test of getIntersects method, of class V2D_LineSegment.
-//     */
-//    @Test
-//    public void testGetIntersects_VectorPoint2D_int() {
-//        boolean result;
-//        BigRational ONE = BigRational.ONE;
-//        BigRational ZERO = BigRational.ZERO;
-//        V2D_Point a = new V2D_Point(ZERO, ZERO);
-//        V2D_Point b = new V2D_Point(ONE, ONE);
-//        V2D_LineSegment ab = new V2D_LineSegment(a, b);
-//        System.out.println("ab " + ab);
-//        boolean expResult = true;
-//        BigRational TEN = BigRational.TEN;
-//        BigRational aX = ONE;
-//        BigRational aY = ONE;
-//        BigRational t = ONE.divide(TEN);
-//        for (int i = 0; i < 1000; i++) {
-//            aX = aX.divide(TEN);
-//            aY = aY.divide(TEN);
-//            a = new V2D_Point(aX, aY);
-//            System.out.println("a " + a.toString());
-//            result = ab.getIntersects(a, t);
-//            System.out.println("ab.getIntersects(a,DecimalPlacePrecision)"
-//                    + result);
-//            Assertions.assertEquals(expResult, result);
-//        }
-//    }
+    /**
+     * Test of equals method, of class V2D_LineSegment.
+     */
+    @Test
+    public void testEquals_Object() {
+        System.out.println("equals");
+        V2D_Point p = new V2D_Point(0, 0);
+        V2D_Point q = new V2D_Point(1, 1);
+        Object o = new V2D_LineSegment(p, q);
+        V2D_LineSegment instance = new V2D_LineSegment(p, q);
+        assertTrue(instance.equals(o));
+        // Test 2
+        instance = new V2D_LineSegment(q, p);
+        assertFalse(instance.equals(o));
+    }
+
+    /**
+     * Test of equals method, of class V2D_LineSegment.
+     */
+    @Test
+    public void testEquals_V2D_LineSegment() {
+        System.out.println("equals");
+        V2D_Point p = new V2D_Point(0, 0);
+        V2D_Point q = new V2D_Point(1, 1);
+        V2D_LineSegment l = new V2D_LineSegment(p, q);
+        V2D_LineSegment instance = new V2D_LineSegment(p, q);
+        assertTrue(instance.equals(l));
+        // Test 2
+        instance = new V2D_LineSegment(q, p);
+        assertFalse(instance.equals(l));
+    }
+
+    /**
+     * Test of equalsIgnoreDirection method, of class V2D_LineSegment.
+     */
+    @Test
+    public void testEqualsIgnoreDirection() {
+        System.out.println("equalsIgnoreDirection");
+        V2D_Point p = new V2D_Point(0, 0);
+        V2D_Point q = new V2D_Point(1, 1);
+        V2D_LineSegment l = new V2D_LineSegment(p, q);
+        V2D_LineSegment instance = new V2D_LineSegment(p, q);
+        assertTrue(instance.equalsIgnoreDirection(l));
+        // Test 2
+        instance = new V2D_LineSegment(q, p);
+        assertTrue(instance.equalsIgnoreDirection(l));
+    }
+
+    /**
+     * Test of getLength method, of class V2D_LineSegment.
+     */
+    @Test
+    public void testGetLength() {
+        System.out.println("getLength");
+        int dp = 1;
+        RoundingMode rm = RoundingMode.HALF_UP;
+        V2D_Point p = new V2D_Point(0, 0);
+        V2D_Point q = new V2D_Point(1, 1);
+        V2D_LineSegment instance = new V2D_LineSegment(p, q);
+        BigDecimal expResult = new BigDecimal("1.4");
+        BigDecimal result = instance.getLength(dp, rm);
+        assertThat(expResult, Matchers.comparesEqualTo(result));
+        // Test 2
+        dp = 2;
+        expResult = new BigDecimal("1.41");
+        result = instance.getLength(dp, rm);
+        assertThat(expResult, Matchers.comparesEqualTo(result));
+        // Test 2
+        dp = 10;
+        expResult = new BigDecimal("1.4142135624");
+        result = instance.getLength(dp, rm);
+        assertThat(expResult, Matchers.comparesEqualTo(result));
+    }
+
+    /**
+     * Test of getEnvelope method, of class V2D_LineSegment.
+     */
+    @Test
+    public void testGetEnvelope() {
+        System.out.println("getEnvelope");
+        V2D_Point p = new V2D_Point(0, 0);
+        V2D_Point q = new V2D_Point(1, 1);
+        V2D_LineSegment instance = new V2D_LineSegment(p, q);
+        V2D_Envelope expResult = new V2D_Envelope(p, q);
+        V2D_Envelope result = instance.getEnvelope();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of isIntersectedBy method, of class V2D_LineSegment.
+     */
+    @Test
+    public void testIsIntersectedBy_V2D_LineSegment() {
+        System.out.println("isIntersectedBy");
+        V2D_Point p = new V2D_Point(0, 0);
+        V2D_Point q = new V2D_Point(1, 1);
+        V2D_LineSegment l = new V2D_LineSegment(p, q);
+        V2D_Point r = new V2D_Point(0, 0);
+        V2D_Point s = new V2D_Point(1, 1);
+        V2D_LineSegment instance = new V2D_LineSegment(r, s);
+        assertTrue(l.isIntersectedBy(instance));
+        // Test 2
+        r = new V2D_Point(2, 2);
+        s = new V2D_Point(3, 3);
+        instance = new V2D_LineSegment(r, s);
+        assertFalse(l.isIntersectedBy(instance));
+    }
+
+    /**
+     * Test of isIntersectedBy method, of class V2D_LineSegment.
+     */
+    @Test
+    public void testIsIntersectedBy_V2D_Point() {
+        System.out.println("isIntersectedBy");
+        V2D_Point p = new V2D_Point(0, 0);
+        V2D_Point q = new V2D_Point(1, 1);
+        V2D_LineSegment instance = new V2D_LineSegment(p, q);
+        V2D_Point pt = new V2D_Point(0, 0);
+        assertTrue(instance.isIntersectedBy(pt));
+        // Test 2
+        pt = new V2D_Point(0, 0);
+        assertTrue(instance.isIntersectedBy(pt));
+        // Test 3
+        pt = new V2D_Point(1, 1);
+        assertTrue(instance.isIntersectedBy(pt));
+        // Test 4
+        pt = new V2D_Point(0.5, 0.5);
+        assertTrue(instance.isIntersectedBy(pt));
+        // Test 5
+        pt = new V2D_Point(2, 2);
+        assertFalse(instance.isIntersectedBy(pt));
+    }
+
+    /**
+     * Test of getIntersection method, of class V2D_LineSegment.
+     */
+    @Test
+    public void testGetIntersection() {
+        System.out.println("getIntersection");
+        V2D_Point p = new V2D_Point(0, 0);
+        V2D_Point q = new V2D_Point(1, 1);
+        V2D_LineSegment instance = new V2D_LineSegment(p, q);
+        V2D_LineSegment l = new V2D_LineSegment(p, q);
+        V2D_Geometry expResult = new V2D_LineSegment(p, q);;
+        V2D_Geometry result = instance.getIntersection(l);
+        assertEquals(expResult, result);
+        // Test 2
+        V2D_Point r = new V2D_Point(0, 0);
+        V2D_Point s = new V2D_Point(2, 2);
+        l = new V2D_LineSegment(r, s);
+        expResult = new V2D_LineSegment(p, q);;
+        result = instance.getIntersection(l);
+        assertEquals(expResult, result);
+        // Test 3
+        r = new V2D_Point(0.5, 0.5);
+        s = new V2D_Point(2, 2);
+        l = new V2D_LineSegment(r, s);
+        expResult = new V2D_LineSegment(r, q);;
+        result = instance.getIntersection(l);
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of hashCode method, of class V2D_LineSegment.
+     */
+    @Test
+    public void testHashCode() {
+        System.out.println("hashCode");
+        // No test.
+    }
 
 }

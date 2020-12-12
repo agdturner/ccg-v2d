@@ -247,39 +247,39 @@ public class V2D_LineSegment extends V2D_Line implements V2D_FiniteGeometry {
         return null;
     }
 
-    /**
-     * @param precision The precision for the {@link MathContext}.
-     * @param rm The rounding mode for the {@link MathContext}.
-     * @return The angle to the x axis.
-     */
-    public BigDecimal getAngleToX(int precision, RoundingMode rm) {
-        return getAngleToX(new MathContext(precision, rm));
-    }
-
-    /**
-     * @param mc The MathContext.
-     * @return The angle to the x axis.
-     */
-    public BigDecimal getAngleToX(MathContext mc) {
-        return BigDecimalMath.atan2(v.dy.toBigDecimal(), v.dx.toBigDecimal(), mc);
-    }
-
-    /**
-     * @param precision The precision for the {@link MathContext}.
-     * @param rm The rounding mode for the {@link MathContext}.
-     * @return The angle to the y axis.
-     */
-    public BigDecimal getAngleToY(int precision, RoundingMode rm) {
-        return getAngleToY(new MathContext(precision, rm));
-    }
-
-    /**
-     * @param mc The MathContext.
-     * @return The angle to the x axis.
-     */
-    public BigDecimal getAngleToY(MathContext mc) {
-        return BigDecimalMath.atan2(v.dx.toBigDecimal(), v.dy.toBigDecimal(), mc);
-    }
+//    /**
+//     * @param precision The precision for the {@link MathContext}.
+//     * @param rm The rounding mode for the {@link MathContext}.
+//     * @return The angle to the x axis.
+//     */
+//    public BigDecimal getAngleToX(int precision, RoundingMode rm) {
+//        return getAngleToX(new MathContext(precision, rm));
+//    }
+//
+//    /**
+//     * @param mc The MathContext.
+//     * @return The angle to the x axis.
+//     */
+//    public BigDecimal getAngleToX(MathContext mc) {
+//        return BigDecimalMath.atan2(v.dy.toBigDecimal(), v.dx.toBigDecimal(), mc);
+//    }
+//
+//    /**
+//     * @param precision The precision for the {@link MathContext}.
+//     * @param rm The rounding mode for the {@link MathContext}.
+//     * @return The angle to the y axis.
+//     */
+//    public BigDecimal getAngleToY(int precision, RoundingMode rm) {
+//        return getAngleToY(new MathContext(precision, rm));
+//    }
+//
+//    /**
+//     * @param mc The MathContext.
+//     * @return The angle to the x axis.
+//     */
+//    public BigDecimal getAngleToY(MathContext mc) {
+//        return BigDecimalMath.atan2(v.dx.toBigDecimal(), v.dy.toBigDecimal(), mc);
+//    }
 
     @Override
     public int hashCode() {

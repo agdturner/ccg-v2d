@@ -220,7 +220,7 @@ public class V2D_LineTest {
         BigDecimal expResult = BigDecimal.ONE;
         BigDecimal result = instance.getDistance(l, scale, rm);
         assertThat(expResult, Matchers.comparesEqualTo(result));
-        assertEquals(expResult, result);
+        //assertEquals(expResult, result);
     }
 
 }
