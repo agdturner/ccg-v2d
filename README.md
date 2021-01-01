@@ -8,9 +8,6 @@ A Java [2D](https://en.wikipedia.org/wiki/Two-dimensional_space) geometry librar
 - [BigMath](https://github.com/eobermuhlner/big-math)
 - Please see the [POM](https://github.com/agdturner/agdt-java-vector2d/blob/master/pom.xml) for details.
 
-## Known uses
-- For generating visualisations of movements across space for the Digital Welfare project.
-
 ## Code status
 This code is unstable research software.
 
