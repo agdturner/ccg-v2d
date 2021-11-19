@@ -15,18 +15,16 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.hamcrest.MatcherAssert.assertThat;
-import org.hamcrest.Matchers;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
+import uk.ac.leeds.ccg.math.number.Math_BigRational;
 import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
 import uk.ac.leeds.ccg.v2d.geometry.envelope.V2D_Envelope;
 
@@ -76,7 +74,7 @@ public class V2D_LineSegmentTest {
         assertTrue(instance.equals(o));
         // Test 2
         instance = new V2D_LineSegment(q, p);
-        assertFalse(instance.equals(o));
+        assertTrue(instance.equals(o));
     }
 
     /**
@@ -92,7 +90,7 @@ public class V2D_LineSegmentTest {
         assertTrue(instance.equals(l));
         // Test 2
         instance = new V2D_LineSegment(q, p);
-        assertFalse(instance.equals(l));
+        assertTrue(instance.equals(l));
     }
 
     /**
@@ -117,24 +115,23 @@ public class V2D_LineSegmentTest {
     @Test
     public void testGetLength() {
         System.out.println("getLength");
-        int dp = 1;
-        RoundingMode rm = RoundingMode.HALF_UP;
+        int oom = -1;
         V2D_Point p = new V2D_Point(0, 0);
         V2D_Point q = new V2D_Point(1, 1);
         V2D_LineSegment instance = new V2D_LineSegment(p, q);
-        BigDecimal expResult = new BigDecimal("1.4");
-        BigDecimal result = instance.getLength(dp, rm);
-        assertThat(expResult, Matchers.comparesEqualTo(result));
+        Math_BigRational expResult = Math_BigRational.valueOf("1.4");
+        Math_BigRational result = instance.getLength(oom);
+        assertTrue(expResult.compareTo(result) == 0);
         // Test 2
-        dp = 2;
-        expResult = new BigDecimal("1.41");
-        result = instance.getLength(dp, rm);
-        assertThat(expResult, Matchers.comparesEqualTo(result));
+        oom = -2;
+        expResult = Math_BigRational.valueOf("1.41");
+        result = instance.getLength(oom);
+        assertTrue(expResult.compareTo(result) == 0);
         // Test 2
-        dp = 10;
-        expResult = new BigDecimal("1.4142135624");
-        result = instance.getLength(dp, rm);
-        assertThat(expResult, Matchers.comparesEqualTo(result));
+        oom = -10;
+        expResult = Math_BigRational.valueOf("1.4142135624");
+        result = instance.getLength(oom);
+        assertTrue(expResult.compareTo(result) == 0);
     }
 
     /**
@@ -148,7 +145,7 @@ public class V2D_LineSegmentTest {
         V2D_LineSegment instance = new V2D_LineSegment(p, q);
         V2D_Envelope expResult = new V2D_Envelope(p, q);
         V2D_Envelope result = instance.getEnvelope();
-        assertEquals(expResult, result);
+        assertTrue(expResult.equals(result));
     }
 
     /**
@@ -163,17 +160,17 @@ public class V2D_LineSegmentTest {
         V2D_Point r = new V2D_Point(0, 0);
         V2D_Point s = new V2D_Point(1, 1);
         V2D_LineSegment instance = new V2D_LineSegment(r, s);
-        assertTrue(l.isIntersectedBy(instance));
+        assertTrue(l.isIntersectedBy(instance, true));
         // Test 2
         r = new V2D_Point(4, 4);
         s = new V2D_Point(3, 3);
         instance = new V2D_LineSegment(r, s);
-        assertFalse(l.isIntersectedBy(instance));
+        assertFalse(l.isIntersectedBy(instance, true));
         // Test 3
         r = new V2D_Point(0, 2);
         s = new V2D_Point(2, 0);
         instance = new V2D_LineSegment(r, s);
-        assertTrue(l.isIntersectedBy(instance));
+        assertTrue(l.isIntersectedBy(instance, true));
     }
 
     /**
@@ -213,7 +210,7 @@ public class V2D_LineSegmentTest {
         V2D_LineSegment l = new V2D_LineSegment(p, q);
         V2D_Geometry expResult = new V2D_LineSegment(p, q);
         V2D_Geometry result = instance.getIntersection(l);
-        assertEquals(expResult, result);
+        assertTrue(expResult.equals(result));
         // Test 2
         l = new V2D_LineSegment(q, p);
         result = instance.getIntersection(l);
@@ -241,7 +238,7 @@ public class V2D_LineSegmentTest {
         l = new V2D_LineSegment(r, s);
         expResult = new V2D_Point(0.5, 0.5);
         result = instance.getIntersection(l);
-        assertEquals(expResult, result);
+        assertTrue(expResult.equals(result));
     }
 
     /**

@@ -31,13 +31,12 @@ public abstract class V2D_Render extends JApplet {
     public int Height = 256;
     //public int scale = 50;
 
-    public JFrame _JFrame;
-    public Graphics2D _Graphics2D;
+    public JFrame frame;
+    public Graphics2D g;
     
     protected V2D_Render(){}
 
-    public V2D_Render(
-            V2D_Environment ve){
+    public V2D_Render(V2D_Environment ve){
         this.ve = ve;
     }
 

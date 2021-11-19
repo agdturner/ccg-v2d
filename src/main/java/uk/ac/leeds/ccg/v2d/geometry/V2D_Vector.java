@@ -15,13 +15,10 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry;
 
-import ch.obermuhlner.math.big.BigRational;
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Objects;
-import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
-import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
+import uk.ac.leeds.ccg.math.number.Math_BigRational;
+import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
 
 /**
  * V2D_Vector
@@ -34,30 +31,36 @@ public class V2D_Vector implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
+     * ZERO Vector
+     */
+    public static final V2D_Vector ZERO = new V2D_Vector(Math_BigRational.ZERO, Math_BigRational.ZERO); 
+    
+    
+    /**
      * The change in x.
      */
-    public final BigRational dx;
+    public final Math_BigRational dx;
 
     /**
      * The change in y.
      */
-    public final BigRational dy;
+    public final Math_BigRational dy;
 
     /**
      * For storing the magnitude squared.
      */
-    public BigRational magnitudeSquared;
+    public Math_BigRational magnitudeSquared;
 
     /**
      * For storing the magnitude.
      */
-    public BigDecimal magnitude;
+    public Math_BigRationalSqrt magnitude;
 
     /**
      * @param dx What {@link #dx} is set to.
      * @param dy What {@link #dy} is set to.
      */
-    public V2D_Vector(BigRational dx, BigRational dy) {
+    public V2D_Vector(Math_BigRational dx, Math_BigRational dy) {
         this.dx = dx;
         this.dy = dy;
     }
@@ -111,14 +114,14 @@ public class V2D_Vector implements Serializable {
      * @return {@code true} if {@code this.equals(V2D_Environment.ZERO_VECTOR)}
      */
     public boolean isZeroVector() {
-        return this.equals(V2D_Environment.ZERO_VECTOR);
+        return this.equals(ZERO);
     }
 
     /**
      * @param s The scalar value to multiply this by.
      * @return Scaled vector.
      */
-    public V2D_Vector multiply(BigRational s) {
+    public V2D_Vector multiply(Math_BigRational s) {
         return new V2D_Vector(dx.multiply(s), dy.multiply(s));
     }
 
@@ -145,7 +148,7 @@ public class V2D_Vector implements Serializable {
      * @param v V2D_Vector
      * @return dot product
      */
-    public BigRational getDotProduct(V2D_Vector v) {
+    public Math_BigRational getDotProduct(V2D_Vector v) {
         return (v.dx.multiply(this.dx)).add(v.dy.multiply(this.dy));
     }
 
@@ -165,7 +168,7 @@ public class V2D_Vector implements Serializable {
      * @return {@link #magnitudeSquared} after initialising it if it is
      * {@code null}.
      */
-    public BigRational getMagnitudeSquared() {
+    public Math_BigRational getMagnitudeSquared() {
         if (magnitudeSquared == null) {
             magnitudeSquared = dx.multiply(dx).add(dy.multiply(dy));
         }
@@ -175,30 +178,28 @@ public class V2D_Vector implements Serializable {
     /**
      * Get the magnitude of the vector at the given scale.
      *
-     * @param oom The scale for the precision of the result.
-     * @param rm The RoundingMode for any rounding.
+     * @param oom The Order of Magnitude for the precision.
      * @return {@link #magnitude} initialised with {@code scale} and {@code rm}.
      */
-    public BigDecimal getMagnitude(int oom, RoundingMode rm) {
+    public Math_BigRational getMagnitude(int oom) {
         if (magnitude == null) {
-            return initMagnitude(oom, rm);
+            return initMagnitude(oom);
         }
-        if (magnitude.scale() > oom) {
-            return magnitude.setScale(oom);
+        if (magnitude.getOom() > oom) {
+            return initMagnitude(oom);
         } else {
-            return initMagnitude(oom, rm);
+            return magnitude.getSqrt(oom);
         }
     }
 
     /**
      * @param scale The scale for the precision of the result.
-     * @param rm The RoundingMode for any rounding.
+     * @param oom The RoundingMode for any rounding.
      * @return {@link #magnitude} initialised with {@code scale} and {@code rm}.
      */
-    protected BigDecimal initMagnitude(int scale, RoundingMode rm) {
-        magnitude = Math_BigDecimal.sqrt(getMagnitudeSquared().toBigDecimal(), 
-                scale, rm);
-        return magnitude;
+    protected Math_BigRational initMagnitude(int oom) {
+        magnitude = new Math_BigRationalSqrt(getMagnitudeSquared(), oom);
+        return magnitude.getSqrt(oom);
     }
 
     /**
@@ -229,10 +230,10 @@ public class V2D_Vector implements Serializable {
             return true;
         }
         if (v.dx.isZero()) {
-            BigRational c = v.dx.divide(dx);
+            Math_BigRational c = v.dx.divide(dx);
             return c.multiply(dy).subtract(v.dy).abs().isZero();
         } else {
-            BigRational c = dx.divide(v.dx);
+            Math_BigRational c = dx.divide(v.dx);
             return c.multiply(dy).subtract(v.dy).abs().isZero();
         }
     }
@@ -251,14 +252,14 @@ public class V2D_Vector implements Serializable {
     }
 
     /**
-     * Scales the vector by the magnitude so that it has length 1
+     * Scales the vector by the magnitude so that it has length 1.
      *
      * @param scale The scale for the precision of the result.
      * @param rm The RoundingMode for any rounding.
      * @return this scaled by the magnitude.
      */
-    public V2D_Vector getUnitVector(int scale, RoundingMode rm) {
-        BigRational m = BigRational.valueOf(getMagnitude(scale + 2, rm));
+    public V2D_Vector getUnitVector(int oom) {
+        Math_BigRational m = getMagnitude(oom - 2);
         return new V2D_Vector(dx.divide(m), dy.divide(m));
     }
 

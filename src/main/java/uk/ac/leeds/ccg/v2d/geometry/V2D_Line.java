@@ -15,16 +15,13 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry;
 
-import ch.obermuhlner.math.big.BigRational;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Objects;
+import uk.ac.leeds.ccg.math.number.Math_BigRational;
 import uk.ac.leeds.ccg.v2d.projection.V2D_Project;
 
 /**
  * 2D representation of an infinite length line. The line passes through the
- * points {@link #p} and {@link #q} and is travelling in the direction 
- * {@link #v}.
+ * points {@link #p} and {@link #q}.
  * <ul>
  * <li>Vector Form
  * <ul>
@@ -242,20 +239,20 @@ public class V2D_Line extends V2D_Geometry {
         // skb/a +eb/a - s1 = l.q.y - q.y
         // s(kb/a - l) = l.q.y - q.y - eb/a
         // s = (l.q.y - q.y - eb/a) / ((kb/a) - l)
-        BigRational t;
+        Math_BigRational t;
         if (l0.v.dx.isZero()) {
             // Line has constant x                    
-            BigRational den = l1.v.dy.multiply(l0.v.dx).divide(l0.v.dy)
+            Math_BigRational den = l1.v.dy.multiply(l0.v.dx).divide(l0.v.dy)
                     .subtract(l1.v.dx);
-            BigRational num = l1.q.x.subtract(l0.q.x).subtract(l1.q.y
+            Math_BigRational num = l1.q.x.subtract(l0.q.x).subtract(l1.q.y
                     .subtract(l0.q.y).multiply(l0.v.dx).divide(l0.v.dy));
             t = num.divide(den).multiply(l1.v.dy).add(l1.q.y)
                     .subtract(l0.q.y).divide(l0.v.dy);
         } else {
             //dy dz nonzero
-            BigRational den = l1.v.dx.multiply(l0.v.dy).divide(l0.v.dx)
+            Math_BigRational den = l1.v.dx.multiply(l0.v.dy).divide(l0.v.dx)
                     .subtract(l1.v.dy);
-            BigRational num = l1.q.y.subtract(l0.q.y).subtract(l1.q.x
+            Math_BigRational num = l1.q.y.subtract(l0.q.y).subtract(l1.q.x
                     .subtract(l0.q.x).multiply(l0.v.dy).divide(l0.v.dx));
             t = num.divide(den).multiply(l1.v.dx).add(l1.q.x)
                     .subtract(l0.q.x).divide(l0.v.dx);
@@ -267,11 +264,10 @@ public class V2D_Line extends V2D_Geometry {
 
     /**
      * @param l A line.
-     * @param scale The scale for the precision of the result.
-     * @param rm The RoundingMode for any rounding.
+     * @param oom The Order of Magnitude for the precision.
      * @return The shortest distance between this and {@code l}.
      */
-    public BigDecimal getDistance(V2D_Line l, int scale, RoundingMode rm) {
+    public Math_BigRational getDistance(V2D_Line l, int oom) {
         // The coordinates of points along the lines are given by:
         // p = <p.x, p.y, p.z> + t<v.dx, v.dy, v.dz>
         // lp = <l.p.x, l.p.y, l.p.z> + t<l.v.dx, l.v.dy, l.v.dz>
@@ -280,7 +276,7 @@ public class V2D_Line extends V2D_Geometry {
         // n = v.l.v
         if (this.isParallel(l)) {
             V2D_Line ol = new V2D_Line(p, v.getOrthogonalVector());
-            return p.getDistance((V2D_Point) ol.getIntersection(l), scale, rm);
+            return p.getDistance((V2D_Point) ol.getIntersection(l), oom);
 //        V2D_Vector n = v.getCrossProduct(l.v);
 //        v.getDotProduct(l.v);
 //        // d = n.(p−l.p)/||n||
@@ -290,7 +286,7 @@ public class V2D_Line extends V2D_Geometry {
 //        BigRational d = n.getDotProduct(p_sub_lp).divide(m);
 //        return Math_BigDecimal.roundIfNecessary(d.toBigDecimal(), scale, rm);
         }
-        return BigDecimal.ZERO;
+        return Math_BigRational.ZERO;
     }
 
     @Override

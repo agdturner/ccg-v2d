@@ -15,10 +15,7 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry;
 
-import ch.obermuhlner.math.big.BigRational;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
+import uk.ac.leeds.ccg.math.number.Math_BigRational;
 import uk.ac.leeds.ccg.v2d.geometry.envelope.V2D_Envelope;
 
 /**
@@ -139,13 +136,13 @@ public class V2D_Triangle extends V2D_Geometry implements V2D_FiniteGeometry {
                  * If cp, cq and cr are all in the same direction then pt
                  * intersects.
                  */
-                BigRational mp = cp.getMagnitudeSquared();
-                BigRational mq = cq.getMagnitudeSquared();
+                Math_BigRational mp = cp.getMagnitudeSquared();
+                Math_BigRational mq = cq.getMagnitudeSquared();
                 V2D_Vector cpq = cp.add(cq);
-                BigRational mpq = cpq.getMagnitudeSquared();
+                Math_BigRational mpq = cpq.getMagnitudeSquared();
                 if (mpq.compareTo(mp) == 1 && mpq.compareTo(mq) == 1) {
-                    BigRational mr = cr.getMagnitudeSquared();
-                    BigRational mpqr = cpq.add(cr).getMagnitudeSquared();
+                    Math_BigRational mr = cr.getMagnitudeSquared();
+                    Math_BigRational mpqr = cpq.add(cr).getMagnitudeSquared();
                     if (mpqr.compareTo(mr) == 1 && mpqr.compareTo(mpq) == 1) {
                         return true;
                     }
@@ -159,10 +156,8 @@ public class V2D_Triangle extends V2D_Geometry implements V2D_FiniteGeometry {
      * @param rm RoundingMode.
      * @return The area of the triangle (rounded).
      */
-    public BigDecimal getArea(int oom, RoundingMode rm) {
-        return Math_BigDecimal.divide(
-                pq.getCrossProduct(qr).getMagnitude(oom - 1, rm),
-                BigDecimal.valueOf(2), oom, rm);
+    public Math_BigRational getArea(int oom) {
+        return pq.getCrossProduct(qr).getMagnitude(oom - 1).divide(2);
     }
 
     /**

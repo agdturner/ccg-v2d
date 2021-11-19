@@ -15,7 +15,6 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry;
 
-import ch.obermuhlner.math.big.BigRational;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -23,6 +22,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import uk.ac.leeds.ccg.math.number.Math_BigRational;
 
 /**
  * Unit tests for the V2D_Point class.
@@ -69,7 +69,7 @@ public class V2D_PointTest {
         d = new V2D_Point(0.2d, 0.3d);
         Assertions.assertFalse(c.equals(d));
         // Test 5
-        BigRational third = BigRational.ONE.divide(BigRational.valueOf(3));
+        Math_BigRational third = Math_BigRational.valueOf(1, 3);
         double dthird = 1.0d/3.0d;
         a = new V2D_Point(dthird, dthird);        
         b = new V2D_Point(third, third);

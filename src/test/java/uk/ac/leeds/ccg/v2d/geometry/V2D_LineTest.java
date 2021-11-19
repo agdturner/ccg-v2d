@@ -15,16 +15,14 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import org.hamcrest.Matchers;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import uk.ac.leeds.ccg.math.number.Math_BigRational;
 import uk.ac.leeds.ccg.v2d.V2D_Test;
 
 /**
@@ -66,7 +64,7 @@ public class V2D_LineTest extends V2D_Test {
                 + "q=V2D_Point(x=1 y=0), v=V2D_Vector(dx=1, dy=0)]";
         String result = instance.toString();
         System.out.println(result);
-        assertEquals(expResult, result);;
+        assertTrue(expResult.equalsIgnoreCase(result));
     }
 
     /**
@@ -82,7 +80,7 @@ public class V2D_LineTest extends V2D_Test {
         assertTrue(instance.equals(o));
         // Test 2
         instance = new V2D_LineSegment(q, p);
-        assertFalse(instance.equals(o));
+        assertTrue(instance.equals(o));
     }
 
     /**
@@ -195,14 +193,14 @@ public class V2D_LineTest extends V2D_Test {
         V2D_Line l1 = new V2D_Line(r, s);
         V2D_Geometry expResult = new V2D_Point(0, 0);
         V2D_Geometry result = V2D_Line.getIntersection(l0, l1);
-        assertEquals(expResult, result);
+        assertTrue(expResult.equals(result));
         // Test 2
         r = new V2D_Point(1, 0);
         s = new V2D_Point(1, 2);
         l1 = new V2D_Line(r, s);
         expResult = new V2D_Point(1, 0);
         result = V2D_Line.getIntersection(l0, l1);
-        assertEquals(expResult, result);
+        assertTrue(expResult.equals(result));
     }
 
     /**
@@ -214,15 +212,13 @@ public class V2D_LineTest extends V2D_Test {
         V2D_Point p = new V2D_Point(0, 0);
         V2D_Point q = new V2D_Point(2, 0);
         V2D_Line l = new V2D_Line(p, q);
-        int scale = 0;
-        RoundingMode rm = RoundingMode.HALF_UP;
+        int oom = 0;
         V2D_Point r = new V2D_Point(0, 1);
         V2D_Point s = new V2D_Point(2, 1);
         V2D_Line instance = new V2D_Line(r, s);
-        BigDecimal expResult = BigDecimal.ONE;
-        BigDecimal result = instance.getDistance(l, scale, rm);
-        assertThat(expResult, Matchers.comparesEqualTo(result));
-        //assertEquals(expResult, result);
+        Math_BigRational expResult = Math_BigRational.ONE;
+        Math_BigRational result = instance.getDistance(l, oom);
+        assertTrue(expResult.compareTo(result) == 0);
     }
 
     /**

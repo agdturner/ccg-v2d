@@ -25,6 +25,7 @@ import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
 import uk.ac.leeds.ccg.io.IO_Path;
 import uk.ac.leeds.ccg.generic.memory.Generic_MemoryManager;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
+import uk.ac.leeds.ccg.math.number.Math_BigRational;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_Vector;
 import uk.ac.leeds.ccg.v2d.io.V2D_Files;
 import uk.ac.leeds.ccg.v2d.projection.V2D_OSGBtoLatLon;
@@ -44,11 +45,6 @@ public class V2D_Environment extends Generic_MemoryManager {
      */
     public final Generic_Environment env;
 
-    /**
-     * zero Vector
-     */
-    public static final V2D_Vector ZERO_VECTOR = new V2D_Vector(BigRational.ZERO, BigRational.ZERO); 
-    
     /**
      * For code brevity.
      */

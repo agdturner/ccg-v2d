@@ -15,9 +15,8 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry;
 
-import ch.obermuhlner.math.big.BigRational;
-import java.math.BigDecimal;
 import java.math.RoundingMode;
+import uk.ac.leeds.ccg.math.number.Math_BigRational;
 import uk.ac.leeds.ccg.v2d.geometry.envelope.V2D_Envelope;
 
 /**
@@ -73,7 +72,7 @@ public class V2D_LineSegment extends V2D_Line implements V2D_FiniteGeometry {
      * @return {@code true} iff {@code this} is equal to {@code l}
      */
     public boolean equals(V2D_LineSegment l) {
-        return p.equals(l.p) && q.equals(l.q);
+        return (p.equals(l.p) && q.equals(l.q)) || (p.equals(l.q) && q.equals(l.p));
     }
 
     /**
@@ -91,12 +90,11 @@ public class V2D_LineSegment extends V2D_Line implements V2D_FiniteGeometry {
     }
 
     /**
-     * @param dp The decimal place precision.
-     * @param rm The RoundingMode.
+     * @param oom The order of magnitude for the precision.
      * @return The length of this as a BigDecimal
      */
-    public BigDecimal getLength(int dp, RoundingMode rm) {
-        return p.getDistance(q, dp, rm);
+    public Math_BigRational getLength(int oom) {
+        return p.getDistance(q, oom);
     }
 
     /**
@@ -149,25 +147,25 @@ public class V2D_LineSegment extends V2D_Line implements V2D_FiniteGeometry {
                 && l.getEnvelope().isIntersectedBy(this))) {
             return null;
         }
-        BigRational x2minusx1 = q.x.subtract(p.x);
-        BigRational y2minusy1 = q.y.subtract(p.y);
-        BigRational x4minusx3 = l.q.x.subtract(l.p.x);
-        BigRational y4minusy3 = l.q.y.subtract(l.p.y);
-        BigRational denominator = (y4minusy3.multiply(x2minusx1))
+        Math_BigRational x2minusx1 = q.x.subtract(p.x);
+        Math_BigRational y2minusy1 = q.y.subtract(p.y);
+        Math_BigRational x4minusx3 = l.q.x.subtract(l.p.x);
+        Math_BigRational y4minusy3 = l.q.y.subtract(l.p.y);
+        Math_BigRational denominator = (y4minusy3.multiply(x2minusx1))
                 .subtract(x4minusx3.multiply(y2minusy1));
         boolean parallel = false;
-        if (denominator.compareTo(BigRational.ZERO) == 0) {
+        if (denominator.compareTo(Math_BigRational.ZERO) == 0) {
             //System.out.println("parallel lines");
             parallel = true;
         }
-        BigRational y1minusy3 = p.y.subtract(l.p.y);
-        BigRational x1minusx3 = p.x.subtract(l.p.x);
-        BigRational uamultiplicand = (x4minusx3.multiply(y1minusy3))
+        Math_BigRational y1minusy3 = p.y.subtract(l.p.y);
+        Math_BigRational x1minusx3 = p.x.subtract(l.p.x);
+        Math_BigRational uamultiplicand = (x4minusx3.multiply(y1minusy3))
                 .subtract(y4minusy3.multiply(x1minusx3));
-        BigRational ubmultiplicand = (x2minusx1.multiply(y1minusy3))
+        Math_BigRational ubmultiplicand = (x2minusx1.multiply(y1minusy3))
                 .subtract(y2minusy1.multiply(x1minusx3));
-        if (uamultiplicand.compareTo(BigRational.ZERO) == 0
-                && ubmultiplicand.compareTo(BigRational.ZERO) == 0
+        if (uamultiplicand.compareTo(Math_BigRational.ZERO) == 0
+                && ubmultiplicand.compareTo(Math_BigRational.ZERO) == 0
                 && parallel) {
             //System.out.println("lines coincident");
             //V2D_LineSegment ot = this.getOrderedLineSegment2D();
@@ -223,18 +221,18 @@ public class V2D_LineSegment extends V2D_Line implements V2D_FiniteGeometry {
         if (parallel) {
             return null;
         }
-        BigRational ua = uamultiplicand.divide(denominator);
-        if (ua.compareTo(BigRational.ONE) != 1
-                && ua.compareTo(BigRational.ZERO) != -1) {
-            BigRational dx = p.x.add(ua.multiply(x2minusx1));
-            BigRational dy = p.y.add(ua.multiply(y2minusy1));
+        Math_BigRational ua = uamultiplicand.divide(denominator);
+        if (ua.compareTo(Math_BigRational.ONE) != 1
+                && ua.compareTo(Math_BigRational.ZERO) != -1) {
+            Math_BigRational dx = p.x.add(ua.multiply(x2minusx1));
+            Math_BigRational dy = p.y.add(ua.multiply(y2minusy1));
             return new V2D_Point(dx, dy);
         } else {
-            BigRational ub = ubmultiplicand.divide(denominator);
-            if (ub.compareTo(BigRational.ONE) != 1
-                    && ub.compareTo(BigRational.ZERO) != -1) {
-                BigRational dx = l.p.x.add(ub.multiply(x4minusx3));
-                BigRational dy = l.p.y.add(ub.multiply(y4minusy3));
+            Math_BigRational ub = ubmultiplicand.divide(denominator);
+            if (ub.compareTo(Math_BigRational.ONE) != 1
+                    && ub.compareTo(Math_BigRational.ZERO) != -1) {
+                Math_BigRational dx = l.p.x.add(ub.multiply(x4minusx3));
+                Math_BigRational dy = l.p.y.add(ub.multiply(y4minusy3));
                 return new V2D_Point(dx, dy);
             }
         }

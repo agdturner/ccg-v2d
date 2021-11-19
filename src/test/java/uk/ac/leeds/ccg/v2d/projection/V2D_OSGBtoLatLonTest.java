@@ -80,7 +80,7 @@ public class V2D_OSGBtoLatLonTest {
         V2D_OSGBtoLatLon instance = new V2D_OSGBtoLatLon();
         BigDecimal[] expResult = new BigDecimal[2];
         expResult[0] = BigDecimal.valueOf(429162);
-        expResult[1] = BigDecimal.valueOf(434735);
+        expResult[1] = BigDecimal.valueOf(434736);
         BigDecimal[] result = instance.latlon2osgb(lat, lon, oom, rm);
         for (int i = 0; i < expResult.length; i ++) {
             assertTrue(expResult[i].compareTo(result[i]) == 0);
