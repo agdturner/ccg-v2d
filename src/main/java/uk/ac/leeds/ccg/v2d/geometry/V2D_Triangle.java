@@ -152,8 +152,7 @@ public class V2D_Triangle extends V2D_Geometry implements V2D_FiniteGeometry {
     }
 
     /**
-     * @param scale The scale.
-     * @param rm RoundingMode.
+     * @param oom The Order of Magnitude for the precision.
      * @return The area of the triangle (rounded).
      */
     public Math_BigRational getArea(int oom) {

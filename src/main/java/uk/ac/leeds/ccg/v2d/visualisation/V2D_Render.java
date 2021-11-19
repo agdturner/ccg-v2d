@@ -16,26 +16,49 @@
 package uk.ac.leeds.ccg.v2d.visualisation;
 
 import java.awt.Graphics2D;
-import javax.swing.JApplet;
 import javax.swing.JFrame;
 import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
 
 /**
  * Abstract render class.
  */
-public abstract class V2D_Render extends JApplet {
+public abstract class V2D_Render {
 
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * V2D_Environment
+     */
     public V2D_Environment ve;
    
+    /**
+     * Width
+     */
     public int Width = 512;
+    
+    /**
+     * Height
+     */
     public int Height = 256;
     //public int scale = 50;
 
+    /**
+     * JFrame
+     */
     public JFrame frame;
+    
+    /**
+     * Graphics
+     */
     public Graphics2D g;
     
     protected V2D_Render(){}
 
+    /**
+     * Create a new instance.
+     * 
+     * @param ve V2D_Environment
+     */
     public V2D_Render(V2D_Environment ve){
         this.ve = ve;
     }

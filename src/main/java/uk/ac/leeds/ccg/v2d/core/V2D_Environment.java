@@ -17,16 +17,12 @@ package uk.ac.leeds.ccg.v2d.core;
 
 import ch.obermuhlner.math.big.BigRational;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.nio.file.Paths;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
 import uk.ac.leeds.ccg.io.IO_Path;
 import uk.ac.leeds.ccg.generic.memory.Generic_MemoryManager;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
-import uk.ac.leeds.ccg.math.number.Math_BigRational;
-import uk.ac.leeds.ccg.v2d.geometry.V2D_Vector;
 import uk.ac.leeds.ccg.v2d.io.V2D_Files;
 import uk.ac.leeds.ccg.v2d.projection.V2D_OSGBtoLatLon;
 
@@ -46,14 +42,33 @@ public class V2D_Environment extends Generic_MemoryManager {
     public final Generic_Environment env;
 
     /**
-     * For code brevity.
+     * P0
      */
-    public final BigRational P0 = BigRational.ZERO;
-    public final BigRational P1 = BigRational.ONE;
-    public final BigRational P2 = BigRational.valueOf(2);
-    public final BigRational P3 = BigRational.valueOf(3);
-    public final BigRational N1 = BigRational.ONE.negate();
+    public final static BigRational P0 = BigRational.ZERO;
 
+    /**
+     * P
+     */
+    public final static BigRational P1 = BigRational.ONE;
+
+    /**
+     * P
+     */
+    public final static BigRational P2 = BigRational.valueOf(2);
+
+    /**
+     * P
+     */
+    public final static BigRational P3 = BigRational.valueOf(3);
+
+    /**
+     * P
+     */
+    public final static BigRational N1 = BigRational.ONE.negate();
+
+    /**
+     * Files
+     */
     public V2D_Files files;
 
     /**
@@ -61,13 +76,29 @@ public class V2D_Environment extends Generic_MemoryManager {
      */
     public Math_BigDecimal bd;
     
+    /**
+     * For converting from OSGB to Latitude and Longitude
+     */
     protected V2D_OSGBtoLatLon OSGBtoLatLon;
 
+    /**
+     * Create a new instance
+     * @param e Generic_Environment
+     * @throws IOException If encountered.
+     * @throws Exception If encountered.
+     */
     public V2D_Environment(Generic_Environment e) throws IOException,
             Exception {
         this(e, e.files.getDir());
     }
 
+    /**
+     * Create a new instance
+     * @param e Generic_Environment
+     * @param dir The IO_Path
+     * @throws IOException If encountered.
+     * @throws Exception If encountered.
+     */
     public V2D_Environment(Generic_Environment e, IO_Path dir)
             throws IOException, Exception {
         super();
@@ -79,14 +110,9 @@ public class V2D_Environment extends Generic_MemoryManager {
         
     }
 
-    public BigDecimal round(BigDecimal toRound, BigDecimal toRoundTo) {
-        int scale = toRoundTo.scale();
-        BigDecimal r = toRound.setScale(scale - 1, RoundingMode.FLOOR);
-        r = r.setScale(scale);
-        r = r.add(toRoundTo);
-        return r;
-    }
-
+    /**
+     * @return V2D_OSGBtoLatLon which provides a way to project from OSGB to lat lon.
+     */
     public V2D_OSGBtoLatLon getOSGBtoLatLon() {
         if (OSGBtoLatLon == null) {
             OSGBtoLatLon = new V2D_OSGBtoLatLon();

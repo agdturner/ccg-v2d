@@ -25,15 +25,26 @@ import javax.swing.JPanel;
 
 public class V2D_OverlayComponent extends JPanel {
 
-    public BufferedImage _BufferedImage = null;
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * The image
+     */
+    public BufferedImage bi = null;
     //public Image _Image;
 
+    /**
+     * Create a new instance
+     */
     public V2D_OverlayComponent() {
     }
 
+    /**
+     * @param imageURL URL of image to read.
+     */
     public void readImage(URL imageURL) {
         try {
-            _BufferedImage = ImageIO.read(imageURL);
+            bi = ImageIO.read(imageURL);
             //_Image = Toolkit.getDefaultToolkit().getImage(imageURL);
         } catch (IOException e) {
             e.printStackTrace(System.err);
@@ -43,8 +54,8 @@ public class V2D_OverlayComponent extends JPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
-        if (_BufferedImage != null) {
-            g.drawImage(_BufferedImage, 0, 0, this);
+        if (bi != null) {
+            g.drawImage(bi, 0, 0, this);
         }
         // Call out to all things to be overlayed...
     }

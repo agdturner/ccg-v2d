@@ -193,8 +193,7 @@ public class V2D_Vector implements Serializable {
     }
 
     /**
-     * @param scale The scale for the precision of the result.
-     * @param oom The RoundingMode for any rounding.
+     * @param oom The Order of Magnitude for the precision.
      * @return {@link #magnitude} initialised with {@code scale} and {@code rm}.
      */
     protected Math_BigRational initMagnitude(int oom) {
@@ -254,8 +253,7 @@ public class V2D_Vector implements Serializable {
     /**
      * Scales the vector by the magnitude so that it has length 1.
      *
-     * @param scale The scale for the precision of the result.
-     * @param rm The RoundingMode for any rounding.
+     * @param oom The Order of Magnitude for the precision.
      * @return this scaled by the magnitude.
      */
     public V2D_Vector getUnitVector(int oom) {

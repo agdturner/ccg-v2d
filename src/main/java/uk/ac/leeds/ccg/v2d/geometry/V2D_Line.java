@@ -131,6 +131,10 @@ public class V2D_Line extends V2D_Geometry {
         return false;
     }
     
+    /**
+     * @param l The line to test for equality with this.
+     * @return {@code true} iff this and l are equal.
+     */
     public boolean equals(V2D_Line l) {
         return this.isIntersectedBy(l.p) && this.isIntersectedBy(l.q);
     }

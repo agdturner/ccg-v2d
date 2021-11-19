@@ -22,7 +22,19 @@ import uk.ac.leeds.ccg.generic.core.Generic_Strings;
  */
 public class V2D_Strings extends Generic_Strings {
     
+    /**
+     * Creates a new instance.
+     */
+    public V2D_Strings(){}
+    
+    /**
+     * Vector
+     */
     public static String s_Vector = "Vector";
+    
+    /**
+     * vector
+     */
     public static String s_vector = "vector";
     
 }

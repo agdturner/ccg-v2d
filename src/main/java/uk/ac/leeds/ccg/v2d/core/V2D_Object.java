@@ -25,6 +25,11 @@ import java.io.Serializable;
  */
 public class V2D_Object implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * V2D_Environment
+     */
     public V2D_Environment e;
 
     /**

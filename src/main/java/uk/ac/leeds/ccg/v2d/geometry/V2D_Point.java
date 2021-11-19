@@ -180,7 +180,6 @@ public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry {
      *
      * @param p A point.
      * @param oom The Order of Magnitude for the precision.
-     * @param rm The RoundingMode for the calculation.
      * @return The distance from {@code p} to this.
      */
     public Math_BigRational getDistance(V2D_Point p, int oom) {
@@ -242,8 +241,8 @@ public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry {
      *
      * @param p A point.
      * @param e V2D_Environment
+     * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for the calculation.
-     * @param dp The number of decimal places the result is accurate to.
      * @return Angle to the Y-Axis clockwise. Default 0.0d.
      */
     public BigDecimal getAngle(V2D_Point p, V2D_Environment e, int oom,
@@ -298,6 +297,13 @@ public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry {
         }
     }
 
+    /**
+     * Rise over run.
+     * 
+     * @param p The other point.
+     * @return The gradient.
+     * @deprecated
+     */
     @Deprecated
     public Math_BigRational getGradient(V2D_Point p) {
         Math_BigRational dx = x.subtract(p.x);

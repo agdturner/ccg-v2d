@@ -1,3 +1,6 @@
+/**
+ * A module for 2D Geometry
+ */
 module uk.ac.leeds.ccg.v2d {
     
     /**
@@ -12,8 +15,10 @@ module uk.ac.leeds.ccg.v2d {
      * Exports.
      */
     exports uk.ac.leeds.ccg.v2d.core;
+    exports uk.ac.leeds.ccg.v2d.geometrics;
     exports uk.ac.leeds.ccg.v2d.geometry;
     exports uk.ac.leeds.ccg.v2d.geometry.envelope;
     exports uk.ac.leeds.ccg.v2d.io;
+    exports uk.ac.leeds.ccg.v2d.projection;
     exports uk.ac.leeds.ccg.v2d.visualisation;
 }
