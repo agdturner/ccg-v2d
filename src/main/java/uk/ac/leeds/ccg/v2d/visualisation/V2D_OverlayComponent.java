@@ -23,6 +23,10 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+/**
+ * V2D_OverlayComponent
+ * @author Andy Turner
+ */
 public class V2D_OverlayComponent extends JPanel {
 
     private static final long serialVersionUID = 1L;

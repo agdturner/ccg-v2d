@@ -25,6 +25,9 @@ import uk.ac.leeds.ccg.v2d.geometry.V2D_Point;
  */
 public class V2D_Angles {
 
+    /**
+     * Create a new instance.
+     */
     public V2D_Angles() {
     }
 

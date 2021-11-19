@@ -33,8 +33,14 @@ import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
  */
 public class V2D_OSGBtoLatLon {
 
+    /**
+     * Math_BigDecimal.
+     */
     private final Math_BigDecimal bd;
 
+    /**
+     * Create a new instance.
+     */
     public V2D_OSGBtoLatLon() {
         bd = new Math_BigDecimal(20);
     }
@@ -810,7 +816,7 @@ public class V2D_OSGBtoLatLon {
      * Calculate at return the x*Pi/180.
      *
      * @param x The angle in decimal degrees to convert to radians.
-     * @param dp The number of decimal places the result should be correct to.
+     * @param oom The Order of Magnitude for the precision.
      * @param rm The rounding mode to use if necessary.
      * @return The angle of x in radians.
      */
@@ -833,7 +839,7 @@ public class V2D_OSGBtoLatLon {
      * Calculate at return the x*180/Pi.
      *
      * @param x The angle in radians to convert to decimal degrees.
-     * @param oom
+     * @param oom The Order of Magnitude for the precision.
      * @param rm The rounding mode to use if necessary.
      * @return The angle of x in decimal degrees.
      */

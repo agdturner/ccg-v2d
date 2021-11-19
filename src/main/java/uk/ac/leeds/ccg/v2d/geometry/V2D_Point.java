@@ -148,6 +148,10 @@ public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry {
         return false;
     }
 
+    /**
+     * @param p The point to test for equality with this.
+     * @return {@code true} if and only if the points are coincident.
+     */
     public boolean equals(V2D_Point p) {
         if (p.x.compareTo(x) == 0) {
             if (p.y.compareTo(y) == 0) {

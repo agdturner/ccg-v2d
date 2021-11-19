@@ -52,6 +52,9 @@ public abstract class V2D_Render {
      */
     public Graphics2D g;
     
+    /**
+     * Create a new instance.
+     */
     protected V2D_Render(){}
 
     /**
