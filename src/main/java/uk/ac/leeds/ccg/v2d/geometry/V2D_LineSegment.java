@@ -15,14 +15,10 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry;
 
-import ch.obermuhlner.math.big.BigDecimalMath;
 import ch.obermuhlner.math.big.BigRational;
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import uk.ac.leeds.ccg.v2d.geometry.envelope.V2D_Envelope;
-//import org.ojalgo.function.implementation.BigFunction;
-//import org.ojalgo.constant.BigMath;
 
 /**
  * Class for a line segment in 2D. The line segment is defined by the two points
@@ -84,7 +80,7 @@ public class V2D_LineSegment extends V2D_Line implements V2D_FiniteGeometry {
      *
      * @param l The line segment to test if it is equal to {@code this}.
      * @return {@code true} iff {@code this} is equal to {@code l} ignoring the
-     * direction of the vector
+     * direction of {@link #v}.
      */
     public boolean equalsIgnoreDirection(V2D_LineSegment l) {
         if (equals(l)) {
@@ -114,11 +110,8 @@ public class V2D_LineSegment extends V2D_Line implements V2D_FiniteGeometry {
         return e;
     }
 
-    /**
-     * @param l A line to test for intersection within the specified tolerance.
-     * @return true if p is within t of this given scale.
-     */
-    public boolean isIntersectedBy(V2D_LineSegment l) {
+    @Override
+    public boolean isIntersectedBy(V2D_LineSegment l, boolean b) {
         boolean ei = getEnvelope().isIntersectedBy(l.getEnvelope());
         if (ei) {
             return super.isIntersectedBy(l);
@@ -140,6 +133,7 @@ public class V2D_LineSegment extends V2D_Line implements V2D_FiniteGeometry {
 
     /**
      * Calculate and return the intersection between this and {@code l}.
+     *
      * @param l The line segment to intersect with.
      * @return {@code null} if this does not intersect {@code l}; the point of
      * intersection if this intersects {@code l} at a point; and the line
@@ -280,10 +274,196 @@ public class V2D_LineSegment extends V2D_Line implements V2D_FiniteGeometry {
 //    public BigDecimal getAngleToY(MathContext mc) {
 //        return BigDecimalMath.atan2(v.dx.toBigDecimal(), v.dy.toBigDecimal(), mc);
 //    }
-
     @Override
     public int hashCode() {
         int hash = 7;
         return hash;
     }
+
+    /**
+     * Intersects {@code this} with {@code l}. If they are equivalent then
+     * return {@code this}. If they overlap in a line return the part that
+     * overlaps (the order of points is not defined). If they intersect at a
+     * point, the point is returned. {@code null} is returned if the two line
+     * segments do not intersect.
+     *
+     * @param l The line to get intersection with this.
+     * @param b To distinguish this method from
+     * {@link #getIntersection(uk.ac.leeds.ccg.v2d.geometry.V2D_Line)}.
+     * @return The intersection between {@code this} and {@code l}.
+     */
+    @Override
+    public V2D_Geometry getIntersection(V2D_LineSegment l, boolean b) {
+        return getIntersection(this, l);
+    }
+
+//    /**
+//     * Implementation of line intercept math by Paul Bourke
+//     * http://paulbourke.net/geometry/pointlineplane/
+//     */
+//    public static V2D_Geometry getIntersection(V2D_LineSegment l0, V2D_LineSegment l1) {
+//        if (l0.v.isZeroVector()) {
+//            if (l1.isIntersectedBy(l0.p)) {
+//                return l0.p;
+//            }
+//        }
+//        if (l1.v.isZeroVector()) {
+//            if (l0.isIntersectedBy(l1.p)) {
+//                return l1.p;
+//            }
+//        }
+//        BigRational x1 = l0.p.x;
+//        BigRational y1 = l0.p.y;
+//        BigRational x2 = l0.q.x;
+//        BigRational y2 = l0.q.y;
+//        BigRational x3 = l1.p.x;
+//        BigRational y3 = l1.p.y;
+//        BigRational x4 = l1.q.x;
+//        BigRational y4 = l1.q.y;
+//
+//        //denominator = ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1))
+//        BigRational denominator = ((y4.subtract(y3)).multiply(x2.subtract(x1))
+//                .multiply(x4.subtract(x3)).multiply(y2.subtract(y1)));
+//        if (denominator.compareTo(BigRational.ZERO) == 0) {
+//            // Lines are parallel
+//            return null;
+//        }
+//        BigRational ua = (((x4.subtract(x3)).multiply(y1.subtract(y3)))
+//                .subtract((y4.subtract(y3)).multiply(x1.subtract(x3))))
+//                .divide(denominator);
+//        BigRational ub = (((x2.subtract(x1)).multiply(y1.subtract(y3)))
+//                .subtract((y2.subtract(y1)).multiply(x1.subtract(x3))))
+//                .divide(denominator);
+//        if (ua.compareTo(BigRational.ZERO) == -1
+//                || ua.compareTo(BigRational.ONE) == 1
+//                || ub.compareTo(BigRational.ZERO) == -1
+//                || ub.compareTo(BigRational.ONE) == 1) {
+//            return null;
+//        }
+//        BigRational x = x1.add(ua.multiply(x2.subtract(x1)));
+//        BigRational y = y1.add(ua.multiply(y2.subtract(y1)));
+//        return new V2D_Point(x, y);
+//    }
+
+    /**
+     * A utility method for calculating and returning the intersection between 
+     * {@code l0} and {@code l1}
+     * @param l0 Line to intersect with {@code l1}.
+     * @param l1 Line to intersect with {@code l0}.
+     * @return The intersection between {@code l0} and {@code l1}.
+     */
+    public static V2D_Geometry getIntersection(V2D_LineSegment l0, V2D_LineSegment l1) {
+        V2D_Envelope ren = l0.getEnvelope().getIntersection(l1.getEnvelope());
+        if (ren == null) {
+            return null;
+        }
+        V2D_Geometry li = V2D_Line.getIntersection(l0, l1);
+        if (li == null) {
+            return null;
+        }
+        if (li instanceof V2D_Point) {
+            return li;
+        }
+        /**
+         * Check the type of intersection. {@code
+         * 1)   p ---------- q
+         *         l.p ---------- l.q
+         * 2)   p ------------------------ q
+         *         l.p ---------- l.q
+         * 3)        p ---------- q
+         *    l.p ------------------------ l.q
+         * 4)        p ---------- q
+         *    l.p ---------- l.q
+         * 5)   q ---------- p
+         *         l.p ---------- l.q
+         * 6)   q ------------------------ p
+         *         l.p ---------- l.q
+         * 7)        q ---------- p
+         *    l.p ------------------------ l.q
+         * 8)        q ---------- p
+         *    l.p ---------- l.q
+         * 9)   p ---------- q
+         *         l.q ---------- l.p
+         * 10)   p ------------------------ q
+         *         l.q ---------- l.p
+         * 11)       p ---------- q
+         *    l.q ------------------------ l.p
+         * 12)       p ---------- q
+         *    l.q ---------- l.p
+         * 13)  q ---------- p
+         *         l.q ---------- l.p
+         * 14)  q ------------------------ p
+         *         l.q ---------- l.p
+         * 15)       q ---------- p
+         *    l.q ------------------------ l.p
+         * 16)       q ---------- p
+         *    l.q ---------- l.p
+         * }
+         */
+        if (l0.isIntersectedBy(l1.p)) {
+            // Cases 1, 2, 5, 6, 14, 16
+            if (l0.isIntersectedBy(l1.q)) {
+                // Cases 2, 6, 14
+                /**
+                 * The line segments are effectively the same although the start
+                 * and end points may be opposite.
+                 */
+                return l1;
+            } else {
+                // Cases 1, 5, 16
+                if (l1.isIntersectedBy(l0.p)) {
+                    // Cases 5
+                    return new V2D_LineSegment(l1.p, l0.p);
+                } else {
+                    // Cases 1, 16
+                    return new V2D_LineSegment(l1.p, l0.q);
+                }
+            }
+        } else {
+            // Cases 3, 4, 7, 8, 9, 10, 11, 12, 13, 15
+            if (l0.isIntersectedBy(l1.q)) {
+                // Cases 4, 8, 9, 10, 11
+                if (l1.isIntersectedBy(l0.p)) {
+                    // Cases 4, 11, 13
+                    if (l1.isIntersectedBy(l0.q)) {
+                        // Cases 11
+                        return l0;
+                    } else {
+                        // Cases 4, 13
+                        return new V2D_LineSegment(l0.p, l1.q);
+                    }
+                } else {
+                    // Cases 8, 9, 10
+                    if (l1.isIntersectedBy(l0.q)) {
+                        // Cases 8, 9
+                        return new V2D_LineSegment(l0.q, l1.q);
+                    } else {
+                        // Cases 10                      
+                        return l1;
+                    }
+                }
+            } else {
+                // Cases 3, 7, 12, 15
+                if (l1.isIntersectedBy(l0.p)) {
+                    // Cases 3, 12, 15
+                    if (l1.isIntersectedBy(l0.q)) {
+                        // Cases 3, 15
+                        return l0;
+                    } else {
+                        // Cases 12                 
+                        return new V2D_LineSegment(l0.p, l1.p);
+                    }
+                } else {
+                    // Cases 7
+                    return l0;
+                }
+            }
+        }
+    }
+    
+    @Override
+    public boolean isEnvelopeIntersectedBy(V2D_Line l) {
+        return getEnvelope().isIntersectedBy(l);
+    }
+
 }

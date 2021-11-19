@@ -19,7 +19,6 @@ import ch.obermuhlner.math.big.BigRational;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
-import uk.ac.leeds.ccg.math.Math_BigDecimal;
 import uk.ac.leeds.ccg.v2d.projection.V2D_Project;
 
 /**
@@ -149,13 +148,12 @@ public class V2D_Line extends V2D_Geometry {
 
     /**
      * @param pt A point to test for intersection.
-     * @return {@code true} if p is on the line.
+     * @return {@code true} if {@code pt} is on the line.
      */
     public boolean isIntersectedBy(V2D_Point pt) {
-        return ((p.x.subtract(pt.x)).multiply(q.y.subtract(pt.y))).subtract((p.y.subtract(pt.y)).multiply(q.x.subtract(pt.x))).isZero();
-        //V2D_Vector ppt = new V2D_Vector(pt.x.subtract(p.x), pt.y.subtract(p.y));
-        //V2D_Vector cp = v.getCrossProduct(ppt);
-        //return cp.dx.isZero() && cp.dy.isZero();
+        return ((p.x.subtract(pt.x)).multiply(q.y.subtract(pt.y)))
+                .subtract((p.y.subtract(pt.y)).multiply(q.x.subtract(pt.x)))
+                .isZero();
     }
 
     /**
@@ -293,5 +291,10 @@ public class V2D_Line extends V2D_Geometry {
 //        return Math_BigDecimal.roundIfNecessary(d.toBigDecimal(), scale, rm);
         }
         return BigDecimal.ZERO;
+    }
+
+    @Override
+    public boolean isEnvelopeIntersectedBy(V2D_Line l) {
+        return true;
     }
 }

@@ -27,4 +27,9 @@ public abstract class V2D_Geometry implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * @param l The line for which intersection with the envelope is indicated.
+     * @return {@code true} iff {@code l} intersects with the envelope.  
+     */
+    public abstract boolean isEnvelopeIntersectedBy(V2D_Line l);
 }

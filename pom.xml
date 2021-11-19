@@ -2,20 +2,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.agdturner</groupId>
-    <artifactId>agdt-java-vector2d</artifactId>
+    <artifactId>ccg-v2d</artifactId>
     <version>0.2-SNAPSHOT</version>
     <!--
     <version>0.3-SNAPSHOT</version>
     -->
     <packaging>jar</packaging>
     
-    <name>agdt-java-vector2d</name>
-    <url>https://github.com/agdturner/agdt-java-vector2d</url>
+    <name>ccg-v2d</name>
+    <url>https://github.com/agdturner/ccg-v2d</url>
     <description>A Java Library for handling 2D spatial vector data.</description>
     <scm>
-        <url>git@github.com:agdturner/agdt-java-vector2d.git</url>
-        <connection>scm:git:git@github.com:agdturner/agdt-java-vector2d.git</connection>
-        <developerConnection>scm:git:git@github.com:agdturner/agdt-java-vector2d</developerConnection>
+        <url>git@github.com:agdturner/ccg-v2d.git</url>
+        <connection>scm:git:git@github.com:agdturner/ccg-v2d.git</connection>
+        <developerConnection>scm:git:git@github.com:agdturner/ccg-v2d</developerConnection>
     </scm>
     <licenses>
         <license>
@@ -42,8 +42,8 @@
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <agdt-java-generic.version>1.7.1</agdt-java-generic.version>
-        <agdt-java-math.version>1.6</agdt-java-math.version>
+        <ccg-generic.version>2.1</ccg-generic.version>
+        <ccg-math.version>2.0.10-SNAPSHOT</ccg-math.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <maven.version>3.0.1</maven.version>
@@ -51,17 +51,17 @@
     </properties>
     
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/io.github.agdturner/agdt-java-generic -->
+        <!-- https://mvnrepository.com/artifact/io.github.agdturner/ccg-generic -->
         <dependency>
             <groupId>io.github.agdturner</groupId>
-            <artifactId>agdt-java-generic</artifactId>
-            <version>${agdt-java-generic.version}</version>
+            <artifactId>ccg-generic</artifactId>
+            <version>${ccg-generic.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/io.github.agdturner/agdt-java-math -->
+        <!-- https://mvnrepository.com/artifact/io.github.agdturner/ccg-math -->
         <dependency>
             <groupId>io.github.agdturner</groupId>
-            <artifactId>agdt-java-math</artifactId>
-            <version>${agdt-java-math.version}</version>
+            <artifactId>ccg-math</artifactId>
+            <version>${ccg-math.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.ojalgo/ojalgo -->
         <dependency>

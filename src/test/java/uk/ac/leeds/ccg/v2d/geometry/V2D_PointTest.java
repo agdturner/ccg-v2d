@@ -15,8 +15,8 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry;
 
+import ch.obermuhlner.math.big.BigRational;
 import java.math.BigDecimal;
-import uk.ac.leeds.ccg.v2d.geometry.V2D_Point;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -25,8 +25,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- *
- * @author geoagdt
+ * Unit tests for the V2D_Point class.
+ * @author Andy Turner
+ * @version 1.0.0
  */
 public class V2D_PointTest {
 
@@ -55,27 +56,24 @@ public class V2D_PointTest {
     @Test
     public void testEquals() {
         System.out.println("equals");
-        V2D_Point a;
-        V2D_Point b;
-        V2D_Point c;
-        V2D_Point d;
-        a = new V2D_Point(0.1d, 0.3d);
-        System.out.println("a = " + a.toString());
-        b = new V2D_Point(new BigDecimal("0.1"), new BigDecimal("0.3"));
-        System.out.println("b = " + b.toString());
+        V2D_Point a = new V2D_Point(0.1d, 0.3d);
+        V2D_Point b = new V2D_Point(new BigDecimal("0.1"), new BigDecimal("0.3"));
         Assertions.assertTrue(a.equals(b));
         // Test 2
-        c = new V2D_Point(a);
-        System.out.println("c = " + c.toString());
+        V2D_Point c = new V2D_Point(a);
         Assertions.assertTrue(a.equals(c));
         // Test 3
-        d = new V2D_Point(0.1d, 0.4d);
-        System.out.println("d = " + d.toString());
+        V2D_Point d = new V2D_Point(0.1d, 0.4d);
         Assertions.assertFalse(b.equals(d));
         // Test 4
         d = new V2D_Point(0.2d, 0.3d);
-        System.out.println("d = " + d.toString());
         Assertions.assertFalse(c.equals(d));
+        // Test 5
+        BigRational third = BigRational.ONE.divide(BigRational.valueOf(3));
+        double dthird = 1.0d/3.0d;
+        a = new V2D_Point(dthird, dthird);        
+        b = new V2D_Point(third, third);
+        Assertions.assertFalse(a.equals(b));
     }
 
 }

@@ -25,14 +25,16 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import org.hamcrest.Matchers;
+import uk.ac.leeds.ccg.v2d.V2D_Test;
 
 /**
  * @author Andy Turner
  * @version 1.0.0
  */
-public class V2D_LineTest {
+public class V2D_LineTest extends V2D_Test {
 
     public V2D_LineTest() {
+        super();
     }
 
     @BeforeAll
@@ -221,6 +223,28 @@ public class V2D_LineTest {
         BigDecimal result = instance.getDistance(l, scale, rm);
         assertThat(expResult, Matchers.comparesEqualTo(result));
         //assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of equals method, of class V2D_Line.
+     */
+    @Test
+    public void testEquals_Object() {
+        System.out.println("equals");
+        Object o = new V2D_Line(P0P0, P1P1);
+        V2D_Line instance = new V2D_Line(P0P0, P1P1);
+        assertTrue(instance.equals(o));
+    }
+
+    /**
+     * Test of equals method, of class V2D_Line.
+     */
+    @Test
+    public void testEquals_V2D_Line() {
+        System.out.println("equals");
+        V2D_Line l = new V2D_Line(P0P0, P1P1);
+        V2D_Line instance = new V2D_Line(P0P0, P1P1);
+        assertTrue(instance.equals(l));
     }
 
 }
