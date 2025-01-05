@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Andy Turner, University of Leeds.
+ * Copyright 2023 Centre for Computational Geography.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,30 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.leeds.ccg.v2d.core;
 
-import java.io.Serializable;
+module uk.ac.leeds.ccg.v2d.test {
+    
+    requires org.junit.jupiter.api;
+    requires org.junit.jupiter.engine;
+    requires org.junit.jupiter.params;
+    
+    requires uk.ac.leeds.ccg.v2d;
 
-/**
- * Vector Object
- *
- * @author Andy Turner
- * @version 1.0.0
- */
-public class V2D_Object implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * V2D_Environment
-     */
-    public V2D_Environment e;
-
-    /**
-     * @param e What {@link e} is set to.
-     */
-    public V2D_Object(V2D_Environment e) {
-        this.e = e;
-    }
-
+    opens uk.ac.leeds.ccg.v2d.geometry.test to org.junit.platform.commons;
 }

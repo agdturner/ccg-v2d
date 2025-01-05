@@ -15,9 +15,10 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry.envelope;
 
+import ch.obermuhlner.math.big.BigRational;
 import java.math.BigDecimal;
 import java.util.Objects;
-import uk.ac.leeds.ccg.math.number.Math_BigRational;
+import uk.ac.leeds.ccg.math.arithmetic.Math_BigRational;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_FiniteGeometry;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_Geometry;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_Line;
@@ -39,27 +40,27 @@ public class V2D_Envelope extends V2D_Geometry implements V2D_FiniteGeometry {
     /**
      * The minimum x-coordinate.
      */
-    private Math_BigRational xMin;
+    private BigRational xMin;
 
     /**
      * The maximum x-coordinate.
      */
-    private Math_BigRational xMax;
+    private BigRational xMax;
 
     /**
      * The minimum y-coordinate.
      */
-    private Math_BigRational yMin;
-
+    private BigRational yMin;
+    
     /**
      * The maximum y-coordinate.
      */
-    private Math_BigRational yMax;
+    private BigRational yMax;
 
     /**
      * The top edge.
      */
-    protected final V2D_FiniteGeometry t;
+    protected V2D_FiniteGeometry t;
 
     /**
      * The right edge.
@@ -116,10 +117,10 @@ public class V2D_Envelope extends V2D_Geometry implements V2D_FiniteGeometry {
                 yMin = points[0].y;
                 yMax = points[0].y;
                 for (int i = 1; i < points.length; i++) {
-                    xMin = Math_BigRational.min(xMin, points[i].x);
-                    xMax = Math_BigRational.max(xMax, points[i].x);
-                    yMin = Math_BigRational.min(yMin, points[i].y);
-                    yMax = Math_BigRational.max(yMax, points[i].y);
+                    xMin = BigRational.min(xMin, points[i].x);
+                    xMax = BigRational.max(xMax, points[i].x);
+                    yMin = BigRational.min(yMin, points[i].y);
+                    yMax = BigRational.max(yMax, points[i].y);
                 }
                 if (xMin.compareTo(xMax) == 0) {
                     if (yMin.compareTo(yMax) == 0) {
@@ -158,7 +159,7 @@ public class V2D_Envelope extends V2D_Geometry implements V2D_FiniteGeometry {
      * @param x The x-coordinate of a point.
      * @param y The y-coordinate of a point.
      */
-    public V2D_Envelope(Math_BigRational x, Math_BigRational y) {
+    public V2D_Envelope(BigRational x, BigRational y) {
         this(new V2D_Point(x, y));
     }
 
@@ -176,8 +177,8 @@ public class V2D_Envelope extends V2D_Geometry implements V2D_FiniteGeometry {
      * @param yMin What {@link yMin} is set to.
      * @param yMax What {@link yMax} is set to.
      */
-    public V2D_Envelope(Math_BigRational xMin, Math_BigRational xMax,
-            Math_BigRational yMin, Math_BigRational yMax) {
+    public V2D_Envelope(BigRational xMin, BigRational xMax,
+            BigRational yMin, BigRational yMax) {
         this(new V2D_Point(xMin, yMin), new V2D_Point(xMax, yMax));
     }
 
@@ -208,10 +209,10 @@ public class V2D_Envelope extends V2D_Geometry implements V2D_FiniteGeometry {
             return this;
         } else {
             return new V2D_Envelope(
-                    Math_BigRational.min(e.getxMin(), getxMin()),
-                    Math_BigRational.max(e.getxMax(), getxMax()),
-                    Math_BigRational.min(e.getyMin(), getyMin()),
-                    Math_BigRational.max(e.getyMax(), getyMax()));
+                    BigRational.min(e.getxMin(), getxMin()),
+                    BigRational.max(e.getxMax(), getxMax()),
+                    BigRational.min(e.getyMin(), getyMin()),
+                    BigRational.max(e.getyMax(), getyMax()));
         }
     }
 
@@ -330,7 +331,7 @@ public class V2D_Envelope extends V2D_Geometry implements V2D_FiniteGeometry {
      * @param y The y-coordinate of the point to test for intersection.
      * @return {@code true} if this intersects with {@code p}
      */
-    public boolean isIntersectedBy(Math_BigRational x, Math_BigRational y) {
+    public boolean isIntersectedBy(BigRational x, BigRational y) {
         return x.compareTo(getxMin()) != -1 && x.compareTo(getxMax()) != 1
                 && y.compareTo(getyMin()) != -1 && y.compareTo(getyMax()) != 1;
     }
@@ -381,10 +382,10 @@ public class V2D_Envelope extends V2D_Geometry implements V2D_FiniteGeometry {
             return null;
         }
         return new V2D_Envelope(
-                Math_BigRational.max(getxMin(), en.getxMin()),
-                Math_BigRational.min(getxMax(), en.getxMax()),
-                Math_BigRational.max(getyMin(), en.getyMin()),
-                Math_BigRational.min(getyMax(), en.getyMax()));
+                BigRational.max(getxMin(), en.getxMin()),
+                BigRational.min(getxMax(), en.getxMax()),
+                BigRational.max(getyMin(), en.getyMin()),
+                BigRational.min(getyMax(), en.getyMax()));
     }
 
     /**
@@ -484,28 +485,28 @@ public class V2D_Envelope extends V2D_Geometry implements V2D_FiniteGeometry {
     /**
      * @return the xMin
      */
-    public Math_BigRational getxMin() {
+    public BigRational getxMin() {
         return xMin;
     }
 
     /**
      * @return the xMax
      */
-    public Math_BigRational getxMax() {
+    public BigRational getxMax() {
         return xMax;
     }
 
     /**
      * @return the yMin
      */
-    public Math_BigRational getyMin() {
+    public BigRational getyMin() {
         return yMin;
     }
 
     /**
      * @return the yMax
      */
-    public Math_BigRational getyMax() {
+    public BigRational getyMax() {
         return yMax;
     }
 

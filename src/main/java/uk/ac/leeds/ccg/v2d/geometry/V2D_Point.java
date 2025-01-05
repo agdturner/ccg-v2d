@@ -15,14 +15,11 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry;
 
-import ch.obermuhlner.math.big.BigDecimalMath;
+import ch.obermuhlner.math.big.BigRational;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.MathContext;
 import java.math.RoundingMode;
-import uk.ac.leeds.ccg.math.number.Math_BigRational;
 import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
-import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
 import uk.ac.leeds.ccg.v2d.geometry.envelope.V2D_Envelope;
 
 /**
@@ -38,12 +35,12 @@ public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry {
     /**
      * The x coordinate.
      */
-    public Math_BigRational x;
+    public BigRational x;
 
     /**
      * The y coordinate.
      */
-    public Math_BigRational y;
+    public BigRational y;
 
     /**
      * @param p Vector_Point
@@ -57,7 +54,7 @@ public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry {
      * @param x What {@link #x} is set to.
      * @param y What {@link #y} is set to.
      */
-    public V2D_Point(Math_BigRational x, Math_BigRational y) {
+    public V2D_Point(BigRational x, BigRational y) {
         this.x = x;
         this.y = y;
     }
@@ -67,8 +64,8 @@ public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry {
      * @param y What {@link #y} is set to.
      */
     public V2D_Point(BigDecimal x, BigDecimal y) {
-        this.x = Math_BigRational.valueOf(x);
-        this.y = Math_BigRational.valueOf(y);
+        this.x = BigRational.valueOf(x);
+        this.y = BigRational.valueOf(y);
     }
 
     /**
@@ -76,8 +73,8 @@ public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry {
      * @param y What {@link #y} is set to.
      */
     public V2D_Point(BigInteger x, BigInteger y) {
-        this.x = Math_BigRational.valueOf(x);
-        this.y = Math_BigRational.valueOf(y);
+        this.x = BigRational.valueOf(x);
+        this.y = BigRational.valueOf(y);
     }
 
     /**
@@ -85,8 +82,8 @@ public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry {
      * @param y What {@link #y} is set to.
      */
     public V2D_Point(double x, double y) {
-        this.x = Math_BigRational.valueOf(x);
-        this.y = Math_BigRational.valueOf(y);
+        this.x = BigRational.valueOf(x);
+        this.y = BigRational.valueOf(y);
     }
 
     /**
@@ -94,8 +91,8 @@ public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry {
      * @param y What {@link #y} is set to.
      */
     public V2D_Point(float x, float y) {
-        this.x = Math_BigRational.valueOf(x);
-        this.y = Math_BigRational.valueOf(y);
+        this.x = BigRational.valueOf(x);
+        this.y = BigRational.valueOf(y);
     }
 
     /**
@@ -103,8 +100,8 @@ public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry {
      * @param y What {@link #y} is set to.
      */
     public V2D_Point(long x, long y) {
-        this.x = Math_BigRational.valueOf(x);
-        this.y = Math_BigRational.valueOf(y);
+        this.x = BigRational.valueOf(x);
+        this.y = BigRational.valueOf(y);
     }
 
     /**
@@ -112,8 +109,8 @@ public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry {
      * @param y What {@link #y} is set to.
      */
     public V2D_Point(int x, int y) {
-        this.x = Math_BigRational.valueOf(x);
-        this.y = Math_BigRational.valueOf(y);
+        this.x = BigRational.valueOf(x);
+        this.y = BigRational.valueOf(y);
     }
 
     /**
@@ -121,8 +118,8 @@ public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry {
      * @param y What {@link #y} is set to.
      */
     public V2D_Point(short x, short y) {
-        this.x = Math_BigRational.valueOf(x);
-        this.y = Math_BigRational.valueOf(y);
+        this.x = BigRational.valueOf(x);
+        this.y = BigRational.valueOf(y);
     }
 
     /**
@@ -130,8 +127,8 @@ public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry {
      * @param y What {@link #y} is set to.
      */
     public V2D_Point(byte x, byte y) {
-        this.x = Math_BigRational.valueOf(x);
-        this.y = Math_BigRational.valueOf(y);
+        this.x = BigRational.valueOf(x);
+        this.y = BigRational.valueOf(y);
     }
 
     @Override
@@ -175,7 +172,7 @@ public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry {
      * @param p A point.
      * @return The distance squared from {@code p} to this.
      */
-    public Math_BigRational getDistanceSquared(V2D_Point p) {
+    public BigRational getDistanceSquared(V2D_Point p) {
         return x.subtract(p.x).pow(2).add(y.subtract(p.y).pow(2));
     }
 
@@ -186,11 +183,11 @@ public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry {
      * @param oom The Order of Magnitude for the precision.
      * @return The distance from {@code p} to this.
      */
-    public Math_BigRational getDistance(V2D_Point p, int oom) {
+    public BigRational getDistance(V2D_Point p, int oom, RoundingMode rm) {
         if (this.equals(p)) {
-            return Math_BigRational.ZERO;
+            return BigRational.ZERO;
         }
-        return new Math_BigRationalSqrt(getDistanceSquared(p), oom).getSqrt(oom);
+        return new Math_BigRationalSqrt(getDistanceSquared(p), oom, rm).getSqrt(oom, rm);
     }
 
     /**
@@ -249,56 +246,56 @@ public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry {
      * @param rm The RoundingMode for the calculation.
      * @return Angle to the Y-Axis clockwise. Default 0.0d.
      */
-    public BigDecimal getAngle(V2D_Point p, V2D_Environment e, int oom,
-            RoundingMode rm) {
-        Math_BigRational dx = p.x.subtract(x);
-        Math_BigRational dy = p.y.subtract(y);
-        if (dy.compareTo(Math_BigRational.ZERO) == 0) {
-            if (dx.compareTo(Math_BigRational.ZERO) == 0) {
-                return BigDecimal.ZERO;
-            } else {
-                BigDecimal piBy2 = e.bd.getPiBy2(oom, rm);
-                if (dx.compareTo(Math_BigRational.ZERO) == 1) {
-                    return piBy2;
-                } else {
-                    return BigDecimal.valueOf(3).multiply(piBy2);
-                }
-            }
-        } else {
-            if (dy.compareTo(Math_BigRational.ZERO) == 1) {
-                if (dx.compareTo(Math_BigRational.ZERO) == 0) {
-                    return BigDecimal.ZERO;
-                } else {
-                    if (dx.compareTo(Math_BigRational.ZERO) == 1) {
-                        //return Math.BigMath.ATAN.invoke(BigMath.DIVIDE.invoke(dx, dy));
-                        return BigDecimalMath.atan(dx.divide(dy).toBigDecimal(oom - 2),
-                                new MathContext(oom - 1, rm));
-                    } else {
-                        return BigDecimalMath.atan(dx.abs().divide(dy).toBigDecimal(oom - 2),
-                                new MathContext(oom - 1, rm));
-//                        return BigMath.SUBTRACT.invoke(BigMath.TWO_PI,
-//                                BigMath.ATAN.invoke(BigMath.DIVIDE.invoke(
-//                                        BigMath.ABS.invoke(dx), dy)));
-                        //return (2.0d * Math.PI) - Math.atan(Math.abs(dx) / dy);
-                    }
-                }
-            } else {
-                // dy < 0.0d
-                BigDecimal pi = e.bd.getPi(oom, rm);
-                if (dx.compareTo(Math_BigRational.ZERO) == 0) {
-                    return pi;
-                } else {
-                    MathContext mc = new MathContext(1 - oom, rm); // TODO: Check MathContext
-                    if (dx.compareTo(Math_BigRational.ZERO) == 1) {
-                        return pi.subtract(BigDecimalMath.atan(dx.divide(
-                                dy.abs()).toBigDecimal(oom - 2), mc));
-                    } else {
-                        return pi.add(BigDecimalMath.atan(dx.abs().divide(
-                                dy.abs()).toBigDecimal(oom - 2), mc));
-                    }
-                }
-            }
-        }
+    public BigRational getAngle(V2D_Point p, int oom, RoundingMode rm) {
+//        BigRational dx = p.x.subtract(x);
+//        BigRational dy = p.y.subtract(y);
+//        if (dy.compareTo(BigRational.ZERO) == 0) {
+//            if (dx.compareTo(BigRational.ZERO) == 0) {
+//                return BigRational.ZERO;
+//            } else {
+//                BigDecimal piBy2 = e.bd.getPiBy2(oom, rm);
+//                if (dx.compareTo(BigRational.ZERO) == 1) {
+//                    return piBy2;
+//                } else {
+//                    return BigDecimal.valueOf(3).multiply(piBy2);
+//                }
+//            }
+//        } else {
+//            if (dy.compareTo(BigRational.ZERO) == 1) {
+//                if (dx.compareTo(BigRational.ZERO) == 0) {
+//                    return BigDecimal.ZERO;
+//                } else {
+//                    if (dx.compareTo(BigRational.ZERO) == 1) {
+//                        //return Math.BigMath.ATAN.invoke(BigMath.DIVIDE.invoke(dx, dy));
+//                        return BigDecimalMath.atan(dx.divide(dy).toBigDecimal(oom - 2),
+//                                new MathContext(oom - 1, rm));
+//                    } else {
+//                        return BigDecimalMath.atan(dx.abs().divide(dy).toBigDecimal(oom - 2),
+//                                new MathContext(oom - 1, rm));
+////                        return BigMath.SUBTRACT.invoke(BigMath.TWO_PI,
+////                                BigMath.ATAN.invoke(BigMath.DIVIDE.invoke(
+////                                        BigMath.ABS.invoke(dx), dy)));
+//                        //return (2.0d * Math.PI) - Math.atan(Math.abs(dx) / dy);
+//                    }
+//                }
+//            } else {
+//                // dy < 0.0d
+//                BigDecimal pi = e.bd.getPi(oom, rm);
+//                if (dx.compareTo(BigRational.ZERO) == 0) {
+//                    return pi;
+//                } else {
+//                    MathContext mc = new MathContext(1 - oom, rm); // TODO: Check MathContext
+//                    if (dx.compareTo(BigRational.ZERO) == 1) {
+//                        return pi.subtract(BigDecimalMath.atan(dx.divide(
+//                                dy.abs()).toBigDecimal(oom - 2), mc));
+//                    } else {
+//                        return pi.add(BigDecimalMath.atan(dx.abs().divide(
+//                                dy.abs()).toBigDecimal(oom - 2), mc));
+//                    }
+//                }
+//            }
+//        }
+        return null;
     }
 
     /**
@@ -309,14 +306,14 @@ public class V2D_Point extends V2D_Geometry implements V2D_FiniteGeometry {
      * @deprecated
      */
     @Deprecated
-    public Math_BigRational getGradient(V2D_Point p) {
-        Math_BigRational dx = x.subtract(p.x);
-        Math_BigRational dy = y.subtract(p.y);
-        if (dy.compareTo(Math_BigRational.ZERO) == 0) {
-            return Math_BigRational.ONE;
+    public BigRational getGradient(V2D_Point p) {
+        BigRational dx = x.subtract(p.x);
+        BigRational dy = y.subtract(p.y);
+        if (dy.compareTo(BigRational.ZERO) == 0) {
+            return BigRational.ONE;
         } else {
-            if (dx.compareTo(Math_BigRational.ZERO) == 0) {
-                return Math_BigRational.ZERO;
+            if (dx.compareTo(BigRational.ZERO) == 0) {
+                return BigRational.ZERO;
             }
             return dx.divide(dy);
         }

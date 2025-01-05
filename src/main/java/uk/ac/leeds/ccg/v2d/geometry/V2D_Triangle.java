@@ -15,7 +15,8 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry;
 
-import uk.ac.leeds.ccg.math.number.Math_BigRational;
+import ch.obermuhlner.math.big.BigRational;
+import java.math.RoundingMode;
 import uk.ac.leeds.ccg.v2d.geometry.envelope.V2D_Envelope;
 
 /**
@@ -136,13 +137,13 @@ public class V2D_Triangle extends V2D_Geometry implements V2D_FiniteGeometry {
                  * If cp, cq and cr are all in the same direction then pt
                  * intersects.
                  */
-                Math_BigRational mp = cp.getMagnitudeSquared();
-                Math_BigRational mq = cq.getMagnitudeSquared();
+                BigRational mp = cp.getMagnitudeSquared();
+                BigRational mq = cq.getMagnitudeSquared();
                 V2D_Vector cpq = cp.add(cq);
-                Math_BigRational mpq = cpq.getMagnitudeSquared();
+                BigRational mpq = cpq.getMagnitudeSquared();
                 if (mpq.compareTo(mp) == 1 && mpq.compareTo(mq) == 1) {
-                    Math_BigRational mr = cr.getMagnitudeSquared();
-                    Math_BigRational mpqr = cpq.add(cr).getMagnitudeSquared();
+                    BigRational mr = cr.getMagnitudeSquared();
+                    BigRational mpqr = cpq.add(cr).getMagnitudeSquared();
                     if (mpqr.compareTo(mr) == 1 && mpqr.compareTo(mpq) == 1) {
                         return true;
                     }
@@ -155,8 +156,8 @@ public class V2D_Triangle extends V2D_Geometry implements V2D_FiniteGeometry {
      * @param oom The Order of Magnitude for the precision.
      * @return The area of the triangle (rounded).
      */
-    public Math_BigRational getArea(int oom) {
-        return pq.getCrossProduct(qr).getMagnitude(oom - 1).divide(2);
+    public BigRational getArea(int oom, RoundingMode rm) {
+        return pq.getCrossProduct(qr).getMagnitude(oom - 1, rm).divide(2);
     }
 
     /**

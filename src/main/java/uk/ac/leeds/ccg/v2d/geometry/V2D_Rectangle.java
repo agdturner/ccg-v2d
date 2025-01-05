@@ -15,7 +15,8 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry;
 
-import uk.ac.leeds.ccg.math.number.Math_BigRational;
+
+import ch.obermuhlner.math.big.BigRational;
 import uk.ac.leeds.ccg.v2d.geometry.envelope.V2D_Envelope;
 
 /**
@@ -170,17 +171,17 @@ public class V2D_Rectangle extends V2D_Geometry implements V2D_FiniteGeometry {
              * If cp, cq, cr, and cs are all in the same direction then pt
              * intersects.
              */
-            Math_BigRational mp = cp.getMagnitudeSquared();
-            Math_BigRational mq = cq.getMagnitudeSquared();
+            BigRational mp = cp.getMagnitudeSquared();
+            BigRational mq = cq.getMagnitudeSquared();
             V2D_Vector cpq = cp.add(cq);
-            Math_BigRational mpq = cpq.getMagnitudeSquared();
+            BigRational mpq = cpq.getMagnitudeSquared();
             if (mpq.compareTo(mp) == 1 && mpq.compareTo(mq) == 1) {
-                Math_BigRational mr = cr.getMagnitudeSquared();
+                BigRational mr = cr.getMagnitudeSquared();
                 V2D_Vector cpqr = cpq.add(cr);
-                Math_BigRational mpqr = cpqr.getMagnitudeSquared();
+                BigRational mpqr = cpqr.getMagnitudeSquared();
                 if (mpqr.compareTo(mr) == 1 && mpqr.compareTo(mpq) == 1) {
-                    Math_BigRational ms = cs.getMagnitudeSquared();
-                    Math_BigRational mpqrs = cpqr.add(cs).getMagnitudeSquared();
+                    BigRational ms = cs.getMagnitudeSquared();
+                    BigRational mpqrs = cpqr.add(cs).getMagnitudeSquared();
                     if (mpqrs.compareTo(ms) == 1 && mpqrs.compareTo(mpqr) == 1) {
                         return true;
                     }

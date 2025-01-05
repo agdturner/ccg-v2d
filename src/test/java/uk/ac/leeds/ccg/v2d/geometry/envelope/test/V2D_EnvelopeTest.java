@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.leeds.ccg.v2d.geometry.envelope;
+package uk.ac.leeds.ccg.v2d.geometry.envelope.test;
 
+import ch.obermuhlner.math.big.BigRational;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_Point;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
@@ -23,10 +24,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import uk.ac.leeds.ccg.generic.core.Generic_Environment;
-import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
-import uk.ac.leeds.ccg.math.number.Math_BigRational;
-import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_LineSegment;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_Point;
 import uk.ac.leeds.ccg.v2d.geometry.envelope.V2D_Envelope;
@@ -36,8 +33,6 @@ import uk.ac.leeds.ccg.v2d.geometry.envelope.V2D_Envelope;
  * @author geoagdt
  */
 public class V2D_EnvelopeTest {
-
-    V2D_Environment env;
 
     public V2D_EnvelopeTest() {
     }
@@ -70,7 +65,7 @@ public class V2D_EnvelopeTest {
         //testIsContainedBy();
         //testIsIntersectedBy_V2D_Point();
         //testIsIntersectedBy_V2D_Point();
-        //testIsIntersectedBy_Math_BigRational_Math_BigRational();
+        //testIsIntersectedBy_BigRational_BigRational();
         //testIsIntersectedBy_V2D_LineSegment();
         //testGetIntersection();
         //testGetEnvelope();
@@ -87,7 +82,7 @@ public class V2D_EnvelopeTest {
     @Test
     public void testToString() {
         System.out.println("toString");
-        V2D_Envelope instance = new V2D_Envelope(Math_BigRational.ZERO, Math_BigRational.ONE, Math_BigRational.ZERO, Math_BigRational.ONE);;
+        V2D_Envelope instance = new V2D_Envelope(BigRational.ZERO, BigRational.ONE, BigRational.ZERO, BigRational.ONE);;
         String expResult = "V2D_Envelope(xMin=0, xMax=1, yMin=0, yMax=1)";
         String result = instance.toString();
         Assertions.assertEquals(expResult, result);
@@ -99,14 +94,14 @@ public class V2D_EnvelopeTest {
     @Test
     public void testUnion() {
         System.out.println("union");
-        Math_BigRational x0 = Math_BigRational.ZERO;
-        Math_BigRational x1 = Math_BigRational.ONE;
-        Math_BigRational x2 = Math_BigRational.TWO;
-        Math_BigRational x3 = Math_BigRational.valueOf(3);
-        Math_BigRational y0 = Math_BigRational.ZERO;
-        Math_BigRational y1 = Math_BigRational.ONE;
-        Math_BigRational y2 = Math_BigRational.TWO;
-        Math_BigRational y3 = Math_BigRational.valueOf(3);
+        BigRational x0 = BigRational.ZERO;
+        BigRational x1 = BigRational.ONE;
+        BigRational x2 = BigRational.TWO;
+        BigRational x3 = BigRational.valueOf(3);
+        BigRational y0 = BigRational.ZERO;
+        BigRational y1 = BigRational.ONE;
+        BigRational y2 = BigRational.TWO;
+        BigRational y3 = BigRational.valueOf(3);
         V2D_Envelope e = new V2D_Envelope(x1, x2, y1, y2);
         V2D_Envelope instance = new V2D_Envelope(x1, x2, y1, y2);
         V2D_Envelope expResult = new V2D_Envelope(x1, x2, y1, y2);
@@ -126,14 +121,14 @@ public class V2D_EnvelopeTest {
     @Test
     public void testIsIntersectedBy_V2D_Envelope() {
         System.out.println("isIntersectedBy");
-        Math_BigRational x0 = Math_BigRational.ZERO;
-        Math_BigRational x1 = Math_BigRational.ONE;
-        Math_BigRational x2 = Math_BigRational.TWO;
-        Math_BigRational x3 = Math_BigRational.valueOf(3);
-        Math_BigRational y0 = Math_BigRational.ZERO;
-        Math_BigRational y1 = Math_BigRational.ONE;
-        Math_BigRational y2 = Math_BigRational.TWO;
-        Math_BigRational y3 = Math_BigRational.valueOf(3);
+        BigRational x0 = BigRational.ZERO;
+        BigRational x1 = BigRational.ONE;
+        BigRational x2 = BigRational.TWO;
+        BigRational x3 = BigRational.valueOf(3);
+        BigRational y0 = BigRational.ZERO;
+        BigRational y1 = BigRational.ONE;
+        BigRational y2 = BigRational.TWO;
+        BigRational y3 = BigRational.valueOf(3);
         V2D_Envelope e = new V2D_Envelope(x1, x2, y1, y2);
         V2D_Envelope instance = new V2D_Envelope(x1, x2, y1, y2);
         boolean result = instance.isIntersectedBy(e);
@@ -151,14 +146,14 @@ public class V2D_EnvelopeTest {
         System.out.println("isIntersectedBy");
         // Test 4
         boolean expResult;
-        Math_BigRational ONE = Math_BigRational.ONE;
-        Math_BigRational TEN = Math_BigRational.TEN;
+        BigRational ONE = BigRational.ONE;
+        BigRational TEN = BigRational.TEN;
         V2D_Point a;
         V2D_Point b = new V2D_Point(ONE, ONE);
         V2D_Envelope be = b.getEnvelope();
         V2D_Envelope abe;
-        Math_BigRational aX = ONE;
-        Math_BigRational aY = ONE;
+        BigRational aX = ONE;
+        BigRational aY = ONE;
         // Test 1
         for (int i = 0; i < 1000; i++) {
             aX = aX.divide(TEN);
@@ -184,14 +179,14 @@ public class V2D_EnvelopeTest {
     @Test
     public void testIsContainedBy() {
         System.out.println("isContainedBy");
-        Math_BigRational x0 = Math_BigRational.ZERO;
-        Math_BigRational x1 = Math_BigRational.ONE;
-        Math_BigRational x2 = Math_BigRational.TWO;
-        Math_BigRational x3 = Math_BigRational.valueOf(3);
-        Math_BigRational y0 = Math_BigRational.ZERO;
-        Math_BigRational y1 = Math_BigRational.ONE;
-        Math_BigRational y2 = Math_BigRational.TWO;
-        Math_BigRational y3 = Math_BigRational.valueOf(3);
+        BigRational x0 = BigRational.ZERO;
+        BigRational x1 = BigRational.ONE;
+        BigRational x2 = BigRational.TWO;
+        BigRational x3 = BigRational.valueOf(3);
+        BigRational y0 = BigRational.ZERO;
+        BigRational y1 = BigRational.ONE;
+        BigRational y2 = BigRational.TWO;
+        BigRational y3 = BigRational.valueOf(3);
         V2D_Envelope e = new V2D_Envelope(x0, x3, y0, y3);
         V2D_Envelope instance = new V2D_Envelope(x1, x2, y1, y2);
         boolean result = instance.isContainedBy(e);
@@ -203,7 +198,7 @@ public class V2D_EnvelopeTest {
         Assertions.assertFalse(result);
         // Test 3
         e = new V2D_Envelope(x0, x3, y0, y3);
-        instance = new V2D_Envelope(x1, x2, y1, Math_BigRational.valueOf(4));
+        instance = new V2D_Envelope(x1, x2, y1, BigRational.valueOf(4));
         result = instance.isContainedBy(e);
         Assertions.assertFalse(result);
     }
@@ -214,14 +209,14 @@ public class V2D_EnvelopeTest {
     @Test
     public void testIsIntersectedBy_V2D_Point() {
         System.out.println("isIntersectedBy");
-        Math_BigRational x0 = Math_BigRational.ZERO;
-        Math_BigRational x1 = Math_BigRational.ONE;
-        Math_BigRational x2 = Math_BigRational.TWO;
-        Math_BigRational x3 = Math_BigRational.valueOf(3);
-        Math_BigRational y0 = Math_BigRational.ZERO;
-        Math_BigRational y1 = Math_BigRational.ONE;
-        Math_BigRational y2 = Math_BigRational.TWO;
-        Math_BigRational y3 = Math_BigRational.valueOf(3);
+        BigRational x0 = BigRational.ZERO;
+        BigRational x1 = BigRational.ONE;
+        BigRational x2 = BigRational.TWO;
+        BigRational x3 = BigRational.valueOf(3);
+        BigRational y0 = BigRational.ZERO;
+        BigRational y1 = BigRational.ONE;
+        BigRational y2 = BigRational.TWO;
+        BigRational y3 = BigRational.valueOf(3);
         V2D_Point p = new V2D_Point(x0, y0);
         V2D_Envelope instance = new V2D_Envelope(x0, x1, y0, y1);
         Assertions.assertTrue(instance.isIntersectedBy(p));
@@ -243,16 +238,16 @@ public class V2D_EnvelopeTest {
      * Test of isIntersectedBy method, of class V2D_Envelope.
      */
     @Test
-    public void testIsIntersectedBy_Math_BigRational_Math_BigRational() {
+    public void testIsIntersectedBy_BigRational_BigRational() {
         System.out.println("isIntersectedBy");
-        Math_BigRational x0 = Math_BigRational.ZERO;
-        Math_BigRational x1 = Math_BigRational.ONE;
-        Math_BigRational x2 = Math_BigRational.TWO;
-        Math_BigRational x3 = Math_BigRational.valueOf(3);
-        Math_BigRational y0 = Math_BigRational.ZERO;
-        Math_BigRational y1 = Math_BigRational.ONE;
-        Math_BigRational y2 = Math_BigRational.TWO;
-        Math_BigRational y3 = Math_BigRational.valueOf(3);
+        BigRational x0 = BigRational.ZERO;
+        BigRational x1 = BigRational.ONE;
+        BigRational x2 = BigRational.TWO;
+        BigRational x3 = BigRational.valueOf(3);
+        BigRational y0 = BigRational.ZERO;
+        BigRational y1 = BigRational.ONE;
+        BigRational y2 = BigRational.TWO;
+        BigRational y3 = BigRational.valueOf(3);
         V2D_Envelope instance = new V2D_Envelope(x0, x1, y0, y1);
         Assertions.assertTrue(instance.isIntersectedBy(x0, y0));
         // Test 2
@@ -271,14 +266,14 @@ public class V2D_EnvelopeTest {
     @Test
     public void testIsIntersectedBy_V2D_LineSegment() {
         System.out.println("isIntersectedBy");
-        Math_BigRational x0 = Math_BigRational.ZERO;
-        Math_BigRational x1 = Math_BigRational.ONE;
-        Math_BigRational x2 = Math_BigRational.TWO;
-        Math_BigRational x3 = Math_BigRational.valueOf(3);
-        Math_BigRational y0 = Math_BigRational.ZERO;
-        Math_BigRational y1 = Math_BigRational.ONE;
-        Math_BigRational y2 = Math_BigRational.TWO;
-        Math_BigRational y3 = Math_BigRational.valueOf(3);
+        BigRational x0 = BigRational.ZERO;
+        BigRational x1 = BigRational.ONE;
+        BigRational x2 = BigRational.TWO;
+        BigRational x3 = BigRational.valueOf(3);
+        BigRational y0 = BigRational.ZERO;
+        BigRational y1 = BigRational.ONE;
+        BigRational y2 = BigRational.TWO;
+        BigRational y3 = BigRational.valueOf(3);
         V2D_Envelope instance = new V2D_Envelope(x0, x2, y0, y2);
         V2D_Point p0 = new V2D_Point(x0, y0);
         V2D_Point p1 = new V2D_Point(x0, y1);
@@ -312,14 +307,14 @@ public class V2D_EnvelopeTest {
     @Test
     public void testGetIntersection() {
         System.out.println("getIntersection");
-        Math_BigRational x0 = Math_BigRational.ZERO;
-        Math_BigRational x1 = Math_BigRational.ONE;
-        Math_BigRational x2 = Math_BigRational.TWO;
-        Math_BigRational x3 = Math_BigRational.valueOf(3);
-        Math_BigRational y0 = Math_BigRational.ZERO;
-        Math_BigRational y1 = Math_BigRational.ONE;
-        Math_BigRational y2 = Math_BigRational.TWO;
-        Math_BigRational y3 = Math_BigRational.valueOf(3);
+        BigRational x0 = BigRational.ZERO;
+        BigRational x1 = BigRational.ONE;
+        BigRational x2 = BigRational.TWO;
+        BigRational x3 = BigRational.valueOf(3);
+        BigRational y0 = BigRational.ZERO;
+        BigRational y1 = BigRational.ONE;
+        BigRational y2 = BigRational.TWO;
+        BigRational y3 = BigRational.valueOf(3);
         V2D_Envelope en = new V2D_Envelope(x0, x2, y0, y2);
         V2D_Envelope instance = new V2D_Envelope(x0, x1, y0, y1);
         V2D_Envelope expResult = new V2D_Envelope(x0, x1, y0, y1);
@@ -363,7 +358,7 @@ public class V2D_EnvelopeTest {
     @Test
     public void testGetEnvelope() {
         System.out.println("getEnvelope");
-        Math_BigRational z = Math_BigRational.ZERO;
+        BigRational z = BigRational.ZERO;
         V2D_Envelope instance = new V2D_Envelope(z, z, z, z);
         V2D_Envelope expResult = new V2D_Envelope(z, z, z, z);
         V2D_Envelope result = instance.getEnvelope();
@@ -376,12 +371,12 @@ public class V2D_EnvelopeTest {
     @Test
     public void testEquals() {
         System.out.println("equals");
-        Math_BigRational z = Math_BigRational.ZERO;
+        BigRational z = BigRational.ZERO;
         Object o = new V2D_Envelope(z, z, z, z);
         V2D_Envelope instance = new V2D_Envelope(z, z, z, z);
         Assertions.assertTrue(instance.equals(o));
         // Test 2
-        instance = new V2D_Envelope(z, z, z, Math_BigRational.ONE);
+        instance = new V2D_Envelope(z, z, z, BigRational.ONE);
         Assertions.assertFalse(instance.equals(o));
     }
 
@@ -400,10 +395,10 @@ public class V2D_EnvelopeTest {
     @Test
     public void testGetxMin() {
         System.out.println("getxMin");
-        Math_BigRational z = Math_BigRational.ZERO;
+        BigRational z = BigRational.ZERO;
         V2D_Envelope instance = new V2D_Envelope(z, z, z, z);
-        Math_BigRational expResult = z;
-        Math_BigRational result = instance.getxMin();
+        BigRational expResult = z;
+        BigRational result = instance.getxMin();
         Assertions.assertEquals(expResult, result);
     }
 
@@ -413,10 +408,10 @@ public class V2D_EnvelopeTest {
     @Test
     public void testGetxMax() {
         System.out.println("getxMax");
-        Math_BigRational z = Math_BigRational.ZERO;
+        BigRational z = BigRational.ZERO;
         V2D_Envelope instance = new V2D_Envelope(z, z, z, z);
-        Math_BigRational expResult = z;
-        Math_BigRational result = instance.getxMax();
+        BigRational expResult = z;
+        BigRational result = instance.getxMax();
         Assertions.assertEquals(expResult, result);
     }
 
@@ -426,10 +421,10 @@ public class V2D_EnvelopeTest {
     @Test
     public void testGetyMin() {
         System.out.println("getyMin");
-        Math_BigRational z = Math_BigRational.ZERO;
+        BigRational z = BigRational.ZERO;
         V2D_Envelope instance = new V2D_Envelope(z, z, z, z);
-        Math_BigRational expResult = z;
-        Math_BigRational result = instance.getyMin();
+        BigRational expResult = z;
+        BigRational result = instance.getyMin();
         Assertions.assertEquals(expResult, result);
     }
 
@@ -439,9 +434,9 @@ public class V2D_EnvelopeTest {
     @Test
     public void testGetyMax() {
         System.out.println("getyMax");
-        Math_BigRational z = Math_BigRational.ZERO;
+        BigRational z = BigRational.ZERO;
         V2D_Envelope instance = new V2D_Envelope(z, z, z, z);
-        Math_BigRational expResult = z;
-        Math_BigRational result = instance.getyMax();
+        BigRational expResult = z;
+        BigRational result = instance.getyMax();
     }
 }

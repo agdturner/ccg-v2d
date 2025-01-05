@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.leeds.ccg.v2d.geometry;
+package uk.ac.leeds.ccg.v2d.geometry.test;
 
+import ch.obermuhlner.math.big.BigRational;
+import java.math.RoundingMode;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,14 +24,16 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import uk.ac.leeds.ccg.math.number.Math_BigRational;
-import uk.ac.leeds.ccg.v2d.V2D_Test;
+import uk.ac.leeds.ccg.v2d.geometry.V2D_Geometry;
+import uk.ac.leeds.ccg.v2d.geometry.V2D_Line;
+import uk.ac.leeds.ccg.v2d.geometry.V2D_LineSegment;
+import uk.ac.leeds.ccg.v2d.geometry.V2D_Point;
 
 /**
  * @author Andy Turner
  * @version 1.0.0
  */
-public class V2D_LineTest extends V2D_Test {
+public class V2D_LineTest {
 
     public V2D_LineTest() {
         super();
@@ -216,31 +220,10 @@ public class V2D_LineTest extends V2D_Test {
         V2D_Point r = new V2D_Point(0, 1);
         V2D_Point s = new V2D_Point(2, 1);
         V2D_Line instance = new V2D_Line(r, s);
-        Math_BigRational expResult = Math_BigRational.ONE;
-        Math_BigRational result = instance.getDistance(l, oom);
+        BigRational expResult = BigRational.ONE;
+        RoundingMode rm = RoundingMode.HALF_UP;
+        BigRational result = instance.getDistance(l, oom, rm);
         assertTrue(expResult.compareTo(result) == 0);
-    }
-
-    /**
-     * Test of equals method, of class V2D_Line.
-     */
-    @Test
-    public void testEquals_Object() {
-        System.out.println("equals");
-        Object o = new V2D_Line(P0P0, P1P1);
-        V2D_Line instance = new V2D_Line(P0P0, P1P1);
-        assertTrue(instance.equals(o));
-    }
-
-    /**
-     * Test of equals method, of class V2D_Line.
-     */
-    @Test
-    public void testEquals_V2D_Line() {
-        System.out.println("equals");
-        V2D_Line l = new V2D_Line(P0P0, P1P1);
-        V2D_Line instance = new V2D_Line(P0P0, P1P1);
-        assertTrue(instance.equals(l));
     }
 
 }

@@ -26,6 +26,8 @@ import java.io.Serializable;
 public abstract class V2D_Geometry implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    
+    public V2D_Geometry(){}
 
     /**
      * @param l The line for which intersection with the envelope is indicated.
