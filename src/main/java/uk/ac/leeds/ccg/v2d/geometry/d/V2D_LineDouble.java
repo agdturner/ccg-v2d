@@ -459,7 +459,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
         if (isIntersectedBy(epsilon, pt)) {
             return pt;
         }
-        V2D_LineDouble l = new V2D_LineDouble(pt, v.rotate(V2D_AngleDouble.PIBY4));
+        V2D_LineDouble l = new V2D_LineDouble(pt, v.rotate90());
         return (V2D_PointDouble) l.getIntersection(this, epsilon);
     }
     

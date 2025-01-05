@@ -925,7 +925,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
         } else {
             V2D_PointDouble lsp = loi.getP();
             //V2D_Point lsq = loi.getQ();
-            V2D_VectorDouble pv = l.v.rotate(V2D_AngleDouble.PIBY4);
+            V2D_VectorDouble pv = l.v.rotate90();
             V2D_LineDouble plp = new V2D_LineDouble(tp, pv);
             V2D_LineDouble plq = new V2D_LineDouble(tq, pv);
             if (plp.isOnSameSide(lsp, tq, epsilon)) {
@@ -969,7 +969,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
                 V2D_PointDouble lsloiq = lsloi.getQ();
                 // Is the intersection point on this within the line segment?
                 // Can use isAligned to do this more clearly?
-                V2D_VectorDouble pv = l.v.rotate(V2D_AngleDouble.PIBY4);
+                V2D_VectorDouble pv = l.v.rotate90();
                 V2D_LineDouble tppl = new V2D_LineDouble(tp, pv);
                 V2D_LineDouble tqpl = new V2D_LineDouble(tq, pv);
                 if (tppl.isOnSameSide(lsloiq, tq, epsilon)) {
@@ -995,7 +995,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
                     V2D_PointDouble lsip;
                     // Is the intersection point on ls within the line segment?
                     // Can use isAligned to do this more clearly?
-                    V2D_VectorDouble pv = ls.l.v.rotate(V2D_AngleDouble.PIBY4);
+                    V2D_VectorDouble pv = ls.l.v.rotate90();
                     V2D_LineDouble lsppl = new V2D_LineDouble(lsp,pv);
                     if (lsppl.isOnSameSide(tloiq, lsq, epsilon)) {
                         V2D_LineDouble lsqpl = new V2D_LineDouble(lsq, pv);
@@ -1041,7 +1041,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
     public V2D_LineDouble getPL() {
         if (pl == null) {
             V2D_PointDouble pt = l.getP();
-            pl = new V2D_LineDouble(pt, l.v.rotate(V2D_AngleDouble.PIBY4));
+            pl = new V2D_LineDouble(pt, l.v.rotate90());
         }
         return pl;
     }
@@ -1054,7 +1054,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
     public V2D_LineDouble getQL() {
         if (ql == null) {
             V2D_PointDouble pt = getQ();
-            ql = new V2D_LineDouble(pt, l.v.rotate(V2D_AngleDouble.PIBY4));
+            ql = new V2D_LineDouble(pt, l.v.rotate90());
         }
         return ql;
     }

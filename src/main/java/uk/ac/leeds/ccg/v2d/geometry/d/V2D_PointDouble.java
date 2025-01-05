@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import uk.ac.leeds.ccg.math.arithmetic.Math_Double;
+import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
 
 /**
  * A point is defined by two vectors: {@link #offset} and {@link #rel}. Adding
@@ -251,36 +252,6 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble {
      * Returns true if this is between a and b. If this equals a or b then
      * return true. Being between does not necessarily mean being collinear.
      *
-     * @param a A point.
-     * @param b A point.
-     * @return true iff this is between a and b.
-     */
-    public boolean isBetween(V2D_PointDouble a, V2D_PointDouble b) {
-        V2D_VectorDouble ab = new V2D_VectorDouble(a, b);
-        if (this.equals(a)) {
-            return true;
-        }
-        if (this.equals(b)) {
-            return true;
-        }
-        if (a.equals(b)) {
-            return false;
-        }
-//        V2D_PlaneDouble ap = new V2D_PlaneDouble(a, ab);
-//        int aps = ap.getSideOfPlane(this);
-//        if (aps == -1) {
-//            return false;
-//        }
-//        V2D_PlaneDouble bp = new V2D_PlaneDouble(b, ab);
-//        int bps = bp.getSideOfPlane(this);
-//        return bps != 1;
-        return false;
-    }
-
-    /**
-     * Returns true if this is between a and b. If this equals a or b then
-     * return true. Being between does not necessarily mean being collinear.
-     *
      * @param epsilon The tolerance within which vector components are
      * considered equal.
      * @param a A point
@@ -298,14 +269,12 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble {
         if (a.equals(b)) {
             return false;
         }
-//        V2D_PlaneDouble ap = new V2D_PlaneDouble(a, ab);
-//        int aps = ap.getSideOfPlane(this, epsilon);
-//        if (aps == -1) {
-//            return false;
-//        }
-//        V2D_PlaneDouble bp = new V2D_PlaneDouble(b, ab);
-//        int bps = bp.getSideOfPlane(this, epsilon);
-//        return bps != 1;
+        V2D_VectorDouble v90 = ab.rotate90();
+        V2D_LineDouble ap = new V2D_LineDouble(a, v90);
+        if (ap.isOnSameSide(this, b, epsilon)) {
+            V2D_LineDouble bp = new V2D_LineDouble(b, v90);
+            return bp.isOnSameSide(this, a, epsilon);
+        }
         return false;
     }
 
@@ -400,25 +369,17 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble {
 
     @Override
     public V2D_PointDouble rotate(V2D_PointDouble pt, double theta, double epsilon) {
-        theta = V2D_AngleDouble.normalise(theta);
+        theta = Math_AngleDouble.normalise(theta);
         if (theta == 0d) {
             return new V2D_PointDouble(this);
         }
-//        V2D_VectorDouble tv = ray.l.getPointOfIntersection(this, epsilon).getVector();
-//        V2D_PointDouble tp = new V2D_PointDouble(this);
-//        tp.translate(tv.reverse());
-//        V2D_VectorDouble tpv = tp.getVector();
-//        V2D_PointDouble r;
-//        if (tpv.isZero()) {
-//            r = new V2D_PointDouble(tpv);
-//        } else {
-//            double magnitude = tpv.getMagnitude();
-//            V2D_VectorDouble tpr = tpv.getUnitVector().rotate(uv, theta);
-//            r = new V2D_PointDouble(tpr.multiply(magnitude));
-//        }
-//        r.translate(tv);
-//        return r;
-        return null;
+        V2D_VectorDouble tv = new V2D_VectorDouble(pt.getX(), pt.getY());
+        V2D_PointDouble tp = new V2D_PointDouble(this);
+        tp.translate(tv.reverse());
+        V2D_VectorDouble tpv = tp.getVector();
+        V2D_PointDouble r = new V2D_PointDouble(tpv.rotate(theta));
+        r.translate(tv);
+        return r;
     }
 
     /**

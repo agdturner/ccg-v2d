@@ -72,63 +72,40 @@ public class V2D_OSGBtoLatLonDoubleTest {
      * Test of osgb2latlon method, of class V2D_OSGBtoLatLon.
      */
     @Test
-    @Disabled
-    public void testOsgb2latlon_double_double() {
-        System.out.println("osgb2latlon");
-        double easting = 0.0;
-        double northing = 0.0;
-        double[] expResult = null;
-        double[] result = V2D_OSGBtoLatLonDouble.osgb2latlon(easting, northing);
-        assertArrayEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of osgb2latlon method, of class V2D_OSGBtoLatLon.
-     */
-    @Test
-    @Disabled
     public void testOsgb2latlon() {
         System.out.println("osgb2latlon");
         double easting = 0.0;
         double northing = 0.0;
         boolean verbose = false;
-        double[] expResult = null;
+        double[] expResult = new double[2];
+        expResult[0] = 49.7661822476161;
+        expResult[1] = -7.556448075617283;
         double[] result = V2D_OSGBtoLatLonDouble.osgb2latlon(easting, northing, verbose);
         assertArrayEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
      * Test of toRadians method, of class V2D_OSGBtoLatLon.
      */
     @Test
-    @Disabled
     public void testToRadians() {
         System.out.println("toRadians");
         double x = 0.0;
         double expResult = 0.0;
         double result = V2D_OSGBtoLatLonDouble.toRadians(x);
         assertEquals(expResult, result, 0.0);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
      * Test of toDegrees method, of class V2D_OSGBtoLatLon.
      */
     @Test
-    @Disabled
     public void testToDegree() {
         System.out.println("toDegrees");
         double x = 0.0;
         double expResult = 0.0;
         double result = V2D_OSGBtoLatLonDouble.toDegrees(x);
         assertEquals(expResult, result, 0.0);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
     
 }

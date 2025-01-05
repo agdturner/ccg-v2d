@@ -18,6 +18,7 @@ package uk.ac.leeds.ccg.v2d.geometry.d;
 import java.io.Serializable;
 import java.util.Objects;
 import uk.ac.leeds.ccg.math.arithmetic.Math_Double;
+import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.light.V2D_VDouble;
 
 /**
@@ -583,7 +584,7 @@ public class V2D_VectorDouble implements Serializable {
      * @return The vector which is {@code #this} rotated using the parameters.
      */
     public V2D_VectorDouble rotate(double theta) {
-        theta = V2D_AngleDouble.normalise(theta);
+        theta = Math_AngleDouble.normalise(theta);
         if (theta == 0d) {
             return new V2D_VectorDouble(this);
         } else {
@@ -595,6 +596,16 @@ public class V2D_VectorDouble implements Serializable {
             double dy2 = dy * Math.cos(theta) - dx * Math.sin(theta);
             return new V2D_VectorDouble(dx2, dy2);
         }
+    }
+    
+    /**
+     * Calculate and return {@code #this} rotated clockwise.
+     *
+     * @param theta The angle of rotation.
+     * @return The vector which is {@code #this} rotated using the parameters.
+     */
+    public V2D_VectorDouble rotate90() {
+        return new V2D_VectorDouble(-dy, dx);
     }
 
     /**

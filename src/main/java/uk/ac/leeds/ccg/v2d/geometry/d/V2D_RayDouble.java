@@ -15,6 +15,8 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry.d;
 
+import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
+
 /**
  * 3D representation of a ray - like a line, but one that starts at a point
  * continues infinitely in only one direction. The ray begins at the point of
@@ -201,7 +203,7 @@ public class V2D_RayDouble extends V2D_GeometryDouble {
     public V2D_LineDouble getPl() {
         if (pl == null) {
             V2D_PointDouble pt = l.getP();
-            pl = new V2D_LineDouble(pt, l.v.rotate(V2D_AngleDouble.PIBY4));
+            pl = new V2D_LineDouble(pt, l.v.rotate90());
         }
         return pl;
     }
@@ -439,7 +441,7 @@ public class V2D_RayDouble extends V2D_GeometryDouble {
     
     @Override
     public V2D_RayDouble rotate(V2D_PointDouble pt, double theta, double epsilon) {
-        theta = V2D_AngleDouble.normalise(theta);
+        theta = Math_AngleDouble.normalise(theta);
         if (theta == 0d) {
             return new V2D_RayDouble(this);
         } else {
