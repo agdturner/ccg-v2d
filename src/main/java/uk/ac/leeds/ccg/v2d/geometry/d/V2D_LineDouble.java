@@ -364,7 +364,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
     
     
     /**
-     * 
+     * https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
      * @param l Line to intersect with.
      */
     public V2D_GeometryDouble getIntersection(V2D_LineDouble l, double epsilon) {
@@ -392,46 +392,18 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
         if (l.isParallel(this, epsilon)) {
             return null;
         }
-        /**
-         * Find the intersection point where the two equations of the lines
-         * meet. (x(t)−x0)/a = (y(t)−y0)/b
-         */
-        // (x−p.x)/a = (y−p.y)/b
-        // t = (v.dx - x0)/p.x;
-        // t = (v.dy - y0)/p.y;
-        // x(t) = t(dx)+q.x
-        // y(t) = t(dy)+q.y
-        // 1: t(v.dx)+q.x = s(l.v.dx)+l.q.x
-        // 2: t(v.dy)+q.y = s(l.v.dy)+l.q.y
-        // Let:
-        // l.v.dx = k; l.v.dy = l
-        // From 1:
-        // t = ((s(k)+l.q.x-q.x)/(v.dx))
-        // Let:
-        // l.q.x-q.x = e; l.q.y-q.y = f
-        // v.dx = a; v.dy = b
-        // t = (sk+e)/a
-        // Sub into 2:
-        // ((sk+e)/a)b+q.y = sl + l.q.y
-        // skb/a +eb/a - s1 = l.q.y - q.y
-        // s(kb/a - l) = l.q.y - q.y - eb/a
-        // s = (l.q.y - q.y - eb/a) / ((kb/a) - l)
-        double t;
-            double qx = q.getX();
-            double qy = q.getY();
-            double lqx = l.q.getX();
-            double lqy = l.q.getY();
-        if (v.dx == 0D) {
-            // Line has constant x    
-            double den = (l.v.dy * v.dx / v.dy) - l.v.dx;
-            double num = (lqx - qx) - (lqy - qy) * v.dx / v.dy;
-            t = num / den * l.v.dy + lqy - qy / v.dy;
-        } else {
-            double den = l.v.dx * v.dy / v.dx - l.v.dy;
-            double num = (lqy - qy) - (lqx - qx) * v.dy / v.dx;
-            t = num / den * l.v.dx + lqx - qx / v.dx;
-        }
-        return new V2D_PointDouble(t * v.dx + qx, t * v.dy + qy);
+        double x1 = p.getX();
+        double x2 = q.getX();
+        double x3 = l.p.getX();
+        double x4 = l.q.getX();
+        double y1 = p.getY();
+        double y2 = q.getY();
+        double y3 = l.p.getY();
+        double y4 = l.q.getY();        
+        double numx = ((x1 * y2 - y1 * x2) * (x3 - x4)) - ((x1 - x2) * (x3 * y4 - y3 * x4));
+        double den = ((x1 - x2) * (y3 - y4)) - ((y1 - y2) * (x3 - x4));
+        double numy = ((x1 * y2 - y1 * x2) * (y3 - y4)) - ((y1 - y2) * (x3 * y4 - y3 * x4));
+        return new V2D_PointDouble(numx / den, numy /den);
     }
     
     /**
