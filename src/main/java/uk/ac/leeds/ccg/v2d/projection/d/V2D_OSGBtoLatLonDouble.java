@@ -15,6 +15,8 @@
  */
 package uk.ac.leeds.ccg.v2d.projection.d;
 
+import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
+
 /**
  * Adapted from http://www.movable-type.co.uk/scripts/latlong-gridref.html.
  * Ordnance Survey Grid Reference functions (c) Chris Veness 2005-2012
@@ -40,14 +42,14 @@ public class V2D_OSGBtoLatLonDouble {
      */
     public static double[] latlon2osgb(double lat, double lon) {
         double[] result = new double[2];
-        double latr = toRadians(lat);
-        double lonr = toRadians(lon);
+        double latr = Math_AngleDouble.toRadians(lat);
+        double lonr = Math_AngleDouble.toRadians(lon);
         double a = 6377563.396;
         double b = 6356256.910;            // Airy 1830 major & minor semi-axes
         double F0 = 0.9996012717;          // NatGrid scale factor on central meridian
         //System.out.println("F0 " + F0);
-        double lat0 = toRadians(49);
-        double lon0 = toRadians(-2);       // NatGrid true origin is 49ºN,2ºW
+        double lat0 = Math_AngleDouble.toRadians(49);
+        double lon0 = Math_AngleDouble.toRadians(-2);       // NatGrid true origin is 49ºN,2ºW
         double N0 = -100000;
         double E0 = 400000;                // northing & easting of true origin, metres
         double e2 = 1 - (b * b) / (a * a); // eccentricity squared
@@ -166,8 +168,8 @@ public class V2D_OSGBtoLatLonDouble {
         double a = 6377563.396;
         double b = 6356256.910;            // Airy 1830 major & minor semi-axes
         double F0 = 0.9996012717;          // NatGrid scale factor on central meridian
-        double lat0 = toRadians(49);
-        double lon0 = toRadians(-2);       // NatGrid true origin is 49ºN,2ºW
+        double lat0 = Math_AngleDouble.toRadians(49);
+        double lon0 = Math_AngleDouble.toRadians(-2);       // NatGrid true origin is 49ºN,2ºW
         double N0 = -100000;
         double E0 = 400000;                // northing & easting of true origin, metres
         double e2 = 1 - (b * b) / (a * a); // eccentricity squared
@@ -228,8 +230,8 @@ public class V2D_OSGBtoLatLonDouble {
         double dE7 = dE5 * dE2;
         lat = lat - VII * dE2 + VIII * dE4 - IX * dE6;
         double lon = lon0 + X * dE - XI * dE3 + XII * dE5 - XIIA * dE7;
-        result[0] = toDegrees(lat);
-        result[1] = toDegrees(lon);
+        result[0] = Math_AngleDouble.toDegrees(lat);
+        result[1] = Math_AngleDouble.toDegrees(lon);
         if (verbose) {
             System.out.println("lat " + lat);
             System.out.println("cosLat " + cosLat);
@@ -251,25 +253,4 @@ public class V2D_OSGBtoLatLonDouble {
         //System.out.println("lat " + lat + ", lon " + lon);
         return result;
     }
-
-    /**
-     * Calculate at return the x*Math.PI/180.
-     *
-     * @param x The angle in decimal degrees to convert to radians.
-     * @return The angle of x in radians.
-     */
-    public static double toRadians(double x) {
-        return x * Math.PI / 180D;
-    }
-
-    /**
-     * Calculate at return the x*180/Pi.
-     *
-     * @param x The angle in radians to convert to decimal degrees.
-     * @return The angle of x in decimal degrees.
-     */
-    public static double toDegrees(double x) {
-        return x * 180D / Math.PI;
-    }
-
 }

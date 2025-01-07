@@ -79,12 +79,4 @@ public class V2D_Angles {
         //double result_deg = getRadToDeg(result);
         return r;
     }
-
-    /**
-     * @param a The angle in radians to be returned in degrees.
-     * @return The angle {@code a} in degrees.
-     */
-    public static double getRadToDeg(double a) {
-        return (a / Math.PI) * 180.0d;
-    }
 }

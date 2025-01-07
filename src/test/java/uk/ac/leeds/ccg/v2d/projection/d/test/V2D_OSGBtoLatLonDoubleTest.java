@@ -24,6 +24,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
 import uk.ac.leeds.ccg.v2d.projection.d.V2D_OSGBtoLatLonDouble;
 
 /**
@@ -92,7 +93,7 @@ public class V2D_OSGBtoLatLonDoubleTest {
         System.out.println("toRadians");
         double x = 0.0;
         double expResult = 0.0;
-        double result = V2D_OSGBtoLatLonDouble.toRadians(x);
+        double result = Math_AngleDouble.toRadians(x);
         assertEquals(expResult, result, 0.0);
     }
 
@@ -104,7 +105,7 @@ public class V2D_OSGBtoLatLonDoubleTest {
         System.out.println("toDegrees");
         double x = 0.0;
         double expResult = 0.0;
-        double result = V2D_OSGBtoLatLonDouble.toDegrees(x);
+        double result = Math_AngleDouble.toDegrees(x);
         assertEquals(expResult, result, 0.0);
     }
     

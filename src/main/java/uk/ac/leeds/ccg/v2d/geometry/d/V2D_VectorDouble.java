@@ -465,8 +465,11 @@ public class V2D_VectorDouble implements Serializable {
                  */
                 return true;
             }
-            if (dx == 0D || dy == 0D) {
-                return false;
+            if (dx == 0D) {
+                return v.dy == 0D;
+            }
+            if (dy == 0D) {
+                return v.dx == 0D;
             }
             return (v.dx / dx) == (v.dy / dy);
         }
@@ -517,7 +520,7 @@ public class V2D_VectorDouble implements Serializable {
                             return false;
                         }
                     } else {
-                        return false;
+                        return true;
                     }
                 } else {
                     // |dx| = |v.dx| != 0d

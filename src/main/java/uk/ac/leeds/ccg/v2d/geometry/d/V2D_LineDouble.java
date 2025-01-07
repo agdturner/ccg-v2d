@@ -327,7 +327,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
         V2D_VectorDouble dpt = new V2D_VectorDouble(
                     pt.getX() - tp.getX(),
                     pt.getY() - tp.getY());
-        return !dpt.isScalarMultiple(v);
+        return dpt.isScalarMultiple(v);
     }
 
     /**
@@ -348,7 +348,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
         V2D_VectorDouble dpt = new V2D_VectorDouble(
                     pt.getX() - tp.getX(),
                     pt.getY() - tp.getY());
-        return !dpt.isScalarMultiple(epsilon, v);
+        return dpt.isScalarMultiple(epsilon, v);
     }
 
     /**
@@ -369,16 +369,18 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      */
     public V2D_GeometryDouble getIntersection(V2D_LineDouble l, double epsilon) {
         // Check the points.
+        p = getP();
+        q = getQ();
         if (l.isIntersectedBy(p)) {
             if (l.isIntersectedBy(q)) {
                 return this; // The lines are coincident.
-            } else {
-                return p;
+            //} else {
+            //    return p;
             }
-        } else {
-            if (l.isIntersectedBy(q)) {
-                return q;
-            }
+        //} else {
+        //    if (l.isIntersectedBy(q)) {
+        //        return q;
+        //    }
         }
         if (this.isIntersectedBy(l.p)) {
             return l.p;
@@ -499,20 +501,14 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @return {@code true} iff this is parallel to the plane defined by x=0.
      */
     public boolean isParallelToX0() {
-        if (v.dy == 0d) {
-            return true;
-        }
-        return false;
+        return v.dx == 0d;
     }
 
     /**
      * @return {@code true} iff this is parallel to the plane defined by y=0.
      */
     public boolean isParallelToY0() {
-        if (v.dx == 0d) {
-            return true;
-        }
-        return false;
+        return v.dy == 0d;
     }
 
     /**
