@@ -645,9 +645,17 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
         if (isIntersectedBy(epsilon, a) && isIntersectedBy(epsilon, b)) {
             return true;
         }
-        double px = p.getX();
-        double py = p.getY();
-        return (v.dy * (a.getX() - px) + (v.dx * (a.getY() - py))) * 
-                (v.dy * (b.getX() - px) + v.dx * (b.getY() - py)) >= 0D;
+        double x1 = p.getX();
+        double y1 = p.getY();
+        double x2 = q.getX();
+        double y2 = q.getY();
+        double ax = a.getX();
+        double ay = a.getY();
+        double bx = b.getX();
+        double by = b.getY();
+        
+        return ((y1-y2)*(ax-x1)+(x2-x1)*(ay-y1))*((y1-y2)*(bx-x1)+(x2-x1)*(by-y1)) >= 0D;
+        //return (v.dy * (a.getX() - px) + (v.dx * (a.getY() - py))) * 
+        //        (v.dy * (b.getX() - px) + v.dx * (b.getY() - py)) >= 0D;
     }
 }

@@ -686,6 +686,24 @@ public class V2D_LineDoubleTest extends V2D_TestDouble {
         result = instance.rotate(pP0P0, theta, epsilon);
         assertTrue(expResult.equals(epsilon, result));
     }
+    
+    /**
+     * Test of isOnSameSide.
+     */
+    @Test
+    public void testIsOnSameSide() {
+        System.out.println("isCollinear");
+        double epsilon = 1d / 10000000d;
+        V2D_LineDouble l;
+        // Test 1
+        l = new V2D_LineDouble(pP0P1, pP1P2);
+        V2D_PointDouble a = pN1P1;
+        V2D_PointDouble b = pP1P0;
+        assertFalse(l.isOnSameSide(a, b, epsilon));        
+        // Test 2
+        a = pP1P1;
+        assertTrue(l.isOnSameSide(a, b, epsilon));
+    }
 
     /**
      * Test of isCollinear method, of class V2D_LineDouble.
