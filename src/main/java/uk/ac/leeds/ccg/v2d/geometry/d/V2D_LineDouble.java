@@ -350,7 +350,166 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
                     pt.getY() - tp.getY());
         return dpt.isScalarMultiple(epsilon, v);
     }
-
+    
+    /**
+     * @param x1 p.getX()
+     * @param x2 q.getX()
+     * @param x3 l.p.getX()
+     * @param x4 l.q.getX()
+     * @param y1 p.getY()
+     * @param y2 q.getY()
+     * @param y3 l.p.getY()
+     * @param y4 l.q.getY()
+     * @return ((x1 - x2) * (y3 - y4)) - ((y1 - y2) * (x3 - x4))
+     */
+    public static double getIntersectionDenominator(double x1,  double x2,
+            double x3, double x4, double y1, double y2, double y3, double y4) {
+        return ((x1 - x2) * (y3 - y4)) - ((y1 - y2) * (x3 - x4));
+    }
+    
+//    /**
+//     * https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
+//     * @param l A line to test for intersection.
+//     * @return {@code true} if lines intersect.
+//     */
+//    public boolean isIntersectedBy(V2D_LineDouble l) {
+//        return isIntersectedBy(l, 
+//                getIntersectionDenominator(p.getX(), q.getX(), l.p.getX(),
+//                l.q.getX(), p.getY(), q.getY(), l.p.getY(), l.q.getY()));
+//    }
+//    
+//    /**
+//     * https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
+//     * @param l A line to test for intersection.
+//     * @param den getIntersectionDenominator(p.getX(), q.getX(), l.p.getX(),
+//     *           l.q.getX(), p.getY(), q.getY(), l.p.getY(), l.q.getY())
+//     * @return {@code true} if lines intersect.
+//     */
+//    public boolean isIntersectedBy(V2D_LineDouble l, double den) {
+//        if (den == 0.0D) {
+//            // Lines are parallel or coincident.
+//            return equals(l);
+//        }
+//        return true;
+//    }
+//    
+//    /**
+//     * https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
+//     * @param l A line to test for intersection.
+//     * @param x1 p.getX()
+//     * @param x2 q.getX()
+//     * @param x3 l.p.getX()
+//     * @param x4 l.q.getX()
+//     * @param y1 p.getY()
+//     * @param y2 q.getY()
+//     * @param y3 l.p.getY()
+//     * @param y4 l.q.getY()
+//     * @return {@code true} if lines intersect.
+//     */
+//    public boolean isIntersectedBy(V2D_LineDouble l, double x1,  double x2,
+//            double x3, double x4, double y1, double y2, double y3, double y4) {
+//        return isIntersectedBy(l,
+//                getIntersectionDenominator(x1, x2, x3, x4, y1, y2, y3, y4));
+//    }
+    
+    /**
+     * https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
+     * @param epsilon The tolerance within which two lines are considered equal.
+     * @param l A line to test for intersection.
+     * @return {@code true} if lines intersect.
+     */
+    public boolean isIntersectedBy(double epsilon, V2D_LineDouble l) {
+        return isIntersectedBy(epsilon, l, 
+                getIntersectionDenominator(p.getX(), q.getX(), l.p.getX(),
+                l.q.getX(), p.getY(), q.getY(), l.p.getY(), l.q.getY()));
+    }
+    
+    /**
+     * https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
+     * @param epsilon The tolerance within which two lines are considered equal.
+     * @param l A line to test for intersection.
+     * @param x1 getP().getX()
+     * @param x2 getQ().getX()
+     * @param x3 l.getP().getX()
+     * @param x4 l.getQ().getX()
+     * @param y1 p.getY()
+     * @param y2 q.getY()
+     * @param y3 l.p.getY()
+     * @param y4 l.q.getY()
+     * @return {@code true} if lines intersect.
+     */
+    public boolean isIntersectedBy(double epsilon, V2D_LineDouble l, double x1,
+            double x2, double x3, double x4, double y1, double y2, double y3, 
+            double y4) {
+        return isIntersectedBy(epsilon, l, 
+                getIntersectionDenominator(x1, x2, x3, x4, y1, y2, y3, y4));
+    }
+    
+    /**
+     * https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
+     * @param epsilon The tolerance within which two lines are considered equal.
+     * @param l A line to test for intersection.
+     * @param den getIntersectionDenominator(p.getX(), q.getX(), l.p.getX(),
+     *           l.q.getX(), p.getY(), q.getY(), l.p.getY(), l.q.getY())
+     * @return {@code true} if lines intersect.
+     */
+    public boolean isIntersectedBy(double epsilon, V2D_LineDouble l, double den) {
+        if (den == 0.0D) {
+            // Lines are parallel or coincident.
+            return equals(epsilon, l);
+        }
+        return true;
+    }
+    
+    /**
+     * https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
+     * @param epsilon The tolerance within which two lines are considered equal.
+     * @param l Line to intersect with.
+     * @returns The geometry or null if there is no intersection.
+     */
+    public V2D_GeometryDouble getIntersection(double epsilon, V2D_LineDouble l) {        
+        double x1 = getP().getX();
+        double x2 = getQ().getX();
+        double x3 = l.getP().getX();
+        double x4 = l.getQ().getX();
+        double y1 = p.getY();
+        double y2 = q.getY();
+        double y3 = l.p.getY();
+        double y4 = l.q.getY();
+        double den = getIntersectionDenominator(x1, x2, x3, x4, y1, y2, y3, y4);
+        return getIntersection(epsilon, l, den, x1, x2, x3, x4, y1, y2, y3, y4);
+    }
+    
+    /**
+     * https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
+     * @param epsilon The tolerance within which two lines are considered equal.
+     * @param l Line to intersect with.
+     * @param den getIntersectionDenominator(x1, x2, x3, x4, y1, y2, y3, y4)
+     * @param x1 getP().getX()
+     * @param x2 getQ().getX()
+     * @param x3 l.getP().getX()
+     * @param x4 l.getQ().getX()
+     * @param y1 p.getY()
+     * @param y2 q.getY()
+     * @param y3 l.p.getY()
+     * @param y4 l.q.getY()
+     * @return The geometry or null if there is no intersection.
+     */
+    public V2D_GeometryDouble getIntersection(double epsilon, V2D_LineDouble l, 
+            double den, double x1, double x2, double x3, double x4, double y1, 
+            double y2, double y3, double y4) {
+        if (isIntersectedBy(epsilon, l, den)) {
+            // Check for coincident lines
+            if (equals(epsilon, l)) {
+                return l;
+            }
+            double numx = ((x1 * y2 - y1 * x2) * (x3 - x4)) - ((x1 - x2) * (x3 * y4 - y3 * x4));
+            double numy = ((x1 * y2 - y1 * x2) * (y3 - y4)) - ((y1 - y2) * (x3 * y4 - y3 * x4));
+            return new V2D_PointDouble(numx / den, numy / den);            
+        }
+        return null;
+    }
+    
     /**
      * @param epsilon The tolerance within which vector components are
      * considered equal.
@@ -359,51 +518,6 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      */
     public boolean isParallel(V2D_LineDouble l, double epsilon) {
         return v.isScalarMultiple(epsilon, l.v);
-    }
-
-    
-    
-    /**
-     * https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
-     * @param l Line to intersect with.
-     */
-    public V2D_GeometryDouble getIntersection(V2D_LineDouble l, double epsilon) {
-        // Check the points.
-        p = getP();
-        q = getQ();
-        if (l.isIntersectedBy(p)) {
-            if (l.isIntersectedBy(q)) {
-                return this; // The lines are coincident.
-            //} else {
-            //    return p;
-            }
-        //} else {
-        //    if (l.isIntersectedBy(q)) {
-        //        return q;
-        //    }
-        }
-        if (this.isIntersectedBy(l.p)) {
-            return l.p;
-        }
-        if (this.isIntersectedBy(l.q)) {
-            return l.q;
-        }
-        // Case of parallel and non equal lines.
-        if (l.isParallel(this, epsilon)) {
-            return null;
-        }
-        double x1 = p.getX();
-        double x2 = q.getX();
-        double x3 = l.p.getX();
-        double x4 = l.q.getX();
-        double y1 = p.getY();
-        double y2 = q.getY();
-        double y3 = l.p.getY();
-        double y4 = l.q.getY();        
-        double numx = ((x1 * y2 - y1 * x2) * (x3 - x4)) - ((x1 - x2) * (x3 * y4 - y3 * x4));
-        double den = ((x1 - x2) * (y3 - y4)) - ((y1 - y2) * (x3 - x4));
-        double numy = ((x1 * y2 - y1 * x2) * (y3 - y4)) - ((y1 - y2) * (x3 * y4 - y3 * x4));
-        return new V2D_PointDouble(numx / den, numy /den);
     }
     
     /**
@@ -434,7 +548,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
             return pt;
         }
         V2D_LineDouble l = new V2D_LineDouble(pt, v.rotate90());
-        return (V2D_PointDouble) l.getIntersection(this, epsilon);
+        return (V2D_PointDouble) getIntersection(epsilon, l);
     }
     
     /**

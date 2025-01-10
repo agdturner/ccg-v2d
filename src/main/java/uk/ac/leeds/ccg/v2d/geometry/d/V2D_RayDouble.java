@@ -292,7 +292,7 @@ public class V2D_RayDouble extends V2D_GeometryDouble {
      */
     public V2D_GeometryDouble getIntersection(V2D_LineDouble l, double epsilon) {
         // Check if infinite lines intersect.
-        V2D_GeometryDouble g = this.l.getIntersection(l, epsilon);
+        V2D_GeometryDouble g = this.l.getIntersection(epsilon, l);
         if (g == null) {
             // There is no intersection.
             return g;

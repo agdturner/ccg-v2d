@@ -299,7 +299,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      * @return {@code true} iff {@code this} is equal to {@code l}. This ignores
      * the order of the point of {@link #l} and {@link #qv}.
      */
-    public boolean equalsIgnoreDirection(double epsilon, 
+    public boolean equalsIgnoreDirection(double epsilon,
             V2D_LineSegmentDouble l) {
 //        if (l == null) {
 //            return false;
@@ -335,7 +335,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
         }
         return en;
     }
-    
+
     /**
      * @param pt A point to test for intersection.
      * @return {@code true} if {@code this} is intersected by {@code pv}.
@@ -394,42 +394,110 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
     }
 
     /**
+     * @param l A line to test for intersection.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     */
+    public boolean isIntersectedBy(V2D_LineDouble l, double epsilon) {
+        return false;
+    }
+
+    /**
      * Intersects {@code this} with {@code l}. If they are equivalent then
      * return {@code this}. If they overlap in a line return the part that
      * overlaps (the order of points is not defined). If they intersect at a
      * point, the point is returned. {@code null} is returned if the two line
      * segments do not intersect.
      *
-     * @param l The line to get intersection with this.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
+     * @param l The line to get intersection with this.
      * @return The intersection between {@code this} and {@code l}.
      */
-    public V2D_FiniteGeometryDouble getIntersection(V2D_LineDouble l,
-            double epsilon) {
-        // Check if infinite lines intersect.
-        V2D_GeometryDouble i = this.l.getIntersection(l, epsilon);
-        if (i == null) {
-            // There is no intersection.
-            return null;
+    public V2D_FiniteGeometryDouble getIntersection(double epsilon,
+            V2D_LineDouble l) {
+        double x1 = getP().getX();
+        double x2 = getQ().getX();
+        double x3 = l.getP().getX();
+        double x4 = l.getQ().getX();
+        double y1 = this.l.p.getY();
+        double y2 = this.l.q.getY();
+        double y3 = l.p.getY();
+        double y4 = l.q.getY();
+        double den = this.l.getIntersectionDenominator(x1, x2, x3, x4, y1, y2, y3, y4);
+        V2D_GeometryDouble li = this.l.getIntersection(epsilon, l, den, x1, x2, x3, x4, y1, y2, y3, y4);
+        if (li != null) {
+            return getIntersection(epsilon, l, li, den, x1, x2, x3, x4, y1, y2, y3, y4);
         }
-        /**
-         * If infinite lines intersects at a point, then check this point is on
-         * this.
-         */
-        if (i instanceof V2D_PointDouble v3D_Point) {
-            //if (isIntersectedBy(v3D_Point, epsilon)) {
-            if (isBetween(v3D_Point, epsilon)) {
-                return v3D_Point;
+        return null;
+    }
+
+    /**
+     * Intersects {@code this} with {@code l}. If they are equivalent then
+     * return {@code this}. If they overlap in a line return the part that
+     * overlaps (the order of points is not defined). If they intersect at a
+     * point, the point is returned. {@code null} is returned if the two line
+     * segments do not intersect.
+     *
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @param l The line to get intersection with this.
+     * @param li The non-null line intersection.
+     * @param den getIntersectionDenominator(x1, x2, x3, x4, y1, y2, y3, y4)
+     * @param x1 getP().getX()
+     * @param x2 getQ().getX()
+     * @param x3 l.getP().getX()
+     * @param x4 l.getQ().getX()
+     * @param y1 this.l.p.getY()
+     * @param y2 this.l.q.getY()
+     * @param y3 l.p.getY()
+     * @param y4 l.q.getY()
+     * @return The intersection between {@code this} and {@code l}.
+     */
+    public V2D_FiniteGeometryDouble getIntersection(double epsilon,
+            V2D_LineDouble l, V2D_GeometryDouble li, double den, double x1,
+            double x2, double x3, double x4, double y1, double y2, double y3,
+            double y4) {
+        if (li instanceof V2D_LineDouble) {
+            return this;
+        }
+        double t = (((x1 - x3) * (y3 - y4)) - ((y1 - y3) * (x3 - x4))) / den;
+        boolean ti = t >= 0D && t <= 1D;
+        if (ti) {
+            double u = (((x1 - x2) * (y1 - y3)) - ((y1 - y2) * (x1 - x3))) / den;
+            if (u >= 0D && u <= 1D) {
+                /**
+                 * This happens when the intersection is a point at the end of 
+                 * collinear line segments.
+                 */
+                if (this.l.p.equals(l.p)) {
+                    return l.p;
+                } else {
+                    if (this.l.p.equals(l.q)) {
+                        return l.q;
+                    } else {
+                        if (this.l.q.equals(l.p)) {
+                            return this.l.p;
+                        } else {
+                            if (this.l.q.equals(l.q)) {
+                                return l.q;
+                            } else {
+                                return null;
+                            }
+                        }
+                    }   
+                }
+            } else {
+                return (V2D_PointDouble) li;
+            }
+        } else {
+            double u = (((x1 - x2) * (y1 - y3)) - ((y1 - y2) * (x1 - x3))) / den;
+            if (u >= 0D && u <= 1D) {
+                return (V2D_PointDouble) li;
             } else {
                 return null;
             }
-        } else if (i instanceof V2D_LineDouble) {
-            // If the lines are the same, then return this. 
-            return this;
-        } else {
-            // There is no intersection.
-            return null;
         }
     }
 
@@ -440,187 +508,407 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      * point, the point is returned. {@code null} is returned if the two line
      * segments do not intersect.
      *
-     * @param ls The line to get intersection with this.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
+     * @param ls The line to get intersection with this.
      * @return The intersection between {@code this} and {@code l}.
      */
-    public V2D_FiniteGeometryDouble getIntersection(V2D_LineSegmentDouble ls,
-            double epsilon) {
-        if (!getEnvelope().isIntersectedBy(ls.getEnvelope(), epsilon)) {
-            return null;
-        }
+    public V2D_FiniteGeometryDouble getIntersection(double epsilon,
+            V2D_LineSegmentDouble ls) {
+        //if (!getEnvelope().isIntersectedBy(ls.getEnvelope(), epsilon)) {
+        //    return null;
+        //}
+        double x1 = getP().getX();
+        double x2 = getQ().getX();
+        double x3 = ls.getP().getX();
+        double x4 = ls.getQ().getX();
+        double y1 = l.p.getY();
+        double y2 = l.q.getY();
+        double y3 = ls.l.p.getY();
+        double y4 = ls.l.q.getY();
+        double den = this.l.getIntersectionDenominator(x1, x2, x3, x4, y1, y2, y3, y4);
         // Get intersection of infinite lines. 
-        V2D_GeometryDouble r = this.l.getIntersection(ls.l, epsilon);
-        if (r == null) {
-            return null;
-        }
-        if (r instanceof V2D_PointDouble rp) {
-            return rp;
-        }
-        /**
-         * Check the type of intersection. {@code
-         *
-         * A) p_q l.p_l.q
-         *
-         * 1)  p +----------+ q
-         *              l.p +----------+ l.q
-         *
-         * 2)  p +----------+ q
-         *         l.p +----------+ l.q
-         *
-         * 3)  p +------------------------+ q
-         *         l.p +----------+ l.q
-         *
-         * 4)        p +----------+ q
-         *     l.p +----------------------+ l.q
-         *
-         * 5)    p +----------+ q
-         *     l.p +----------+ l.q
-         *
-         * 6)         p +----------+ q
-         *     l.p +----------+ l.q
-         *
-         * 7)              p +----------+ q
-         *     l.p +---------+ l.q
-         *
-         * B) q_p l.p_l.q
-         *
-         * 8)  q +----------+ p
-         *              l.p +----------+ l.q
-         *
-         * 9)  q +----------+ p
-         *         l.p +----------+ l.q
-         *
-         * 10) q +------------------------+ p
-         *         l.p +----------+ l.q
-         *
-         * 11)       q +----------+ p
-         *     l.p +----------------------+ l.q
-         *
-         * 12)       q +----------+ p
-         *         l.p +----------+ l.q
-         *
-         * 13)       q +----------+ p
-         *     l.p +----------+ l.q
-         *
-         * 14)              q +----------+ p
-         *     l.p +----------+ l.q
-         *
-         * C) p_q l.q_l.p
-         *
-         * 15) p +----------+ q
-         *              l.q +----------+ l.p
-         *
-         * 16) p +----------+ q
-         *         l.q +----------+ l.p
-         *
-         * 17) p +------------------------+ q
-         *         l.q +----------+ l.p
-         *
-         * 18)       p +----------+ q
-         *     l.q +------------------------+ l.p
-         *
-         * 19)       p +----------+ q
-         *         l.q +----------+ l.p
-         *
-         * 20)       p +----------+ q
-         *     l.q +----------+ l.p
-         *
-         * 21)              p +----------+ q
-         *     l.q +----------+ l.p
-         *
-         * D) q_p l.q_l.p
-         *
-         * 22) q +----------+ p
-         *              l.q +----------+ l.p
-         *
-         * 23) q +----------+ p
-         *         l.q +----------+ l.p
-         *
-         * 24) q +------------------------+ p
-         *         l.q +----------+ l.p
-         *
-         * 25)       q +----------+ p
-         *     l.q +------------------------+ l.p
-         *
-         * 26)       p +----------+ q
-         *         l.q +----------+ l.p
-         *
-         * 27)       q +----------+ p
-         *    l.q +---------+ l.p
-         *
-         * 28)            q +----------+ p
-         *    l.q +---------+ l.p
-         * }
-         */
-        V2D_PointDouble lp = ls.getP();
-        V2D_PointDouble lq = ls.getQ();
-        V2D_PointDouble tp = getP();
-        V2D_PointDouble tq = getQ();
-        if (isIntersectedBy(lp, epsilon)) {
-            // Cases: 1, 2, 3, 5, 8, 9, 10, 12, 17, 19, 20, 21, 24, 26, 27, 28
-            if (isIntersectedBy(lq, epsilon)) {
-                // Cases: 3, 5, 10, 12, 17, 19, 24, 26
-                return ls;
-            } else {
-                // Cases: 1, 2, 8, 9, 20, 21, 27, 28
-                if (ls.isIntersectedBy(tp, epsilon)) {
-                    // Cases: 8, 9, 20, 21
-                    if (tp.equals(epsilon, lp)) {
-                        // Cases: 8, 21
-                        return tp;
-                    } else {
-                        // Cases: 9, 20
-                        return V2D_LineSegmentDouble.getGeometry(lp, tp, epsilon);
-                    }
-                } else {
-                    // Case: 1, 2, 27, 28
-                    if (lp.equals(epsilon, tq)) {
-                        // Case: 1, 28
-                        return lp;
-                    } else {
-                        // Cases: 2, 27
-                        return V2D_LineSegmentDouble.getGeometry(lp, tq, epsilon);
-                    }
-                }
-            }
-        } else {
-            // Cases: 4, 6, 7, 11, 13, 14, 15, 16, 18, 22, 23, 25
-            if (isIntersectedBy(lq, epsilon)) {
-                // Cases: 6, 7, 13, 14, 15, 16, 22, 23
-                if (ls.isIntersectedBy(tp, epsilon)) {
-                    // Cases: 6, 7, 22, 23
-                    if (ls.isIntersectedBy(tq, epsilon)) {
-                            // Case: 23
-                            return V2D_LineSegmentDouble.getGeometry(lq, tp, epsilon);
-                    } else {
-                        // Cases: 6, 7, 22, 
-                        if (tp.equals(epsilon, lq)) {
-                            // Cases: 7, 22
-                            return tp;
-                        } else {
-                            // Case: 6
-                            return V2D_LineSegmentDouble.getGeometry(tp, lq, epsilon);
-                        }
-                    }
-                } else {
-                    // Cases: 13, 14, 15, 16
-                    if (tq.equals(epsilon, lq)) {
-                        // Cases: 14, 15
-                        return tq;
-                    } else {
-                        // Case: 13, 16
-                        return V2D_LineSegmentDouble.getGeometry(tq, lq, epsilon);
-                    }
-                }
-            } else {
-                // Cases: 4, 11, 18, 25
+        V2D_GeometryDouble li = l.getIntersection(epsilon, ls.l, den, x1, x2, x3, x4, y1, y2, y3, y4);
+        if (li != null) {
+            if (den == 0D) {
                 return this;
             }
+            double t = (((x1 - x3) * (y3 - y4)) - ((y1 - y3) * (x3 - x4))) / den;
+            boolean ti = t >= 0D && t <= 1D;
+            if (ti) {
+                if (li instanceof V2D_LineDouble) {
+                    double u = (((x1 - x2) * (y1 - y3)) - ((y1 - y2) * (x1 - x3))) / den;
+                    if (u >= 0D && u <= 1D) {
+                        /**
+                         * Check the type of intersection. {@code
+                         *
+                         * A) p_q l.p_l.q
+                         *
+                         * 1)  p +----------+ q
+                         *              l.p +----------+ l.q
+                         *
+                         * 2)  p +----------+ q
+                         *         l.p +----------+ l.q
+                         *
+                         * 3)  p +------------------------+ q
+                         *         l.p +----------+ l.q
+                         *
+                         * 4)        p +----------+ q
+                         *     l.p +----------------------+ l.q
+                         *
+                         * 5)    p +----------+ q
+                         *     l.p +----------+ l.q
+                         *
+                         * 6)         p +----------+ q
+                         *     l.p +----------+ l.q
+                         *
+                         * 7)              p +----------+ q
+                         *     l.p +---------+ l.q
+                         *
+                         * B) q_p l.p_l.q
+                         *
+                         * 8)  q +----------+ p
+                         *              l.p +----------+ l.q
+                         *
+                         * 9)  q +----------+ p
+                         *         l.p +----------+ l.q
+                         *
+                         * 10) q +------------------------+ p
+                         *         l.p +----------+ l.q
+                         *
+                         * 11)       q +----------+ p
+                         *     l.p +----------------------+ l.q
+                         *
+                         * 12)       q +----------+ p
+                         *         l.p +----------+ l.q
+                         *
+                         * 13)       q +----------+ p
+                         *     l.p +----------+ l.q
+                         *
+                         * 14)              q +----------+ p
+                         *     l.p +----------+ l.q
+                         *
+                         * C) p_q l.q_l.p
+                         *
+                         * 15) p +----------+ q
+                         *              l.q +----------+ l.p
+                         *
+                         * 16) p +----------+ q
+                         *         l.q +----------+ l.p
+                         *
+                         * 17) p +------------------------+ q
+                         *         l.q +----------+ l.p
+                         *
+                         * 18)       p +----------+ q
+                         *     l.q +------------------------+ l.p
+                         *
+                         * 19)       p +----------+ q
+                         *         l.q +----------+ l.p
+                         *
+                         * 20)       p +----------+ q
+                         *     l.q +----------+ l.p
+                         *
+                         * 21)              p +----------+ q
+                         *     l.q +----------+ l.p
+                         *
+                         * D) q_p l.q_l.p
+                         *
+                         * 22) q +----------+ p
+                         *              l.q +----------+ l.p
+                         *
+                         * 23) q +----------+ p
+                         *         l.q +----------+ l.p
+                         *
+                         * 24) q +------------------------+ p
+                         *         l.q +----------+ l.p
+                         *
+                         * 25)       q +----------+ p
+                         *     l.q +------------------------+ l.p
+                         *
+                         * 26)       p +----------+ q
+                         *         l.q +----------+ l.p
+                         *
+                         * 27)       q +----------+ p
+                         *    l.q +---------+ l.p
+                         *
+                         * 28)            q +----------+ p
+                         *    l.q +---------+ l.p
+                         * }
+                         */
+                        V2D_PointDouble lp = ls.getP();
+                        V2D_PointDouble lq = ls.getQ();
+                        V2D_PointDouble tp = getP();
+                        V2D_PointDouble tq = getQ();
+                        if (isIntersectedBy(lp, epsilon)) {
+                            // Cases: 1, 2, 3, 5, 8, 9, 10, 12, 17, 19, 20, 21, 24, 26, 27, 28
+                            if (isIntersectedBy(lq, epsilon)) {
+                                // Cases: 3, 5, 10, 12, 17, 19, 24, 26
+                                return ls;
+                            } else {
+                                // Cases: 1, 2, 8, 9, 20, 21, 27, 28
+                                if (ls.isIntersectedBy(tp, epsilon)) {
+                                    // Cases: 8, 9, 20, 21
+                                    if (tp.equals(epsilon, lp)) {
+                                        // Cases: 8, 21
+                                        return tp;
+                                    } else {
+                                        // Cases: 9, 20
+                                        return V2D_LineSegmentDouble.getGeometry(lp, tp, epsilon);
+                                    }
+                                } else {
+                                    // Case: 1, 2, 27, 28
+                                    if (lp.equals(epsilon, tq)) {
+                                        // Case: 1, 28
+                                        return lp;
+                                    } else {
+                                        // Cases: 2, 27
+                                        return V2D_LineSegmentDouble.getGeometry(lp, tq, epsilon);
+                                    }
+                                }
+                            }
+                        } else {
+                            // Cases: 4, 6, 7, 11, 13, 14, 15, 16, 18, 22, 23, 25
+                            if (isIntersectedBy(lq, epsilon)) {
+                                // Cases: 6, 7, 13, 14, 15, 16, 22, 23
+                                if (ls.isIntersectedBy(tp, epsilon)) {
+                                    // Cases: 6, 7, 22, 23
+                                    if (ls.isIntersectedBy(tq, epsilon)) {
+                                        // Case: 23
+                                        return V2D_LineSegmentDouble.getGeometry(lq, tp, epsilon);
+                                    } else {
+                                        // Cases: 6, 7, 22, 
+                                        if (tp.equals(epsilon, lq)) {
+                                            // Cases: 7, 22
+                                            return tp;
+                                        } else {
+                                            // Case: 6
+                                            return V2D_LineSegmentDouble.getGeometry(tp, lq, epsilon);
+                                        }
+                                    }
+                                } else {
+                                    // Cases: 13, 14, 15, 16
+                                    if (tq.equals(epsilon, lq)) {
+                                        // Cases: 14, 15
+                                        return tq;
+                                    } else {
+                                        // Case: 13, 16
+                                        return V2D_LineSegmentDouble.getGeometry(tq, lq, epsilon);
+                                    }
+                                }
+                            } else {
+                                // Cases: 4, 11, 18, 25
+                                return this;
+                            }
+                        }
+                    } else {
+                        return (V2D_PointDouble) li;
+                    }
+                } else {
+                    V2D_PointDouble pt = (V2D_PointDouble) li;
+                    if (isIntersectedBy(pt)) {
+                        return pt;
+                    } else {
+                        return null;
+                    }
+                }
+            } else {
+                double u = (((x1 - x2) * (y1 - y3)) - ((y1 - y2) * (x1 - x3))) / den;
+                if (u >= 0D && u <= 1D) {
+                    return (V2D_PointDouble) li;
+                }
+            }
         }
+        return null;
+
     }
 
+//    /**
+//     * Intersects {@code this} with {@code l}. If they are equivalent then
+//     * return {@code this}. If they overlap in a line return the part that
+//     * overlaps (the order of points is not defined). If they intersect at a
+//     * point, the point is returned. {@code null} is returned if the two line
+//     * segments do not intersect.
+//     *
+//     * @param ls The line to get intersection with this.
+//     * @param epsilon The tolerance within which two vectors are regarded as
+//     * equal.
+//     * @return The intersection between {@code this} and {@code l}.
+//     */
+//    public V2D_FiniteGeometryDouble getIntersection(V2D_LineSegmentDouble ls,
+//            double epsilon) {
+//        if (!getEnvelope().isIntersectedBy(ls.getEnvelope(), epsilon)) {
+//            return null;
+//        }
+//        // Get intersection of infinite lines. 
+//        V2D_GeometryDouble r = this.l.getIntersection(epsilon, ls.l);
+//        if (r == null) {
+//            return null;
+//        }
+//        //if (r instanceof V2D_PointDouble rp) {
+//        //    return rp;
+//        //}
+//        /**
+//         * Check the type of intersection. {@code
+//         *
+//         * A) p_q l.p_l.q
+//         *
+//         * 1)  p +----------+ q
+//         *              l.p +----------+ l.q
+//         *
+//         * 2)  p +----------+ q
+//         *         l.p +----------+ l.q
+//         *
+//         * 3)  p +------------------------+ q
+//         *         l.p +----------+ l.q
+//         *
+//         * 4)        p +----------+ q
+//         *     l.p +----------------------+ l.q
+//         *
+//         * 5)    p +----------+ q
+//         *     l.p +----------+ l.q
+//         *
+//         * 6)         p +----------+ q
+//         *     l.p +----------+ l.q
+//         *
+//         * 7)              p +----------+ q
+//         *     l.p +---------+ l.q
+//         *
+//         * B) q_p l.p_l.q
+//         *
+//         * 8)  q +----------+ p
+//         *              l.p +----------+ l.q
+//         *
+//         * 9)  q +----------+ p
+//         *         l.p +----------+ l.q
+//         *
+//         * 10) q +------------------------+ p
+//         *         l.p +----------+ l.q
+//         *
+//         * 11)       q +----------+ p
+//         *     l.p +----------------------+ l.q
+//         *
+//         * 12)       q +----------+ p
+//         *         l.p +----------+ l.q
+//         *
+//         * 13)       q +----------+ p
+//         *     l.p +----------+ l.q
+//         *
+//         * 14)              q +----------+ p
+//         *     l.p +----------+ l.q
+//         *
+//         * C) p_q l.q_l.p
+//         *
+//         * 15) p +----------+ q
+//         *              l.q +----------+ l.p
+//         *
+//         * 16) p +----------+ q
+//         *         l.q +----------+ l.p
+//         *
+//         * 17) p +------------------------+ q
+//         *         l.q +----------+ l.p
+//         *
+//         * 18)       p +----------+ q
+//         *     l.q +------------------------+ l.p
+//         *
+//         * 19)       p +----------+ q
+//         *         l.q +----------+ l.p
+//         *
+//         * 20)       p +----------+ q
+//         *     l.q +----------+ l.p
+//         *
+//         * 21)              p +----------+ q
+//         *     l.q +----------+ l.p
+//         *
+//         * D) q_p l.q_l.p
+//         *
+//         * 22) q +----------+ p
+//         *              l.q +----------+ l.p
+//         *
+//         * 23) q +----------+ p
+//         *         l.q +----------+ l.p
+//         *
+//         * 24) q +------------------------+ p
+//         *         l.q +----------+ l.p
+//         *
+//         * 25)       q +----------+ p
+//         *     l.q +------------------------+ l.p
+//         *
+//         * 26)       p +----------+ q
+//         *         l.q +----------+ l.p
+//         *
+//         * 27)       q +----------+ p
+//         *    l.q +---------+ l.p
+//         *
+//         * 28)            q +----------+ p
+//         *    l.q +---------+ l.p
+//         * }
+//         */
+//        V2D_PointDouble lp = ls.getP();
+//        V2D_PointDouble lq = ls.getQ();
+//        V2D_PointDouble tp = getP();
+//        V2D_PointDouble tq = getQ();
+//        if (isIntersectedBy(lp, epsilon)) {
+//            // Cases: 1, 2, 3, 5, 8, 9, 10, 12, 17, 19, 20, 21, 24, 26, 27, 28
+//            if (isIntersectedBy(lq, epsilon)) {
+//                // Cases: 3, 5, 10, 12, 17, 19, 24, 26
+//                return ls;
+//            } else {
+//                // Cases: 1, 2, 8, 9, 20, 21, 27, 28
+//                if (ls.isIntersectedBy(tp, epsilon)) {
+//                    // Cases: 8, 9, 20, 21
+//                    if (tp.equals(epsilon, lp)) {
+//                        // Cases: 8, 21
+//                        return tp;
+//                    } else {
+//                        // Cases: 9, 20
+//                        return V2D_LineSegmentDouble.getGeometry(lp, tp, epsilon);
+//                    }
+//                } else {
+//                    // Case: 1, 2, 27, 28
+//                    if (lp.equals(epsilon, tq)) {
+//                        // Case: 1, 28
+//                        return lp;
+//                    } else {
+//                        // Cases: 2, 27
+//                        return V2D_LineSegmentDouble.getGeometry(lp, tq, epsilon);
+//                    }
+//                }
+//            }
+//        } else {
+//            // Cases: 4, 6, 7, 11, 13, 14, 15, 16, 18, 22, 23, 25
+//            if (isIntersectedBy(lq, epsilon)) {
+//                // Cases: 6, 7, 13, 14, 15, 16, 22, 23
+//                if (ls.isIntersectedBy(tp, epsilon)) {
+//                    // Cases: 6, 7, 22, 23
+//                    if (ls.isIntersectedBy(tq, epsilon)) {
+//                        // Case: 23
+//                        return V2D_LineSegmentDouble.getGeometry(lq, tp, epsilon);
+//                    } else {
+//                        // Cases: 6, 7, 22, 
+//                        if (tp.equals(epsilon, lq)) {
+//                            // Cases: 7, 22
+//                            return tp;
+//                        } else {
+//                            // Case: 6
+//                            return V2D_LineSegmentDouble.getGeometry(tp, lq, epsilon);
+//                        }
+//                    }
+//                } else {
+//                    // Cases: 13, 14, 15, 16
+//                    if (tq.equals(epsilon, lq)) {
+//                        // Cases: 14, 15
+//                        return tq;
+//                    } else {
+//                        // Case: 13, 16
+//                        return V2D_LineSegmentDouble.getGeometry(tq, lq, epsilon);
+//                    }
+//                }
+//            } else {
+//                // Cases: 4, 11, 18, 25
+//                return this;
+//            }
+//        }
+//    }
     /**
      * If the distance from a point to the line is less than the distance of the
      * point from either end of the line and the distance from either end of the
@@ -716,7 +1004,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      * @return The minimum distance squared to {@code l}.
      */
     public double getDistanceSquared(V2D_LineSegmentDouble l, double epsilon) {
-        if (getIntersection(l, epsilon) != null) {
+        if (getIntersection(epsilon, l) != null) {
             return 0d;
         }
         V2D_LineSegmentDouble loi = getLineOfIntersection(l, epsilon);
@@ -903,15 +1191,12 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      */
     public V2D_LineSegmentDouble getLineOfIntersection(V2D_LineDouble l,
             double epsilon) {
-        if (getIntersection(l, epsilon) != null) {
+        if (getIntersection(epsilon, l) != null) {
             return null;
         }
-
         //V2D_LineSegmentDouble loi = this.l.getLineOfIntersection(l, epsilon);
-
         V2D_LineSegmentDouble loi = null;
-        
-        
+
         V2D_PointDouble tp = getP();
         V2D_PointDouble tq = getQ();
         if (loi == null) {
@@ -955,7 +1240,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      */
     public V2D_LineSegmentDouble getLineOfIntersection(V2D_LineSegmentDouble ls,
             double epsilon) {
-        V2D_FiniteGeometryDouble ilsl = getIntersection(ls, epsilon);
+        V2D_FiniteGeometryDouble ilsl = getIntersection(epsilon, ls);
         if (ilsl == null) {
             V2D_PointDouble lsp = ls.getP();
             V2D_PointDouble lsq = ls.getQ();
@@ -996,7 +1281,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
                     // Is the intersection point on ls within the line segment?
                     // Can use isAligned to do this more clearly?
                     V2D_VectorDouble pv = ls.l.v.rotate90();
-                    V2D_LineDouble lsppl = new V2D_LineDouble(lsp,pv);
+                    V2D_LineDouble lsppl = new V2D_LineDouble(lsp, pv);
                     if (lsppl.isOnSameSide(tloiq, lsq, epsilon)) {
                         V2D_LineDouble lsqpl = new V2D_LineDouble(lsq, pv);
                         if (lsqpl.isOnSameSide(tloiq, lsp, epsilon)) {
@@ -1109,7 +1394,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
     }
 
     @Override
-    public V2D_LineSegmentDouble rotate(V2D_PointDouble pt, double theta, 
+    public V2D_LineSegmentDouble rotate(V2D_PointDouble pt, double theta,
             double epsilon) {
         return new V2D_LineSegmentDouble(
                 getP().rotate(pt, theta, epsilon),
@@ -1147,7 +1432,6 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
 //            return this;
 //        }
 //    }
-
     @Override
     public boolean isIntersectedBy(V2D_EnvelopeDouble aabb, double epsilon) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
