@@ -467,12 +467,12 @@ public class V2D_VectorDouble implements Serializable {
             }
             if (dx == 0D) {
                 if (v.dx == 0D) {
-                    return v.dy == 0D;
+                    return true;
                 }
             }
             if (dy == 0D) {
                 if (v.dy == 0D) {
-                    return v.dx == 0D;
+                    return true;
                 }
             }
             return (v.dx / dx) == (v.dy / dy);

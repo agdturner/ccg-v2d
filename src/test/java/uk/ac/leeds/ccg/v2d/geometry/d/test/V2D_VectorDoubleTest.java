@@ -282,7 +282,8 @@ public class V2D_VectorDoubleTest extends V2D_TestDouble {
         instance = new V2D_VectorDouble(-3d, 0d);
         v = new V2D_VectorDouble(-6d, 0d);
         assertTrue(instance.isScalarMultiple(v));
-        // Test 6
+        // Test 9
+        epsilon = 0.0000000000000000001d;
         v = new V2D_VectorDouble(0d, 1d);
         instance = new V2D_VectorDouble(0d + epsilon, 1d);
         assertFalse(instance.isScalarMultiple(v));
