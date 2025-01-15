@@ -559,11 +559,22 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @return The minimum distance between this and {@code pv}.
      */
     public double getDistance(V2D_PointDouble pt, double epsilon) {
+        return Math.sqrt(getDistanceSquared(pt, epsilon));
+    }
+    
+    /**
+     * @param pt A point for which the minimum distance from {@code this} is
+     * returned.
+     * @param epsilon The tolerance within which vector components are
+     * considered equal.
+     * @return The minimum distance between this and {@code pv}.
+     */
+    public double getDistanceSquared(V2D_PointDouble pt, double epsilon) {
         if (isIntersectedBy(epsilon, pt)) {
             return 0d;
         }
         V2D_PointDouble poi = getPointOfIntersection(pt, epsilon);
-        return poi.getDistance(pt);
+        return poi.getDistanceSquared(pt);
     }
 
     /**

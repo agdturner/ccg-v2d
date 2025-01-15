@@ -387,7 +387,11 @@ public class V2D_RayDouble extends V2D_GeometryDouble {
             return null;
         } else if (g instanceof V2D_PointDouble pt) {
             if (isAligned(pt, epsilon)) {
-                return pt;
+                if (ls.isBetween(pt, epsilon)) {
+                    return pt;
+                } else {
+                    return null;
+                }
             } else {
                 return null;
             }
