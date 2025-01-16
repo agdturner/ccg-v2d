@@ -243,6 +243,18 @@ public class V2D_VectorDoubleTest extends V2D_TestDouble {
         instance = new V2D_VectorDouble(-3d, 0d);
         v = new V2D_VectorDouble(-6d, 0d);
         assertTrue(instance.isScalarMultiple(epsilon, v));
+        // Test 10
+        v = new V2D_VectorDouble(0d, 1d);
+        instance = new V2D_VectorDouble(0d, -1d);
+        assertTrue(instance.isScalarMultiple(epsilon, v));
+        // Test 11
+        v = new V2D_VectorDouble(1d, 1d);
+        instance = new V2D_VectorDouble(-1d, -1d);
+        assertTrue(instance.isScalarMultiple(epsilon, v));
+        // Test 12
+        v = new V2D_VectorDouble(1d, 0d);
+        instance = new V2D_VectorDouble(-1d, 0d);
+        assertTrue(instance.isScalarMultiple(epsilon, v));
     }
 
     /**
@@ -287,6 +299,18 @@ public class V2D_VectorDoubleTest extends V2D_TestDouble {
         v = new V2D_VectorDouble(0d, 1d);
         instance = new V2D_VectorDouble(0d + epsilon, 1d);
         assertFalse(instance.isScalarMultiple(v));
+        // Test 10
+        v = new V2D_VectorDouble(0d, 1d);
+        instance = new V2D_VectorDouble(0d, -1d);
+        assertTrue(instance.isScalarMultiple(v));
+        // Test 11
+        v = new V2D_VectorDouble(1d, 1d);
+        instance = new V2D_VectorDouble(-1d, -1d);
+        assertTrue(instance.isScalarMultiple(v));
+        // Test 12
+        v = new V2D_VectorDouble(1d, 0d);
+        instance = new V2D_VectorDouble(-1d, 0d);
+        assertTrue(instance.isScalarMultiple(v));
     }
 
     /**

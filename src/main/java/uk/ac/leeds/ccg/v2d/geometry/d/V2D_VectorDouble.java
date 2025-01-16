@@ -518,11 +518,11 @@ public class V2D_VectorDouble implements Serializable {
                 if (Math_Double.equals(dx, 0d, epsilon)) {
                     // dx = v.dx = 0d
                     if (Math_Double.equals(Math.abs(v.dy), Math.abs(dy), epsilon)) {
-                        if (Math_Double.equals(v.dy, 0d, epsilon)) {
+                        //if (Math_Double.equals(v.dy, 0d, epsilon)) {
                             return true;
-                        } else {
-                            return false;
-                        }
+                        //} else {
+                        //    return false;
+                        //}
                     } else {
                         return true;
                     }
