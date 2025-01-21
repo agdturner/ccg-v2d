@@ -394,16 +394,33 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
         V2D_FiniteGeometryDouble lpqi = getPQ().getIntersection(epsilon, l);
         V2D_FiniteGeometryDouble lqri = getQR().getIntersection(epsilon, l);
         V2D_FiniteGeometryDouble lrpi = getRP().getIntersection(epsilon, l);
+        /**
+         * This may appear overly complicated in parts, but due to imprecision 
+         * some odd cases may arise!
+         */
         if (lpqi == null) {
             if (lqri == null) {
-                return null;
-            } else {
+                return lrpi;
+            } else if (lqri instanceof V2D_PointDouble lqrip) {
                 if (lrpi == null) {
                     return lqri;
+                } else if (lrpi instanceof V2D_PointDouble lrpip) {
+                    return V2D_LineSegmentDouble.getGeometry(lqrip, lrpip,
+                            epsilon);
                 } else {
                     return V2D_LineSegmentDouble.getGeometry(
-                            (V2D_PointDouble) lqri, (V2D_PointDouble) lrpi,
+                            (V2D_LineSegmentDouble) lrpi, lqrip, epsilon);
+                }
+            } else {
+                V2D_LineSegmentDouble lqril = (V2D_LineSegmentDouble) lqri;
+                if (lrpi == null) {
+                    return lqril;
+                } else if (lrpi instanceof V2D_PointDouble lrpip) {
+                    return V2D_LineSegmentDouble.getGeometry(lqril, lrpip,
                             epsilon);
+                } else {
+                    V2D_LineSegmentDouble lrpil = (V2D_LineSegmentDouble) lrpi;
+                    return V2D_LineSegmentDouble.getGeometry(epsilon, lqril, lrpil);
                 }
             }
         } else if (lpqi instanceof V2D_PointDouble lpqip) {
@@ -571,7 +588,7 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
             V2D_FiniteGeometryDouble grp = t.getIntersection(getRP(), epsilon);
             if (gpq == null) {
                 if (gqr == null) {
-                    
+
                     if (grp == null) {
                         return null;
                     } else if (grp instanceof V2D_PointDouble grpp) {
@@ -583,7 +600,7 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
                             return grp;
                         }
                     }
-                    
+
                 } else if (gqr instanceof V2D_PointDouble gqrp) {
                     if (grp == null) {
                         return gqr;
@@ -597,13 +614,13 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
                 } else {
                     V2D_LineSegmentDouble gqrl = (V2D_LineSegmentDouble) gqr;
                     if (grp == null) {
-                        
+
                         if (pi) {
                             return getGeometry(gqrl, pttp, epsilon);
                         } else {
                             return gqr;
                         }
-                        
+
                     } else if (grp instanceof V2D_PointDouble grpp) {
                         return getGeometry(grpp, gqrl.getP(),
                                 gqrl.getQ(), epsilon);
@@ -648,13 +665,13 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
                 V2D_LineSegmentDouble gpql = (V2D_LineSegmentDouble) gpq;
                 if (gqr == null) {
                     if (grp == null) {
-                        
+
                         if (ri) {
                             return getGeometry(gpql, pttr, epsilon);
                         } else {
                             return gpq;
                         }
-                        
+
                     } else if (grp instanceof V2D_PointDouble grpp) {
                         return getGeometry(grpp, gpql.getP(), gpql.getQ(),
                                 epsilon);
@@ -1054,7 +1071,7 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
      * @param l a line segment either equal to one of the edges of this: null
      * null null null null null null null null null null null null null null
      * null null null null null null null null null null null null null null
-     * null null null null     {@link #getPQ()},
+     * null null null null null     {@link #getPQ()},
      * {@link #getQR()} or {@link #getRP()}.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.

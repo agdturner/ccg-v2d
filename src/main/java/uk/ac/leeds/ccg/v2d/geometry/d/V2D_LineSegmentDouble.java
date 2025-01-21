@@ -425,7 +425,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
         double y2 = this.l.q.getY();
         double y3 = l.p.getY();
         double y4 = l.q.getY();
-        double den = this.l.getIntersectionDenominator(x1, x2, x3, x4, y1, y2, y3, y4);
+        double den = V2D_LineDouble.getIntersectionDenominator(x1, x2, x3, x4, y1, y2, y3, y4);
         V2D_GeometryDouble li = this.l.getIntersection(epsilon, l, den, x1, x2, x3, x4, y1, y2, y3, y4);
         if (li != null) {
             if (li instanceof V2D_PointDouble pli) {
@@ -510,7 +510,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
         double y2 = l.q.getY();
         double y3 = ls.l.p.getY();
         double y4 = ls.l.q.getY();
-        double den = this.l.getIntersectionDenominator(x1, x2, x3, x4, y1, y2, y3, y4);
+        double den = V2D_LineDouble.getIntersectionDenominator(x1, x2, x3, x4, y1, y2, y3, y4);
         // Get intersection with infinite lines.
         V2D_GeometryDouble li = l.getIntersection(epsilon, ls.l, den, x1, x2, x3, x4, y1, y2, y3, y4);
         V2D_FiniteGeometryDouble tils = getIntersection(epsilon, ls.l, li, den, x1, x2, x3, x4, y1, y2, y3, y4);

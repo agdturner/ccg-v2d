@@ -344,8 +344,8 @@ public class V2D_EnvelopeDouble implements Serializable {
             pts = new V2D_PointDouble[4];
             pts[0] = new V2D_PointDouble(getXMin(), getYMin());
             pts[1] = new V2D_PointDouble(getXMin(), getYMax());
-            pts[2] = new V2D_PointDouble(getXMax(), getYMin());
-            pts[3] = new V2D_PointDouble(getXMax(), getYMax());
+            pts[2] = new V2D_PointDouble(getXMax(), getYMax());
+            pts[3] = new V2D_PointDouble(getXMax(), getYMin());
         }
         return pts;
     }

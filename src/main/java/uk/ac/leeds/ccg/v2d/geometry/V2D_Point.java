@@ -23,7 +23,7 @@ import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
 import uk.ac.leeds.ccg.v2d.geometry.envelope.V2D_Envelope;
 
 /**
- * 2D points.
+ * For representing a 2D point.
  *
  * @author Andy Turner
  * @version 1.0

@@ -49,6 +49,8 @@ public class V2D_RectangleDouble extends V2D_FiniteGeometryDouble {
 
     /**
      * Create a new instance.
+     * 
+     * @param r Another rectangle.
      */
     public V2D_RectangleDouble(V2D_RectangleDouble r) {
         this(r.getP(), r.getQ(), r.getR(), r.getS());
@@ -68,8 +70,8 @@ public class V2D_RectangleDouble extends V2D_FiniteGeometryDouble {
     public V2D_RectangleDouble(V2D_VectorDouble offset, V2D_VectorDouble p,
             V2D_VectorDouble q, V2D_VectorDouble r, V2D_VectorDouble s) {
         super(offset);
-        rsp = new V2D_TriangleDouble(offset, r, s, p);
-        pqr = new V2D_TriangleDouble(offset, p, q, r);
+        pqr = new V2D_TriangleDouble(p, q, r);
+        rsp = new V2D_TriangleDouble(r, s, p);
     }
 
     /**
@@ -82,15 +84,17 @@ public class V2D_RectangleDouble extends V2D_FiniteGeometryDouble {
      */
     public V2D_RectangleDouble(V2D_PointDouble p, V2D_PointDouble q,
             V2D_PointDouble r, V2D_PointDouble s) {
-        super(p.offset);
-        V2D_PointDouble qn = new V2D_PointDouble(q);
-        qn.setOffset(p.offset);
-        V2D_PointDouble rn = new V2D_PointDouble(r);
-        rn.setOffset(p.offset);
-        V2D_PointDouble sn = new V2D_PointDouble(s);
-        sn.setOffset(p.offset);
-        rsp = new V2D_TriangleDouble(this.offset, rn.rel, sn.rel, p.rel);
-        pqr = new V2D_TriangleDouble(this.offset, p.rel, qn.rel, rn.rel);
+        this(V2D_VectorDouble.ZERO, p.getVector(), q.getVector(), r.getVector(), s.getVector());
+//        V2D_PointDouble qn = new V2D_PointDouble(q);
+//        qn.setOffset(p.offset);
+//        V2D_PointDouble rn = new V2D_PointDouble(r);
+//        rn.setOffset(p.offset);
+//        V2D_PointDouble sn = new V2D_PointDouble(s);
+//        sn.setOffset(p.offset);
+//        //rsp = new V2D_TriangleDouble(this.offset, rn.rel, sn.rel, p.rel);
+//        //pqr = new V2D_TriangleDouble(this.offset, p.rel, qn.rel, rn.rel);
+//        pqr = new V2D_TriangleDouble(p, qn, rn);
+//        rsp = new V2D_TriangleDouble(rn, sn, p);
     }
 
     @Override
