@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Andy Turner, University of Leeds.
+ * Copyright 2025 Andy Turner, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import uk.ac.leeds.ccg.v2d.geometry.envelope.V2D_Envelope;
  * V2D_FiniteGeometry
  * 
  * @author Andy Turner
- * @version 1.0.0
+ * @version 1.1
  */
 public interface V2D_FiniteGeometry {
     

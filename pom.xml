@@ -62,6 +62,12 @@
             <artifactId>ccg-math</artifactId>
             <version>3.1.0-SNAPSHOT</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/io.github.agdturner/ccg-stats -->
+        <dependency>
+            <groupId>io.github.agdturner</groupId>
+            <artifactId>ccg-stats</artifactId>
+            <version>0.7-SNAPSHOT</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/ch.obermuhlner/big-math -->
         <dependency>
             <groupId>ch.obermuhlner</groupId>
@@ -86,7 +92,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
-            <version>5.10.0</version>
+            <version>5.10.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -107,7 +113,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.2.2</version>
                 <configuration>
                     <argLine>-Xms256m</argLine>
                     <!-- Ignore test failures -->
@@ -124,7 +130,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.1.2</version>
             </plugin>
             <!-- Skip 
             <plugin>
@@ -168,7 +174,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>3.1.0</version>
+                        <version>3.2.2</version>
                         <configuration>
                             <argLine>-Xms256m -Xmx512m</argLine>
                         </configuration>
@@ -176,7 +182,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>3.1.0</version>
+                        <version>3.1.2</version>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
