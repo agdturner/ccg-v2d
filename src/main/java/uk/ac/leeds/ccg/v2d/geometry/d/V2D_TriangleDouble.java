@@ -16,6 +16,7 @@
 package uk.ac.leeds.ccg.v2d.geometry.d;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import uk.ac.leeds.ccg.v2d.geometry.d.light.V2D_VTriangleDouble;
 
@@ -953,36 +954,35 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
     protected static V2D_FiniteGeometryDouble getGeometry(
             V2D_LineSegmentDouble l1, V2D_LineSegmentDouble l2,
             V2D_PointDouble pt, double epsilon) {
-//        V2D_PointDouble l1p = l1.getP();
-//        V2D_PointDouble l1q = l1.getQ();
-//        V2D_PointDouble l2p = l2.getP();
-//        V2D_PointDouble l2q = l2.getQ();
-//        ArrayList<V2D_PointDouble> points;
-//        {
-//            List<V2D_PointDouble> pts = new ArrayList<>();
-//            pts.add(l1p);
-//            pts.add(l1q);
-//            pts.add(l2p);
-//            pts.add(l2q);
-//            pts.add(pt);
-//            points = V2D_PointDouble.getUnique(pts, epsilon);
-//        }
-//        int n = points.size();
-//        if (n == 2) {
-//            return l1;
-//        } else if (n == 3) {
-//            Iterator<V2D_PointDouble> ite = points.iterator();
-//            return getGeometry(ite.next(), ite.next(), ite.next(), epsilon);
-//        } else {
-//            V2D_PointDouble[] pts = new V2D_PointDouble[points.size()];
-//            int i = 0;
-//            for (var p : points) {
-//                pts[i] = p;
-//                i++;
-//            }
-//            return new V2D_ConvexHullDouble(epsilon, pts);
-//        }
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        V2D_PointDouble l1p = l1.getP();
+        V2D_PointDouble l1q = l1.getQ();
+        V2D_PointDouble l2p = l2.getP();
+        V2D_PointDouble l2q = l2.getQ();
+        ArrayList<V2D_PointDouble> points;
+        {
+            List<V2D_PointDouble> pts = new ArrayList<>();
+            pts.add(l1p);
+            pts.add(l1q);
+            pts.add(l2p);
+            pts.add(l2q);
+            pts.add(pt);
+            points = V2D_PointDouble.getUnique(pts, epsilon);
+        }
+        int n = points.size();
+        if (n == 2) {
+            return l1;
+        } else if (n == 3) {
+            Iterator<V2D_PointDouble> ite = points.iterator();
+            return getGeometry(ite.next(), ite.next(), ite.next(), epsilon);
+        } else {
+            V2D_PointDouble[] pts = new V2D_PointDouble[points.size()];
+            int i = 0;
+            for (var p : points) {
+                pts[i] = p;
+                i++;
+            }
+            return new V2D_ConvexHullDouble(epsilon, pts);
+        }
     }
 
 //    /**

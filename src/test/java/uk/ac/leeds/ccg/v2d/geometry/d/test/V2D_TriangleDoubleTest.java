@@ -556,14 +556,21 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
         
         ArrayList<V2D_TriangleDouble> expected = new ArrayList<>();
         expected.add(new V2D_TriangleDouble(
+                new V2D_PointDouble(0d, 0d),
                 new V2D_PointDouble(-25d, 0d),
+                new V2D_PointDouble(0d, 50d)));
+        expected.add(new V2D_TriangleDouble(
+                new V2D_PointDouble(0d, 0d),
                 new V2D_PointDouble(0d, 50d),
                 new V2D_PointDouble(25d, 0d)));
         expected.add(new V2D_TriangleDouble(
+                new V2D_PointDouble(0d, 0d),
                 new V2D_PointDouble(25d, 0d),
+                new V2D_PointDouble(0d, -50d)));
+        expected.add(new V2D_TriangleDouble(
+                new V2D_PointDouble(0d, 0d),
                 new V2D_PointDouble(0d, -50d),
                 new V2D_PointDouble(-25d, 0d)));
-        
         
         // Calculate the intersection
         // We are expecting a convex hull with 4 points that can be tested to 

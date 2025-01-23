@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import uk.ac.leeds.ccg.v2d.geometrics.d.V2D_GeometricsDouble;
 
 /**
  * A class for representing convex hulls. These are a special types of polygon: 
@@ -733,21 +734,19 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
     }
 
     /**
-     * This implementation does not compute a centroid and use that.
+     * This implementation computes a centroid and uses that to construct 
+     * triangles with each edge.
      * @return A list of triangles that make up the convex hull. 
      */
     public ArrayList<V2D_TriangleDouble> getTriangles() {
         ArrayList<V2D_TriangleDouble> result = new ArrayList<>();
         V2D_PointDouble[] ps = getPoints();
-        V2D_PointDouble p = ps[0];
-        V2D_PointDouble q = ps[1];
-        V2D_PointDouble r = ps[2];
-        result.add(new V2D_TriangleDouble(p, q, r));
-        //int nt = ps.length - 2;
-        for (int i = 3; i < ps.length; i ++) {
-            q = r;
-            r = ps[i];
-            result.add(new V2D_TriangleDouble(p, q, r));
+        V2D_PointDouble centroid = V2D_GeometricsDouble.getCentroid(ps);
+        V2D_PointDouble p0 = ps[0];
+        for (int i = 1; i < ps.length; i ++) {
+            V2D_PointDouble p1 = ps[i];
+            result.add(new V2D_TriangleDouble(centroid, p0, p1));
+            p0 = p1;
         }
         return result;
     }
