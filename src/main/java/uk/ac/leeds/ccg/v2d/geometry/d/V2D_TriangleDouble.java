@@ -294,14 +294,40 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
     }
 
     /**
-     * @param pt The point to intersect with.
+     * @param pt The point to test for intersection.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
-     * @return A point or line segment.
+     * @return True iff there is an intersection.
      */
     public boolean isIntersectedBy(V2D_PointDouble pt, double epsilon) {
         if (getEnvelope().isIntersectedBy(pt.getEnvelope(), epsilon)) {
             return isAligned(pt, epsilon);
+        }
+        return false;
+    }
+
+    /**
+     * @param ls The line segment to test for intersection.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return True iff there is an intersection.
+     */
+    public boolean isIntersectedBy(V2D_LineSegmentDouble ls, double epsilon) {
+        V2D_LineSegmentDouble pq = getPQ();
+        V2D_LineSegmentDouble qr = getQR();
+        V2D_LineSegmentDouble rp = getRP();
+        V2D_PointDouble p = getP();
+        V2D_PointDouble q = getQ();
+        V2D_PointDouble r = getR();
+        V2D_PointDouble lsp = ls.getP();
+        V2D_PointDouble lsq = ls.getQ();
+        if ((pq.l.isOnSameSide(r, lsp, epsilon)
+                || pq.l.isOnSameSide(r, lsq, epsilon))
+                && (qr.l.isOnSameSide(p, lsp, epsilon)
+                || qr.l.isOnSameSide(p, lsq, epsilon))
+                && (rp.l.isOnSameSide(q, lsp, epsilon)
+                || rp.l.isOnSameSide(q, lsq, epsilon))) {
+            return true;
         }
         return false;
     }
@@ -395,7 +421,7 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
         V2D_FiniteGeometryDouble lqri = getQR().getIntersection(epsilon, l);
         V2D_FiniteGeometryDouble lrpi = getRP().getIntersection(epsilon, l);
         /**
-         * This may appear overly complicated in parts, but due to imprecision 
+         * This may appear overly complicated in parts, but due to imprecision
          * some odd cases may arise!
          */
         if (lpqi == null) {
@@ -520,8 +546,8 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
         if (g == null) {
             return null;
         }
-        if (g instanceof V2D_PointDouble gp) {
-            if (isAligned(gp, epsilon)) {
+        if (g instanceof V2D_PointDouble gp) {            
+            if (isIntersectedBy(gp, epsilon)) {
                 if (l.isBetween(gp, epsilon)) {
                     return gp;
                 }
@@ -529,11 +555,22 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
             return null;
         }
         V2D_LineSegmentDouble ls = (V2D_LineSegmentDouble) g;
-        if (ls.isBetween(l.getP(), epsilon) || ls.isBetween(l.getQ(), epsilon)
-                || l.isBetween(getP(), epsilon)) {
-            return l.getIntersectionLS(epsilon, (V2D_LineSegmentDouble) g);
-        } else {
+        V2D_FiniteGeometryDouble lils = l.getIntersectionLS(epsilon, ls);
+        if (lils == null) {
             return null;
+        } else if (lils instanceof V2D_PointDouble lilsp) {
+            if (isIntersectedBy(lilsp, epsilon)) {
+                return lilsp;
+            } else {
+                return null;
+            }
+        } else {
+            V2D_LineSegmentDouble lilsl = (V2D_LineSegmentDouble) lils;
+            if (isIntersectedBy(lilsl, epsilon)) {
+                return l.getIntersectionLS(epsilon, ls);
+            } else {
+                return null;
+            }
         }
     }
 
@@ -1071,7 +1108,7 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
      * @param l a line segment either equal to one of the edges of this: null
      * null null null null null null null null null null null null null null
      * null null null null null null null null null null null null null null
-     * null null null null null     {@link #getPQ()},
+     * null null null null null null     {@link #getPQ()},
      * {@link #getQR()} or {@link #getRP()}.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.

@@ -94,41 +94,39 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
      */
     public V2D_ConvexHullDouble(double epsilon, V2D_PointDouble... points) {
         super();
-        this.points = new ArrayList<>();
+        this.points = V2D_PointDouble.getUnique(Arrays.asList(points), epsilon);
         this.triangles = new ArrayList<>();
-        // Get a list of unique points.
-        ArrayList<V2D_PointDouble> pts = V2D_PointDouble.getUnique(
-                Arrays.asList(points), epsilon);
-        V2D_VectorDouble v0 = new V2D_VectorDouble(pts.get(0).rel);
-        double xmin = v0.dx;
-        double xmax = v0.dx;
-        double ymin = v0.dy;
-        double ymax = v0.dy;
-        int xminIndex = 0;
-        int xmaxIndex = 0;
-        int yminIndex = 0;
-        int ymaxIndex = 0;
-        for (int i = 1; i < pts.size(); i++) {
-            V2D_PointDouble pt = pts.get(i);
-            double x = pt.rel.dx;
-            double y = pt.rel.dy;
-            if (x < xmin) {
-                xmin = x;
-                xminIndex = i;
-            }
-            if (x > xmax) {
-                xmax = x;
-                xmaxIndex = i;
-            }
-            if (y < ymin) {
-                ymin = y;
-                yminIndex = i;
-            }
-            if (y > ymax) {
-                ymax = y;
-                ymaxIndex = i;
-            }
-        }
+//        // Get a list of unique points.
+//        V2D_VectorDouble v0 = new V2D_VectorDouble(points.get(0).rel);
+//        double xmin = v0.dx;
+//        double xmax = v0.dx;
+//        double ymin = v0.dy;
+//        double ymax = v0.dy;
+//        int xminIndex = 0;
+//        int xmaxIndex = 0;
+//        int yminIndex = 0;
+//        int ymaxIndex = 0;
+//        for (int i = 1; i < points.size(); i++) {
+//            V2D_PointDouble pt = points.get(i);
+//            double x = pt.rel.dx;
+//            double y = pt.rel.dy;
+//            if (x < xmin) {
+//                xmin = x;
+//                xminIndex = i;
+//            }
+//            if (x > xmax) {
+//                xmax = x;
+//                xmaxIndex = i;
+//            }
+//            if (y < ymin) {
+//                ymin = y;
+//                yminIndex = i;
+//            }
+//            if (y > ymax) {
+//                ymax = y;
+//                ymaxIndex = i;
+//            }
+//        }
     }
 
     /**
@@ -734,4 +732,23 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
         }
     }
 
+    /**
+     * This implementation does not compute a centroid and use that.
+     * @return A list of triangles that make up the convex hull. 
+     */
+    public ArrayList<V2D_TriangleDouble> getTriangles() {
+        ArrayList<V2D_TriangleDouble> result = new ArrayList<>();
+        V2D_PointDouble[] ps = getPoints();
+        V2D_PointDouble p = ps[0];
+        V2D_PointDouble q = ps[1];
+        V2D_PointDouble r = ps[2];
+        result.add(new V2D_TriangleDouble(p, q, r));
+        //int nt = ps.length - 2;
+        for (int i = 3; i < ps.length; i ++) {
+            q = r;
+            r = ps[i];
+            result.add(new V2D_TriangleDouble(p, q, r));
+        }
+        return result;
+    }
 }

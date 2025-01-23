@@ -778,8 +778,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
         double ay = a.getY();
         double bx = b.getX();
         double by = b.getY();
-        
-        return ((y1-y2)*(ax-x1)+(x2-x1)*(ay-y1))*((y1-y2)*(bx-x1)+(x2-x1)*(by-y1)) >= 0D;
+        return ((y1-y2)*(ax-x1)+(x2-x1)*(ay-y1))*((y1-y2)*(bx-x1)+(x2-x1)*(by-y1)) + epsilon >= 0D;
         //return (v.dy * (a.getX() - px) + (v.dx * (a.getY() - py))) * 
         //        (v.dy * (b.getX() - px) + v.dx * (b.getY() - py)) >= 0D;
     }

@@ -472,12 +472,13 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
             return this;
         }
         double t = (((x1 - x3) * (y3 - y4)) - ((y1 - y3) * (x3 - x4))) / den;
-        boolean ti = t >= 0D && t <= 1D;
+        
+        boolean ti = (t >= -epsilon) && (t <= 1D + epsilon);
         if (ti) {
             return (V2D_PointDouble) li;
         } else {
             double u = (((x1 - x2) * (y1 - y3)) - ((y1 - y2) * (x1 - x3))) / den;
-            if (u >= 0D && u <= 1D) {
+            if (u >= -epsilon && u <= 1D + epsilon) {
                 return (V2D_PointDouble) li;
             } else {
                 return null;
@@ -1163,6 +1164,8 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      * line segment.
      */
     public boolean isBetween(V2D_PointDouble pt, double epsilon) {
+        getP().equals(epsilon, pt);
+        getQ().equals(epsilon, pt);
         if (getPL().isOnSameSide(pt, getQ(), epsilon)) {
             if (getQL().isOnSameSide(pt, getP(), epsilon)) {
                 return true;

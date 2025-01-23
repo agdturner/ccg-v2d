@@ -23,4 +23,6 @@ module uk.ac.leeds.ccg.v2d.test {
     requires uk.ac.leeds.ccg.v2d;
 
     opens uk.ac.leeds.ccg.v2d.geometry.d.test to org.junit.platform.commons;
+    opens uk.ac.leeds.ccg.v2d.geometry.envelope.test to org.junit.platform.commons;
+    opens uk.ac.leeds.ccg.v2d.projection.d.test to org.junit.platform.commons;
 }

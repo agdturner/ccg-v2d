@@ -15,6 +15,7 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry.d.test;
 
+import java.util.ArrayList;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +23,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import uk.ac.leeds.ccg.math.arithmetic.Math_Double;
+import uk.ac.leeds.ccg.v2d.geometry.d.V2D_ConvexHullDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_EnvelopeDouble;
+import uk.ac.leeds.ccg.v2d.geometry.d.V2D_FiniteGeometryDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_GeometryDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_LineDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_LineSegmentDouble;
@@ -539,6 +542,37 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
         expResult = new V2D_TriangleDouble(pP1P0, pP2P0, pP2P1);
         result = instance.getIntersection(t, epsilon);
         assertTrue(((V2D_TriangleDouble) expResult).equals((V2D_TriangleDouble) result, epsilon));
+        // Test 6
+        // 0
+        V2D_PointDouble p = new V2D_PointDouble(-50d, -50d);
+        V2D_PointDouble q = new V2D_PointDouble(0d, 50d);
+        V2D_PointDouble r = new V2D_PointDouble(50d, -50d);
+        V2D_TriangleDouble t0 = new V2D_TriangleDouble(p, q, r);
+        double theta;
+        V2D_PointDouble origin = new V2D_PointDouble(0d, 0d);
+        // 1
+        theta = Math.PI;
+        V2D_TriangleDouble t1 = t0.rotate(origin, theta, epsilon);
+        
+        ArrayList<V2D_TriangleDouble> expected = new ArrayList<>();
+        expected.add(new V2D_TriangleDouble(
+                new V2D_PointDouble(-25d, 0d),
+                new V2D_PointDouble(0d, 50d),
+                new V2D_PointDouble(25d, 0d)));
+        expected.add(new V2D_TriangleDouble(
+                new V2D_PointDouble(25d, 0d),
+                new V2D_PointDouble(0d, -50d),
+                new V2D_PointDouble(-25d, 0d)));
+        
+        
+        // Calculate the intersection
+        // We are expecting a convex hull with 4 points that can be tested to 
+        // see if they are made up of the two triangles as expected.
+        V2D_FiniteGeometryDouble gi = t0.getIntersection(t1, epsilon);
+        ArrayList<V2D_TriangleDouble> git = ((V2D_ConvexHullDouble) gi).getTriangles();
+        for (int i = 0; i < git.size(); i ++) {
+            assertTrue(expected.get(i).equals(git.get(i), epsilon));
+        }
     }
 
     /**
