@@ -20,12 +20,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import uk.ac.leeds.ccg.v2d.geometrics.d.V2D_GeometricsDouble;
+import uk.ac.leeds.ccg.v2d.geometrics.d.V2D_SortByCentroid;
 
 /**
- * A class for representing convex hulls. These are a special types of polygon: 
- * They have no holes and all the angles are convex. Below is a
- * basic algorithm for generating a convex hull from a set of coplanar points
- * known as the "quick hull" algorithm (see
+ * A class for representing convex hulls. These are a special types of polygon:
+ * They have no holes and all the angles are convex. Below is a basic algorithm
+ * for generating a convex hull from a set of coplanar points known as the
+ * "quick hull" algorithm (see
  * <a href="https://en.wikipedia.org/wiki/Quickhull">
  * https://en.wikipedia.org/wiki/Quickhull</a>) :
  * <ol>
@@ -70,7 +71,7 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
     protected final ArrayList<V2D_TriangleDouble> triangles;
 
     /**
-     * The collection of points. (Todo: organise to be final)
+     * The collection of points in a clockwise order.
      */
     protected ArrayList<V2D_PointDouble> points;
 
@@ -95,39 +96,14 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
      */
     public V2D_ConvexHullDouble(double epsilon, V2D_PointDouble... points) {
         super();
-        this.points = V2D_PointDouble.getUnique(Arrays.asList(points), epsilon);
+        ArrayList<V2D_PointDouble> uniquePoints = V2D_PointDouble.getUnique(Arrays.asList(points), epsilon);
+        V2D_PointDouble[] up = new V2D_PointDouble[uniquePoints.size()];
+        up = uniquePoints.toArray(up);
+        V2D_PointDouble centroid = V2D_GeometricsDouble.getCentroid(up);
+        V2D_SortByCentroid sbc = new V2D_SortByCentroid(centroid);
+        Arrays.sort(up, sbc);
+        this.points = new ArrayList<>(Arrays.asList(up));
         this.triangles = new ArrayList<>();
-//        // Get a list of unique points.
-//        V2D_VectorDouble v0 = new V2D_VectorDouble(points.get(0).rel);
-//        double xmin = v0.dx;
-//        double xmax = v0.dx;
-//        double ymin = v0.dy;
-//        double ymax = v0.dy;
-//        int xminIndex = 0;
-//        int xmaxIndex = 0;
-//        int yminIndex = 0;
-//        int ymaxIndex = 0;
-//        for (int i = 1; i < points.size(); i++) {
-//            V2D_PointDouble pt = points.get(i);
-//            double x = pt.rel.dx;
-//            double y = pt.rel.dy;
-//            if (x < xmin) {
-//                xmin = x;
-//                xminIndex = i;
-//            }
-//            if (x > xmax) {
-//                xmax = x;
-//                xmaxIndex = i;
-//            }
-//            if (y < ymin) {
-//                ymin = y;
-//                yminIndex = i;
-//            }
-//            if (y > ymax) {
-//                ymax = y;
-//                ymaxIndex = i;
-//            }
-//        }
     }
 
     /**
@@ -139,7 +115,7 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
      */
-    public V2D_ConvexHullDouble(V2D_ConvexHullDouble ch, V2D_TriangleDouble t, 
+    public V2D_ConvexHullDouble(V2D_ConvexHullDouble ch, V2D_TriangleDouble t,
             double epsilon) {
         this(epsilon, V2D_FiniteGeometryDouble.getPoints(ch, t));
     }
@@ -147,11 +123,8 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
     @Override
     public V2D_PointDouble[] getPoints() {
         int np = points.size();
-        V2D_PointDouble[] re = new V2D_PointDouble[np];
-        for (int i = 0; i < np; i++) {
-            re[i] = new V2D_PointDouble(points.get(i));
-        }
-        return re;
+        V2D_PointDouble[] pts = new V2D_PointDouble[np];
+        return points.toArray(pts);
     }
 
     @Override
@@ -218,7 +191,7 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
             }
         }
         return true;
-        
+
 //        /**
 //         * The triangularisation of this and i might be different and the number
 //         * of points in each might be different, but the areas they define might
@@ -233,7 +206,9 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
 //            V2D_Geometry g = i.getIntersection(t);
 //            if (g instanceof V2D_Triangle gt) {
 //                if (!t.equals(gt)) {
-////                    System.out.println(gt);
+    
+
+    ////                    System.out.println(gt);
 ////                    System.out.println(t);
 ////                    t.equals(gt);
 //                    return false;
@@ -294,12 +269,12 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
     public boolean isIntersectedBy(V2D_PointDouble pt, double epsilon) {
         // Check envelopes intersect.
         if (getEnvelope().isIntersectedBy(pt)) {
-                // Check point is in a triangle
-                for (var t : triangles) {
-                    //if (t.isIntersectedBy(pt, epsilon)) {
-                    if (t.isAligned(pt, epsilon)) {
-                        return true;
-                    }
+            // Check point is in a triangle
+            for (var t : triangles) {
+                //if (t.isIntersectedBy(pt, epsilon)) {
+                if (t.isAligned(pt, epsilon)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -337,7 +312,6 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
 //        return false;
 //        //return triangles.parallelStream().anyMatch(t -> (t.isIntersectedBy0(pt, oom)));
 //    }
-
     /**
      * This sums all the areas irrespective of any overlaps.
      *
@@ -386,7 +360,7 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
 //            return new V2D_ConvexHullDouble(t.pl.n, epsilon,
 //                    tsu.toArray(V2D_PointDouble[]::new)).simplify(epsilon);
 //        }
-////        switch (size) {
+    ////        switch (size) {
 ////            case 0:
 ////                return null;
 ////            case 1:
@@ -505,6 +479,7 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
 //        }
 //    }
 //
+
     @Override
     public boolean isIntersectedBy(V2D_EnvelopeDouble aabb, double epsilon) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
@@ -612,7 +587,6 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
 //        }
 //        return false;
 //    }
-
 //    /**
 //     * Clips this using t.
 //     *
@@ -733,20 +707,38 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
         }
     }
 
+//    /**
+//     * This implementation computes a centroid and uses that to construct 
+//     * triangles with each edge.
+//     * @return A list of triangles that make up the convex hull. 
+//     */
+//    public ArrayList<V2D_TriangleDouble> getTriangles() {
+//        ArrayList<V2D_TriangleDouble> result = new ArrayList<>();
+//        V2D_PointDouble[] ps = getPoints();
+//        V2D_PointDouble centroid = V2D_GeometricsDouble.getCentroid(ps);
+//        V2D_PointDouble p0 = ps[0];
+//        for (int i = 1; i < ps.length; i ++) {
+//            V2D_PointDouble p1 = ps[i];
+//            result.add(new V2D_TriangleDouble(centroid, p0, p1));
+//            p0 = p1;
+//        }
+//        return result;
+//    }
     /**
-     * This implementation computes a centroid and uses that to construct 
-     * triangles with each edge.
-     * @return A list of triangles that make up the convex hull. 
+     * This implementation does not computes a centroid and alternates between
+     * clockwise and anticlockwise to fill the space with triangles.
+     *
+     * @return A list of triangles that make up the convex hull.
      */
     public ArrayList<V2D_TriangleDouble> getTriangles() {
         ArrayList<V2D_TriangleDouble> result = new ArrayList<>();
         V2D_PointDouble[] ps = getPoints();
-        V2D_PointDouble centroid = V2D_GeometricsDouble.getCentroid(ps);
         V2D_PointDouble p0 = ps[0];
-        for (int i = 1; i < ps.length; i ++) {
-            V2D_PointDouble p1 = ps[i];
-            result.add(new V2D_TriangleDouble(centroid, p0, p1));
-            p0 = p1;
+        V2D_PointDouble p1 = ps[1];
+        for (int i = 2; i < ps.length; i++) {
+            V2D_PointDouble p2 = ps[i];
+            result.add(new V2D_TriangleDouble(p0, p1, p2));
+            p1 = p2;
         }
         return result;
     }
