@@ -542,19 +542,24 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
         expResult = new V2D_TriangleDouble(pP1P0, pP2P0, pP2P1);
         result = instance.getIntersection(t, epsilon);
         assertTrue(((V2D_TriangleDouble) expResult).equals((V2D_TriangleDouble) result, epsilon));
-        // Test 6
-        // 0
-        V2D_PointDouble p = new V2D_PointDouble(-50d, -50d);
-        V2D_PointDouble q = new V2D_PointDouble(0d, 50d);
-        V2D_PointDouble r = new V2D_PointDouble(50d, -50d);
-        V2D_TriangleDouble t0 = new V2D_TriangleDouble(p, q, r);
-        double theta;
+        // Test 6 - Test 7 Are more complex intersections
         V2D_PointDouble origin = new V2D_PointDouble(0d, 0d);
-        // 1
+        ArrayList<V2D_TriangleDouble> expected;
+        V2D_TriangleDouble t0;
+        V2D_TriangleDouble t1;
+        double theta;
+        // Test 6
+        t0 = new V2D_TriangleDouble(
+                new V2D_PointDouble(-50d, -50d),
+                new V2D_PointDouble(0d, 50d),
+                new V2D_PointDouble(50d, -50d));
         theta = Math.PI;
-        V2D_TriangleDouble t1 = t0.rotate(origin, theta, epsilon);
-        
-        ArrayList<V2D_TriangleDouble> expected = new ArrayList<>();
+        t1 = t0.rotate(origin, theta, epsilon);
+        expected = new ArrayList<>();
+        /** 
+         * Using an additional centroid point and connecting each edge with this 
+         * would result in 4 triangles.
+         */
 //        expected.add(new V2D_TriangleDouble(
 //                new V2D_PointDouble(0d, 0d),
 //                new V2D_PointDouble(-25d, 0d),
@@ -584,6 +589,37 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
         // see if they are made up of the two triangles as expected.
         V2D_FiniteGeometryDouble gi = t0.getIntersection(t1, epsilon);
         ArrayList<V2D_TriangleDouble> git = ((V2D_ConvexHullDouble) gi).getTriangles();
+        for (int i = 0; i < git.size(); i ++) {
+            assertTrue(expected.get(i).equals(git.get(i), epsilon));
+        }
+        // Test 7
+        t0 = new V2D_TriangleDouble(new V2D_PointDouble(-30d, -30d),
+        new V2D_PointDouble(0d, 60d),
+        new V2D_PointDouble(30d, -30d));
+        theta = Math.PI;
+        t1 = t0.rotate(origin, theta, epsilon);
+        expected = new ArrayList<>();
+        expected.add(new V2D_TriangleDouble(
+                new V2D_PointDouble(-10d, 30d),
+                new V2D_PointDouble(-20d, 0d),
+                new V2D_PointDouble(-10d, -30d)));
+        expected.add(new V2D_TriangleDouble(
+                new V2D_PointDouble(-10d, 30d),
+                new V2D_PointDouble(-10d, -30d),
+                new V2D_PointDouble(10d, -30d)));
+        expected.add(new V2D_TriangleDouble(
+                new V2D_PointDouble(-10d, 30d),
+                new V2D_PointDouble(10d, -30d),
+                new V2D_PointDouble(20d, 0d)));
+        expected.add(new V2D_TriangleDouble(
+                new V2D_PointDouble(-10d, 30d),
+                new V2D_PointDouble(20d, 0d),
+                new V2D_PointDouble(10d, 30d)));
+        // Calculate the intersection
+        // Expecting a convex hull with 6 points that can be tested to 
+        // see if they are made up of the four triangles as expected.
+        gi = t0.getIntersection(t1, epsilon);
+        git = ((V2D_ConvexHullDouble) gi).getTriangles();
         for (int i = 0; i < git.size(); i ++) {
             assertTrue(expected.get(i).equals(git.get(i), epsilon));
         }
