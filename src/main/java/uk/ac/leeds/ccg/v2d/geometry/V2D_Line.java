@@ -1372,6 +1372,8 @@ public class V2D_Line extends V2D_Geometry {
         if (isIntersectedBy(a, oom, rm) && isIntersectedBy(b, oom, rm)) {
             return true;
         }
+        p = getP();
+        q = getQ(oom, rm);
         BigRational x1 = p.getX(oom, rm);
         BigRational y1 = p.getY(oom, rm);
         BigRational x2 = q.getX(oom, rm);

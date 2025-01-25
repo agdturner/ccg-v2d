@@ -22,6 +22,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import uk.ac.leeds.ccg.v2d.geometry.V2D_Envelope;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_Point;
 //import org.junit.jupiter.api.Disabled;
 
@@ -73,56 +74,42 @@ public class V2D_PointTest extends V2D_Test {
         assertTrue(instance.equals(p, oom, rm));
     }
 
-//    /**
-//     * Test of isCoincident method, of class V2D_Line.
-//     */
-//    @Test
-//    public void testEquals_V2D_PointArray() {
-//        System.out.println("equals");
-//        V2D_Point[] points = new V2D_Point[2];
-//        points[0] = pP0P0;
-//        points[1] = pP0P0;
-//        assertTrue(V2D_Point.equals(points));
-//        points[1] = pP0P1;
-//        assertFalse(V2D_Point.equals(points));
-//        points[0] = pP0P1;
-//        assertTrue(V2D_Point.equals(points));
-//    }
-//
-//    /**
-//     * Test of isBetween method, of class V2D_Point.
-//     */
-//    @Test
-//    public void testIsBetween_double_V2D_Point_V2D_Point() {
-//        System.out.println("isBetween");
-//        // Test 1
-//        V2D_Point p = pP0P0;
-//        V2D_Point a = pN1P0;
-//        V2D_Point b = pP1P0;
-//        double epsilon = 1 / 100000000d;
-//        assertTrue(p.isBetween(epsilon, a, b));
-//        // Test 2
-//        p = pP0P0;
-//        a = pP0N1;
-//        b = pP0P1;
-//        assertTrue(p.isBetween(epsilon, a, b));
-//        // Test 3
-//        p = pP0P0;
-//        a = pN1N1;
-//        b = pP1P1;
-//        assertTrue(p.isBetween(epsilon, a, b));
-//    }
-//
-//    /**
-//     * Test of getEnvelope method, of class V2D_Point.
-//     */
-//    @Test
-//    public void testGetEnvelope() {
-//        System.out.println("getEnvelope");
-//        V2D_Envelope expResult = new V2D_Envelope(pP1P2);
-//        V2D_Envelope result = pP1P2.getEnvelope();
-//        assertTrue(expResult.equals(result));
-//    }
+      /**
+     * Test of isBetween method, of class V2D_Point.
+     */
+    @Test
+    public void testIsBetween_double_V2D_Point_V2D_Point() {
+        System.out.println("isBetween");
+        // Test 1
+        V2D_Point p = pP0P0;
+        V2D_Point a = pN1P0;
+        V2D_Point b = pP1P0;
+        int oom = -6;
+        RoundingMode rm = RoundingMode.HALF_UP;
+        assertTrue(p.isBetween(a, b, oom, rm));
+        // Test 2
+        p = pP0P0;
+        a = pP0N1;
+        b = pP0P1;
+        assertTrue(p.isBetween(a, b, oom, rm));
+        // Test 3
+        p = pP0P0;
+        a = pN1N1;
+        b = pP1P1;
+        assertTrue(p.isBetween(a, b, oom, rm));
+    }
+
+    /**
+     * Test of getEnvelope method, of class V2D_Point.
+     */
+    @Test
+    public void testGetEnvelope() {
+        System.out.println("getEnvelope");
+        int oom = -6;
+        V2D_Envelope expResult = new V2D_Envelope(oom, pP1P2);
+        V2D_Envelope result = pP1P2.getEnvelope(oom);
+        assertTrue(expResult.equals(result));
+    }
 //
 //    /**
 //     * Test of getDistance method, of class V2D_Point.
