@@ -606,10 +606,9 @@ public class V2D_VectorDouble implements Serializable {
     }
     
     /**
-     * Calculate and return {@code #this} rotated clockwise.
+     * Calculate and return {@code #this} rotated 90 degrees clockwise.
      *
-     * @param theta The angle of rotation.
-     * @return The vector which is {@code #this} rotated using the parameters.
+     * @return A new vector which is this rotated 90 degrees.
      */
     public V2D_VectorDouble rotate90() {
         return new V2D_VectorDouble(-dy, dx);

@@ -400,6 +400,13 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      * @return {@code true} if {@code this} is intersected by {@code pv}.
      */
     public boolean isIntersectedBy(V2D_LineDouble l, double epsilon) {
+        if (this.l.isIntersectedBy(epsilon, l)) {
+            if (getIntersection(epsilon, l) == null) {
+                return false;
+            } else {
+                return true;
+            }
+        }
         return false;
     }
 

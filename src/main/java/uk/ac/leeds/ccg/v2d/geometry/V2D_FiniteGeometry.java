@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Andy Turner, University of Leeds.
+ * Copyright 2020 Andy Turner, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,65 +15,90 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry;
 
-import uk.ac.leeds.ccg.v2d.geometry.envelope.V2D_Envelope;
+import java.math.RoundingMode;
+import uk.ac.leeds.ccg.v2d.geometry.V2D_Point;
+import uk.ac.leeds.ccg.v2d.geometry.V2D_Vector;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
- * V2D_FiniteGeometry
- * 
+ * V2D_FiniteGeometry for representing finite geometries.
+ *
  * @author Andy Turner
- * @version 1.1
+ * @version 1.0
  */
-public interface V2D_FiniteGeometry {
+public abstract class V2D_FiniteGeometry extends V2D_Geometry {
+
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * For storing the envelope.
+     */
+    protected V2D_Envelope en;
     
     /**
      * For getting the envelope of the geometry
-     * @return The V2D_Envelope. 
-     */
-    public abstract V2D_Envelope getEnvelope();
-
-    /**
-     * For identifying if the geometry is intersected by point
-     * {@code p}.
      *
-     * @param p The point to test for intersection with.
-     * @return {@code true} iff the geometry is intersected by {@code p}.
+     * @return The envelope.
      */
-    public abstract boolean isIntersectedBy(V2D_Point p);
+    public abstract V2D_Envelope getEnvelope(int oom);
     
     /**
-     * For identifying if the geometry is intersected by line
-     * {@code l}.
-     *
-     * @param l The line to test for intersection with.
-     * @return {@code true} iff the geometry is intersected by {@code l}.
+     * Creates a new instance with offset V2D_Vector.ZERO.
      */
-    public abstract boolean isIntersectedBy(V2D_Line l);
+    public V2D_FiniteGeometry() {
+        this(V2D_Vector.ZERO);
+    }
     
     /**
-     * For identifying if the geometry is intersected by line segment
-     * {@code l}.
+     * Creates a new instance.
      *
-     * @param l The line segment to test for intersection with.
-     * @param b To distinguish this method from
-     * {@link #isIntersectedBy(uk.ac.leeds.ccg.v3d.geometry.V3D_Line)}.
-     * @return {@code true} iff the geometry is intersected by {@code l}.
+     * @param offset What {@link #offset} is set to.
      */
-    public abstract boolean isIntersectedBy(V2D_LineSegment l, boolean b);
+    public V2D_FiniteGeometry(V2D_Vector offset) {
+        super(offset);
+    }
     
     /**
-     * For getting the intersection between the geometry and a {@code l}.
-     * @param l The line to intersect with.
-     * @return The V2D_Geometry. 
+     * For evaluating if the geometry is intersected by the Axis Aligned 
+     * Bounding Box aabb.
+     *
+     * @param aabb The Axis Aligned Bounding Box to test for intersection.
+     * @param epsilon The tolerance within which two vector components are
+     * considered equal.
+     * @return {@code true} iff the geometry intersects aabb at the given precision.
      */
-    public abstract V2D_Geometry getIntersection(V2D_Line l);
+    public abstract boolean isIntersectedBy(V2D_Envelope aabb, int oom, 
+            RoundingMode rm);
     
     /**
-     * For getting the intersection between the geometry and the line segment
-     * {@code l}.
-     *
-     * @param l The line segment to intersect with.
-     * @param b To distinguish this method from
-     * {@link #getIntersection(uk.ac.leeds.ccg.v3d.geometry.V3D_Line)}.
-     * @return The V2D_Geometry.
+     * @return A copy of the points of the geometry.
      */
-    public abstract V2D_Geometry getIntersection(V2D_LineSegment l, boolean b);
+    public abstract V2D_Point[] getPoints();
+    
+    /**
+     * @return A copy of the points of the geometries gs.
+     * @param gs The geometries.
+     */
+    public static V2D_Point[] getPoints(V2D_FiniteGeometry... gs) {
+        ArrayList<V2D_Point> list = new ArrayList<>();
+        for (var x: gs) {
+            list.addAll(Arrays.asList(x.getPoints()));
+        }
+        return list.toArray(V2D_Point[]::new);
+    }
+    
+    /**
+     * Translate (move relative to the origin).
+     *
+     * @param v The vector to translate.
+     */
+    @Override
+    public void translate(V2D_Vector v, int oom, RoundingMode rm) {
+        super.translate(v, oom, rm);
+        if (en != null) {
+            en.translate(v, oom, rm);
+        }
+        //en = null;
+    }
 }

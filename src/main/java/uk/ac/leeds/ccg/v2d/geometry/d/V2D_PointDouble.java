@@ -259,7 +259,6 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble {
      * @return true iff this is equal to the ORIGIN.
      */
     public boolean isBetween(double epsilon, V2D_PointDouble a, V2D_PointDouble b) {
-        V2D_VectorDouble ab = new V2D_VectorDouble(a, b);
         if (this.equals(a)) {
             return true;
         }
@@ -269,6 +268,7 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble {
         if (a.equals(b)) {
             return false;
         }
+        V2D_VectorDouble ab = new V2D_VectorDouble(a, b);
         V2D_VectorDouble v90 = ab.rotate90();
         V2D_LineDouble ap = new V2D_LineDouble(a, v90);
         if (ap.isOnSameSide(this, b, epsilon)) {
