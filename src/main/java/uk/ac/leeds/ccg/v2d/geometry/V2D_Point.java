@@ -362,13 +362,13 @@ public class V2D_Point extends V2D_FiniteGeometry {
                     return 1;
                 }
             } else {
-                return 3;
+                return 2;
             }
         } else {
             if (getY(oom, rm).compareTo(BigRational.ZERO) != -1) {
-                return 4;
+                return 3;
             } else {
-                return 5;
+                return 4;
             }
         }
     }
@@ -420,7 +420,7 @@ public class V2D_Point extends V2D_FiniteGeometry {
         if (na.compareTo(BigRational.ZERO) == 0) {
             return new V2D_Point(this);
         }
-        V2D_Vector tv = new V2D_Vector(pt.getX(oom, rm), pt.getY(oom, rm));
+        V2D_Vector tv = new V2D_Vector(pt.getX(oomn9, rm), pt.getY(oomn9, rm));
         V2D_Point tp = new V2D_Point(this);
         tp.translate(tv.reverse(), oomn9, rm);
         V2D_Vector tpv = tp.getVector(oomn9, rm);
