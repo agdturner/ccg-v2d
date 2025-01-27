@@ -17,6 +17,7 @@ package uk.ac.leeds.ccg.v2d.geometry.test;
 
 import ch.obermuhlner.math.big.BigRational;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -367,7 +368,6 @@ public class V2D_PointTest extends V2D_Test {
         result = instance.rotate(pt, theta, bd, oom, rm);
         expResult = new V2D_Point(-3, 0);
         assertTrue(expResult.equals(result, oom, rm));
-
         // Test 5
         pt = pP0P1;
         instance = new V2D_Point(pP1P0);
@@ -387,7 +387,6 @@ public class V2D_PointTest extends V2D_Test {
         result = instance.rotate(pt, theta, bd, oom, rm);
         expResult = pP2P2;
         assertTrue(expResult.equals(result, oom, rm));
-
         // Test 8
         instance = new V2D_Point(pP1P1);
         theta = Pi;
@@ -407,124 +406,130 @@ public class V2D_PointTest extends V2D_Test {
         assertTrue(expResult.equals(result, oom, rm));
     }
 
-//    /**
-//     * Test of setOffset method, of class V2D_Point.
-//     */
-//    @Test
-//    public void testTranslate() {
-//        System.out.println("setOffset");
-//        V2D_Point instance = new V2D_Point(pP0P0);
-//        V2D_Vector offset = P0P1;
-//        double epsilon = 1 / 100000000d;
-//        instance.translate(offset);
-//        assertTrue(instance.equals(epsilon, pP0P1));
-//        // Test 2
-//        offset = N2N2;
-//        instance.translate(offset);
-//        assertTrue(instance.equals(epsilon, pN2N1));
-//    }
-//
-//    /**
-//     * Test of setOffset method, of class V2D_Point.
-//     */
-//    @Test
-//    public void testSetOffset() {
-//        System.out.println("setOffset");
-//        V2D_Vector offset = P0P1;
-//        V2D_Point instance = new V2D_Point(pP0P0);
-//        instance.setOffset(offset);
-//        assertTrue(instance.equals(pP0P0));
-//    }
-//
-//    /**
-//     * Test of setRel method, of class V2D_Point.
-//     */
-//    @Test
-//    public void testSetRel() {
-//        System.out.println("setRel");
-//        V2D_Vector rel = P0P1;
-//        V2D_Point instance = new V2D_Point(pP0P0);
-//        instance.setRel(rel);
-//        assertTrue(instance.equals(pP0P0));
-//    }
-//
-//    /**
-//     * Test of equals method, of class V2D_Point.
-//     */
-//    @Test
-//    public void testGetUnique() {
-//        System.out.println("getUnique");
-//        ArrayList<V2D_Point> pts;
-//        ArrayList<V2D_Point> expResult;
-//        ArrayList<V2D_Point> result;
-//        double epsilon = 1 / 100000000d;
-//        // Test 1
-//        pts = new ArrayList<>();
-//        pts.add(pP0P0);
-//        pts.add(pP0P0);
-//        expResult = new ArrayList<>();
-//        expResult.add(pP0P0);
-//        result = V2D_Point.getUnique(pts, epsilon);
-//        testContainsSamePoints(expResult, result, epsilon);
-//        // Test 2
-//        pts = new ArrayList<>();
-//        pts.add(pP0P0);
-//        pts.add(pP0P0);
-//        pts.add(pP0P0);
-//        pts.add(pP1P0);
-//        pts.add(pP0P0);
-//        pts.add(pP0P0);
-//        pts.add(pP0P0);
-//        pts.add(pP1P0);
-//        pts.add(pP0P0);
-//        pts.add(pP1P0);
-//        expResult = new ArrayList<>();
-//        expResult.add(pP0P0);
-//        expResult.add(pP1P0);
-//        result = V2D_Point.getUnique(pts, epsilon);
-//        testContainsSamePoints(expResult, result, epsilon);
-//        // Test 3
-//        pts = new ArrayList<>();
-//        pts.add(pP0P1);
-//        pts.add(pP0P0);
-//        pts.add(pP0P0);
-//        pts.add(pP1P0);
-//        pts.add(pP0P0);
-//        pts.add(pP0P0);
-//        pts.add(pP0P0);
-//        pts.add(pP1P0);
-//        pts.add(pP0P0);
-//        pts.add(pP1P0);
-//        expResult = new ArrayList<>();
-//        expResult.add(pP0P1);
-//        expResult.add(pP0P0);
-//        expResult.add(pP1P0);
-//        result = V2D_Point.getUnique(pts, epsilon);
-//        testContainsSamePoints(expResult, result, epsilon);
-//    }
-//
-//    private void testContainsSamePoints(ArrayList<V2D_Point> expResult,
-//            ArrayList<V2D_Point> result, double epsilon) {
-//        assertEquals(expResult.size(), result.size());
-//        boolean t = false;
-//        for (var x : result) {
-//            for (var y : expResult) {
-//                if (x.equals(epsilon, y)) {
-//                    t = true;
-//                    break;
-//                }
-//            }
-//            assertTrue(t);
-//        }
-//        t = false;
-//        for (var x : expResult) {
-//            for (var y : result) {
-//                if (x.equals(epsilon, y)) {
-//                    t = true;
-//                    break;
-//                }
-//            }
-//            assertTrue(t);
-//        }
-//    }
+    /**
+     * Test of setOffset method, of class V2D_Point.
+     */
+    @Test
+    public void testTranslate() {
+        System.out.println("setOffset");
+        V2D_Point instance = new V2D_Point(pP0P0);
+        V2D_Vector offset = P0P1;
+        int oom = -6;
+        RoundingMode rm = RoundingMode.HALF_UP;
+        instance.translate(offset, oom, rm);
+        assertTrue(instance.equals(pP0P1, oom, rm));
+        // Test 2
+        offset = N2N2;
+        instance.translate(offset, oom, rm);
+        assertTrue(instance.equals(pN2N1, oom, rm));
+    }
+
+    /**
+     * Test of setOffset method, of class V2D_Point.
+     */
+    @Test
+    public void testSetOffset() {
+        System.out.println("setOffset");
+        int oom = -6;
+        RoundingMode rm = RoundingMode.HALF_UP;
+        V2D_Vector offset = P0P1;
+        V2D_Point instance = new V2D_Point(pP0P0);
+        instance.setOffset(offset, oom, rm);
+        assertTrue(instance.equals(pP0P0, oom, rm));
+    }
+
+    /**
+     * Test of setRel method, of class V2D_Point.
+     */
+    @Test
+    public void testSetRel() {
+        System.out.println("setRel");
+        int oom = -6;
+        RoundingMode rm = RoundingMode.HALF_UP;
+        V2D_Vector rel = P0P1;
+        V2D_Point instance = new V2D_Point(pP0P0);
+        instance.setRel(rel, oom, rm);
+        assertTrue(instance.equals(pP0P0, oom, rm));
+    }
+
+    /**
+     * Test of equals method, of class V2D_Point.
+     */
+    @Test
+    public void testGetUnique() {
+        System.out.println("getUnique");
+        int oom = -6;
+        RoundingMode rm = RoundingMode.HALF_UP;
+        ArrayList<V2D_Point> pts;
+        ArrayList<V2D_Point> expResult;
+        ArrayList<V2D_Point> result;
+        // Test 1
+        pts = new ArrayList<>();
+        pts.add(pP0P0);
+        pts.add(pP0P0);
+        expResult = new ArrayList<>();
+        expResult.add(pP0P0);
+        result = V2D_Point.getUnique(pts, oom, rm);
+        testContainsSamePoints(expResult, result, oom, rm);
+        // Test 2
+        pts = new ArrayList<>();
+        pts.add(pP0P0);
+        pts.add(pP0P0);
+        pts.add(pP0P0);
+        pts.add(pP1P0);
+        pts.add(pP0P0);
+        pts.add(pP0P0);
+        pts.add(pP0P0);
+        pts.add(pP1P0);
+        pts.add(pP0P0);
+        pts.add(pP1P0);
+        expResult = new ArrayList<>();
+        expResult.add(pP0P0);
+        expResult.add(pP1P0);
+        result = V2D_Point.getUnique(pts, oom, rm);
+        testContainsSamePoints(expResult, result, oom, rm);
+        // Test 3
+        pts = new ArrayList<>();
+        pts.add(pP0P1);
+        pts.add(pP0P0);
+        pts.add(pP0P0);
+        pts.add(pP1P0);
+        pts.add(pP0P0);
+        pts.add(pP0P0);
+        pts.add(pP0P0);
+        pts.add(pP1P0);
+        pts.add(pP0P0);
+        pts.add(pP1P0);
+        expResult = new ArrayList<>();
+        expResult.add(pP0P1);
+        expResult.add(pP0P0);
+        expResult.add(pP1P0);
+        result = V2D_Point.getUnique(pts, oom, rm);
+        testContainsSamePoints(expResult, result, oom, rm);
+    }
+
+    private void testContainsSamePoints(ArrayList<V2D_Point> expResult,
+            ArrayList<V2D_Point> result, int oom, RoundingMode rm) {
+        assertEquals(expResult.size(), result.size());
+        boolean t = false;
+        for (var x : result) {
+            for (var y : expResult) {
+                if (x.equals(y, oom, rm)) {
+                    t = true;
+                    break;
+                }
+            }
+            assertTrue(t);
+        }
+        t = false;
+        for (var x : expResult) {
+            for (var y : result) {
+                if (x.equals(y, oom, rm)) {
+                    t = true;
+                    break;
+                }
+            }
+            assertTrue(t);
+        }
+    }
 }
