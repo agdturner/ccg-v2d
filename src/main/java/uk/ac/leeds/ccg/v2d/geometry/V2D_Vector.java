@@ -319,8 +319,8 @@ public class V2D_Vector implements Serializable {
      * @param v The vector to compare with {@code this}.
      * @return {@code true} iff {@code this} is the reverse of {@code v}.
      */
-    public boolean isReverse(V2D_Vector v) {
-        return equals(v.reverse());
+    public boolean isReverse(V2D_Vector v, int oom, RoundingMode rm) {
+        return equals(v.reverse(), oom, rm);
     }
 
     /**
@@ -524,36 +524,66 @@ public class V2D_Vector implements Serializable {
      * @return {@code true} if {@code this} and {@code v} are scalar multiples.
      */
     public boolean isScalarMultiple(V2D_Vector v, int oom, RoundingMode rm) {
-        if (equals(v)) {
+        if (equals(v, oom, rm)) {
             return true;
         } else {
             // Special cases
-            boolean isZero = isZero();
+            boolean isZero = isZero(oom, rm);
             if (isZero) {
                 /**
                  * Can't multiply the zero vector by a scalar to get a non-zero
                  * vector.
                  */
-                return v.isZero();
+                return v.isZero(oom, rm);
             }
-            if (v.isZero()) {
+            if (v.isZero(oom, rm)) {
                 /**
                  * Already tested that this is not equal to v, so the scalar is
                  * zero.
                  */
                 return true;
             }
-            if (dx.compareTo(Math_BigRationalSqrt.ZERO) == 0D) {
-                if (v.dx.compareTo(Math_BigRationalSqrt.ZERO) == 0D) {
+            if (v.dx.abs().equals(dx.abs(), oom)) {
+                // |dx| = |v.dx|
+                if (dx.equals(Math_BigRationalSqrt.ZERO, oom )) {
+                    // dx = v.dx = 0d
                     return true;
+                } else {
+                    // |dx| = |v.dx| != 0d
+                    if (v.dy.abs().equals(dy.abs(), oom)) {
+                        if (v.dy.equals(Math_BigRationalSqrt.ZERO, oom)) {
+                            return true;
+                        } else {
+                            Math_BigRationalSqrt scalar = v.dx.divide(dx, oom, rm);
+                            if (v.dy.equals(dy.multiply(scalar, oom, rm), oom)) {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }
+                    } else {
+                        // |dx| = |v.dx| != 0d, |dy| != |v.dy|
+                        Math_BigRationalSqrt scalar = v.dx.divide(dx, oom, rm);
+                        if (v.dy.equals(dy.multiply(scalar, oom, rm), oom)) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                }
+            } else {
+                // |dx| != |v.dx|
+                if (dx.equals(Math_BigRationalSqrt.ZERO, oom)) {
+                    return isZero;
+                } else {
+                    Math_BigRationalSqrt scalar = v.dx.divide(dx, oom, rm);
+                    if (v.dy.equals(dy.multiply(scalar, oom, rm), oom)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
                 }
             }
-            if (dy.compareTo(Math_BigRationalSqrt.ZERO) == 0D) {
-                if (v.dy.compareTo(Math_BigRationalSqrt.ZERO) == 0D) {
-                    return true;
-                }
-            }
-            return (v.dx.divide(dx, oom, rm)).compareTo(v.dy.divide(dy, oom, rm)) == 0;
         }
     }
 

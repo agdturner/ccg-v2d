@@ -493,15 +493,14 @@ public class V2D_VectorDouble implements Serializable {
         } else {
             // Special cases
             boolean isZero = isZero(epsilon);
-            boolean visZero = v.isZero(epsilon);
             if (isZero) {
                 /**
                  * Can't multiply the zero vector by a scalar to get a non-zero
                  * vector.
                  */
-                return visZero;
+                return v.isZero(epsilon);
             }
-            if (visZero) {
+            if (v.isZero(epsilon)) {
                 /**
                  * Already tested that this is not equal to v, so the scalar is
                  * zero.
@@ -517,15 +516,7 @@ public class V2D_VectorDouble implements Serializable {
                 // |dx| = |v.dx|
                 if (Math_Double.equals(dx, 0d, epsilon)) {
                     // dx = v.dx = 0d
-                    if (Math_Double.equals(Math.abs(v.dy), Math.abs(dy), epsilon)) {
-                        //if (Math_Double.equals(v.dy, 0d, epsilon)) {
-                            return true;
-                        //} else {
-                        //    return false;
-                        //}
-                    } else {
-                        return true;
-                    }
+                    return true;
                 } else {
                     // |dx| = |v.dx| != 0d
                     if (Math_Double.equals(Math.abs(v.dy), Math.abs(dy), epsilon)) {
