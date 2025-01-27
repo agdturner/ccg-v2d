@@ -242,10 +242,10 @@ public class V2D_Envelope implements Serializable {
             return true;
         } else if (getYMax(oom).compareTo(e.getYMin(oom)) == -1) {
             return true;
-        } else {
-            //(getYMin(oom).compareTo(e.getYMax(oom)) == 1)
+        } else if (getYMin(oom).compareTo(e.getYMax(oom)) == 1) {
             return true;
         }
+        return false;
     }
 
     /**
