@@ -18,7 +18,6 @@ package uk.ac.leeds.ccg.v2d.geometry;
 import ch.obermuhlner.math.big.BigRational;
 import java.math.RoundingMode;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
-import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
 import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
 
 /**
@@ -993,6 +992,40 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @return The line of intersection between {@code this} and {@code l}.
      */
     public V2D_LineSegment getLineOfIntersection(V2D_Line l, int oom, RoundingMode rm) {
+        if (getIntersection(l, oom, rm) != null) {
+            return null;
+        }
+        V2D_LineSegment loi = null;
+        V2D_Point tp = getP();
+        V2D_Point tq = getQ();
+        if (loi == null) {
+            BigRational pd = l.getDistanceSquared(tp, oom, rm);
+            BigRational qd = l.getDistanceSquared(tq, oom, rm);
+            if (pd.compareTo(qd) == 1) {
+                return new V2D_LineSegment(tq, l.getPointOfIntersection(tq, oom, rm), oom, rm);
+            } else {
+                return new V2D_LineSegment(tp, l.getPointOfIntersection(tp, oom, rm), oom, rm);
+            }
+        } else {
+            V2D_Point lsp = loi.getP();
+            //V2D_Point lsq = loi.getQ();
+            V2D_Vector pv = l.v.rotate90();
+            V2D_Line plp = new V2D_Line(tp, pv);
+            V2D_Line plq = new V2D_Line(tq, pv);
+            if (plp.isOnSameSide(lsp, tq, oom, rm)) {
+                if (plq.isOnSameSide(lsp, tp, oom, rm)) {
+                    /**
+                     * The line of intersection connects in the line segment, so
+                     * return it.
+                     */
+                    return loi;
+                } else {
+                    return new V2D_LineSegment(tq, lsp, oom, rm);
+                }
+            } else {
+                return new V2D_LineSegment(tp, lsp, oom, rm);
+            }
+        }
 //        if (getIntersection(l, oom, rm) != null) {
 //            return null;
 //        }
@@ -1026,7 +1059,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
 //                return new V2D_LineSegment(tp, lsp, oom, rm);
 //            }
 //        }
-        return null;
+//        return null;
     }
 
     /**
@@ -1039,6 +1072,82 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @return The line of intersection between {@code this} and {@code l}.
      */
     public V2D_LineSegment getLineOfIntersection(V2D_LineSegment ls, int oom, RoundingMode rm) {
+        V2D_FiniteGeometry ilsl = getIntersection(ls, oom,rm);
+        if (ilsl == null) {
+            V2D_Point lsp = ls.getP();
+            V2D_Point lsq = ls.getQ();
+            V2D_Point tp = getP();
+            V2D_Point tq = getQ();
+            // Get the line of intersection between this and ls.l
+            V2D_LineSegment tloi = getLineOfIntersection(ls.l, oom, rm);
+            V2D_LineSegment lsloi = ls.getLineOfIntersection(l, oom, rm);
+            if (tloi == null) {
+                V2D_Point tip;
+                V2D_Point lsloiq = lsloi.getQ();
+                // Is the intersection point on this within the line segment?
+                // Can use isAligned to do this more clearly?
+                V2D_Vector pv = l.v.rotate90();
+                V2D_Line tppl = new V2D_Line(tp, pv);
+                V2D_Line tqpl = new V2D_Line(tq, pv);
+                if (tppl.isOnSameSide(lsloiq, tq, oom, rm)) {
+                    if (tqpl.isOnSameSide(lsloiq, tp, oom, rm)) {
+                        /**
+                         * The line of intersection connects in this, so lsloiq
+                         * is one of the points wanted.
+                         */
+                        return lsloi;
+                    } else {
+                        // tq is closest.
+                        tip = tq;
+                    }
+                } else {
+                    // tp is closest.
+                    tip = tp;
+                }
+                return new V2D_LineSegment(tip, lsloiq, oom, rm);
+            } else {
+                V2D_Point tloip = tloi.getP(); // This is the end of the line segment on this.
+                V2D_Point tloiq = tloi.getQ();
+                if (lsloi == null) {
+                    V2D_Point lsip;
+                    // Is the intersection point on ls within the line segment?
+                    // Can use isAligned to do this more clearly?
+                    V2D_Vector pv = ls.l.v.rotate90();
+                    V2D_Line lsppl = new V2D_Line(lsp, pv);
+                    if (lsppl.isOnSameSide(tloiq, lsq, oom, rm)) {
+                        V2D_Line lsqpl = new V2D_Line(lsq, pv);
+                        if (lsqpl.isOnSameSide(tloiq, lsp, oom, rm)) {
+                            /**
+                             * The line of intersection connects in this, so
+                             * lsloiq is one of the points wanted.
+                             */
+                            lsip = tloiq;
+                        } else {
+                            // lsq is closest.
+                            lsip = lsq;
+                        }
+                    } else {
+                        // lsp is closest.
+                        lsip = lsp;
+                    }
+                    return new V2D_LineSegment(tloip, lsip, oom, rm);
+                    //return new V2D_LineSegment(tq, lsip);
+                    //return new V2D_LineSegment(tp, lsip);
+                    //return new V2D_LineSegment(tloiq, getNearestPoint(this, tloiq));
+                } else {
+                    // tloip is on
+                    if (isBetween(tloip, oom, rm)) {
+                        return new V2D_LineSegment(tloip, getNearestPoint(ls, tloip, oom, rm), oom, rm);
+                    } else {
+                        return new V2D_LineSegment(
+                                getNearestPoint(this, tloip, oom, rm),
+                                getNearestPoint(ls, tloip, oom, rm), oom, rm);
+                    }
+                }
+            }
+        } else {
+            return null;
+        }
 //        V2D_FiniteGeometry ilsl = getIntersection(ls, oom, rm);
 //        if (ilsl == null) {
 //            V2D_Point lsp = ls.getP();
@@ -1113,7 +1222,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
 //        } else {
 //            return null;
 //        }
-        return null;
+//        return null;
     }
 
     /**

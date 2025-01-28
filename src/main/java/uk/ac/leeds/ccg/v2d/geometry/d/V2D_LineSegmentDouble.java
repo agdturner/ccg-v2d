@@ -1018,8 +1018,8 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
         V2D_PointDouble tp = getP();
         V2D_PointDouble tq = getQ();
         if (loi == null) {
-            double pd = l.getDistance(tp, epsilon);
-            double qd = l.getDistance(tq, epsilon);
+            double pd = l.getDistanceSquared(tp, epsilon);
+            double qd = l.getDistanceSquared(tq, epsilon);
             if (pd > qd) {
                 return new V2D_LineSegmentDouble(tq, l.getPointOfIntersection(tq, epsilon));
             } else {
