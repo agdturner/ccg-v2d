@@ -20,33 +20,37 @@ import uk.ac.leeds.ccg.v2d.geometry.d.V2D_PointDouble;
 
 /**
  * Comparator for ordering points around a centroid.
- * 
+ *
  * @author Andy Turner
  */
-public class V2D_SortByCentroid implements Comparator<V2D_PointDouble>{
-    
+public class V2D_SortByCentroidDouble implements Comparator<V2D_PointDouble> {
+
     V2D_PointDouble centroid;
-    
-    public V2D_SortByCentroid(V2D_PointDouble centroid) {
+
+    public V2D_SortByCentroidDouble(V2D_PointDouble centroid) {
         this.centroid = centroid;
     }
-    
+
     @Override
     public int compare(V2D_PointDouble a, V2D_PointDouble b) {
         double cx = centroid.getX();
         double ax = a.getX();
-        double bx = b.getX();        
-        if (ax - cx >= 0d && bx - cx < 0d) {
+        double bx = b.getX();
+        double axscx = ax - cx;
+        double bxscx = bx - cx;
+        if (axscx >= 0d && bxscx < 0d) {
             return 1;
         }
-        if (ax - cx < 0d && bx - cx >= 0d) {
+        if (axscx < 0d && bxscx >= 0d) {
             return -1;
         }
         double cy = centroid.getY();
         double ay = a.getY();
-        double by = b.getY();        
-        if (ax - cx == 0 && bx - cx == 0) {
-            if (ay - cy >= 0 || by - cy >= 0) {
+        double by = b.getY();
+        double ayscy = ay - cy;
+        double byscy = by - cy;
+        if (axscx == 0 && bxscx == 0) {
+            if (ayscy >= 0 || byscy >= 0) {
                 if (ay > by) {
                     return 1;
                 } else {
@@ -54,13 +58,13 @@ public class V2D_SortByCentroid implements Comparator<V2D_PointDouble>{
                 }
             }
             if (by > ay) {
-                    return 1;
-                } else {
-                    return -1;
-                }
+                return 1;
+            } else {
+                return -1;
+            }
         }
         // Cross product.
-        double det = (ax - cx) * (by - cy) - (bx - cx) * (ay - cy);
+        double det = axscx * byscy - bxscx * ayscy;
         if (det < 0d) {
             return 1;
         }
@@ -68,13 +72,13 @@ public class V2D_SortByCentroid implements Comparator<V2D_PointDouble>{
             return -1;
         }
         // The centroid, a and b are collinear, further is greater.
-        double d1 = (ax - cx) * (ax - cx) + (ay - cy) * (ay - cy);
-        double d2 = (bx - cx) * (bx - cx) + (by - cy) * (by - cy);
+        double d1 = axscx * axscx + ayscy * ayscy;
+        double d2 = bxscx * bxscx + byscy * byscy;
         if (d1 > d2) {
             return 1;
         } else {
             return -1;
         }
     }
-    
+
 }

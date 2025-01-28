@@ -393,7 +393,6 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
      * @return The area of the triangle.
      */
     public double getArea() {
-        // Calculate s
         double a = getPQ().getLength();
         double b = getQR().getLength();
         double c = getRP().getLength();

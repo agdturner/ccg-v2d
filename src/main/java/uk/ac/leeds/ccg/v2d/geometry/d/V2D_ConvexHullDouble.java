@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import uk.ac.leeds.ccg.v2d.geometrics.d.V2D_GeometricsDouble;
-import uk.ac.leeds.ccg.v2d.geometrics.d.V2D_SortByCentroid;
+import uk.ac.leeds.ccg.v2d.geometrics.d.V2D_SortByCentroidDouble;
 
 /**
  * A class for representing convex hulls. These are a special types of polygon:
@@ -100,7 +100,7 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
         V2D_PointDouble[] up = new V2D_PointDouble[uniquePoints.size()];
         up = uniquePoints.toArray(up);
         V2D_PointDouble centroid = V2D_GeometricsDouble.getCentroid(up);
-        V2D_SortByCentroid sbc = new V2D_SortByCentroid(centroid);
+        V2D_SortByCentroidDouble sbc = new V2D_SortByCentroidDouble(centroid);
         Arrays.sort(up, sbc);
         this.points = new ArrayList<>(Arrays.asList(up));
         this.triangles = new ArrayList<>();
