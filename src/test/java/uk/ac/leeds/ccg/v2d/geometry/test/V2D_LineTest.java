@@ -88,7 +88,7 @@ public class V2D_LineTest extends V2D_Test {
      * Test of isIntersectedBy method, of class V2D_Line.
      */
     @Test
-    public void testIsIntersectedBy_double_V2D_Point() {
+    public void testIsIntersectedBy_3args() {
         System.out.println("isIntersectedBy");
         int oom = -6;
         RoundingMode rm = RoundingMode.HALF_UP;
@@ -111,7 +111,8 @@ public class V2D_LineTest extends V2D_Test {
         // Test 6 works as the rounding puts pt on the line.
         a = N0_1E2 + N1E12;
         pt = new V2D_Point(a, a);
-        assertTrue(instance.isIntersectedBy(pt, oom, rm));
+        assertTrue(instance.isIntersectedBy(pt, -12, rm));
+        //assertTrue(instance.isIntersectedBy(pt, oom, rm));
         // Test 7
         instance = new V2D_Line(pP0N1, pP2P1, oom, rm);
         pt = new V2D_Point(-1d, -2d);
@@ -121,15 +122,15 @@ public class V2D_LineTest extends V2D_Test {
         //epsilon = 0.000000000001d;
         a = N0_1E2 + N1E12;
         pt = new V2D_Point(a, a);
-        assertFalse(instance.isIntersectedBy(pt, -15, rm));
+        assertFalse(instance.isIntersectedBy(pt, -12, rm));
         pt = new V2D_Point(a + 1d, a);
-        assertTrue(instance.isIntersectedBy(pt, -15, rm));
+        assertTrue(instance.isIntersectedBy(pt, -12, rm));
         // Test 9
         a = N0_1E12 + N1E12;
         pt = new V2D_Point(a, a);
-        assertFalse(instance.isIntersectedBy(pt, -15, rm));
+        assertFalse(instance.isIntersectedBy(pt, -12, rm));
         pt = new V2D_Point(a + 1d, a);
-        assertTrue(instance.isIntersectedBy(pt, -15, rm));
+        assertTrue(instance.isIntersectedBy(pt, -12, rm));
     }
 
     /**
@@ -193,7 +194,7 @@ public class V2D_LineTest extends V2D_Test {
      * Test of getIntersection method, of class V2D_Line.
      */
     @Test
-    public void testGetIntersection_V2D_Line_double() {
+    public void testGetIntersection_3args() {
         System.out.println("getIntersection");
         int oom = -6;
         RoundingMode rm = RoundingMode.HALF_UP;
@@ -222,7 +223,7 @@ public class V2D_LineTest extends V2D_Test {
         assertTrue(((V2D_Point) expResult).equals((V2D_Point) result, oom, rm));
         // Test 4
         l = new V2D_Line(pN1N1, pP1P1, oom, rm);
-        instance = new V2D_Line(new V2D_Vector(3d, 2d), new V2D_Vector(5d, 2d));
+        instance = new V2D_Line(P0P0, new V2D_Vector(3, 2), new V2D_Vector(5, 2), oom, rm);
         expResult = pP2P2;
         result = instance.getIntersection(l, oom, rm);
         assertTrue(((V2D_Point) expResult).equals((V2D_Point) result, oom, rm));
@@ -271,9 +272,9 @@ public class V2D_LineTest extends V2D_Test {
         result = instance.getIntersection(l, oom, rm);
         assertTrue(((V2D_Point) expResult).equals((V2D_Point) result, oom, rm));
         // Test 12
-        l = new V2D_Line(P0N1, new V2D_Vector(2d, 1d));
+        l = new V2D_Line(P0P0, P0N1, new V2D_Vector(2d, 1d), oom, rm);
         expResult = pP1P0;
-        instance = new V2D_Line(new V2D_Vector(1d, 0d), new V2D_Vector(1d, 1d));
+        instance = new V2D_Line(P0P0, P1P0, P1P1, oom, rm);
         result = instance.getIntersection(l, oom, rm);
         assertTrue(((V2D_Point) expResult).equals((V2D_Point) result, oom, rm));
         // Test 12 to 14
@@ -309,7 +310,7 @@ public class V2D_LineTest extends V2D_Test {
         result = instance.getIntersection(l, oom, rm);
         assertTrue(((V2D_Point) expResult).equals((V2D_Point) result, oom, rm));
         // Test 17
-        l = new V2D_Line(P0P1, new V2D_Vector(2d, 3d));
+        l = new V2D_Line(P0P0, P0P1, new V2D_Vector(2d, 3d), oom, rm);
         expResult = pP1P2;
         instance = new V2D_Line(pP1P2, pP2P2, oom, rm);
         result = instance.getIntersection(l, oom, rm);
@@ -467,29 +468,29 @@ public class V2D_LineTest extends V2D_Test {
         instance = new V2D_Line(pP1P0, pP1P1, oom, rm);
         expResult = BigRational.ONE;
         result = instance.getDistance(pt, oom, rm);
-        assertTrue(expResult == result);
+        assertTrue(expResult.compareTo(result) == 0);
         // Test 2
         instance = new V2D_Line(pP0P1, pP1P1, oom, rm);
         result = instance.getDistance(pt, oom, rm);
-        assertTrue(expResult == result);
+        assertTrue(expResult.compareTo(result) == 0);
         // Test 3
         pt = pP1P1;
         expResult = BigRational.ZERO;
         instance = new V2D_Line(pP0P0, pP1P1, oom, rm);
         result = instance.getDistance(pt, oom, rm);
-        assertTrue(expResult == result);
+        assertTrue(expResult.compareTo(result) == 0);
         // Test 4
         pt = pP0P1;
         instance = new V2D_Line(pP0P0, pP1P1, oom, rm);
         expResult = new Math_BigRationalSqrt(BigRational.valueOf("0.5"), oom, rm).getSqrt(oom, rm);
         result = instance.getDistance(pt, oom, rm);
-        assertTrue(expResult == result);
+        assertTrue(expResult.compareTo(result) == 0);
         // Test 5
         instance = new V2D_Line(pP0P0, pP0P1, oom, rm);
         pt = pP1P0;
         expResult = BigRational.ONE;
         result = instance.getDistance(pt, oom, rm);
-        assertTrue(expResult == result);
+        assertTrue(expResult.compareTo(result) == 0);
     }
 
     /**
@@ -701,7 +702,7 @@ public class V2D_LineTest extends V2D_Test {
      */
     @Test
     public void testIsOnSameSide() {
-        System.out.println("isCollinear");
+        System.out.println("isOnSameSide");
         int oom = -6;
         RoundingMode rm = RoundingMode.HALF_UP;
         V2D_Line l;
@@ -712,6 +713,9 @@ public class V2D_LineTest extends V2D_Test {
         assertFalse(l.isOnSameSide(a, b, oom, rm));        
         // Test 2
         a = pP1P1;
+        assertTrue(l.isOnSameSide(a, b, oom, rm));  
+        // Test 3
+        a = pP1P0;
         assertTrue(l.isOnSameSide(a, b, oom, rm));
     }
 

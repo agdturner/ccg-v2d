@@ -503,8 +503,10 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
             if (equals(epsilon, l)) {
                 return l;
             }
-            double numx = ((x1 * y2 - y1 * x2) * (x3 - x4)) - ((x1 - x2) * (x3 * y4 - y3 * x4));
-            double numy = ((x1 * y2 - y1 * x2) * (y3 - y4)) - ((y1 - y2) * (x3 * y4 - y3 * x4));
+            double x1y2sy1x2 = (x1 * y2 - y1 * x2);
+            double x3y4sy3x4 = (x3 * y4 - y3 * x4);
+            double numx = (x1y2sy1x2 * (x3 - x4)) - ((x1 - x2) * x3y4sy3x4);
+            double numy = (x1y2sy1x2 * (y3 - y4)) - ((y1 - y2) * x3y4sy3x4);
             return new V2D_PointDouble(numx / den, numy / den);            
         }
         return null;
@@ -547,6 +549,18 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
         if (isIntersectedBy(epsilon, pt)) {
             return pt;
         }
+        return getPointOfIntersection(pt, true, epsilon);
+    }
+    
+    /**
+     * @param pt The point projected onto this.
+     * @param noint True iff there is no intersection.
+     * @param epsilon The tolerance within which vector components are
+     * considered equal.
+     * @return A point on {@code this} which is the shortest distance from
+     * {@code pt}.
+     */
+    public V2D_PointDouble getPointOfIntersection(V2D_PointDouble pt, boolean noint, double epsilon) {
         V2D_LineDouble l = new V2D_LineDouble(pt, v.rotate90());
         return (V2D_PointDouble) getIntersection(epsilon, l);
     }
@@ -573,7 +587,19 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
         if (isIntersectedBy(epsilon, pt)) {
             return 0d;
         }
-        V2D_PointDouble poi = getPointOfIntersection(pt, epsilon);
+        return getDistanceSquared(pt, true, epsilon);
+    }
+    
+    /**
+     * @param pt A point for which the minimum distance from {@code this} is
+     * returned.
+     * @param noint True iff pt is not intersecting.
+     * @param epsilon The tolerance within which vector components are
+     * considered equal.
+     * @return The minimum distance between this and {@code pv}.
+     */
+    public double getDistanceSquared(V2D_PointDouble pt, boolean noint, double epsilon) {
+        V2D_PointDouble poi = getPointOfIntersection(pt, noint, epsilon);
         return poi.getDistanceSquared(pt);
     }
 
@@ -585,11 +611,22 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @return The minimum distance between this and {@code l}.
      */
     public double getDistance(V2D_LineDouble l, double epsilon) {
+        return Math.sqrt(getDistanceSquared(l, epsilon));
+    }
+
+    /**
+     * @param l A line for which the minimum distance from {@code this} is
+     * returned.
+     * @param epsilon The tolerance within which vector components are
+     * considered equal.
+     * @return The minimum distance between this and {@code l}.
+     */
+    public double getDistanceSquared(V2D_LineDouble l, double epsilon) {
         if (this.equals(epsilon, l)) {
             return 0D;
         }
         if (this.isParallel(l, epsilon)) {
-            return this.getDistance(l.p, epsilon);
+            return this.getDistanceSquared(l.p, epsilon);
         }
         return 0D;
     }
@@ -778,8 +815,8 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
         double ay = a.getY();
         double bx = b.getX();
         double by = b.getY();
+        //double p1 = ((y1-y2)*(ax-x1)+(x2-x1)*(ay-y1));
+        //double p2 = ((y1-y2)*(bx-x1)+(x2-x1)*(by-y1));
         return ((y1-y2)*(ax-x1)+(x2-x1)*(ay-y1))*((y1-y2)*(bx-x1)+(x2-x1)*(by-y1)) + epsilon >= 0D;
-        //return (v.dy * (a.getX() - px) + (v.dx * (a.getY() - py))) * 
-        //        (v.dy * (b.getX() - px) + v.dx * (b.getY() - py)) >= 0D;
     }
 }

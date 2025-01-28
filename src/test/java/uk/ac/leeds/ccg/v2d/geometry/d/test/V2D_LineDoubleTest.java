@@ -691,7 +691,7 @@ public class V2D_LineDoubleTest extends V2D_TestDouble {
      */
     @Test
     public void testIsOnSameSide() {
-        System.out.println("isCollinear");
+        System.out.println("isOnSameSide");
         double epsilon = 1d / 10000000d;
         V2D_LineDouble l;
         // Test 1
@@ -701,6 +701,9 @@ public class V2D_LineDoubleTest extends V2D_TestDouble {
         assertFalse(l.isOnSameSide(a, b, epsilon));        
         // Test 2
         a = pP1P1;
+        assertTrue(l.isOnSameSide(a, b, epsilon));
+        // Test 3
+        a = pP1P0;
         assertTrue(l.isOnSameSide(a, b, epsilon));
     }
 
