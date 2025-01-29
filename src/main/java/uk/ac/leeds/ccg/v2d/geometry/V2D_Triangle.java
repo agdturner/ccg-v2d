@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
+import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
 import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
 import uk.ac.leeds.ccg.v2d.geometry.light.V2D_VTriangle;
 
@@ -739,19 +740,14 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
      * @return The area of the triangle.
      */
     public BigRational getArea(int oom, RoundingMode rm) {
-        //BigRational a = getPQ(oom, rm).getLength(oom, rm).getSqrt(oom, rm);
-        //BigRational b = getQR(oom, rm).getLength(oom, rm).getSqrt(oom, rm);
-        //BigRational c = getRP(oom, rm).getLength(oom, rm).getSqrt(oom, rm);
-        Math_BigRationalSqrt a = getPQ(oom, rm).getLength(oom, rm);
-        Math_BigRationalSqrt b = getQR(oom, rm).getLength(oom, rm);
-        Math_BigRationalSqrt c = getRP(oom, rm).getLength(oom, rm);
-        Math_BigRationalSqrt p1 = (a.add(b, oom, rm).add(c, oom, rm)).divide(BigRational.TWO, oom, rm);
-        Math_BigRationalSqrt p2 = (b.add(c, oom, rm).add(a.negate(), oom, rm)).divide(BigRational.TWO, oom, rm);
-        Math_BigRationalSqrt p3 = (a.add(b.negate(), oom, rm).add(c, oom, rm)).divide(BigRational.TWO, oom, rm);
-        Math_BigRationalSqrt p4 = (a.add(b, oom, rm).add(c.negate(), oom, rm)).divide(BigRational.TWO, oom, rm);
-        Math_BigRationalSqrt r2 = p1.multiply(p2, oom, rm).multiply(p3, oom, rm).multiply(p4, oom, rm);
-        return r2.getSqrt(oom, rm);
-        //return Math.sqrt(((a + b + c) / 2d) * ((b + c - a) / 2d) * ((a - b + c) / 2d) * ((a + b - c) / 2d));
+        BigRational a = getPQ(oom, rm).getLength(oom, rm).getSqrt(oom, rm);
+        BigRational b = getQR(oom, rm).getLength(oom, rm).getSqrt(oom, rm);
+        BigRational c = getRP(oom, rm).getLength(oom, rm).getSqrt(oom, rm);
+        BigRational p1 = (a.add(b).add(c)).divide(2);
+        BigRational p2 = (b.add(c).subtract(a)).divide(2);
+        BigRational p3 = (a.subtract(b).add(c)).divide(2);
+        BigRational p4 = (a.add(b).subtract(c)).divide(2);
+        return new Math_BigRationalSqrt(p1.multiply(p2).multiply(p3).multiply(p4), oom, rm).getSqrt(oom, rm);
     }
 
     public BigRational getPerimeter(int oom, RoundingMode rm) {
@@ -1210,12 +1206,23 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
     }
 
     @Override
-    public V2D_Triangle rotate(V2D_Point pt, BigRational theta, 
+    public V2D_Triangle rotate(V2D_Point pt, BigRational theta, Math_BigDecimal bd,
+            int oom, RoundingMode rm) {
+        theta = Math_AngleBigRational.normalise(theta, bd, oom, rm);
+        if (theta.compareTo(BigRational.ZERO) == 0d) {
+            return new V2D_Triangle(this);
+        } else {
+            return rotateN(pt, theta, bd, oom, rm);
+        }
+    }
+    
+    @Override
+    public V2D_Triangle rotateN(V2D_Point pt, BigRational theta, 
             Math_BigDecimal bd, int oom, RoundingMode rm) {
         return new V2D_Triangle(
-                getP().rotate(pt, theta, bd, oom, rm),
-                getQ().rotate(pt, theta, bd, oom, rm),
-                getR().rotate(pt, theta, bd, oom, rm), oom, rm);
+                getP().rotateN(pt, theta, bd, oom, rm),
+                getQ().rotateN(pt, theta, bd, oom, rm),
+                getR().rotateN(pt, theta, bd, oom, rm), oom, rm);
     }
 
     /**

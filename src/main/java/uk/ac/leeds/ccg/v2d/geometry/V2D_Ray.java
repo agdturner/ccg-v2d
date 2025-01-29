@@ -385,11 +385,19 @@ public class V2D_Ray extends V2D_Geometry {
 //    }
 
     @Override
-    public V2D_Ray rotate(V2D_Point pt, BigRational theta, Math_BigDecimal bd, int oom, RoundingMode rm) {
+    public V2D_Ray rotate(V2D_Point pt, BigRational theta, Math_BigDecimal bd,
+            int oom, RoundingMode rm) {
+        theta = Math_AngleBigRational.normalise(theta, bd, oom, rm);
         if (theta.isZero()) {
            return new V2D_Ray(this);
         } else {
-            return new V2D_Ray(l.rotate(pt, theta, bd, oom, rm));
+            return rotateN(pt, theta, bd, oom, rm);
         }
+    }
+   
+    @Override
+    public V2D_Ray rotateN(V2D_Point pt, BigRational theta, Math_BigDecimal bd, 
+            int oom, RoundingMode rm) {
+        return new V2D_Ray(l.rotateN(pt, theta, bd, oom, rm));
     }
 }

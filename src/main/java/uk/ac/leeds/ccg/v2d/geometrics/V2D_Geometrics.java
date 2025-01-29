@@ -47,4 +47,22 @@ public class V2D_Geometrics {
         return new V2D_Point(x, y);
     }
 
+    /**
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @param ps The points the index of the max of which is returned.
+     * @return The maximum point (largest y, largest x).
+     */
+    public static int getMax(int oom, RoundingMode rm, V2D_Point... ps) {
+        int r = 0;
+        V2D_Point max = ps[0];
+        double n = ps.length;
+        for (int i = 1; i < n; i ++) {
+            if (ps[i].compareTo(max, oom, rm) == 1) {
+                r = i;
+            }
+        }
+        return r;
+    }
+
 }

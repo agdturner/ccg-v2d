@@ -21,6 +21,7 @@ import java.math.RoundingMode;
 import java.util.Arrays;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigRational;
+import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
 import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
 
 /**
@@ -329,12 +330,24 @@ public class V2D_Rectangle extends V2D_FiniteGeometry {
     }
 
     @Override
-    public V2D_Rectangle rotate(V2D_Point pt, BigRational theta, Math_BigDecimal bd, int oom, RoundingMode rm) {
+    public V2D_Rectangle rotate(V2D_Point pt, BigRational theta, 
+            Math_BigDecimal bd, int oom, RoundingMode rm) {
+        theta = Math_AngleBigRational.normalise(theta, bd, oom, rm);
+        if (theta.compareTo(BigRational.ZERO) == 0d) {
+            return new V2D_Rectangle(this, oom, rm);
+        } else {
+            return rotateN(pt, theta, bd, oom, rm);
+        }
+    }
+    
+    @Override
+    public V2D_Rectangle rotateN(V2D_Point pt, BigRational theta, 
+            Math_BigDecimal bd, int oom, RoundingMode rm) {
         return new V2D_Rectangle(
-                getP().rotate(pt, theta, bd, oom, rm),
-                getQ().rotate(pt, theta, bd, oom, rm),
-                getR().rotate(pt, theta, bd, oom, rm),
-                getS().rotate(pt, theta, bd, oom, rm), oom, rm);
+                getP().rotateN(pt, theta, bd, oom, rm),
+                getQ().rotateN(pt, theta, bd, oom, rm),
+                getR().rotateN(pt, theta, bd, oom, rm),
+                getS().rotateN(pt, theta, bd, oom, rm), oom, rm);
     }
 
     /**

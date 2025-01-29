@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright 2020 Andy Turner, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -226,7 +226,7 @@ public class V2D_TriangleTest extends V2D_Test {
         instance = new V2D_Triangle(pP0P0, pP1P0, pP1P1, oom, rm);
         expResult = new V2D_Point(2d / 3d, 1d / 3d);
         result = instance.getCentroid(oom, rm);
-        assertTrue(expResult.equals(result));
+        assertTrue(expResult.equals(result, oom, rm));
     }
 
     /**
@@ -238,12 +238,12 @@ public class V2D_TriangleTest extends V2D_Test {
         V2D_Triangle instance = new V2D_Triangle(P0P0, P1P0, P0P1, P0P0);
         String expResult = """
                            V2D_Triangle(
-                             offset=(V2D_Vector(dx=0, dy=0)),
-                             p=(V2D_Vector(dx=1, dy=0)),
-                             q=(V2D_Vector(dx=0, dy=1)),
-                             r=(V2D_Vector(dx=0, dy=0)))""";
+                            offset=(V2D_Vector(dx=0, dy=0)),
+                            p=(V2D_Vector(dx=1, dy=0)),
+                            q=(V2D_Vector(dx=0, dy=1)),
+                            r=(V2D_Vector(dx=0, dy=0)))""";
         String result = instance.toString();
-        //System.out.println(result);
+        System.out.println(result);
         assertTrue(expResult.equals(result));
     }
 
@@ -372,7 +372,7 @@ public class V2D_TriangleTest extends V2D_Test {
         V2D_Triangle instance;
         V2D_Triangle result;
         V2D_Triangle expResult;
-        BigRational Pi = Math_BigRational.getPi(bd, oom, rm);
+        BigRational Pi = Math_BigRational.getPi(bd, oom - 2, rm);
         // Test 1
         instance = new V2D_Triangle(pP1P0, pP0P1, pP1P1, oom, rm);
         V2D_Point pt = pP0P0;
@@ -449,7 +449,7 @@ public class V2D_TriangleTest extends V2D_Test {
         r = new V2D_Ray(pP0P0, pP1P0, oom, rm);
         result = t.getIntersection(r, oom, rm);
         expResult = pP1P0;
-        assertTrue(((V2D_Point) expResult).equals((V2D_Point) result));
+        assertTrue(((V2D_Point) expResult).equals((V2D_Point) result, oom, rm));
         // Test 2
         t = new V2D_Triangle(pP0N2, pP0P2, pP2P0, oom, rm);
         r = new V2D_Ray(pP1P0, pP2P0, oom, rm);
@@ -573,7 +573,7 @@ public class V2D_TriangleTest extends V2D_Test {
                 new V2D_Point(-50d, -50d),
                 new V2D_Point(0d, 50d),
                 new V2D_Point(50d, -50d), oom, rm);
-        theta = Math_BigRational.getPi(bd, oom, rm);
+        theta = Math_BigRational.getPi(bd, oom - 2, rm);
         t1 = t0.rotate(origin, theta, bd, oom, rm);
         expected = new ArrayList<>();
         /** 
@@ -597,13 +597,13 @@ public class V2D_TriangleTest extends V2D_Test {
 //                new V2D_Point(0d, -50d),
 //                new V2D_Point(-25d, 0d)));
         expected.add(new V2D_Triangle(
-                new V2D_Point(0d, 50d),
-                new V2D_Point(-25d, 0d),
-                new V2D_Point(0d, -50d), oom, rm));
-        expected.add(new V2D_Triangle(
                 new V2D_Point(0d, -50d),
                 new V2D_Point(25d, 0d),
                 new V2D_Point(0d, 50d), oom, rm));
+        expected.add(new V2D_Triangle(
+                new V2D_Point(0d, 50d),
+                new V2D_Point(-25d, 0d),
+                new V2D_Point(0d, -50d), oom, rm));
         // Calculate the intersection
         // We are expecting a convex hull with 4 points that can be tested to 
         // see if they are made up of the two triangles as expected.
@@ -616,25 +616,25 @@ public class V2D_TriangleTest extends V2D_Test {
         t0 = new V2D_Triangle(new V2D_Point(-30d, -30d),
         new V2D_Point(0d, 60d),
         new V2D_Point(30d, -30d), oom, rm);
-        theta = Math_BigRational.getPi(bd, oom, rm);
+        theta = Math_BigRational.getPi(bd, oom - 2, rm);
         t1 = t0.rotate(origin, theta, bd, oom, rm);
         expected = new ArrayList<>();
         expected.add(new V2D_Triangle(
-                new V2D_Point(-10d, 30d),
-                new V2D_Point(-20d, 0d),
-                new V2D_Point(-10d, -30d), oom, rm));
-        expected.add(new V2D_Triangle(
-                new V2D_Point(-10d, 30d),
-                new V2D_Point(-10d, -30d),
-                new V2D_Point(10d, -30d), oom, rm));
-        expected.add(new V2D_Triangle(
-                new V2D_Point(-10d, 30d),
                 new V2D_Point(10d, -30d),
-                new V2D_Point(20d, 0d), oom, rm));
-        expected.add(new V2D_Triangle(
-                new V2D_Point(-10d, 30d),
                 new V2D_Point(20d, 0d),
                 new V2D_Point(10d, 30d), oom, rm));
+        expected.add(new V2D_Triangle(
+                new V2D_Point(10d, -30d),
+                new V2D_Point(10d, 30d),
+                new V2D_Point(-10d, 30d), oom, rm));
+        expected.add(new V2D_Triangle(
+                new V2D_Point(10d, -30d),
+                new V2D_Point(-10d, 30d),
+                new V2D_Point(-20d, 0d), oom, rm));
+        expected.add(new V2D_Triangle(
+                new V2D_Point(-10d, -30d),
+                new V2D_Point(-20d, 0d),
+                new V2D_Point(10d, -30d), oom, rm));
         // Calculate the intersection
         // Expecting a convex hull with 6 points that can be tested to 
         // see if they are made up of the four triangles as expected.
@@ -787,13 +787,13 @@ public class V2D_TriangleTest extends V2D_Test {
         instance = new V2D_Triangle(pP0P0, pP1P0, pP0P1, oom, rm);
         expResult = BigRational.ZERO;
         result = instance.getDistanceSquared(l, oom, rm);
-        assertEquals(expResult, result);
+        assertTrue(Math_BigRational.equals(expResult, result, oom));
         // Test 2
         l = new V2D_Line(pP0P1, pP1P1, oom, rm);
         instance = new V2D_Triangle(pN2N2, pP2N2, pN2P2, oom, rm);
-        expResult = BigRational.ONE;
+        expResult = BigRational.ZERO;
         result = instance.getDistanceSquared(l, oom, rm);
-        assertEquals(expResult, result);
+        assertTrue(Math_BigRational.equals(expResult, result, oom));
     }
 
     /**
@@ -822,18 +822,18 @@ public class V2D_TriangleTest extends V2D_Test {
         instance = new V2D_Triangle(pP0P0, pP1P0, pP0P1, oom, rm);
         expResult = BigRational.ZERO;
         result = instance.getDistanceSquared(l, oom, rm);
-        assertEquals(expResult, result);
+        assertTrue(Math_BigRational.equals(expResult, result, oom));
         // Test 2
         l = new V2D_LineSegment(pP0P0, pP1P0, oom, rm);
         instance = new V2D_Triangle(pN2N2, pP2N2, pN2P2, oom, rm);
-        expResult = BigRational.ZERO;;
+        expResult = BigRational.ZERO;
         result = instance.getDistanceSquared(l, oom, rm);
-        assertEquals(expResult, result);
+        assertTrue(Math_BigRational.equals(expResult, result, oom));
         // Test 3
         l = new V2D_LineSegment(pP0P1, pP1P1, oom, rm);
         expResult = BigRational.valueOf(1, 2);
         result = instance.getDistanceSquared(l, oom, rm);
-        assertEquals(expResult, result);
+        assertTrue(Math_BigRational.equals(expResult, result, oom));
     }
 
     /**

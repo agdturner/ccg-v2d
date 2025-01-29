@@ -104,17 +104,30 @@ public abstract class V2D_Geometry implements Serializable {
     }
 
     /**
-     * Returns the geometry rotated by the angle theta about the point pt. If
-     * theta is positive the angle is clockwise.
+     * Returns the geometry rotated by the angle theta about pt. If theta is 
+     * positive the angle is clockwise.
      *
      * @param pt The point about which the geometry is rotated.
-     * @param theta The angle of rotation around the the rotation axis in
-     * radians.
-     * @param bd Math_BigDecimal
+     * @param theta The angle of rotation about pt in radians.
+     * @param bd Math_BigDecimal used to get an approximation of Pi.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode.
      * @return The rotated geometry.
      */
     public abstract V2D_Geometry rotate(V2D_Point pt, BigRational theta,
+            Math_BigDecimal bd, int oom, RoundingMode rm);
+    
+    /**
+     * Returns the geometry rotated by a normalised angle theta about pt. 
+     * theta &gt; 0 && theta &lt; 2Pi.
+     * 
+     * @param pt The point about which the geometry is rotated.
+     * @param theta The angle of rotation around pt in radians.
+     * @param bd Math_BigDecimal used to get an approximation of Pi.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode.
+     * @return The rotated geometry.
+     */
+    public abstract V2D_Geometry rotateN(V2D_Point pt, BigRational theta,
             Math_BigDecimal bd, int oom, RoundingMode rm);
 }

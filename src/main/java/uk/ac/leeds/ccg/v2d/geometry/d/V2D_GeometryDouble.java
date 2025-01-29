@@ -106,31 +106,25 @@ public abstract class V2D_GeometryDouble implements Serializable {
      * theta is positive the angle is clockwise.
      * 
      * @param pt The point about which the geometry is rotated.
-     * @param theta The angle of rotation around the the rotation axis in
-     * radians.
+     * @param theta The angle of rotation about pt in radians.
      * @param epsilon The tolerance within which two vectors are regarded as 
      * equal.
      * @return The rotated geometry.
      */
-    public abstract V2D_GeometryDouble rotate(V2D_PointDouble pt, 
-            double theta, double epsilon);
-
+    public abstract V2D_GeometryDouble rotate(V2D_PointDouble pt, double theta, 
+            double epsilon);
+    
     /**
-     * For getting an angle between 0 and 2Pi
-     * @param theta The angle to be transformed.
-     * @return An angle between 0 and 2Pi.
+     * Returns the geometry rotated by a normalised angle theta about pt. 
+     * theta &gt; 0 && theta &lt; 2Pi.
+     * 
+     * @param pt The point about which the geometry is rotated.
+     * @param theta The angle of rotation around pt in radians.
+     * @param epsilon The tolerance within which two vectors are regarded as 
+     * equal.
+     * @return The rotated geometry.
      */
-    public double getAngleM(double theta) {
-        double twoPi = Math.PI * 2;
-        // Change a negative angle into a positive one.
-        while (theta < 0d) {
-            theta = theta + twoPi;
-        }
-        // Only rotate less than 2Pi radians.
-        while (theta > twoPi) {
-            theta = theta - twoPi;
-        }
-        return theta;
-    }
+    public abstract V2D_GeometryDouble rotateN(V2D_PointDouble pt, double theta,
+            double epsilon);
     
 }

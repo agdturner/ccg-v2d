@@ -18,6 +18,7 @@ package uk.ac.leeds.ccg.v2d.geometry.d;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.light.V2D_VTriangleDouble;
 
 /**
@@ -855,10 +856,20 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
 
     @Override
     public V2D_TriangleDouble rotate(V2D_PointDouble pt, double theta, double epsilon) {
+        theta = Math_AngleDouble.normalise(theta);
+        if (theta == 0d) {
+            return new V2D_TriangleDouble(this);
+        } else {
+            return rotateN(pt, theta, epsilon);
+        }
+    }
+    
+    @Override
+    public V2D_TriangleDouble rotateN(V2D_PointDouble pt, double theta, double epsilon) {
         return new V2D_TriangleDouble(
-                getP().rotate(pt, theta, epsilon),
-                getQ().rotate(pt, theta, epsilon),
-                getR().rotate(pt, theta, epsilon));
+                getP().rotateN(pt, theta, epsilon),
+                getQ().rotateN(pt, theta, epsilon),
+                getR().rotateN(pt, theta, epsilon));
     }
 
     /**

@@ -444,12 +444,19 @@ public class V2D_RayDouble extends V2D_GeometryDouble {
     }
     
     @Override
-    public V2D_RayDouble rotate(V2D_PointDouble pt, double theta, double epsilon) {
+    public V2D_RayDouble rotate(V2D_PointDouble pt, double theta,
+            double epsilon) {
         theta = Math_AngleDouble.normalise(theta);
         if (theta == 0d) {
             return new V2D_RayDouble(this);
         } else {
-            return new V2D_RayDouble(l.rotate(pt, theta, epsilon));
+            return rotateN(pt, theta, epsilon);
         }
+    }
+    
+    @Override
+    public V2D_RayDouble rotateN(V2D_PointDouble pt, double theta, 
+            double epsilon) {
+        return new V2D_RayDouble(l.rotateN(pt, theta, epsilon));
     }
 }

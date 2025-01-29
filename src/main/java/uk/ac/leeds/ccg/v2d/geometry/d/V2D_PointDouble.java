@@ -30,7 +30,7 @@ import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
  * @author Andy Turner
  * @version 1.0
  */
-public class V2D_PointDouble extends V2D_FiniteGeometryDouble {
+public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Comparable<V2D_PointDouble> {
 
     private static final long serialVersionUID = 1L;
 
@@ -171,7 +171,7 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble {
     }
 
     /**
-     * For determining if all points are coincident within a tolerance given by 
+     * For determining if all points are coincident within a tolerance given by
      * epsilon.
      *
      * @param epsilon The tolerance within which vector components are
@@ -372,12 +372,18 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble {
         theta = Math_AngleDouble.normalise(theta);
         if (theta == 0d) {
             return new V2D_PointDouble(this);
+        } else {
+            return rotateN(pt, theta, epsilon);
         }
+    }
+
+    @Override
+    public V2D_PointDouble rotateN(V2D_PointDouble pt, double theta, double epsilon) {
         V2D_VectorDouble tv = new V2D_VectorDouble(pt.getX(), pt.getY());
         V2D_PointDouble tp = new V2D_PointDouble(this);
         tp.translate(tv.reverse());
         V2D_VectorDouble tpv = tp.getVector();
-        V2D_PointDouble r = new V2D_PointDouble(tpv.rotate(theta));
+        V2D_PointDouble r = new V2D_PointDouble(tpv.rotateN(theta));
         r.translate(tv);
         return r;
     }
@@ -392,6 +398,13 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble {
      */
     public static ArrayList<V2D_PointDouble> getUnique(
             List<V2D_PointDouble> pts, double epsilon) {
+
+        System.out.println("Before unique");
+        for (int i = 0; i < pts.size(); i++) {
+            System.out.println("i=" + i);
+            System.out.println(pts.get(i).toStringSimple(""));
+        }
+
         HashSet<Integer> indexes = new HashSet<>();
         ArrayList<V2D_PointDouble> r = new ArrayList<>();
         for (int i = 0; i < pts.size(); i++) {
@@ -408,6 +421,13 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble {
                 }
             }
         }
+
+        System.out.println("After unique");
+        for (int i = 0; i < r.size(); i++) {
+            System.out.println("i=" + i);
+            System.out.println(r.get(i).toStringSimple(""));
+        }
+
         return r;
     }
 
@@ -426,5 +446,27 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble {
     @Override
     public boolean isIntersectedBy(V2D_EnvelopeDouble aabb, double epsilon) {
         return aabb.isIntersectedBy(this);
+    }
+
+    @Override
+    public int compareTo(V2D_PointDouble p) {
+        if (getY() > p.getY()) {
+            return 1;
+        } else {
+            if (getY() < p.getY()) {
+                return -1;
+            } else {
+                if (getX() > p.getX()) {
+                    return 1;
+                } else {
+                    if (getX() < p.getX()) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                }
+
+            }
+        }
     }
 }

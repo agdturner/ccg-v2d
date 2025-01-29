@@ -15,6 +15,7 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry.d;
 
+import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
 import uk.ac.leeds.ccg.math.matrices.Math_Matrix_Double;
 
 /**
@@ -679,8 +680,18 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
 
     @Override
     public V2D_LineDouble rotate(V2D_PointDouble pt, double theta, double epsilon) {
-        V2D_PointDouble rp = getP().rotate(pt, theta, epsilon);
-        V2D_VectorDouble rv = v.getUnitVector().rotate(theta);
+        theta = Math_AngleDouble.normalise(theta);
+        if (theta == 0d) {
+            return new V2D_LineDouble(this);
+        } else {
+            return rotateN(pt, theta, epsilon);
+        }
+    }
+    
+    @Override
+    public V2D_LineDouble rotateN(V2D_PointDouble pt, double theta, double epsilon) {
+        V2D_PointDouble rp = getP().rotateN(pt, theta, epsilon);
+        V2D_VectorDouble rv = v.getUnitVector().rotateN(theta);
         return new V2D_LineDouble(rp, rv);
     }
     

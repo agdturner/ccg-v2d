@@ -19,8 +19,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
+import uk.ac.leeds.ccg.v2d.geometrics.V2D_Geometrics;
 import uk.ac.leeds.ccg.v2d.geometrics.d.V2D_GeometricsDouble;
-import uk.ac.leeds.ccg.v2d.geometrics.d.V2D_SortByCentroidDouble;
+import uk.ac.leeds.ccg.v2d.geometrics.d.V2D_SortByAngleDouble;
 
 /**
  * A class for representing convex hulls. These are a special types of polygon:
@@ -99,13 +101,30 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
         ArrayList<V2D_PointDouble> uniquePoints = V2D_PointDouble.getUnique(Arrays.asList(points), epsilon);
         V2D_PointDouble[] up = new V2D_PointDouble[uniquePoints.size()];
         up = uniquePoints.toArray(up);
+        V2D_PointDouble max = up[V2D_GeometricsDouble.getMax(up)];
         V2D_PointDouble centroid = V2D_GeometricsDouble.getCentroid(up);
-        V2D_SortByCentroidDouble sbc = new V2D_SortByCentroidDouble(centroid);
+        V2D_SortByAngleDouble sbc = new V2D_SortByAngleDouble(centroid, max);
         Arrays.sort(up, sbc);
+//        System.out.println("After sorting");
+//        for (int i = 0; i < up.length; i++) {
+//            System.out.println("i=" + i);
+//            System.out.println(up[i].toStringSimple(""));
+//        }
         this.points = new ArrayList<>(Arrays.asList(up));
         this.triangles = new ArrayList<>();
     }
 
+    /**
+     * Create a new instance.
+     *
+     * @param ch The convex hull.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     */
+    public V2D_ConvexHullDouble(V2D_ConvexHullDouble ch, double epsilon) {
+        this(epsilon, V2D_FiniteGeometryDouble.getPoints(ch));
+    }
+    
     /**
      * Create a new instance.
      *
@@ -375,12 +394,25 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
 ////    @Override
 ////    public boolean isEnvelopeIntersectedBy(V2D_Line l, int oom) {
 ////        return getEnvelope().isIntersectedBy(l, oom);
-////    }
+    ////    }
+    
+    
     @Override
-    public V2D_ConvexHullDouble rotate(V2D_PointDouble pt, double theta, double epsilon) {
+    public V2D_ConvexHullDouble rotate(V2D_PointDouble pt, double theta,
+            double epsilon) {
+        theta = Math_AngleDouble.normalise(theta);
+        if (theta == 0d) {
+            return new V2D_ConvexHullDouble(this, epsilon);
+        } else {
+            return rotateN(pt, theta, epsilon);
+        }
+    }
+
+    @Override
+    public V2D_ConvexHullDouble rotateN(V2D_PointDouble pt, double theta, double epsilon) {
         V2D_TriangleDouble[] rts = new V2D_TriangleDouble[triangles.size()];
         for (int i = 0; i < triangles.size(); i++) {
-            rts[0] = triangles.get(i).rotate(pt, theta, epsilon);
+            rts[0] = triangles.get(i).rotateN(pt, theta, epsilon);
         }
         return new V2D_ConvexHullDouble(epsilon, rts);
     }

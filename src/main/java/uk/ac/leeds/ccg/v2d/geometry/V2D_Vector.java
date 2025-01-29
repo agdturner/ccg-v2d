@@ -39,7 +39,7 @@ import uk.ac.leeds.ccg.v2d.geometry.light.V2D_V;
  * @version 1.1
  */
 public class V2D_Vector implements Serializable {
-
+    
     private static final long serialVersionUID = 1L;
 
     /**
@@ -58,8 +58,7 @@ public class V2D_Vector implements Serializable {
     protected Math_BigRationalSqrt m;
 
     /**
-     * The zero vector {@code <0,0>} where:
-     * {@link #dx} = {@link #dy} = 0.
+     * The zero vector {@code <0,0>} where: {@link #dx} = {@link #dy} = 0.
      */
     public static final V2D_Vector ZERO = new V2D_Vector(0, 0);
 
@@ -87,7 +86,7 @@ public class V2D_Vector implements Serializable {
      * The J vector {@code <0,-1>}.
      */
     public static final V2D_Vector NJ = new V2D_Vector(0, -1);
-    
+
     /**
      * The IJ vector {@code <1,-1>}.
      */
@@ -221,7 +220,7 @@ public class V2D_Vector implements Serializable {
     public V2D_Vector(V2D_V v) {
         this(v.x, v.y);
     }
-
+    
     @Override
     public String toString() {
         //return toString("");
@@ -265,7 +264,7 @@ public class V2D_Vector implements Serializable {
         return pad + "dx=" + dx.toStringSimple()
                 + ", dy=" + dy.toStringSimple();
     }
-
+    
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -275,7 +274,7 @@ public class V2D_Vector implements Serializable {
         }
         return false;
     }
-
+    
     @Override
     public int hashCode() {
         int hash = 3;
@@ -514,7 +513,7 @@ public class V2D_Vector implements Serializable {
         }
         return m;
     }
-    
+
     /**
      * Test if {@code v} is a scalar multiple of {@code this}.
      *
@@ -545,7 +544,7 @@ public class V2D_Vector implements Serializable {
             }
             if (v.dx.abs().equals(dx.abs(), oom)) {
                 // |dx| = |v.dx|
-                if (dx.equals(Math_BigRationalSqrt.ZERO, oom )) {
+                if (dx.equals(Math_BigRationalSqrt.ZERO, oom)) {
                     // dx = v.dx = 0d
                     return true;
                 } else {
@@ -612,50 +611,51 @@ public class V2D_Vector implements Serializable {
     }
 
     /**
-     * Calculate and return {@code #this} rotated using the parameters.(see
- Doug (https://math.stackexchange.com/users/102399/doug), How do you
- rotate a vector by a unit quaternion?, URL (version: 2019-06-12):
- https://math.stackexchange.com/q/535223)
+     * Calculate and return {@code #this} rotated by the angle theta.
      *
-     * @param pt The point of rotatio.
-     * @param theta The angle of rotation.
+     * @param theta The angle of rotation about pt in radians.
      * @param bd The Math_BigDecimal.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
-     * @return The vector which is {@code #this} rotated using the parameters.
+     * @return A new vector which it {@code #this} rotated by the angle theta
+     * about the point pt. If theta is positive the angle is clockwise.
      */
-    public V2D_Vector rotate(V2D_Point pt, BigRational theta, 
+    public V2D_Vector rotate(BigRational theta,
             Math_BigDecimal bd, int oom, RoundingMode rm) {
         theta = Math_AngleBigRational.normalise(theta, bd, oom, rm);
         if (theta.compareTo(BigRational.ZERO) == 0d) {
             return new V2D_Vector(this);
         } else {
-            // Rotate counter clockwise
-//            BigRational dx2 = dx.getX().multiply(
-//                    Math_BigRational.cos(theta, bd.bi, oom, rm)).subtract(
-//                            dy.getX().multiply(
-//                    Math_BigRational.sin(theta, bd.bi, oom, rm)));
-//            BigRational dy2 = dy.getX().multiply(
-//                    Math_BigRational.cos(theta, bd.bi, oom, rm)).add(
-//                            dx.getX().multiply(
-//                    Math_BigRational.sin(theta, bd.bi, oom, rm)));
-            // Rotate clockwise
-            //BigRational dxr = dx.getX();
-            //BigRational dxr = dx.getSqrt();
-            BigRational dxr = dx.getSqrt(oom, rm);
-            BigRational dyr = dy.getSqrt(oom, rm);
-            BigRational dx2 = dxr.multiply(
-                    Math_BigRational.cos(theta, bd.bi, oom, rm)).add(
-                            dyr.multiply(
-                    Math_BigRational.sin(theta, bd.bi, oom, rm)));
-            BigRational dy2 = dyr.multiply(
-                    Math_BigRational.cos(theta, bd.bi, oom, rm)).subtract(
-                            dxr.multiply(
-                    Math_BigRational.sin(theta, bd.bi, oom, rm)));
-            return new V2D_Vector(dx2, dy2);
+            return rotateN(theta, bd, oom, rm);
         }
     }
-    
+
+    /**
+     * Calculate and return {@code #this} rotated by the angle theta.
+     *
+     * @param theta The angle of rotation about pt in radians theta &gt 0 &&
+     * theta &lt 2Pi.
+     * @param bd The Math_BigDecimal.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return A new vector which it {@code #this} rotated by the angle theta
+     * about the point pt. If theta is positive the angle is clockwise.
+     */
+    public V2D_Vector rotateN(BigRational theta, Math_BigDecimal bd, int oom, 
+            RoundingMode rm) {
+        BigRational dxr = dx.getSqrt(oom, rm);
+        BigRational dyr = dy.getSqrt(oom, rm);
+        BigRational dx2 = dxr.multiply(
+                Math_BigRational.cos(theta, bd.bi, oom, rm)).add(
+                dyr.multiply(
+                        Math_BigRational.sin(theta, bd.bi, oom, rm)));
+        BigRational dy2 = dyr.multiply(
+                Math_BigRational.cos(theta, bd.bi, oom, rm)).subtract(
+                dxr.multiply(
+                        Math_BigRational.sin(theta, bd.bi, oom, rm)));
+        return new V2D_Vector(dx2, dy2);
+    }
+
     /**
      * Calculate and return {@code #this} rotated 90 degrees clockwise.
      *

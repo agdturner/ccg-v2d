@@ -16,6 +16,7 @@
 package uk.ac.leeds.ccg.v2d.geometry.d;
 
 import java.util.Arrays;
+import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
 
 /**
  * For representing and processing rectangles in 2D. A rectangle is a right
@@ -315,15 +316,26 @@ public class V2D_RectangleDouble extends V2D_FiniteGeometryDouble {
         pqr.translate(v);
         rsp.translate(v);
     }
+    
+    @Override
+    public V2D_RectangleDouble rotate(V2D_PointDouble pt, double theta,
+            double epsilon) {
+        theta = Math_AngleDouble.normalise(theta);
+        if (theta == 0d) {
+            return new V2D_RectangleDouble(this);
+        } else {
+            return rotateN(pt, theta, epsilon);
+        }
+    }
 
     @Override
-    public V2D_RectangleDouble rotate(V2D_PointDouble pt,
+    public V2D_RectangleDouble rotateN(V2D_PointDouble pt,
             double theta, double epsilon) {
         return new V2D_RectangleDouble(
-                getP().rotate(pt, theta, epsilon),
-                getQ().rotate(pt, theta, epsilon),
-                getR().rotate(pt, theta, epsilon),
-                getS().rotate(pt, theta, epsilon));
+                getP().rotateN(pt, theta, epsilon),
+                getQ().rotateN(pt, theta, epsilon),
+                getR().rotateN(pt, theta, epsilon),
+                getS().rotateN(pt, theta, epsilon));
     }
 
     /**

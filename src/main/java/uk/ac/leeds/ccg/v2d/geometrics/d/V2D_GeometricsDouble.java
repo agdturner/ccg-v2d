@@ -24,6 +24,11 @@ import uk.ac.leeds.ccg.v2d.geometry.d.V2D_PointDouble;
 public class V2D_GeometricsDouble {
     
     /**
+     * Create a new instance.
+     */
+    public V2D_GeometricsDouble(){}
+    
+    /**
      * https://en.wikipedia.org/wiki/Centroid
      * This centroid point is the minimum of the sum of squared Euclidean 
      * distances between itself and each input point. This is not a barycentre.
@@ -43,4 +48,19 @@ public class V2D_GeometricsDouble {
         return new V2D_PointDouble(x, y);
     }
 
+    /**
+     * @param ps The points the index of the max of which is returned.
+     * @return The maximum point (largest y, largest x).
+     */
+    public static int getMax(V2D_PointDouble... ps) {
+        int r = 0;
+        V2D_PointDouble max = ps[0];
+        double n = ps.length;
+        for (int i = 1; i < n; i ++) {
+            if (ps[i].compareTo(max) == 1) {
+                r = i;
+            }
+        }
+        return r;
+    }
 }

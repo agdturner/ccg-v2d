@@ -18,6 +18,7 @@ package uk.ac.leeds.ccg.v2d.geometry;
 import ch.obermuhlner.math.big.BigRational;
 import java.math.RoundingMode;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
+import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
 import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
 
 /**
@@ -1321,11 +1322,22 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
     }
 
     @Override
-    public V2D_LineSegment rotate(V2D_Point pt, BigRational theta, 
+    public V2D_LineSegment rotate(V2D_Point pt, BigRational theta, Math_BigDecimal bd,
+            int oom, RoundingMode rm) {
+        theta = Math_AngleBigRational.normalise(theta, bd, oom, rm);
+        if (theta.compareTo(BigRational.ZERO) == 0d) {
+            return new V2D_LineSegment(this);
+        } else {
+            return rotateN(pt, theta, bd, oom, rm);
+        }
+    }
+    
+    @Override
+    public V2D_LineSegment rotateN(V2D_Point pt, BigRational theta, 
             Math_BigDecimal bd, int oom, RoundingMode rm) {
         return new V2D_LineSegment(
-                getP().rotate(pt, theta, bd, oom, rm),
-                getQ().rotate(pt, theta, bd, oom, rm), oom, rm);
+                getP().rotateN(pt, theta, bd, oom, rm),
+                getQ().rotateN(pt, theta, bd, oom, rm), oom, rm);
     }
 
     /**

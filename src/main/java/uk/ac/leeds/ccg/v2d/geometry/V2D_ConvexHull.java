@@ -25,9 +25,12 @@ import java.util.List;
 import java.util.TreeSet;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
+import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
 import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
 import uk.ac.leeds.ccg.v2d.geometrics.V2D_Geometrics;
-import uk.ac.leeds.ccg.v2d.geometrics.V2D_SortByCentroid;
+import uk.ac.leeds.ccg.v2d.geometrics.V2D_SortByAngle;
+import uk.ac.leeds.ccg.v2d.geometry.d.V2D_PointDouble;
+import uk.ac.leeds.ccg.v2d.geometry.d.V2D_RectangleDouble;
 
 /**
  * A class for representing and using coplanar convex hulls. These are a special
@@ -105,9 +108,15 @@ public class V2D_ConvexHull extends V2D_FiniteGeometry {
         ArrayList<V2D_Point> uniquePoints = V2D_Point.getUnique(Arrays.asList(points), oom, rm);
         V2D_Point[] up = new V2D_Point[uniquePoints.size()];
         up = uniquePoints.toArray(up);
+        V2D_Point max = up[V2D_Geometrics.getMax(oom, rm, up)];
         V2D_Point centroid = V2D_Geometrics.getCentroid(oom, rm, up);
-        V2D_SortByCentroid sbc = new V2D_SortByCentroid(centroid, oom, rm);
+        V2D_SortByAngle sbc = new V2D_SortByAngle(centroid, max, oom, rm);
         Arrays.sort(up, sbc);
+//        System.out.println("After sorting");
+//        for (int i = 0; i < up.length; i++) {
+//            System.out.println("i=" + i);
+//            System.out.println(up[i].toStringSimple(""));
+//        }
         this.points = new ArrayList<>(Arrays.asList(up));
         this.triangles = new ArrayList<>();
     }
@@ -348,12 +357,24 @@ public class V2D_ConvexHull extends V2D_FiniteGeometry {
 //    public boolean isEnvelopeIntersectedBy(V2D_Line l, int oom) {
 //        return getEnvelope().isIntersectedBy(l, oom);
 //    }
+    
     @Override
-    public V2D_ConvexHull rotate(V2D_Point pt, BigRational theta,
+    public V2D_ConvexHull rotate(V2D_Point pt, BigRational theta, 
+            Math_BigDecimal bd, int oom, RoundingMode rm) {
+        theta = Math_AngleBigRational.normalise(theta, bd, oom, rm);
+        if (theta.compareTo(BigRational.ZERO) == 0d) {
+            return new V2D_ConvexHull(oom, rm, this);
+        } else {
+            return rotateN(pt, theta, bd, oom, rm);
+        }
+    }
+    
+    @Override
+    public V2D_ConvexHull rotateN(V2D_Point pt, BigRational theta,
             Math_BigDecimal bd, int oom, RoundingMode rm) {
         V2D_Triangle[] rts = new V2D_Triangle[triangles.size()];
         for (int i = 0; i < triangles.size(); i++) {
-            rts[0] = triangles.get(i).rotate(pt, theta, bd, oom, rm);
+            rts[0] = triangles.get(i).rotateN(pt, theta, bd, oom, rm);
         }
         return new V2D_ConvexHull(oom, rm, rts);
     }

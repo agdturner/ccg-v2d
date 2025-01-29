@@ -578,12 +578,12 @@ public class V2D_VectorTest extends V2D_Test {
         BigRational theta = Math_BigRational.getPi(bd, oom, rm).divide(2);
         V2D_Vector instance = new V2D_Vector(1, 0);
         V2D_Vector expResult = new V2D_Vector(0, -1);
-        V2D_Vector result = instance.rotate(pP0P0, theta, bd, oom, rm);
+        V2D_Vector result = instance.rotate(theta, bd, oom, rm);
         assertTrue(expResult.equals(result, oom, rm));
         // Test 2
         instance = new V2D_Vector(0, 1);
         expResult = new V2D_Vector(1, 0);
-        result = instance.rotate(pP0P0, theta, bd, oom, rm);
+        result = instance.rotate(theta, bd, oom, rm);
         assertTrue(expResult.equals(result, oom, rm));
     }
 

@@ -16,6 +16,7 @@
 package uk.ac.leeds.ccg.v2d.geometry.d;
 
 import uk.ac.leeds.ccg.math.arithmetic.Math_Double;
+import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
 
 /**
  * 2D representation of a finite length line (a line segment). The line begins
@@ -1228,9 +1229,20 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
     @Override
     public V2D_LineSegmentDouble rotate(V2D_PointDouble pt, double theta,
             double epsilon) {
+        theta = Math_AngleDouble.normalise(theta);
+        if (theta == 0d) {
+            return new V2D_LineSegmentDouble(this);
+        } else {
+            return rotateN(pt, theta, epsilon);
+        }
+    }
+
+    @Override
+    public V2D_LineSegmentDouble rotateN(V2D_PointDouble pt, double theta,
+            double epsilon) {
         return new V2D_LineSegmentDouble(
-                getP().rotate(pt, theta, epsilon),
-                getQ().rotate(pt, theta, epsilon));
+                getP().rotateN(pt, theta, epsilon),
+                getQ().rotateN(pt, theta, epsilon));
     }
 
 //    /**

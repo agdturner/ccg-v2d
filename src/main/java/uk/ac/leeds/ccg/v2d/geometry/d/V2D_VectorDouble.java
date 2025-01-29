@@ -47,8 +47,7 @@ public class V2D_VectorDouble implements Serializable {
     protected double m;
 
     /**
-     * The zero vector {@code <0,0>} where:
-     * {@link #dx} = {@link #dy} = 0.
+     * The zero vector {@code <0,0>} where: {@link #dx} = {@link #dy} = 0.
      */
     public static final V2D_VectorDouble ZERO = new V2D_VectorDouble(0, 0);
 
@@ -368,6 +367,17 @@ public class V2D_VectorDouble implements Serializable {
     public double getDotProduct(V2D_VectorDouble v) {
         return dx * v.dx + dy * v.dy;
     }
+    
+    /**
+     * Calculate and return the
+     * <A href="https://en.wikipedia.org/wiki/Determinant">determinant</A>.
+     *
+     * @param v The other vector to compose the cross product from.
+     * @return The dot product.
+     */
+    public double getDeterminant(V2D_VectorDouble v) {
+        return dx * v.dy - dy * v.dx;
+    }
 
     /**
      * Test if this is orthogonal to {@code v}.
@@ -416,7 +426,7 @@ public class V2D_VectorDouble implements Serializable {
 //     * @return {@code true} if this and {@code v} are orthogonal.
 //     */
 //    public boolean isOrthogonal(V2D_VectorDouble v, double epsilon) {
-////        // Special case
+    ////        // Special case
 ////        if (isScalarMultiple(v, epsilon)) {
 ////            return false;
 ////        }
@@ -558,12 +568,20 @@ public class V2D_VectorDouble implements Serializable {
 
     /**
      * Compute and return the angle (in radians) between {@code #this} and
-     * {@code v}. The algorithm is to:
-     * <ol>
-     * <li>Find the dot product of the vectors.</li>
-     * <li>Divide the dot product with the magnitude of the first vector.</li>
-     * <li>the second vector.</li>
-     * </ol>
+     * {@code v}.
+     *
+     * @param v The vector to find the angle between.
+     * @return The angle in radians between {@code this} and {@code v}.
+     */
+    public double getAngle2(V2D_VectorDouble v) {
+        double dp = getDotProduct(v);
+        double det = getDeterminant(v);
+        return Math.atan2(det, dp);
+    }
+    
+    /**
+     * Compute and return the angle (in radians) between {@code #this} and
+     * {@code v}.
      *
      * @param v The vector to find the angle between.
      * @return The angle in radians between {@code this} and {@code v}.
@@ -572,30 +590,39 @@ public class V2D_VectorDouble implements Serializable {
         double dp = getDotProduct(v);
         double mag = getMagnitude();
         double vmag = v.getMagnitude();
-        return Math.acos(dp / (mag * vmag));
+        return Math.acos(dp / (mag * vmag)); 
     }
 
     /**
-     * Calculate and return {@code #this} rotated clockwise.
+     * Calculate and return {@code #this} rotated by the angle theta.
      *
-     * @param theta The angle of rotation.
-     * @return The vector which is {@code #this} rotated using the parameters.
+     * @param theta The angle of rotation about pt in radians.
+     * @return A new vector which it {@code #this} rotated by the angle theta
+     * about the point pt. If theta is positive the angle is clockwise.
      */
     public V2D_VectorDouble rotate(double theta) {
         theta = Math_AngleDouble.normalise(theta);
         if (theta == 0d) {
             return new V2D_VectorDouble(this);
         } else {
-            // Rotate counter clockwise
-            //double dx2 = dx * Math.cos(theta) - dy * Math.sin(theta);
-            //double dy2 = dx * Math.sin(theta) + dy * Math.cos(theta);
-            // Rotate clockwise
-            double dx2 = dx * Math.cos(theta) + dy * Math.sin(theta);
-            double dy2 = dy * Math.cos(theta) - dx * Math.sin(theta);
-            return new V2D_VectorDouble(dx2, dy2);
+            return rotateN(theta);
         }
     }
-    
+
+    /**
+     * Calculate and return {@code #this} rotated by the angle theta.
+     *
+     * @param theta The angle of rotation about pt in radians theta &gt 0 &&
+     * theta &lt 2Pi.
+     * @return A new vector which it {@code #this} rotated by the angle theta
+     * about the point pt. If theta is positive the angle is clockwise.
+     */
+    public V2D_VectorDouble rotateN(double theta) {
+        double dx2 = dx * Math.cos(theta) + dy * Math.sin(theta);
+        double dy2 = dy * Math.cos(theta) - dx * Math.sin(theta);
+        return new V2D_VectorDouble(dx2, dy2);
+    }
+
     /**
      * Calculate and return {@code #this} rotated 90 degrees clockwise.
      *

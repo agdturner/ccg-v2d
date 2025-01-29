@@ -24,7 +24,6 @@ import java.util.List;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
 import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
-import uk.ac.leeds.ccg.v2d.geometry.d.V2D_PointDouble;
 
 /**
  * A point is defined by two vectors: {@link #offset} and {@link #rel}. Adding
@@ -401,17 +400,7 @@ public class V2D_Point extends V2D_FiniteGeometry {
         offset = offset.subtract(rel, oom, rm).add(this.rel, oom, rm);
         this.rel = rel;
     }
-
-    /**
-     * Rotates the point about {@link offset}.
-     *
-     * @param axis The axis of rotation.
-     * @param theta The angle of rotation.
-     * @param ma The Math_AngleBigRational for obtaining PI and normalising
-     * angles.
-     * @param oom The Order of Magnitude for the precision.
-     * @param rm The RoundingMode.
-     */
+    
     @Override
     public V2D_Point rotate(V2D_Point pt, BigRational theta, Math_BigDecimal bd, 
             int oom, RoundingMode rm) {
@@ -419,12 +408,20 @@ public class V2D_Point extends V2D_FiniteGeometry {
         BigRational na = Math_AngleBigRational.normalise(theta, bd, oomn9, rm);
         if (na.compareTo(BigRational.ZERO) == 0) {
             return new V2D_Point(this);
+        } else {
+            return rotateN(pt, na, bd, oom, rm);
         }
+    }
+
+    @Override
+    public V2D_Point rotateN(V2D_Point pt, BigRational theta, Math_BigDecimal bd, 
+            int oom, RoundingMode rm) {
+        int oomn9 = oom - 9;
         V2D_Vector tv = new V2D_Vector(pt.getX(oomn9, rm), pt.getY(oomn9, rm));
         V2D_Point tp = new V2D_Point(this);
         tp.translate(tv.reverse(), oomn9, rm);
         V2D_Vector tpv = tp.getVector(oomn9, rm);
-        V2D_Point r = new V2D_Point(tpv.rotate(pt, theta, bd, oomn9, rm));
+        V2D_Point r = new V2D_Point(tpv.rotate(theta, bd, oomn9, rm));
         r.translate(tv, oomn9, rm);
         return r;
     }
@@ -439,6 +436,11 @@ public class V2D_Point extends V2D_FiniteGeometry {
      */
     public static ArrayList<V2D_Point> getUnique(List<V2D_Point> pts,
             int oom, RoundingMode rm) {
+//        System.out.println("Before unique");
+//        for (int i = 0; i < pts.size(); i++) {
+//            System.out.println("i=" + i);
+//            System.out.println(pts.get(i).toStringSimple(""));
+//        }
         HashSet<Integer> indexes = new HashSet<>();
         ArrayList<V2D_Point> r = new ArrayList<>();
         for (int i = 0; i < pts.size(); i++) {
@@ -476,11 +478,49 @@ public class V2D_Point extends V2D_FiniteGeometry {
 //                }
 //            }
 //        }
+
+        System.out.println("After unique");
+        for (int i = 0; i < r.size(); i++) {
+            System.out.println("i=" + i);
+            System.out.println(r.get(i).toStringSimple(""));
+        }
+
         return r;
     }
 
     @Override
     public boolean isIntersectedBy(V2D_Envelope aabb, int oom, RoundingMode rm) {
         return aabb.isIntersectedBy(this, oom, rm);
+    }
+
+    /**
+     * @param p The point to compare this with
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode.
+     * @return 1 if this is greater than p, -1 if this is less than p, and 0 
+     * otherwise for the given oom and rm. 
+     */
+    public int compareTo(V2D_Point p, int oom, RoundingMode rm) {
+        BigRational y = getY(oom, rm);
+        BigRational py = p.getY(oom, rm);
+        if (y.compareTo(py) == 1) {
+            return 1;
+        } else {
+            if (y.compareTo(py) == -1) {
+                return -1;
+            } else {
+                BigRational x = getX(oom, rm);
+                BigRational px = p.getX(oom, rm);
+                if (x.compareTo(px) == 1) {
+                    return 1;
+                } else {
+                    if (x.compareTo(px) == -1) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                }
+            }
+        }
     }
 }

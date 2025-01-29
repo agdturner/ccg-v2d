@@ -21,6 +21,7 @@ module uk.ac.leeds.ccg.v2d.test {
     requires org.junit.jupiter.params;
     
     requires uk.ac.leeds.ccg.v2d;
+    requires uk.ac.leeds.ccg.math;
 
     opens uk.ac.leeds.ccg.v2d.geometry.d.test to org.junit.platform.commons;
     opens uk.ac.leeds.ccg.v2d.geometry.test to org.junit.platform.commons;
