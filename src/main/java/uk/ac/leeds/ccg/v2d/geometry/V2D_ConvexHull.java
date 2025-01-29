@@ -717,4 +717,24 @@ public class V2D_ConvexHull extends V2D_FiniteGeometry {
         }
     }
 
+    /**
+     * This implementation does not computes a centroid and alternates between
+     * clockwise and anticlockwise to fill the space with triangles.
+     *
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return A list of triangles that make up the convex hull.
+     */
+    public ArrayList<V2D_Triangle> getTriangles(int oom, RoundingMode rm) {
+        ArrayList<V2D_Triangle> result = new ArrayList<>();
+        V2D_Point[] ps = getPoints();
+        V2D_Point p0 = ps[0];
+        V2D_Point p1 = ps[1];
+        for (int i = 2; i < ps.length; i++) {
+            V2D_Point p2 = ps[i];
+            result.add(new V2D_Triangle(p0, p1, p2, oom, rm));
+            p1 = p2;
+        }
+        return result;
+    }
 }
