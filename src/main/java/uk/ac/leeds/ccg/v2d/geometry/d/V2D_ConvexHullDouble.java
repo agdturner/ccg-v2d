@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
-import uk.ac.leeds.ccg.v2d.geometrics.V2D_Geometrics;
 import uk.ac.leeds.ccg.v2d.geometrics.d.V2D_GeometricsDouble;
 import uk.ac.leeds.ccg.v2d.geometrics.d.V2D_SortByAngleDouble;
 

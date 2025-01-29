@@ -457,34 +457,11 @@ public class V2D_Point extends V2D_FiniteGeometry {
                 }
             }
         }
-//        HashSet<Integer> indexes = new HashSet<>();
-//        ArrayList<V2D_Point> r = new ArrayList<>();
-//        for (int i = 0; i < pts.size(); i++) {
-//            if (!indexes.contains(i)) {
-//                V2D_Point p = pts.get(i);
-//                boolean added = false;
-//                for (int j = i + 1; j < pts.size(); j++) {
-//                    if (p.equals(pts.get(j), oom, rm)) {
-//                        //r.add(p);
-//                        r.add(new V2D_Point(p));
-//                        indexes.add(j);
-//                        added = true;
-//                        break;
-//                    }
-//                }
-//                if (!added) {
-//                    //r.add(p);
-//                    r.add(new V2D_Point(p));
-//                }
-//            }
+//        System.out.println("After unique");
+//        for (int i = 0; i < r.size(); i++) {
+//            System.out.println("i=" + i);
+//            System.out.println(r.get(i).toStringSimple(""));
 //        }
-
-        System.out.println("After unique");
-        for (int i = 0; i < r.size(); i++) {
-            System.out.println("i=" + i);
-            System.out.println(r.get(i).toStringSimple(""));
-        }
-
         return r;
     }
 

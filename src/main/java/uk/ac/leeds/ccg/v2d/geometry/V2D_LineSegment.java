@@ -1083,6 +1083,42 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
             V2D_LineSegment tloi = getLineOfIntersection(ls.l, oom, rm);
             V2D_LineSegment lsloi = ls.getLineOfIntersection(l, oom, rm);
             if (tloi == null) {
+                if (lsloi == null) {
+                    // The line segments are collinear, but not intersecting.
+                    BigRational lspd2tp = lsp.getDistanceSquared(tp, oom, rm);
+                    BigRational lspd2tq = lsp.getDistanceSquared(tq, oom, rm);
+                    BigRational lsqd2tp = lsq.getDistanceSquared(tp, oom, rm);
+                    BigRational lsqd2tq = lsq.getDistanceSquared(tq, oom, rm);
+                    if (lspd2tp.compareTo(lspd2tq) == -1) {
+                        if (lspd2tp.compareTo(lsqd2tp) == -1) {
+                            if (lspd2tp.compareTo(lsqd2tq) == -1) {
+                                return new V2D_LineSegment(lsp, tp, oom, rm);
+                            } else {
+                                return new V2D_LineSegment(lsq, tq, oom, rm);
+                            }                            
+                        } else {
+                            if (lsqd2tp.compareTo(lsqd2tq) == -1) {
+                                return new V2D_LineSegment(lsq, tp, oom, rm);
+                            } else {
+                                return new V2D_LineSegment(lsq, tq, oom, rm);
+                            }
+                        }                        
+                    } else {
+                        if (lspd2tq.compareTo(lsqd2tp) == -1) {
+                            if (lspd2tq.compareTo(lsqd2tq) == -1) {
+                                return new V2D_LineSegment(lsp, tq, oom, rm);
+                            } else {
+                                return new V2D_LineSegment(lsq, tq, oom, rm);
+                            }                            
+                        } else {
+                            if (lsqd2tp.compareTo(lsqd2tq) == -1) {
+                                return new V2D_LineSegment(lsq, tp, oom, rm);
+                            } else {
+                                return new V2D_LineSegment(lsq, tq, oom, rm);
+                            }
+                        }       
+                    }
+                }
                 V2D_Point tip;
                 V2D_Point lsloiq = lsloi.getQ();
                 // Is the intersection point on this within the line segment?
@@ -1105,7 +1141,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
                     // tp is closest.
                     tip = tp;
                 }
-                return new V2D_LineSegment(tip, lsloiq, oom, rm);
+                return new V2D_LineSegment(tip, lsloi.getP(), oom, rm);
             } else {
                 V2D_Point tloip = tloi.getP(); // This is the end of the line segment on this.
                 V2D_Point tloiq = tloi.getQ();

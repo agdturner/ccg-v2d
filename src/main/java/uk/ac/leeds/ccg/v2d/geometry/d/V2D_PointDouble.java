@@ -398,13 +398,11 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
      */
     public static ArrayList<V2D_PointDouble> getUnique(
             List<V2D_PointDouble> pts, double epsilon) {
-
-        System.out.println("Before unique");
-        for (int i = 0; i < pts.size(); i++) {
-            System.out.println("i=" + i);
-            System.out.println(pts.get(i).toStringSimple(""));
-        }
-
+//        System.out.println("Before unique");
+//        for (int i = 0; i < pts.size(); i++) {
+//            System.out.println("i=" + i);
+//            System.out.println(pts.get(i).toStringSimple(""));
+//        }
         HashSet<Integer> indexes = new HashSet<>();
         ArrayList<V2D_PointDouble> r = new ArrayList<>();
         for (int i = 0; i < pts.size(); i++) {
@@ -421,13 +419,11 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
                 }
             }
         }
-
-        System.out.println("After unique");
-        for (int i = 0; i < r.size(); i++) {
-            System.out.println("i=" + i);
-            System.out.println(r.get(i).toStringSimple(""));
-        }
-
+//        System.out.println("After unique");
+//        for (int i = 0; i < r.size(); i++) {
+//            System.out.println("i=" + i);
+//            System.out.println(r.get(i).toStringSimple(""));
+//        }
         return r;
     }
 
