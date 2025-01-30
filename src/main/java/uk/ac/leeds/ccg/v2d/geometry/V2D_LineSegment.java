@@ -17,6 +17,8 @@ package uk.ac.leeds.ccg.v2d.geometry;
 
 import ch.obermuhlner.math.big.BigRational;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
 import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
@@ -128,17 +130,23 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      */
     public V2D_LineSegment(int oom, RoundingMode rm, V2D_Point... points) {
         super(points[0].offset);
-        V2D_Point p0 = points[0];
-        V2D_Point p1 = points[1];
+        ArrayList<V2D_Point> unique = V2D_Point.getUnique(Arrays.asList(points), oom, rm);
+        int n = unique.size();
+        if (n < 2) {
+            throw new RuntimeException("Can't define line segment - all points the same.");
+        }
+        V2D_Point p0 = unique.get(0);
+        V2D_Point p1 = unique.get(1);
         V2D_LineSegment ls = new V2D_LineSegment(p0, p1, oom, rm);
-        for (int i = 2; i < points.length; i++) {
-            if (!ls.isIntersectedBy(points[i], oom, rm)) {
-                V2D_LineSegment l2 = new V2D_LineSegment(ls.getP(), points[i], oom, rm);
+        for (int i = 2; i < n; i++) {
+            V2D_Point p = unique.get(i);
+            if (!ls.isIntersectedBy(p, oom, rm)) {
+                V2D_LineSegment l2 = new V2D_LineSegment(ls.getP(), p, oom, rm);
                 V2D_Point lq = ls.getQ();
                 if (l2.isIntersectedBy(lq, oom, rm)) {
                     ls = l2;
                 } else {
-                    ls = new V2D_LineSegment(ls.getQ(), points[i], oom, rm);
+                    ls = new V2D_LineSegment(ls.getQ(), p, oom, rm);
                 }
             }
         }

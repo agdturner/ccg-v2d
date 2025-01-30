@@ -363,8 +363,9 @@ public class V2D_Rectangle extends V2D_FiniteGeometry {
      */
     public V2D_FiniteGeometry getIntersection(V2D_Triangle t,
             int oom, RoundingMode rm) {
-            V2D_FiniteGeometry pqrit = pqr.getIntersection(t, oom, rm);
-            V2D_FiniteGeometry rspit = rsp.getIntersection(t, oom, rm);
+        int oomn2 = oom -2;
+            V2D_FiniteGeometry pqrit = pqr.getIntersection(t, oomn2, rm);
+            V2D_FiniteGeometry rspit = rsp.getIntersection(t, oomn2, rm);
             if (pqrit == null) {
                 return rspit;
             } else if (pqrit instanceof V2D_Point) {

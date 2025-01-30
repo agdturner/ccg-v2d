@@ -547,7 +547,7 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
         if (g == null) {
             return null;
         }
-        if (g instanceof V2D_PointDouble gp) {            
+        if (g instanceof V2D_PointDouble gp) {
             if (isIntersectedBy(gp, epsilon)) {
                 if (l.isBetween(gp, epsilon)) {
                     return gp;
@@ -863,7 +863,7 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
             return rotateN(pt, theta, epsilon);
         }
     }
-    
+
     @Override
     public V2D_TriangleDouble rotateN(V2D_PointDouble pt, double theta, double epsilon) {
         return new V2D_TriangleDouble(
@@ -1052,26 +1052,31 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
     protected static V2D_FiniteGeometryDouble getGeometry(
             V2D_LineSegmentDouble ab, V2D_LineSegmentDouble cd,
             double epsilon) {
-        V2D_PointDouble pt = (V2D_PointDouble) ab.getIntersection(epsilon, cd);
-        V2D_PointDouble abp = ab.getP();
-        V2D_PointDouble cdp = cd.getP();
-        if (pt == null) {
-            //V2D_TriangleDouble t = new V2D_TriangleDouble(cd, abp);
-            return new V2D_ConvexHullDouble(epsilon, abp, cdp, ab.getQ(), cd.getQ());
-        } else {
-            if (abp.equals(epsilon, pt)) {
-                if (cdp.equals(epsilon, pt)) {
-                    return new V2D_TriangleDouble(pt, ab.getQ(), cd.getQ());
-                } else {
-                    return new V2D_TriangleDouble(pt, ab.getQ(), cdp);
-                }
+        V2D_FiniteGeometryDouble g = ab.getIntersection(epsilon, cd);
+        if (g instanceof V2D_PointDouble) {
+            V2D_PointDouble pt = (V2D_PointDouble) g;
+            V2D_PointDouble abp = ab.getP();
+            V2D_PointDouble cdp = cd.getP();
+            if (pt == null) {
+                //V2D_TriangleDouble t = new V2D_TriangleDouble(cd, abp);
+                return new V2D_ConvexHullDouble(epsilon, abp, cdp, ab.getQ(), cd.getQ());
             } else {
-                if (cdp.equals(epsilon, pt)) {
-                    return new V2D_TriangleDouble(pt, abp, cd.getQ());
+                if (abp.equals(epsilon, pt)) {
+                    if (cdp.equals(epsilon, pt)) {
+                        return new V2D_TriangleDouble(pt, ab.getQ(), cd.getQ());
+                    } else {
+                        return new V2D_TriangleDouble(pt, ab.getQ(), cdp);
+                    }
                 } else {
-                    return new V2D_TriangleDouble(pt, abp, cdp);
+                    if (cdp.equals(epsilon, pt)) {
+                        return new V2D_TriangleDouble(pt, abp, cd.getQ());
+                    } else {
+                        return new V2D_TriangleDouble(pt, abp, cdp);
+                    }
                 }
             }
+        } else {
+            return g;
         }
     }
 
@@ -1118,7 +1123,7 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
      * @param l a line segment either equal to one of the edges of this: null
      * null null null null null null null null null null null null null null
      * null null null null null null null null null null null null null null
-     * null null null null null null     {@link #getPQ()},
+     * null null null null null null null     {@link #getPQ()},
      * {@link #getQR()} or {@link #getRP()}.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
