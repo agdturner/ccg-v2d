@@ -1,6 +1,12 @@
 # [ccg-v2d](https://github.com/agdturner/ccg-v2d)
 
-A modularised Java [2D](https://en.wikipedia.org/wiki/Two-dimensional_space) geometry library. The dimensions are defined by orthogonal coordinate axes X and Y that meet at the origin point <x,y> where the coordinates x=y=0. All points in this space can be defined as immutable [V2D_Point](https://github.com/agdturner/agdt-java-vector2D/blob/master/src/main/java/uk/ac/leeds/ccg/v2d/geometry/V2D_Point.java) instances with each coordinate stored currently as a [BigRational](https://github.com/eobermuhlner/big-math/blob/master/ch.obermuhlner.math.big/src/main/java/ch/obermuhlner/math/big/BigRational.java). I am considering changing this to allow for coordinates to be [Math_BigRationalSqrt](https://github.com/agdturner/agdt-java-math/blob/master/src/main/java/uk/ac/leeds/ccg/math/Math_BigRationalSqrt.java) numbers, [algebraic numbers](https://en.wikipedia.org/wiki/Algebraic_number) or possibly any [real number](https://en.wikipedia.org/wiki/Real_number).
+A modularised Java [2D](https://en.wikipedia.org/wiki/Two-dimensional_space) Euclidean spatial vector geometry library.
+
+Spatial dimensions are defined by orthogonal coordinate axes X and Y that meet at the origin point <x,y> where the coordinates x=y=0.
+
+There are two main implementations in the library that are distinguished by the type of numbers used for calculations and to represent coordinates:
+1. Coordinates and calculations using Java double precision primitive numbers.
+2. Coordinates and calculations using a combination of [BigRational](https://github.com/eobermuhlner/big-math/blob/master/ch.obermuhlner.math.big/src/main/java/ch/obermuhlner/math/big/BigRational.java) and [Math_BigRationalSqrt](https://github.com/agdturner/ccg-math/blob/master/src/main/java/uk/ac/leeds/ccg/math/number/Math_BigRationalSqrt.java) numbers.
 
 ## Dependencies
 - [ccg-io](https://github.com/agdturner/ccg-io)
@@ -8,23 +14,19 @@ A modularised Java [2D](https://en.wikipedia.org/wiki/Two-dimensional_space) geo
 - [BigMath](https://github.com/eobermuhlner/big-math)
 - Please see the [POM](https://github.com/agdturner/ccg-v2d/blob/master/pom.xml) for details.
 
-## Code status
-This code is unstable research software.
-
 ## Development plans/ideas
 - Develop more comprehensive unit tests.
 - Improve documentation.
+- Extend functionality and representations.
 - Make a versioned release on Maven Central.
 - As the [OpenJDK](https://openjdk.java.net/) develops some of the functionality may become redundant.
-- Consider if it is appropriate to [contribute](https://openjdk.java.net/contribute/) any of this.
 
 ## Development history
-The intention is to provide a summary of changes from one version to the next here.
-### Origin
-This code began development bundled together with lots of other code developed for an academic research project.
+- The code was originally developed for academic research projects.
+- The code is being developed along with [ccg-r2d](https://github.com/agdturner/ccg-r2d) - rendering code to show the capabilities of the library.
 
 ## Contributions
-- Welcome.
+- Please submit issues to initiate discussions about collaboration.
 
 ## LICENSE
 - [APACHE LICENSE, VERSION 2.0](https://www.apache.org/licenses/LICENSE-2.0)
