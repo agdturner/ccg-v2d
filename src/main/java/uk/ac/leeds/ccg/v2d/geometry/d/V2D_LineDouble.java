@@ -826,8 +826,10 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
         double ay = a.getY();
         double bx = b.getX();
         double by = b.getY();
-        //double p1 = ((y1-y2)*(ax-x1)+(x2-x1)*(ay-y1));
-        //double p2 = ((y1-y2)*(bx-x1)+(x2-x1)*(by-y1));
-        return ((y1-y2)*(ax-x1)+(x2-x1)*(ay-y1))*((y1-y2)*(bx-x1)+(x2-x1)*(by-y1)) + epsilon >= 0D;
+        double y1sy2 = y1 - y2; 
+        double x2sx1 = x2 - x1;
+        //double p1 = ((y1sy2)*(ax-x1)+(x2sx1)*(ay-y1));
+        //double p2 = ((y1sy2)*(bx-x1)+(x2sx1)*(by-y1));
+        return ((y1sy2)*(ax-x1)+(x2sx1)*(ay-y1))*((y1sy2)*(bx-x1)+(x2sx1)*(by-y1)) + epsilon >= 0D;
     }
 }

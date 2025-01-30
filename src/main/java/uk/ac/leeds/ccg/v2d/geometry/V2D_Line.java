@@ -970,7 +970,6 @@ public class V2D_Line extends V2D_Geometry {
         BigRational by = b.getY(oom, rm);
         BigRational y1sy2 = y1.subtract(y2); 
         BigRational x2sx1 = x2.subtract(x1);
-        
         BigRational p1 = (y1sy2.multiply(ax.subtract(x1))).add(
                 x2sx1.multiply(ay.subtract(y1)));
         BigRational p2 = (y1sy2.multiply(bx.subtract(x1))).add(

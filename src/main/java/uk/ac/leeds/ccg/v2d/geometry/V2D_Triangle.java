@@ -629,51 +629,32 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
         }
         return false;
     }
-
-//    /**
-//     * @param pt The point.
-//     * @param oom The Order of Magnitude for the precision.
-//     * @param rm The RoundingMode if rounding is needed.
-//     * @return {@code true} if this intersects with {@code pt}.
-//     */
-//    @Deprecated
-//    protected boolean isIntersectedBy0(V2D_Point pt, int oom, RoundingMode rm) {
-//        V2D_LineSegment tpq = getPQ(oom, rm);
-//        V2D_LineSegment tqr = getQR(oom, rm);
-//        V2D_LineSegment trp = getRP(oom, rm);
-//        if (tpq.isIntersectedBy(pt, oom, rm)
-//                || tqr.isIntersectedBy(pt, oom, rm)
-//                || trp.isIntersectedBy(pt, oom, rm)) {
-//            return true;
-//        }
-//        V2D_Vector ppt = new V2D_Vector(getP(), pt, oom, rm);
-//        V2D_Vector qpt = new V2D_Vector(getQ(), pt, oom, rm);
-//        V2D_Vector rpt = new V2D_Vector(getR(), pt, oom, rm);
-//        V2D_Vector cp = tpq.l.v.getCrossProduct(ppt, oom, rm);
-//        V2D_Vector cq = tqr.l.v.getCrossProduct(qpt, oom, rm);
-//        V2D_Vector cr = trp.l.v.getCrossProduct(rpt, oom, rm);
-//        /**
-//         * If cp, cq and cr are all in the same direction then pt intersects.
-//         */
-////        if (cp.dx.isNegative() && cq.dx.isNegative() && cr.dx.isNegative()) {
-////            if (cp.dy.isNegative() && cq.dy.isNegative() && cr.dy.isNegative()) {
-////                if (cp.dz.isNegative() && cq.dz.isNegative() && cr.dz.isNegative()) {
-////                    return true;
-////                }
-////            }
-////        }
-//        if (cp.dx.isNegative() == cq.dx.isNegative()
-//                && cp.dx.isNegative() == cr.dx.isNegative()) {
-//            if (cp.dy.isNegative() == cq.dy.isNegative()
-//                    && cp.dy.isNegative() == cr.dy.isNegative()) {
-//                if (cp.dz.isNegative() == cq.dz.isNegative()
-//                        && cp.dz.isNegative() == cr.dz.isNegative()) {
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
-//    }
+    
+    /**
+     * @param ls The line segment to test for intersection.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return True iff there is an intersection.
+     */
+    public boolean isIntersectedBy(V2D_LineSegment ls, int oom, RoundingMode rm) {
+        V2D_LineSegment pq = getPQ(oom, rm);
+        V2D_LineSegment qr = getQR(oom, rm);
+        V2D_LineSegment rp = getRP(oom, rm);
+        V2D_Point p = getP();
+        V2D_Point q = getQ();
+        V2D_Point r = getR();
+        V2D_Point lsp = ls.getP();
+        V2D_Point lsq = ls.getQ();
+        if ((pq.l.isOnSameSide(r, lsp, oom, rm)
+                || pq.l.isOnSameSide(r, lsq, oom, rm))
+                && (qr.l.isOnSameSide(p, lsp, oom, rm)
+                || qr.l.isOnSameSide(p, lsq, oom, rm))
+                && (rp.l.isOnSameSide(q, lsp, oom, rm)
+                || rp.l.isOnSameSide(q, lsq, oom, rm))) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * The point pt aligns with this if it is on the same side of each plane
@@ -882,7 +863,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
     }
 
     /**
-     * Get the intersection between the geometry and the line segment {@code l}.
+     * Compute and return the intersection with the line segment.
      *
      * @param l The line segment to intersect with.
      * @param oom The Order of Magnitude for the precision.
@@ -895,8 +876,8 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
         if (g == null) {
             return null;
         }
-        if (g instanceof V2D_Point gp) {
-            if (l.isAligned(gp, oom, rm)) {
+        if (g instanceof V2D_Point gp) {            
+            if (isIntersectedBy(gp, oom, rm)) {
                 if (l.isBetween(gp, oom, rm)) {
                     return gp;
                 }
@@ -904,12 +885,44 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
             return null;
         }
         V2D_LineSegment ls = (V2D_LineSegment) g;
-        if (ls.isBetween(l.getP(), oom, rm) || ls.isBetween(l.getQ(), oom, rm) 
-                || l.isBetween(getP(), oom, rm)) {
-            return l.getIntersectionLS((V2D_LineSegment) g, oom, rm);
-        } else {
+        V2D_FiniteGeometry lils = l.getIntersectionLS(ls, oom, rm);
+        if (lils == null) {
             return null;
+        } else if (lils instanceof V2D_Point lilsp) {
+            if (isIntersectedBy(lilsp, oom, rm)) {
+                return lilsp;
+            } else {
+                return null;
+            }
+        } else {
+            V2D_LineSegment lilsl = (V2D_LineSegment) lils;
+            if (isIntersectedBy(lilsl, oom, rm)) {
+                return l.getIntersectionLS(ls, oom, rm);
+            } else {
+                return null;
+            }
         }
+//        // Previous version.
+//        if (g == null) {
+//            return null;
+//        }
+//        if (g instanceof V2D_Point gp) {
+//            if (l.isAligned(gp, oom, rm)) {
+//                if (l.isBetween(gp, oom, rm)) {
+//                    return gp;
+//                }
+//            }
+//            return null;
+//        }
+//        V2D_LineSegment ls = (V2D_LineSegment) g;
+//        //if (ls.isBetween(l.getP(), oom, rm) || ls.isBetween(l.getQ(), oom, rm) 
+//        //        || l.isBetween(getP(), oom, rm)) {
+//        if (ls.isBetween(l.getP(), oom, rm) || ls.isBetween(l.getQ(), oom, rm) 
+//                || l.isBetween(getP(), oom, rm) || l.isBetween(getQ(), oom, rm)) {
+//            return l.getIntersectionLS((V2D_LineSegment) g, oom, rm);
+//        } else {
+//            return null;
+//        }
     }
 
     /**

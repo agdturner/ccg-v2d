@@ -534,7 +534,7 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
     }
 
     /**
-     * Get the intersection between the geometry and the line segment {@code l}.
+     * Compute and return the intersection with the line segment.
      *
      * @param l The line segment to intersect with.
      * @param epsilon The tolerance within which two vectors are regarded as
