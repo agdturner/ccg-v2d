@@ -19,14 +19,13 @@ There are two main implementations in the library that are distinguished by the 
 - Improve documentation.
 - Extend functionality and representations.
 - Make a versioned release on Maven Central.
-- As the [OpenJDK](https://openjdk.java.net/) develops some of the functionality may become redundant.
 
 ## Development history
 - The code was originally developed for academic research projects.
 - The code is being developed along with [ccg-r2d](https://github.com/agdturner/ccg-r2d) - rendering code to show the capabilities of the library.
 
-## Contributions
-- Please submit issues to initiate discussions about collaboration.
+## Contributions welcome
+- Please submit issues and initiate discussions about collaboration to help develop the code.
 
 ## LICENSE
 - [APACHE LICENSE, VERSION 2.0](https://www.apache.org/licenses/LICENSE-2.0)
