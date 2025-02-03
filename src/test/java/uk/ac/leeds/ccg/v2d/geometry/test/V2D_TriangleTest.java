@@ -885,13 +885,28 @@ public class V2D_TriangleTest extends V2D_Test {
         result = instance.getDistanceSquared(t, oom, rm);
         assertTrue(Math_BigRational.equals(expResult, result, oom));
     }
-
+    
     /**
-     * Test of getDistance method, of class V2D_Triangle covered by
-     * {@link #testGetDistanceSquared_V2D_Tetrahedron()}.
+     * Test of getCircumcentre method, of class V2D_Triangle.
      */
     @Test
-    public void testGetDistance_V2D_Tetrahedron() {
-        System.out.println("getDistance");
+    public void testGetCircumcentre() {
+        int oom = -6;
+        RoundingMode rm = RoundingMode.HALF_UP;
+        V2D_Point a = new V2D_Point(3, 2);
+        V2D_Point b = new V2D_Point(1, 4);
+        V2D_Point c = new V2D_Point(5, 4);
+        V2D_Triangle t = new V2D_Triangle(a, b, c, oom, rm);
+        V2D_Point expResult = new V2D_Point(3, 4);
+        V2D_Point result = t.getCircumcenter(oom, rm);
+        assertTrue(result.equals(expResult, oom, rm));
+        // Test 2
+         a = new V2D_Point(-2, -3);
+         b = new V2D_Point(-1, 0);
+         c = new V2D_Point(7, -6);
+         t = new V2D_Triangle(a, b, c, oom, rm);
+         expResult = new V2D_Point(3, -3);
+         result = t.getCircumcenter(oom, rm);
+        assertTrue(result.equals(expResult, oom, rm));
     }
 }

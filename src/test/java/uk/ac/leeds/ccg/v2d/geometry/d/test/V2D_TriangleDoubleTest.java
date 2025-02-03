@@ -858,13 +858,27 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
         result = instance.getDistanceSquared(t, epsilon);
         assertTrue(Math_Double.equals(expResult, result, epsilon));
     }
-
+    
     /**
-     * Test of getDistance method, of class V2D_TriangleDouble covered by
-     * {@link #testGetDistanceSquared_V2D_Tetrahedron()}.
+     * Test of getCircumcentre method, of class V2D_TriangleDouble.
      */
     @Test
-    public void testGetDistance_V2D_Tetrahedron() {
-        System.out.println("getDistance");
+    public void testGetCircumcentre() {
+        double epsilon = 1d / 10000000d;
+        V2D_PointDouble a = new V2D_PointDouble(3, 2);
+        V2D_PointDouble b = new V2D_PointDouble(1, 4);
+        V2D_PointDouble c = new V2D_PointDouble(5, 4);
+        V2D_TriangleDouble t = new V2D_TriangleDouble(a, b, c);
+        V2D_PointDouble expResult = new V2D_PointDouble(3, 4);
+        V2D_PointDouble result = t.getCircumcenter();
+        assertTrue(result.equals(epsilon, expResult));
+        // Test 2
+         a = new V2D_PointDouble(-2, -3);
+         b = new V2D_PointDouble(-1, 0);
+         c = new V2D_PointDouble(7, -6);
+         t = new V2D_TriangleDouble(a, b, c);
+         expResult = new V2D_PointDouble(3, -3);
+         result = t.getCircumcenter();
+        assertTrue(result.equals(epsilon, expResult));
     }
 }

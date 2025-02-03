@@ -1308,6 +1308,30 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
         ArrayList<V2D_PointDouble> points = V2D_PointDouble.getUnique(s, epsilon);
         return points.toArray(V2D_PointDouble[]::new);
     }
+    
+    /**
+     * Computes and returns the circumcentre of the circmcircle.
+     * https://en.wikipedia.org/wiki/Circumcircle
+     * @return The circumcentre of a circumcircle of this triangle.
+     */
+    public V2D_PointDouble getCircumcenter() {
+        double ax = getP().getX();
+        double ay = getP().getY();
+        double bx = getQ().getX();
+        double by = getQ().getY();
+        double cx = getR().getX();
+        double cy = getR().getY();
+        double byscy = by - cy;
+        double cysay = cy - ay;
+        double aysby = ay - by;
+        double d = 2D * ((ax * (byscy)) + (bx * (cysay) + (cx * (aysby))));
+        double ax2aay2 = ((ax * ax) + (ay * ay));
+        double bx2aby2 = ((bx * bx) + (by * by));
+        double cx2acy2 = ((cx * cx) + (cy * cy));
+        double ux = ((ax2aay2 * (byscy)) + (bx2aby2 * (cysay)) + (cx2acy2 * (aysby))) / d;
+        double uy = ((ax2aay2 * (cx - bx)) + (bx2aby2 * (ax - cx)) + (cx2acy2 * (bx - ax))) / d;
+        return new V2D_PointDouble(ux, uy);
+    }
 
     /**
      * Clips this using t.

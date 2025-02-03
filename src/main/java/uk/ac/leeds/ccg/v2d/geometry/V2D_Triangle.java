@@ -1739,6 +1739,39 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
         ArrayList<V2D_Point> points = V2D_Point.getUnique(s, oom, rm);
         return points.toArray(V2D_Point[]::new);
     }
+    
+    /**
+     * Computes and returns the circumcentre of the circmcircle.
+     * https://en.wikipedia.org/wiki/Circumcircle
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return The circumcentre of a circumcircle of this triangle.
+     */
+    public V2D_Point getCircumcenter(int oom, RoundingMode rm) {
+        V2D_Point a = getP();
+        BigRational ax = a.getX(oom, rm);
+        BigRational ay = a.getY(oom, rm);
+        V2D_Point b = getQ();
+        BigRational bx = b.getX(oom, rm);
+        BigRational by = b.getY(oom, rm);
+        V2D_Point c = getR();        
+        BigRational cx = c.getX(oom, rm);
+        BigRational cy = c.getY(oom, rm);
+        BigRational byscy = by.subtract(cy);
+        BigRational cysay = cy.subtract(ay);
+        BigRational aysby = ay.subtract(by);
+        BigRational d = BigRational.TWO.multiply((ax.multiply(byscy))
+                .add(bx.multiply(cysay).add(cx.multiply(aysby))));
+        BigRational ax2aay2 = ((ax.multiply(ax)).add(ay.multiply(ay)));
+        BigRational bx2aby2 = ((bx.multiply(bx)).add(by.multiply(by)));
+        BigRational cx2acy2 = ((cx.multiply(cx)).add(cy.multiply(cy)));
+        BigRational ux = ((ax2aay2.multiply(byscy)).add(bx2aby2.multiply(cysay))
+                .add(cx2acy2.multiply(aysby))).divide(d);
+        BigRational uy = ((ax2aay2.multiply(cx.subtract(bx)))
+                .add(bx2aby2.multiply(ax.subtract(cx)))
+                .add(cx2acy2.multiply(bx.subtract(ax)))).divide(d);
+        return new V2D_Point(ux, uy);
+    }
 
 //    /**
 //     * Clips this using pl and returns the part that is on the same side as pt.

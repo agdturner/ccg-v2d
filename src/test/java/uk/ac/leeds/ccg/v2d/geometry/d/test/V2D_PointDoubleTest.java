@@ -24,9 +24,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_EnvelopeDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_PointDouble;
-import uk.ac.leeds.ccg.v2d.geometry.d.V2D_RayDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_VectorDouble;
-//import org.junit.jupiter.api.Disabled;
 
 /**
  * Test of V2D_PointDouble class.
