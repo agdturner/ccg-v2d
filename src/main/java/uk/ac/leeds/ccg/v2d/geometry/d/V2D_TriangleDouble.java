@@ -277,6 +277,27 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
     public final V2D_VectorDouble getRPV() {
         return p.subtract(r);
     }
+    
+    /**
+     * @return The internal angle at {@link #p}.
+     */
+    public final double getAngleP() {
+        return getPQV().getAngle(getRPV().reverse());
+    }
+    
+    /**
+     * @return The internal angle at {@link #q}.
+     */
+    public final double getAngleQ() {
+        return getPQV().reverse().getAngle(getQRV());
+    }
+    
+    /**
+     * @return The internal angle at {@link #r}.
+     */
+    public final double getAngleR() {
+        return getQRV().reverse().getAngle(getRPV());
+    }
 
     @Override
     public V2D_EnvelopeDouble getEnvelope() {
@@ -1120,11 +1141,7 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
     /**
      * For getting the point opposite a side of a triangle given the side.
      *
-     * @param l a line segment either equal to one of the edges of this: null
-     * null null null null null null null null null null null null null null
-     * null null null null null null null null null null null null null null
-     * null null null null null null null     {@link #getPQ()},
-     * {@link #getQR()} or {@link #getRP()}.
+     * @param l A line segment equal to one of the edges of this triangle.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
      * @return The point of {@code this} that does not intersect with {@code l}.

@@ -511,6 +511,36 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
         rpoom = oom;
         rprm = rm;
     }
+    
+    /**
+     *
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return The internal angle at {@link #p}.
+     */
+    public final BigRational getAngleP(int oom, RoundingMode rm) {
+        return getPQV(oom, rm).getAngle(getRPV(oom, rm).reverse(), oom, rm);
+    }
+    
+    /**
+     *
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return The internal angle at {@link #q}.
+     */
+    public final BigRational getAngleQ(int oom, RoundingMode rm) {
+        return getPQV(oom, rm).reverse().getAngle(getQRV(oom, rm), oom, rm);
+    }
+    
+    /**
+     *
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return The internal angle at {@link #r}.
+     */
+    public final BigRational getAngleR(int oom, RoundingMode rm) {
+        return getQRV(oom, rm).reverse().getAngle(getRPV(oom, rm), oom, rm);
+    }
 
 //    /**
 //     * For getting the plane through {@link #pq} in the direction of the normal.
@@ -1545,11 +1575,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
     /**
      * For getting the point opposite a side of a triangle given the side.
      *
-     * @param l a line segment either equal to one of the edges of this - null
-     * null null null null null null null null null null null null null null
-     * null null null null null null null null null     {@link #getPQ(int, java.math.RoundingMode)},
-     * {@link #getQR(int, java.math.RoundingMode)} or
-     * {@link #getRP(int, java.math.RoundingMode)}.
+     * @param l A line segment equal to one of the edges of this triangle.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
      * @return The point of {@code this} that does not intersect with {@code l}.

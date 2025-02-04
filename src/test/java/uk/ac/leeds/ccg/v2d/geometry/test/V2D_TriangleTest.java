@@ -909,4 +909,106 @@ public class V2D_TriangleTest extends V2D_Test {
          result = t.getCircumcenter(oom, rm);
         assertTrue(result.equals(expResult, oom, rm));
     }
+    
+    /**
+     * Test of getAngleP method, of class V2D_Triangle.
+     */
+    @Test
+    public void testGetAngleP() {
+        int oom = -6;
+        RoundingMode rm = RoundingMode.HALF_UP;
+        V2D_Triangle t = new V2D_Triangle(pP0P0, pP0P1, pP1P1, oom, rm);
+        Math_BigDecimal bd = new Math_BigDecimal();
+        BigRational expResult = Math_BigRational.getPi(bd, oom, rm).divide(4);
+        BigRational result = t.getAngleP(oom, rm);
+        assertTrue(Math_BigRational.equals(expResult, result, oom));
+        // Test 2
+        t = new V2D_Triangle(pP0P0, pP1P1, pP1P0, oom, rm);
+        expResult = Math_BigRational.getPi(bd, oom, rm).divide(4);
+        result = t.getAngleP(oom, rm);
+        assertTrue(Math_BigRational.equals(expResult, result, oom));
+        // Test 3
+        t = new V2D_Triangle(pP0P0, pP0P1, pP1P0, oom, rm);
+        expResult = Math_BigRational.getPi(bd, oom, rm).divide(2);
+        result = t.getAngleP(oom, rm);
+        assertTrue(Math_BigRational.equals(expResult, result, oom));
+        // Test 4
+        t = new V2D_Triangle(pP1P1, pP1P2, pP2P1, oom, rm);
+        expResult = Math_BigRational.getPi(bd, oom, rm).divide(2);
+        result = t.getAngleP(oom, rm);
+        assertTrue(Math_BigRational.equals(expResult, result, oom));
+        // Test 5
+        t = new V2D_Triangle(pP1P1, pP2P2, pP2P1, oom, rm);
+        expResult = Math_BigRational.getPi(bd, oom, rm).divide(4);
+        result = t.getAngleP(oom, rm);
+        assertTrue(Math_BigRational.equals(expResult, result, oom));
+    }
+
+    /**
+     * Test of getAngleQ method, of class V2D_Triangle.
+     */
+    @Test
+    public void testGetAngleQ() {
+        int oom = -6;
+        RoundingMode rm = RoundingMode.HALF_UP;
+        Math_BigDecimal bd = new Math_BigDecimal();
+        V2D_Triangle t = new V2D_Triangle(pP0P0, pP0P1, pP1P1, oom, rm);
+        BigRational expResult = Math_BigRational.getPi(bd, oom, rm).divide(2);
+        BigRational result = t.getAngleQ(oom, rm);
+        assertTrue(Math_BigRational.equals(expResult, result, oom));
+        // Test 2
+        t = new V2D_Triangle(pP0P0, pP1P1, pP1P0, oom, rm);
+        expResult = Math_BigRational.getPi(bd, oom, rm).divide(4);
+        result = t.getAngleQ(oom, rm);
+        assertTrue(Math_BigRational.equals(expResult, result, oom));
+        // Test 3
+        t = new V2D_Triangle(pP0P0, pP0P1, pP1P0, oom, rm);
+        expResult = Math_BigRational.getPi(bd, oom, rm).divide(4);
+        result = t.getAngleQ(oom, rm);
+        assertTrue(Math_BigRational.equals(expResult, result, oom));
+        // Test 4
+        t = new V2D_Triangle(pP1P1, pP1P2, pP2P1, oom, rm);
+        expResult = Math_BigRational.getPi(bd, oom, rm).divide(4);
+        result = t.getAngleQ(oom, rm);
+        assertTrue(Math_BigRational.equals(expResult, result, oom));
+        // Test 5
+        t = new V2D_Triangle(pP1P1, pP2P2, pP2P1, oom, rm);
+        expResult = Math_BigRational.getPi(bd, oom, rm).divide(4);
+        result = t.getAngleQ(oom, rm);
+        assertTrue(Math_BigRational.equals(expResult, result, oom));
+    }
+    
+    /**
+     * Test of getAngleR method, of class V2D_Triangle.
+     */
+    @Test
+    public void testGetAngleR() {
+        int oom = -6;
+        RoundingMode rm = RoundingMode.HALF_UP;
+        Math_BigDecimal bd = new Math_BigDecimal();
+        V2D_Triangle t = new V2D_Triangle(pP0P0, pP0P1, pP1P1, oom, rm);
+       BigRational expResult = Math_BigRational.getPi(bd, oom, rm).divide(4);
+       BigRational result = t.getAngleR(oom, rm);
+        assertTrue(Math_BigRational.equals(expResult, result, oom));
+        // Test 2
+        t = new V2D_Triangle(pP0P0, pP1P1, pP1P0, oom, rm);
+        expResult = Math_BigRational.getPi(bd, oom, rm).divide(2);
+        result = t.getAngleR(oom, rm);
+        assertTrue(Math_BigRational.equals(expResult, result, oom));
+        // Test 3
+        t = new V2D_Triangle(pP0P0, pP0P1, pP1P0, oom, rm);
+        expResult = Math_BigRational.getPi(bd, oom, rm).divide(4);
+        result = t.getAngleR(oom, rm);
+        assertTrue(Math_BigRational.equals(expResult, result, oom));
+        // Test 4
+        t = new V2D_Triangle(pP1P1, pP1P2, pP2P1, oom, rm);
+        expResult = Math_BigRational.getPi(bd, oom, rm).divide(4);
+        result = t.getAngleR(oom, rm);
+        assertTrue(Math_BigRational.equals(expResult, result, oom));
+        // Test 5
+        t = new V2D_Triangle(pP1P1, pP2P2, pP2P1, oom, rm);
+        expResult = Math_BigRational.getPi(bd, oom, rm).divide(2);
+        result = t.getAngleR(oom, rm);
+        assertTrue(Math_BigRational.equals(expResult, result, oom));
+    }
 }

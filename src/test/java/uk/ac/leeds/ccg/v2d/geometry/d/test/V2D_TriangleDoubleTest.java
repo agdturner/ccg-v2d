@@ -881,4 +881,100 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
          result = t.getCircumcenter();
         assertTrue(result.equals(epsilon, expResult));
     }
+    
+    /**
+     * Test of getAngleP method, of class V2D_TriangleDouble.
+     */
+    @Test
+    public void testGetAngleP() {
+        double epsilon = 1d / 10000000d;
+        V2D_TriangleDouble t = new V2D_TriangleDouble(pP0P0, pP0P1, pP1P1);
+        double expResult = Math.PI/4d;
+        double result = t.getAngleP();
+        assertTrue(Math_Double.equals(expResult, result, epsilon));
+        // Test 2
+        t = new V2D_TriangleDouble(pP0P0, pP1P1, pP1P0);
+        expResult = Math.PI/4d;
+        result = t.getAngleP();
+        assertTrue(Math_Double.equals(expResult, result, epsilon));
+        // Test 3
+        t = new V2D_TriangleDouble(pP0P0, pP0P1, pP1P0);
+        expResult = Math.PI/2d;
+        result = t.getAngleP();
+        assertTrue(Math_Double.equals(expResult, result, epsilon));
+        // Test 4
+        t = new V2D_TriangleDouble(pP1P1, pP1P2, pP2P1);
+        expResult = Math.PI/2d;
+        result = t.getAngleP();
+        assertTrue(Math_Double.equals(expResult, result, epsilon));
+        // Test 5
+        t = new V2D_TriangleDouble(pP1P1, pP2P2, pP2P1);
+        expResult = Math.PI/4d;
+        result = t.getAngleP();
+        assertTrue(Math_Double.equals(expResult, result, epsilon));
+    }
+
+    /**
+     * Test of getAngleQ method, of class V2D_TriangleDouble.
+     */
+    @Test
+    public void testGetAngleQ() {
+        double epsilon = 1d / 10000000d;
+        V2D_TriangleDouble t = new V2D_TriangleDouble(pP0P0, pP0P1, pP1P1);
+        double expResult = Math.PI/2d;
+        double result = t.getAngleQ();
+        assertTrue(Math_Double.equals(expResult, result, epsilon));
+        // Test 2
+        t = new V2D_TriangleDouble(pP0P0, pP1P1, pP1P0);
+        expResult = Math.PI/4d;
+        result = t.getAngleQ();
+        assertTrue(Math_Double.equals(expResult, result, epsilon));
+        // Test 3
+        t = new V2D_TriangleDouble(pP0P0, pP0P1, pP1P0);
+        expResult = Math.PI/4d;
+        result = t.getAngleQ();
+        assertTrue(Math_Double.equals(expResult, result, epsilon));
+        // Test 4
+        t = new V2D_TriangleDouble(pP1P1, pP1P2, pP2P1);
+        expResult = Math.PI/4d;
+        result = t.getAngleQ();
+        assertTrue(Math_Double.equals(expResult, result, epsilon));
+        // Test 5
+        t = new V2D_TriangleDouble(pP1P1, pP2P2, pP2P1);
+        expResult = Math.PI/4d;
+        result = t.getAngleQ();
+        assertTrue(Math_Double.equals(expResult, result, epsilon));
+    }
+    
+    /**
+     * Test of getAngleR method, of class V2D_TriangleDouble.
+     */
+    @Test
+    public void testGetAngleR() {
+        double epsilon = 1d / 10000000d;
+        V2D_TriangleDouble t = new V2D_TriangleDouble(pP0P0, pP0P1, pP1P1);
+        double expResult = Math.PI/4d;
+        double result = t.getAngleR();
+        assertTrue(Math_Double.equals(expResult, result, epsilon));
+        // Test 2
+        t = new V2D_TriangleDouble(pP0P0, pP1P1, pP1P0);
+        expResult = Math.PI/2d;
+        result = t.getAngleR();
+        assertTrue(Math_Double.equals(expResult, result, epsilon));
+        // Test 3
+        t = new V2D_TriangleDouble(pP0P0, pP0P1, pP1P0);
+        expResult = Math.PI/4d;
+        result = t.getAngleR();
+        assertTrue(Math_Double.equals(expResult, result, epsilon));
+        // Test 4
+        t = new V2D_TriangleDouble(pP1P1, pP1P2, pP2P1);
+        expResult = Math.PI/4d;
+        result = t.getAngleR();
+        assertTrue(Math_Double.equals(expResult, result, epsilon));
+        // Test 5
+        t = new V2D_TriangleDouble(pP1P1, pP2P2, pP2P1);
+        expResult = Math.PI/2d;
+        result = t.getAngleR();
+        assertTrue(Math_Double.equals(expResult, result, epsilon));
+    }
 }
