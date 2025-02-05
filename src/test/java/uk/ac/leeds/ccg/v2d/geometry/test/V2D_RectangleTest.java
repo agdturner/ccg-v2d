@@ -82,22 +82,22 @@ public class V2D_RectangleTest extends V2D_Test {
         V2D_Envelope result;
         instance = new V2D_Rectangle(pN1P1, pP1P1, pP1N1, pN1N1, oom, rm);
         expResult = new V2D_Envelope(oom, pN1N1, pP1P1);
-        result = instance.getEnvelope(oom);
+        result = instance.getEnvelope(oom, rm);
         assertTrue(expResult.equals(result, oom));
         // Test 2
         instance = new V2D_Rectangle(pN1P1, pP1P1, pP1N1, pN1N1, oom, rm);
         expResult = new V2D_Envelope(oom, pN1N1, pP1P1);
-        result = instance.getEnvelope(oom);
+        result = instance.getEnvelope(oom, rm);
         assertTrue(expResult.equals(result, oom));
         // Test 3
         instance = new V2D_Rectangle(pN1P1, pP1P1, pP1N1, pN1N1, oom, rm);
         expResult = new V2D_Envelope(oom, pN1N1, pP1P1);
-        result = instance.getEnvelope(oom);
+        result = instance.getEnvelope(oom, rm);
         assertTrue(expResult.equals(result, oom));
         // Test 4
         instance = new V2D_Rectangle(pN1N1, pP1N1, pP1P1, pN1P1, oom, rm);
         expResult = new V2D_Envelope(oom, pN1N1, pP1P1);
-        result = instance.getEnvelope(oom);
+        result = instance.getEnvelope(oom, rm);
         assertTrue(expResult.equals(result, oom));
     }
 

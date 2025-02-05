@@ -334,7 +334,7 @@ public class V2D_Ray extends V2D_Geometry {
             V2D_Point rp = l.getP();
             //V2D_Point rq = l.getQ(oom, rm);
             V2D_Point lsp = ls.getP();
-            V2D_Point lsq = ls.getQ();
+            V2D_Point lsq = ls.getQ(oom, rm);
             if (isAligned(lsp, oom, rm)) {
                 if (isAligned(lsq, oom, rm)) {
                     return ls;

@@ -132,7 +132,7 @@ public class V2D_TriangleTest extends V2D_Test {
         RoundingMode rm = RoundingMode.HALF_UP;
         V2D_Triangle instance = new V2D_Triangle(pP0P0, pP0P1, pP1P0, oom, rm);
         V2D_Envelope expResult = new V2D_Envelope(oom, pP0P0, pP0P1, pP1P0);
-        V2D_Envelope result = instance.getEnvelope(oom);
+        V2D_Envelope result = instance.getEnvelope(oom, rm);
         assertTrue(expResult.equals(result, oom));
     }
 

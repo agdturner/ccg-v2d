@@ -39,9 +39,11 @@ public abstract class V2D_FiniteGeometry extends V2D_Geometry {
     /**
      * For getting the envelope of the geometry
      *
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
      * @return The envelope.
      */
-    public abstract V2D_Envelope getEnvelope(int oom);
+    public abstract V2D_Envelope getEnvelope(int oom, RoundingMode rm);
     
     /**
      * Creates a new instance with offset V2D_Vector.ZERO.
@@ -64,26 +66,30 @@ public abstract class V2D_FiniteGeometry extends V2D_Geometry {
      * Bounding Box aabb.
      *
      * @param aabb The Axis Aligned Bounding Box to test for intersection.
-     * @param epsilon The tolerance within which two vector components are
-     * considered equal.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
      * @return {@code true} iff the geometry intersects aabb at the given precision.
      */
     public abstract boolean isIntersectedBy(V2D_Envelope aabb, int oom, 
             RoundingMode rm);
     
     /**
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
      * @return A copy of the points of the geometry.
      */
-    public abstract V2D_Point[] getPoints();
+    public abstract V2D_Point[] getPoints(int oom, RoundingMode rm);
     
     /**
      * @return A copy of the points of the geometries gs.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
      * @param gs The geometries.
      */
-    public static V2D_Point[] getPoints(V2D_FiniteGeometry... gs) {
+    public static V2D_Point[] getPoints(int oom, RoundingMode rm, V2D_FiniteGeometry... gs) {
         ArrayList<V2D_Point> list = new ArrayList<>();
         for (var x: gs) {
-            list.addAll(Arrays.asList(x.getPoints()));
+            list.addAll(Arrays.asList(x.getPoints(oom, rm)));
         }
         return list.toArray(V2D_Point[]::new);
     }

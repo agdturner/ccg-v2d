@@ -112,8 +112,9 @@ public class V2D_PointTest extends V2D_Test {
     public void testGetEnvelope() {
         System.out.println("getEnvelope");
         int oom = -6;
+        RoundingMode rm = RoundingMode.HALF_UP;
         V2D_Envelope expResult = new V2D_Envelope(oom, pP1P2);
-        V2D_Envelope result = pP1P2.getEnvelope(oom);
+        V2D_Envelope result = pP1P2.getEnvelope(oom, rm);
         assertTrue(expResult.equals(result, oom));
     }
 

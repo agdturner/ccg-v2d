@@ -633,7 +633,7 @@ public class V2D_LineTest extends V2D_Test {
                             )
                            )""";
         String result = instance.toString(pad);
-        System.out.println(result);
+        //System.out.println(result);
         assertEquals(expResult, result);
     }
 

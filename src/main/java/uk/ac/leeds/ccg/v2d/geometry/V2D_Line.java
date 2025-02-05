@@ -18,7 +18,6 @@ package uk.ac.leeds.ccg.v2d.geometry;
 import ch.obermuhlner.math.big.BigRational;
 import java.math.RoundingMode;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
-import uk.ac.leeds.ccg.math.arithmetic.Math_BigRational;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
 import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
 import uk.ac.leeds.ccg.math.matrices.Math_Matrix_BR;
@@ -383,6 +382,7 @@ public class V2D_Line extends V2D_Geometry {
     
     /**
      * https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
+     * 
      * @param l A line to test for intersection.
      * @param den getIntersectionDenominator(getP().getX(oom, rm), 
      * getQ(oom, rm).getX(oom, rm), l.getP().getX(oom, rm),
@@ -447,6 +447,46 @@ public class V2D_Line extends V2D_Geometry {
 //        return cp.getDX(oom, rm).isZero() && cp.getDY(oom, rm).isZero()
 //                && cp.getDZ(oom, rm).isZero();
 //        return false;
+    }
+    
+    /**
+     * https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
+     *
+     * @param l A line to test for intersection.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} if lines intersect.
+     */
+    public boolean isIntersectedBy(V2D_Line l, int oom, RoundingMode rm) {
+        return isIntersectedBy(l, getIntersectionDenominator(p.getX(oom, rm),
+                        getQ(oom, rm).getX(oom, rm), l.p.getX(oom, rm),
+                        l.getQ(oom, rm).getX(oom, rm), p.getY(oom, rm), 
+                        q.getY(oom, rm), l.p.getY(oom, rm), l.q.getY(oom, rm)),
+                oom, rm);
+    }
+
+    /**
+     * https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
+     *
+     * @param l A line to test for intersection.
+     * @param x1 getP().getX()
+     * @param x2 getQ().getX()
+     * @param x3 l.getP().getX()
+     * @param x4 l.getQ().getX()
+     * @param y1 p.getY()
+     * @param y2 q.getY()
+     * @param y3 l.p.getY()
+     * @param y4 l.q.getY()
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} if lines intersect.
+     */
+    public boolean isIntersectedBy(V2D_Line l, BigRational x1,
+            BigRational x2, BigRational x3, BigRational x4, BigRational y1,
+            BigRational y2, BigRational y3, BigRational y4,
+            int oom, RoundingMode rm) {
+        return isIntersectedBy(l, V2D_Line.getIntersectionDenominator(x1, x2, 
+                x3, x4, y1, y2, y3, y4), oom, rm);
     }
 
     /**

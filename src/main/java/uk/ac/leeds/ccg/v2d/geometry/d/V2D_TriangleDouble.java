@@ -1520,17 +1520,45 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
             if (aabb.isIntersectedBy(getR())) {
                 return true;
             }
-            if (isIntersectedBy(aabb.getLeft(), epsilon)) {
-                return true;
+            V2D_FiniteGeometryDouble l = aabb.getLeft();
+            if (l instanceof V2D_LineSegmentDouble ll) {
+                if (isIntersectedBy(ll, epsilon)) {
+                    return true;
+                }
+            } else {
+                if (isIntersectedBy((V2D_PointDouble) l, epsilon)) {
+                    return true;
+                }
             }
-            if (isIntersectedBy(aabb.getRight(), epsilon)) {
-                return true;
+            V2D_FiniteGeometryDouble r = aabb.getRight();
+            if (r instanceof V2D_LineSegmentDouble rl) {
+                if (isIntersectedBy(rl, epsilon)) {
+                    return true;
+                }
+            } else {
+                if (isIntersectedBy((V2D_PointDouble) r, epsilon)) {
+                    return true;
+                }
             }
-            if (isIntersectedBy(aabb.getTop(), epsilon)) {
-                return true;
+            V2D_FiniteGeometryDouble t = aabb.getTop();
+            if (l instanceof V2D_LineSegmentDouble tl) {
+                if (isIntersectedBy(tl, epsilon)) {
+                    return true;
+                }
+            } else {
+                if (isIntersectedBy((V2D_PointDouble) t, epsilon)) {
+                    return true;
+                }
             }
-            if (isIntersectedBy(aabb.getBottom(), epsilon)) {
-                return true;
+            V2D_FiniteGeometryDouble b = aabb.getBottom();
+            if (b instanceof V2D_LineSegmentDouble bl) {
+                if (isIntersectedBy(bl, epsilon)) {
+                    return true;
+                }
+            } else {
+                if (isIntersectedBy((V2D_PointDouble) b, epsilon)) {
+                    return true;
+                }
             }
         }
         return false;

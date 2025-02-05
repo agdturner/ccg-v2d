@@ -82,7 +82,6 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
             V2D_VectorDouble q) {
         super(offset);
         l = new V2D_LineDouble(offset, p, q);
-        //this.qv = q;
     }
 
     /**
@@ -122,7 +121,6 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
             }
         }
         this.l = ls.l;
-        //this.qv = ls.qv;
     }
 
     /**
@@ -138,26 +136,6 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
     public V2D_PointDouble getQ() {
         return l.getQ();
     }
-
-//    /**
-//     * @return {@link #qv} with {@link #offset} applied.
-//     */
-//    public V2D_PointDouble getQ() {
-//        if (q == null) {
-//            q = new V2D_PointDouble(offset, qv);
-//        }
-//        return q;
-//    }
-
-//    /**
-//     * @return {@link #qv} with {@link #offset} applied.
-//     */
-//    public V2D_PointDouble getQV() {
-//        if (qv == null) {
-//            qv = new V2D_VectorDouble(getP(), getQ());
-//        }
-//        return q;
-//    }
 
     /**
      * Translate (move relative to the origin).
@@ -195,7 +173,6 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
 
     @Override
     public String toString() {
-        //return toString("");
         return toStringSimple("");
     }
 
@@ -229,30 +206,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
     protected String toStringFields(String pad) {
         String r = super.toStringFields(pad) + "\n"
                 + pad + ",\n";
-        r += pad + "l=" + l.toStringFields(pad) + "\n"
-                + pad + ",\n"
-                + pad + "q=" + getQ().toStringFields(pad);
-//        if (l.qv == null) {
-//            r += pad + "pv=" + l.getP().toString(pad) + "\n"
-//                    + pad + ",\n"
-//                    + pad + "qv=null" + "\n"
-//                    + pad + ",\n"
-//                    + pad + "v=" + l.v.toString(pad);
-//        } else {
-//            if (l.v == null) {
-//                r += pad + "pv=" + l.getP().toString(pad) + "\n"
-//                        + pad + ",\n"
-//                        + pad + "qv=" + l.qv.toString(pad) + "\n"
-//                        + pad + ",\n"
-//                        + pad + "v=null";
-//            } else {
-//                r += pad + "pv=" + l.getP().toString(pad) + "\n"
-//                        + pad + ",\n"
-//                        + pad + "qv=" + l.qv.toString(pad) + "\n"
-//                        + pad + ",\n"
-//                        + pad + "v=" + l.v.toString(pad);
-//            }
-//        }
+        r += pad + "l=" + l.toStringFields(pad);
         return r;
     }
 
@@ -263,23 +217,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
     @Override
     protected String toStringFieldsSimple(String pad) {
         String r = super.toStringFieldsSimple(pad) + ",\n";
-        r += pad + "l=" + l.toStringFieldsSimple(pad) + ",\n"
-                + pad + "q=" + getQ().toStringFieldsSimple("");
-//        if (l.qv == null) {
-//            r += pad + "pv=" + l.getP().toStringSimple("") + ",\n"
-//                    + pad + "qv=null" + ",\n"
-//                    + pad + "v=" + l.v.toStringSimple(pad);
-//        } else {
-//            if (l.v == null) {
-//                r += pad + "pv=" + l.getP().toStringSimple(pad) + ",\n"
-//                        + pad + "qv=" + l.qv.toStringSimple(pad) + ",\n"
-//                        + pad + "v=null";
-//            } else {
-//                r += pad + "pv=" + l.getP().toStringSimple(pad) + ",\n"
-//                        + pad + "qv=" + l.qv.toStringSimple(pad) + ",\n"
-//                        + pad + "v=" + l.v.toStringSimple(pad);
-//            }
-//        }
+        r += pad + "l=" + l.toStringFieldsSimple(pad);
         return r;
     }
 
@@ -305,9 +243,6 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      */
     public boolean equalsIgnoreDirection(double epsilon,
             V2D_LineSegmentDouble l) {
-//        if (l == null) {
-//            return false;
-//        }
         if (this.l.equals(epsilon, l.l)) {
             return isIntersectedBy(l.getQ(), epsilon)
                     && l.isIntersectedBy(getQ(), epsilon);
@@ -345,8 +280,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      * @return {@code true} if {@code this} is intersected by {@code pv}.
      */
     public boolean isIntersectedBy(V2D_PointDouble pt) {
-        boolean ei = getEnvelope().isIntersectedBy(pt.getEnvelope());
-        if (ei) {
+        if (getEnvelope().isIntersectedBy(pt.getEnvelope())) {
             if (l.isIntersectedBy(pt)) {
                 V2D_PointDouble tp = getP();
                 double a = pt.getDistance(tp);
@@ -542,6 +476,14 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
         double y3 = ls.getP().getY();
         double y4 = ls.getQ().getY();
         double den = V2D_LineDouble.getIntersectionDenominator(x1, x2, x3, x4, y1, y2, y3, y4);
+        if (den == 0) {
+            // Either the line segments are collinear or parallel but not collinear.
+            if (this.l.equals(epsilon, ls.l)) {
+                return getIntersectionLS(epsilon, ls);
+            } else {
+                return null;
+            }
+        }
         // Get intersection with infinite lines.
         V2D_GeometryDouble li = l.getIntersection(epsilon, ls.l, den, x1, x2, x3, x4, y1, y2, y3, y4);
         V2D_FiniteGeometryDouble tils = getIntersection(epsilon, ls.l, li, den, x1, x2, x3, x4, y1, y2, y3, y4);
@@ -561,8 +503,8 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
                             return null;
                         }
                     } else {
-                        throw new RuntimeException();
-                        //return null;
+                        //throw new RuntimeException();
+                        return null;
                     }
                 }
             } else {
@@ -1231,8 +1173,6 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      * line segment.
      */
     public boolean isBetween(V2D_PointDouble pt, double epsilon) {
-        getP().equals(epsilon, pt);
-        getQ().equals(epsilon, pt);
         if (getPL().isOnSameSide(pt, getQ(), epsilon)) {
             if (getQL().isOnSameSide(pt, getP(), epsilon)) {
                 return true;
@@ -1268,6 +1208,9 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      * @return The minimum distance to {@code l}.
      */
     public double getDistanceSquared(V2D_LineDouble ld, double epsilon) {
+        if (getIntersection(epsilon, ld) != null) {
+            return 0d;
+        }
         double pd = ld.getDistanceSquared(getP(), epsilon);
         double qd = ld.getDistanceSquared(getQ(), epsilon);
         return Math.min(pd, qd);
@@ -1346,17 +1289,45 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
             if (aabb.isIntersectedBy(q)) {
                 return true;
             }
-            if (isIntersectedBy(aabb.getLeft(), epsilon)) {
-                return true;
+            V2D_FiniteGeometryDouble l = aabb.getLeft();
+            if (l instanceof V2D_LineSegmentDouble ll) {
+                if (isIntersectedBy(ll, epsilon)) {
+                    return true;
+                }
+            } else {
+                if (isIntersectedBy((V2D_PointDouble) l, epsilon)) {
+                    return true;
+                }
             }
-            if (isIntersectedBy(aabb.getRight(), epsilon)) {
-                return true;
+            V2D_FiniteGeometryDouble r = aabb.getRight();
+            if (r instanceof V2D_LineSegmentDouble rl) {
+                if (isIntersectedBy(rl, epsilon)) {
+                    return true;
+                }
+            } else {
+                if (isIntersectedBy((V2D_PointDouble) r, epsilon)) {
+                    return true;
+                }
             }
-            if (isIntersectedBy(aabb.getTop(), epsilon)) {
-                return true;
+            V2D_FiniteGeometryDouble t = aabb.getTop();
+            if (l instanceof V2D_LineSegmentDouble tl) {
+                if (isIntersectedBy(tl, epsilon)) {
+                    return true;
+                }
+            } else {
+                if (isIntersectedBy((V2D_PointDouble) t, epsilon)) {
+                    return true;
+                }
             }
-            if (isIntersectedBy(aabb.getBottom(), epsilon)) {
-                return true;
+            V2D_FiniteGeometryDouble b = aabb.getBottom();
+            if (b instanceof V2D_LineSegmentDouble bl) {
+                if (isIntersectedBy(bl, epsilon)) {
+                    return true;
+                }
+            } else {
+                if (isIntersectedBy((V2D_PointDouble) b, epsilon)) {
+                    return true;
+                }
             }
         }
         return false;

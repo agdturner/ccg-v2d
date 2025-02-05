@@ -127,7 +127,7 @@ public class V2D_EnvelopeTest {
         BigRational TEN = BigRational.TEN;
         V2D_Point a;
         V2D_Point b = new V2D_Point(ONE, ONE);
-        V2D_Envelope be = b.getEnvelope(oom);
+        V2D_Envelope be = b.getEnvelope(oom, rm);
         V2D_Envelope abe;
         BigRational aX = ONE;
         BigRational aY = ONE;
@@ -139,7 +139,7 @@ public class V2D_EnvelopeTest {
             //System.out.println("a " + a.toString());
             abe = new V2D_Envelope(oom, a, b);
             //System.out.println("abe " + abe.toString());
-            Assertions.assertTrue(abe.isIntersectedBy(a.getEnvelope(oom), oom));
+            Assertions.assertTrue(abe.isIntersectedBy(a.getEnvelope(oom, rm), oom));
             Assertions.assertTrue(abe.isIntersectedBy(be, oom));
         }
     }

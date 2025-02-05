@@ -129,7 +129,7 @@ public class V2D_ConvexHull extends V2D_FiniteGeometry {
      * @param gs The input convex hulls.
      */
     public V2D_ConvexHull(int oom, RoundingMode rm, V2D_ConvexHull... gs) {
-        this(oom, rm, V2D_FiniteGeometry.getPoints(gs));
+        this(oom, rm, V2D_FiniteGeometry.getPoints(oom, rm, gs));
     }
 
     /**
@@ -142,11 +142,11 @@ public class V2D_ConvexHull extends V2D_FiniteGeometry {
      * hull with ch.
      */
     public V2D_ConvexHull(int oom, RoundingMode rm, V2D_ConvexHull ch, V2D_Triangle t) {
-        this(oom, rm, V2D_FiniteGeometry.getPoints(ch, t));
+        this(oom, rm, V2D_FiniteGeometry.getPoints(oom, rm, ch, t));
     }
 
     @Override
-    public V2D_Point[] getPoints() {
+    public V2D_Point[] getPoints(int oom, RoundingMode rm) {
         int np = points.size();
         V2D_Point[] re = new V2D_Point[np];
         for (int i = 0; i < np; i++) {
@@ -222,11 +222,11 @@ public class V2D_ConvexHull extends V2D_FiniteGeometry {
     }
 
     @Override
-    public V2D_Envelope getEnvelope(int oom) {
+    public V2D_Envelope getEnvelope(int oom, RoundingMode rm) {
         if (en == null) {
-            en = points.get(0).getEnvelope(oom);
+            en = points.get(0).getEnvelope(oom, rm);
             for (int i = 1; i < points.size(); i++) {
-                en = en.union(points.get(i).getEnvelope(oom), oom);
+                en = en.union(points.get(i).getEnvelope(oom, rm), oom);
             }
         }
         return en;
@@ -263,7 +263,7 @@ public class V2D_ConvexHull extends V2D_FiniteGeometry {
      */
     public boolean isIntersectedBy(V2D_Point pt, int oom, RoundingMode rm) {
         // Check envelopes intersect.
-        if (getEnvelope(oom).isIntersectedBy(pt, oom, rm)) {
+        if (getEnvelope(oom, rm).isIntersectedBy(pt, oom, rm)) {
                 // Check point is in a triangle
                 for (var t : triangles) {
                     if (t.isAligned(pt, oom, rm)) {
@@ -332,7 +332,7 @@ public class V2D_ConvexHull extends V2D_FiniteGeometry {
         List<V2D_Point> ts = new ArrayList<>();
         for (V2D_Triangle t2 : triangles) {
             V2D_FiniteGeometry i = t2.getIntersection(t, oom, rm);
-            ts.addAll(Arrays.asList(i.getPoints()));
+            ts.addAll(Arrays.asList(i.getPoints(oom, rm)));
         }
         ArrayList<V2D_Point> tsu = V2D_Point.getUnique(ts, oom, rm);
         if (tsu.isEmpty()) {
@@ -748,7 +748,7 @@ public class V2D_ConvexHull extends V2D_FiniteGeometry {
      */
     public ArrayList<V2D_Triangle> getTriangles(int oom, RoundingMode rm) {
         ArrayList<V2D_Triangle> result = new ArrayList<>();
-        V2D_Point[] ps = getPoints();
+        V2D_Point[] ps = getPoints(oom, rm);
         V2D_Point p0 = ps[0];
         V2D_Point p1 = ps[1];
         for (int i = 2; i < ps.length; i++) {

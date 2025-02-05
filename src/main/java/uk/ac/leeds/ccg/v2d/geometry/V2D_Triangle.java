@@ -229,7 +229,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
         this.p = p;
         this.q = q;
         this.r = r;
-
+        
         // Debugging code
         if (p.equals(q) || p.equals(r) || q.equals(r)) {
             int debug = 1;
@@ -237,56 +237,6 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
         }
     }
 
-//    /**
-//     * Creates a new triangle.
-//     *
-//     * @param offset What {@link #offset} is set to.
-//     * @param p What {@link #pl} is set to.
-//     * @param q What {@link #q} is set to.
-//     * @param r What {@link #r} is set to.
-//     * @param normal What {@link #normal} is set to.
-//     * @param oom The Order of Magnitude for the precision.
-//     * @param rm The RoundingMode if rounding is needed.
-//     */
-//    public V2D_Triangle(V2D_Vector offset, V2D_Vector p, V2D_Vector q, 
-//            V2D_Vector r, V2D_Vector normal, int oom, RoundingMode rm) {
-//        super(offset);
-//        this.oom = oom;
-//        this.rm = rm;
-//        this.p = p;
-//        this.q = q;
-//        this.r = r;
-//        this.normal = normal;
-//    }
-//    /**
-//     * Creates a new triangle.
-//     *
-//     * @param l A line segment representing one of the three edges of the
-//     * triangle.
-//     * @param r Defines the other point relative to l.offset that defines the
-//     * triangle.
-//     * @param oom The Order of Magnitude for the precision.
-//     * @param rm The RoundingMode if rounding is needed.
-//     */
-//    public V2D_Triangle(V2D_LineSegment l, V2D_Vector r, int oom,
-//            RoundingMode rm) {
-//        this(new V2D_Vector(l.offset), l.l.pv, l.qv, r, oom, rm);
-//    }
-//    /**
-//     * Creates a new triangle.
-//     *
-//     * @param l A line segment representing one of the three edges of the
-//     * triangle.
-//     * @param r Defines the other point relative to l.offset that defines the
-//     * triangle.
-//     * @param oom The Order of Magnitude for the precision.
-//     * @param rm The RoundingMode if rounding is needed.
-//     */
-//    public V2D_Triangle(V2D_LineSegment l, V2D_Point r, int oom,
-//            RoundingMode rm) {
-//        this(l.offset, l.l.pv, l.qv, r.getVector(oom, rm)
-//                .subtract(l.offset, oom, rm), oom, rm);
-//    }
     /**
      * Creates a new instance.
      *
@@ -307,30 +257,10 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
     }
 
     /**
-     * Creates a new instance.
-     *
-     * @param pt A point giving the direction of the normal vector.
-     * @param p Used to initialise {@link #offset} and {@link #pl}.
-     * @param q Used to initialise {@link #q}.
-     * @param r Used to initialise {@link #r}.
-     * @param oom The Order of Magnitude for the precision.
-     * @param rm The RoundingMode if rounding is needed.
-     */
-    public V2D_Triangle(V2D_Point pt, V2D_Point p, V2D_Point q, V2D_Point r,
-            int oom, RoundingMode rm) {
-        super(new V2D_Vector(p.offset));
-        this.p = new V2D_Vector(p.rel);
-        this.q = q.getVector(oom, rm).subtract(p.offset, oom, rm);
-        this.r = r.getVector(oom, rm).subtract(p.offset, oom, rm);
-        this.oom = oom;
-        this.rm = rm;
-    }
-
-    /**
      * Creates a new triangle.
      */
     public V2D_Triangle(V2D_LineSegment ls, V2D_Point pt, int oom, RoundingMode rm) {
-        this(ls.getP(), ls.getQ(), pt, oom, rm);
+        this(ls.getP(), ls.getQ(oom, rm), pt, oom, rm);
     }
 
 //    /**
@@ -626,7 +556,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
 //                getPl(oom, rm).n, oom, rm));
 //    }
     @Override
-    public V2D_Envelope getEnvelope(int oom) {
+    public V2D_Envelope getEnvelope(int oom, RoundingMode rm) {
         if (en == null) {
             en = new V2D_Envelope(oom, getP(), getQ(), getR());
         }
@@ -634,7 +564,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
     }
 
     @Override
-    public V2D_Point[] getPoints() {
+    public V2D_Point[] getPoints(int oom, RoundingMode rm) {
         V2D_Point[] re = new V2D_Point[3];
         re[0] = getP();
         re[1] = getQ();
@@ -649,7 +579,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
      * @return A point or line segment.
      */
     public boolean isIntersectedBy(V2D_Point pt, int oom, RoundingMode rm) {
-        if (getEnvelope(oom).isIntersectedBy(pt, oom, rm)) {
+        if (getEnvelope(oom, rm).isIntersectedBy(pt, oom, rm)) {
             //if (getPl(oom, rm).isIntersectedBy(pt, oom, rm)) {
             return isAligned(pt, oom, rm);
             //return isIntersectedBy0(pt, oom, rm);
@@ -672,7 +602,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
         V2D_Point q = getQ();
         V2D_Point r = getR();
         V2D_Point lsp = ls.getP();
-        V2D_Point lsq = ls.getQ();
+        V2D_Point lsq = ls.getQ(oom, rm);
         if ((pq.l.isOnSameSide(r, lsp, oom, rm)
                 || pq.l.isOnSameSide(r, lsq, oom, rm))
                 && (qr.l.isOnSameSide(p, lsp, oom, rm)
@@ -719,7 +649,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
      */
     public boolean isAligned(V2D_LineSegment l, int oom, RoundingMode rm) {
         if (isAligned(l.getP(), oom, rm)) {
-            return isAligned(l.getQ(), oom, rm);
+            return isAligned(l.getQ(oom, rm), oom, rm);
         }
         return false;
     }
@@ -874,7 +804,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
         }
         V2D_LineSegment ls = (V2D_LineSegment) g;
         V2D_Point lsp = ls.getP();
-        V2D_Point lsq = ls.getQ();
+        V2D_Point lsq = ls.getQ(oom, rm);
         if (r.isAligned(lsp, oom, rm)) {
             if (r.isAligned(lsq, oom, rm)) {
                 return ls;
@@ -975,7 +905,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
     public V2D_FiniteGeometry getIntersection(V2D_Triangle t, int oom,
             RoundingMode rm) {
         int oomn2 = oom - 2;
-        if (getEnvelope(oom).isIntersectedBy(t.getEnvelope(oomn2), oomn2)) {
+        if (getEnvelope(oom, rm).isIntersectedBy(t.getEnvelope(oomn2, rm), oomn2)) {
             /**
              * Get intersections between the triangle edges. If there are none,
              * then either this returns t or vice versa. If there are some, then
@@ -1034,7 +964,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
                                 gqrp, grpp, oom, rm);
                     } else {
                         V2D_LineSegment ls = (V2D_LineSegment) grp;
-                        return getGeometry(gqrp, ls.getP(), ls.getQ(), oom, rm);
+                        return getGeometry(gqrp, ls.getP(), ls.getQ(oom, rm), oom, rm);
                     }
                 } else {
                     V2D_LineSegment gqrl = (V2D_LineSegment) gqr;
@@ -1048,7 +978,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
 
                     } else if (grp instanceof V2D_Point grpp) {
                         return getGeometry(grpp, gqrl.getP(),
-                                gqrl.getQ(), oom, rm);
+                                gqrl.getQ(oom, rm), oom, rm);
                     } else {
                         return getGeometry((V2D_LineSegment) gqr,
                                 (V2D_LineSegment) grp, oom, rm);
@@ -1064,7 +994,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
                     } else {
                         V2D_LineSegment ls = (V2D_LineSegment) grp;
                         return getGeometry(gpqp, ls.getP(),
-                                ls.getQ(), oom, rm);
+                                ls.getQ(oom, rm), oom, rm);
                     }
                 } else if (gqr instanceof V2D_Point gqrp) {
                     if (grp == null) {
@@ -1098,7 +1028,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
                         }
 
                     } else if (grp instanceof V2D_Point grpp) {
-                        return getGeometry(grpp, gpql.getP(), gpql.getQ(),
+                        return getGeometry(grpp, gpql.getP(), gpql.getQ(oom, rm),
                                 oom, rm);
                     } else {
                         return getGeometry(gpql,
@@ -1110,12 +1040,12 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
                             return gpql;
                         } else {
                             return new V2D_ConvexHull(oom, rm, gpql.getP(),
-                                    gpql.getQ(), gqrp);
+                                    gpql.getQ(oom, rm), gqrp);
                         }
                     } else if (grp instanceof V2D_Point grpp) {
                         ArrayList<V2D_Point> pts = new ArrayList<>();
                         pts.add(gpql.getP());
-                        pts.add(gpql.getQ());
+                        pts.add(gpql.getQ(oom, rm));
                         pts.add(gqrp);
                         pts.add(grpp);
                         ArrayList<V2D_Point> pts2 = V2D_Point.getUnique(pts, oom, rm);
@@ -1125,34 +1055,34 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
                             case 3 ->
                                 new V2D_Triangle(pts2.get(0), pts2.get(1), pts2.get(2), oom, rm);
                             default ->
-                                new V2D_ConvexHull(oom, rm, gpql.getP(), gpql.getQ(), gqrp, grpp);
+                                new V2D_ConvexHull(oom, rm, gpql.getP(), gpql.getQ(oom, rm), gqrp, grpp);
                         };
                     } else {
                         V2D_LineSegment grpl = (V2D_LineSegment) grp;
                         return V2D_ConvexHull.getGeometry(
                                 oom, rm, gpql.getP(),
-                                gpql.getQ(), gqrp, grpl.getP(),
-                                grpl.getQ());
+                                gpql.getQ(oom, rm), gqrp, grpl.getP(),
+                                grpl.getQ(oom, rm));
                     }
                 } else {
                     V2D_LineSegment gqrl = (V2D_LineSegment) gqr;
                     if (grp == null) {
                         return V2D_ConvexHull.getGeometry(
                                 oom, rm,
-                                gpql.getP(), gpql.getQ(),
-                                gqrl.getP(), gqrl.getQ());
+                                gpql.getP(), gpql.getQ(oom, rm),
+                                gqrl.getP(), gqrl.getQ(oom, rm));
                     } else if (grp instanceof V2D_Point grpp) {
                         return V2D_ConvexHull.getGeometry(
                                 oom, rm, gpql.getP(),
-                                gpql.getQ(), gqrl.getP(),
-                                gqrl.getQ(), grpp);
+                                gpql.getQ(oom, rm), gqrl.getP(),
+                                gqrl.getQ(oom, rm), grpp);
                     } else {
                         V2D_LineSegment grpl = (V2D_LineSegment) grp;
                         return V2D_ConvexHull.getGeometry(
                                 oom, rm, gpql.getP(),
-                                gpql.getQ(), gqrl.getP(),
-                                gqrl.getQ(), grpl.getP(),
-                                grpl.getQ());
+                                gpql.getQ(oom, rm), gqrl.getP(),
+                                gqrl.getQ(oom, rm), grpl.getP(),
+                                grpl.getQ(oom, rm));
                     }
                 }
             }
@@ -1371,11 +1301,11 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
     protected static V2D_FiniteGeometry getGeometry(V2D_LineSegment l1,
             V2D_LineSegment l2, V2D_LineSegment l3, int oom, RoundingMode rm) {
         V2D_Point l1p = l1.getP();
-        V2D_Point l1q = l1.getQ();
+        V2D_Point l1q = l1.getQ(oom, rm);
         V2D_Point l2p = l2.getP();
-        V2D_Point l2q = l2.getQ();
+        V2D_Point l2q = l2.getQ(oom, rm);
         V2D_Point l3p = l3.getP();
-        V2D_Point l3q = l3.getQ();
+        V2D_Point l3q = l3.getQ(oom, rm);
         ArrayList<V2D_Point> points;
         {
             List<V2D_Point> pts = new ArrayList<>();
@@ -1421,9 +1351,9 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
     protected static V2D_FiniteGeometry getGeometry(V2D_LineSegment l1,
             V2D_LineSegment l2, V2D_Point pt, int oom, RoundingMode rm) {
         V2D_Point l1p = l1.getP();
-        V2D_Point l1q = l1.getQ();
+        V2D_Point l1q = l1.getQ(oom, rm);
         V2D_Point l2p = l2.getP();
-        V2D_Point l2q = l2.getQ();
+        V2D_Point l2q = l2.getQ(oom, rm);
         ArrayList<V2D_Point> points;
         {
             List<V2D_Point> pts = new ArrayList<>();
@@ -1466,9 +1396,9 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
     protected static V2D_FiniteGeometry getGeometry2(V2D_LineSegment l1,
             V2D_LineSegment l2, int oom, RoundingMode rm) {
         V2D_Point l1p = l1.getP();
-        V2D_Point l1q = l1.getQ();
+        V2D_Point l1q = l1.getQ(oom, rm);
         V2D_Point l2p = l2.getP();
-        V2D_Point l2q = l2.getQ();
+        V2D_Point l2q = l2.getQ(oom, rm);
         ArrayList<V2D_Point> points;
         {
             List<V2D_Point> pts = new ArrayList<>();
@@ -1518,13 +1448,13 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
             V2D_Point l2p = l2.getP();
             if (l1p.equals(pt, oom, rm)) {
                 if (l2p.equals(pt, oom, rm)) {
-                    return new V2D_Triangle(pt, l1.getQ(), l2.getQ(), oom, rm);
+                    return new V2D_Triangle(pt, l1.getQ(oom, rm), l2.getQ(oom, rm), oom, rm);
                 } else {
-                    return new V2D_Triangle(pt, l1.getQ(), l2p, oom, rm);
+                    return new V2D_Triangle(pt, l1.getQ(oom, rm), l2p, oom, rm);
                 }
             } else {
                 if (l2p.equals(pt, oom, rm)) {
-                    return new V2D_Triangle(pt, l1p, l2.getQ(), oom, rm);
+                    return new V2D_Triangle(pt, l1p, l2.getQ(oom, rm), oom, rm);
                 } else {
                     return new V2D_Triangle(pt, l1p, l2p, oom, rm);
                 }
@@ -1550,7 +1480,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
         if (l.isIntersectedBy(p1, oom, rm)) {
             return getGeometry(l, p2, oom, rm);
         } else {
-            return new V2D_Triangle(p1, l.getP(), l.getQ(), oom, rm);
+            return new V2D_Triangle(p1, l.getP(), l.getQ(oom, rm), oom, rm);
         }
     }
 
@@ -1569,7 +1499,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
         if (l.isIntersectedBy(p, oom, rm)) {
             return l;
         }
-        return new V2D_Triangle(p, l.getP(), l.getQ(), oom, rm);
+        return new V2D_Triangle(p, l.getP(), l.getQ(oom, rm), oom, rm);
     }
 
     /**
@@ -1700,7 +1630,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
          * distances as these could be the minimum.
          */
         V2D_Point lp = l.getP();
-        V2D_Point lq = l.getQ();
+        V2D_Point lq = l.getQ(oom, rm);
         if (isAligned(lp, oom, rm)) {
             d2 = BigRational.min(d2, getDistanceSquared(lp, oom, rm));
         }
@@ -1955,6 +1885,57 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
 //    }
     @Override
     public boolean isIntersectedBy(V2D_Envelope aabb, int oom, RoundingMode rm) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (getEnvelope(oom, rm).isIntersectedBy(aabb, oom)) {
+            if (aabb.isIntersectedBy(getP(), oom, rm)) {
+                return true;
+            }
+            if (aabb.isIntersectedBy(getQ(), oom, rm)) {
+                return true;
+            }
+            if (aabb.isIntersectedBy(getR(), oom, rm)) {
+                return true;
+            }
+            V2D_FiniteGeometry l = aabb.getLeft(oom, rm);
+            if (l instanceof V2D_LineSegment ll) {
+                if (isIntersectedBy(ll, oom, rm)) {
+                    return true;
+                }
+            } else {
+                if (isIntersectedBy((V2D_Point) l, oom, rm)) {
+                    return true;
+                }
+            }
+            V2D_FiniteGeometry r = aabb.getRight(oom, rm);
+            if (r instanceof V2D_LineSegment rl) {
+                if (isIntersectedBy(rl, oom, rm)) {
+                    return true;
+                }
+            } else {
+                if (isIntersectedBy((V2D_Point) r, oom, rm)) {
+                    return true;
+                }
+            }
+            V2D_FiniteGeometry t = aabb.getTop(oom, rm);
+            if (l instanceof V2D_LineSegment tl) {
+                if (isIntersectedBy(tl, oom, rm)) {
+                    return true;
+                }
+            } else {
+                if (isIntersectedBy((V2D_Point) t, oom, rm)) {
+                    return true;
+                }
+            }
+            V2D_FiniteGeometry b = aabb.getBottom(oom, rm);
+            if (b instanceof V2D_LineSegment bl) {
+                if (isIntersectedBy(bl, oom, rm)) {
+                    return true;
+                }
+            } else {
+                if (isIntersectedBy((V2D_Point) b, oom, rm)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

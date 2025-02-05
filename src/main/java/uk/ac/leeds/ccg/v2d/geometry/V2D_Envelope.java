@@ -357,7 +357,7 @@ public class V2D_Envelope implements Serializable {
         if (isIntersectedBy(l.getP(), oom, rm)) {
             return true;
         } else {
-            if (isIntersectedBy(l.getQ(), oom, rm)) {
+            if (isIntersectedBy(l.getQ(oom, rm), oom, rm)) {
                 return true;
             }
         }
@@ -523,5 +523,81 @@ public class V2D_Envelope implements Serializable {
      */
     public BigRational getYMax(int oom, RoundingMode rm) {
         return yMax.add(offset.getDY(oom - 2, rm));
+    }
+    
+    /**
+     * @return the left of the envelope.
+     */
+    public V2D_FiniteGeometry getLeft(int oom, RoundingMode rm) {
+        if (l == null) {
+            BigRational xmin = getXMin(oom);
+            BigRational ymin = getYMin(oom);
+            BigRational ymax = getYMax(oom);
+            if (ymin.compareTo(ymax) == 0) {
+                l = new V2D_Point(xmin, ymax);
+            } else {
+                l = new V2D_LineSegment(
+                    new V2D_Point(xmin, ymin),
+                    new V2D_Point(xmin, ymax), oom, rm);
+            }
+        }
+        return l;
+    }
+    
+    /**
+     * @return the right of the envelope.
+     */
+    public V2D_FiniteGeometry getRight(int oom, RoundingMode rm) {
+        if (r == null) {
+            BigRational xmax = getXMax(oom);
+            BigRational ymin = getYMin(oom);
+            BigRational ymax = getYMax(oom);
+            if (ymin.compareTo(ymax) == 0) {
+                r = new V2D_Point(xmax, ymax);
+            } else {
+                r = new V2D_LineSegment(
+                    new V2D_Point(xmax, ymin),
+                    new V2D_Point(xmax, ymax), oom, rm);
+            }
+        }
+        return r;
+    }
+    
+    /**
+     * @return the top of the envelope.
+     */
+    public V2D_FiniteGeometry getTop(int oom, RoundingMode rm) {
+        if (t == null) {
+            BigRational xmin = getXMin(oom);
+            BigRational xmax = getXMax(oom);
+            BigRational ymax = getYMax(oom);
+            if (xmin.compareTo(xmax) == 0) {
+                t = new V2D_Point(xmin, ymax);
+            } else {
+                t = new V2D_LineSegment(
+                    new V2D_Point(xmin, ymax),
+                    new V2D_Point(xmax, ymax), oom, rm);
+            }
+        }
+        return t;
+    }
+    
+    /**
+     * @return the bottom of the envelope.
+     */
+    public V2D_FiniteGeometry getBottom(int oom, RoundingMode rm) {
+        if (b == null) {
+            BigRational xmin = getXMin(oom);
+            BigRational xmax = getXMax(oom);
+            BigRational ymin = getYMin(oom);
+            if (xmin.compareTo(xmax) == 0) {
+                b = new V2D_Point(xmin, ymin);
+            } else {
+                b = new V2D_LineSegment(
+                    new V2D_Point(xmin, ymin),
+                    new V2D_Point(xmax, ymin), oom, rm);
+            }
+        }
+        return b;
     }
 }

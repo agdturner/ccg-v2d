@@ -79,8 +79,7 @@ public class V2D_LineSegmentTest extends V2D_Test {
                             offset=V2D_Vector(dx=0, dy=0),
                             l= offset=V2D_Vector(dx=0, dy=0),
                             p=V2D_Point(offset=V2D_Vector(dx=0, dy=0), rel=V2D_Vector(dx=0, dy=0)),
-                            v= V2D_Vector(dx=1, dy=0),
-                            q=dx=1, dy=0
+                            v= V2D_Vector(dx=1, dy=0)
                            )""";
         String result = instance.toString();
         //System.out.println(result);
@@ -97,11 +96,11 @@ public class V2D_LineSegmentTest extends V2D_Test {
         RoundingMode rm = RoundingMode.HALF_UP;
         V2D_LineSegment instance = new V2D_LineSegment(pN1N1, pP1P1, oom, rm);
         V2D_Envelope expResult = new V2D_Envelope(oom, pN1N1, pP1P1);
-        V2D_Envelope result = instance.getEnvelope(oom);
+        V2D_Envelope result = instance.getEnvelope(oom, rm);
         assertTrue(expResult.equals(result, oom));
         // Test 2
         instance = new V2D_LineSegment(pP1N1, pN1P1, oom, rm);
-        result = instance.getEnvelope(oom);
+        result = instance.getEnvelope(oom, rm);
         assertTrue(expResult.equals(result, oom));
     }
 

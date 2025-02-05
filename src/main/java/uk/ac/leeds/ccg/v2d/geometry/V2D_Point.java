@@ -210,7 +210,7 @@ public class V2D_Point extends V2D_FiniteGeometry {
     }
 
     @Override
-    public V2D_Point[] getPoints() {
+    public V2D_Point[] getPoints(int oom, RoundingMode rm) {
         V2D_Point[] r = new V2D_Point[1];
         r[0] = this;
         return r;
@@ -330,7 +330,7 @@ public class V2D_Point extends V2D_FiniteGeometry {
     }
 
     @Override
-    public V2D_Envelope getEnvelope(int oom) {
+    public V2D_Envelope getEnvelope(int oom, RoundingMode rm) {
         return new V2D_Envelope(oom, this);
     }
 

@@ -790,7 +790,7 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
         // Test 2
         l = new V2D_LineDouble(pP0P1, pP1P1);
         instance = new V2D_TriangleDouble(pN2N2, pP2N2, pN2P2);
-        expResult = 1d;
+        expResult = 0d;
         result = instance.getDistanceSquared(l, epsilon);
         assertEquals(expResult, result);
     }

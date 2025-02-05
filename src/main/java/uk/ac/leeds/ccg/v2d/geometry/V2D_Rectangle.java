@@ -131,7 +131,7 @@ public class V2D_Rectangle extends V2D_FiniteGeometry {
     }
 
     @Override
-    public V2D_Point[] getPoints() {
+    public V2D_Point[] getPoints(int oom, RoundingMode rm) {
         V2D_Point[] re = new V2D_Point[4];
         re[0] = getP();
         re[1] = getQ();
@@ -183,9 +183,9 @@ public class V2D_Rectangle extends V2D_FiniteGeometry {
     }
 
     @Override
-    public V2D_Envelope getEnvelope(int oom) {
+    public V2D_Envelope getEnvelope(int oom, RoundingMode rm) {
         if (en == null) {
-            en = rsp.getEnvelope(oom).union(pqr.getEnvelope(oom), oom);
+            en = rsp.getEnvelope(oom, rm).union(pqr.getEnvelope(oom, rm), oom);
         }
         return en;
     }
@@ -384,8 +384,8 @@ public class V2D_Rectangle extends V2D_FiniteGeometry {
                 if (rspit == null) {
                     return pqrit;
                 }
-                V2D_Point[] pqritps = pqrit.getPoints();
-                V2D_Point[] rspitps = rspit.getPoints();
+                V2D_Point[] pqritps = pqrit.getPoints(oom, rm);
+                V2D_Point[] rspitps = rspit.getPoints(oom, rm);
                 V2D_Point[] pts = Arrays.copyOf(pqritps, pqritps.length + rspitps.length);
                 System.arraycopy(rspitps, 0, pts, pqritps.length, rspitps.length);
                 return V2D_ConvexHull.getGeometry(oom, rm, pts);
@@ -498,8 +498,8 @@ public class V2D_Rectangle extends V2D_FiniteGeometry {
      * @return {@code true} iff this is equal to r.
      */
     public boolean equals(V2D_Rectangle r, int oom, RoundingMode rm) {
-        V2D_Point[] pts = getPoints();
-        V2D_Point[] rpts = r.getPoints();
+        V2D_Point[] pts = getPoints(oom, rm);
+        V2D_Point[] rpts = r.getPoints(oom, rm);
         for (var x : pts) {
             boolean found = false;
             for (var y : rpts) {
