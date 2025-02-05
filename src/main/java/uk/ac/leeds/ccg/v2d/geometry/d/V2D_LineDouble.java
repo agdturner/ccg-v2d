@@ -128,7 +128,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
             throw new RuntimeException("" + pv + " and " + qv + " are the same"
                     + " so do not define a line.");
         }
-        q = new V2D_PointDouble(offset, qv);
+        //q = new V2D_PointDouble(offset, qv);
         v = qv.subtract(pv);
         isDefinedByVector = false;
     }
@@ -421,8 +421,8 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      */
     public boolean isIntersectedBy(double epsilon, V2D_LineDouble l) {
         return isIntersectedBy(epsilon, l, 
-                getIntersectionDenominator(p.getX(), q.getX(), l.p.getX(),
-                l.q.getX(), p.getY(), q.getY(), l.p.getY(), l.q.getY()));
+                getIntersectionDenominator(p.getX(), getQ().getX(), l.p.getX(),
+                l.getQ().getX(), p.getY(), q.getY(), l.p.getY(), l.q.getY()));
     }
     
     /**
@@ -455,7 +455,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @return {@code true} if lines intersect.
      */
     public boolean isIntersectedBy(double epsilon, V2D_LineDouble l, double den) {
-        if (den == 0.0D) {
+        if (den == 0d) {
             // Lines are parallel or coincident.
             return equals(epsilon, l);
         }
@@ -468,7 +468,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @param l Line to intersect with.
      * @returns The geometry or null if there is no intersection.
      */
-    public V2D_GeometryDouble getIntersection(double epsilon, V2D_LineDouble l) {        
+    public V2D_GeometryDouble getIntersection(double epsilon, V2D_LineDouble l) {
         double x1 = getP().getX();
         double x2 = getQ().getX();
         double x3 = l.getP().getX();
@@ -675,7 +675,6 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
         if (q != null) {
             q.translate(v);
         }
-
     }
 
     @Override
@@ -818,6 +817,8 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
         if (isIntersectedBy(epsilon, a) && isIntersectedBy(epsilon, b)) {
             return true;
         }
+        p = getP();
+        q = getQ();
         double x1 = p.getX();
         double y1 = p.getY();
         double x2 = q.getX();

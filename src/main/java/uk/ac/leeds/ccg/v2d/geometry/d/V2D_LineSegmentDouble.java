@@ -15,6 +15,7 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry.d;
 
+import ch.obermuhlner.math.big.BigRational;
 import uk.ac.leeds.ccg.math.arithmetic.Math_Double;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
 
@@ -501,7 +502,6 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
             return this;
         }
         double t = (((x1 - x3) * (y3 - y4)) - ((y1 - y3) * (x3 - x4))) / den;
-
         boolean ti = (t >= -epsilon) && (t <= 1D + epsilon);
         if (ti) {
             return (V2D_PointDouble) li;
@@ -529,7 +529,8 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      */
     public V2D_FiniteGeometryDouble getIntersection(double epsilon,
             V2D_LineSegmentDouble ls) {
-        if (!getEnvelope().isIntersectedBy(ls.getEnvelope(), epsilon)) {
+        if (!getEnvelope().isIntersectedBy(ls.getEnvelope())) {
+        //if (!getEnvelope().isIntersectedBy(ls.getEnvelope(), epsilon)) {
             return null;
         }
         double x1 = getP().getX();
@@ -537,7 +538,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
         double x3 = ls.getP().getX();
         double x4 = ls.getQ().getX();
         double y1 = getP().getY();
-        double y2 = getP().getY();
+        double y2 = getQ().getY();
         double y3 = ls.getP().getY();
         double y4 = ls.getQ().getY();
         double den = V2D_LineDouble.getIntersectionDenominator(x1, x2, x3, x4, y1, y2, y3, y4);
@@ -1106,6 +1107,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
                         } else {
                             if (lsqd2tp < lsqd2tq) {
                                 return new V2D_LineSegmentDouble(lsq, tp);
+                                //return getGeometry(lsq, tp, epsilon);
                             } else {
                                 return new V2D_LineSegmentDouble(lsq, tq);
                             }

@@ -339,24 +339,50 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
         if (getEnvelope().isIntersectedBy(ls.getEnvelope())) {
             V2D_PointDouble lsp = ls.getP();
             if (en.isIntersectedBy(lsp)) {
-                return true;
+                return isIntersectedBy0(ls, epsilon);
             }
             V2D_PointDouble lsq = ls.getQ();
             if (en.isIntersectedBy(lsq)) {
-                return true;
+                return isIntersectedBy0(ls, epsilon);
             }
             V2D_LineSegmentDouble pq = getPQ();
             if (pq.isIntersectedBy(ls, epsilon)) {
-                return true;
+                return isIntersectedBy0(ls, epsilon);
             }
             V2D_LineSegmentDouble qr = getQR();
             if (qr.isIntersectedBy(ls, epsilon)) {
-                return true;
+                return isIntersectedBy0(ls, epsilon);
             }
             V2D_LineSegmentDouble rp = getRP();
             if (rp.isIntersectedBy(ls, epsilon)) {
-                return true;
+                return isIntersectedBy0(ls, epsilon);
             }
+        }
+        return false;
+    }
+    
+    /**
+     * @param ls The line segment to test for intersection.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return True iff there is an intersection.
+     */
+    protected boolean isIntersectedBy0(V2D_LineSegmentDouble ls, double epsilon) {
+        V2D_LineSegmentDouble pq = getPQ();
+        V2D_LineSegmentDouble qr = getQR();
+        V2D_LineSegmentDouble rp = getRP();
+        V2D_PointDouble p = getP();
+        V2D_PointDouble q = getQ();
+        V2D_PointDouble r = getR();
+        V2D_PointDouble lsp = ls.getP();
+        V2D_PointDouble lsq = ls.getQ();
+        if ((pq.l.isOnSameSide(r, lsp, epsilon)
+                || pq.l.isOnSameSide(r, lsq, epsilon))
+                && (qr.l.isOnSameSide(p, lsp, epsilon)
+                || qr.l.isOnSameSide(p, lsq, epsilon))
+                && (rp.l.isOnSameSide(q, lsp, epsilon)
+                || rp.l.isOnSameSide(q, lsq, epsilon))) {
+            return true;
         }
         return false;
     }

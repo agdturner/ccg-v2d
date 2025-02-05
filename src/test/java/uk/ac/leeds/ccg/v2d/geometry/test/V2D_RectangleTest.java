@@ -149,6 +149,25 @@ public class V2D_RectangleTest extends V2D_Test {
     }
 
     /**
+     * Test of isIntersectedBy method, of class V2D_RectangleDouble.
+     */
+    @Test
+    public void testIsIntersectedBy_V2D_LineSegmentDouble_double() {
+        System.out.println("isIntersectedBy");
+        int oom = -6;
+        RoundingMode rm = RoundingMode.HALF_UP;
+        V2D_Rectangle r = new V2D_Rectangle(
+                new V2D_Point(-30, -22),
+                new V2D_Point(-30, -21),
+                new V2D_Point(-29, -21),
+                new V2D_Point(-29, -22), oom, rm);
+        V2D_LineSegment l = new V2D_LineSegment(
+                new V2D_Point(-30, -30),
+                new V2D_Point(-20, 0), oom, rm);
+        //assertTrue(!r.isIntersectedBy(l, oom, rm));
+    }
+    
+    /**
      * Test of getIntersection method, of class V2D_Rectangle.
      */
     @Test
