@@ -161,7 +161,7 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
      */
     public V2D_TriangleDouble(V2D_LineSegmentDouble l, V2D_VectorDouble r) {
         this(new V2D_VectorDouble(l.offset), new V2D_VectorDouble(l.l.pv),
-                new V2D_VectorDouble(l.qv), new V2D_VectorDouble(r));
+                new V2D_VectorDouble(l.l.v), new V2D_VectorDouble(r));
     }
 
     /**
@@ -277,21 +277,21 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
     public final V2D_VectorDouble getRPV() {
         return p.subtract(r);
     }
-    
+
     /**
      * @return The internal angle at {@link #p}.
      */
     public final double getAngleP() {
         return getPQV().getAngle(getRPV().reverse());
     }
-    
+
     /**
      * @return The internal angle at {@link #q}.
      */
     public final double getAngleQ() {
         return getPQV().reverse().getAngle(getQRV());
     }
-    
+
     /**
      * @return The internal angle at {@link #r}.
      */
@@ -323,7 +323,7 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
      * @return True iff there is an intersection.
      */
     public boolean isIntersectedBy(V2D_PointDouble pt, double epsilon) {
-        if (getEnvelope().isIntersectedBy(pt.getEnvelope(), epsilon)) {
+        if (getEnvelope().isIntersectedBy(pt.getEnvelope())) {
             return isAligned(pt, epsilon);
         }
         return false;
@@ -336,21 +336,74 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
      * @return True iff there is an intersection.
      */
     public boolean isIntersectedBy(V2D_LineSegmentDouble ls, double epsilon) {
-        V2D_LineSegmentDouble pq = getPQ();
-        V2D_LineSegmentDouble qr = getQR();
-        V2D_LineSegmentDouble rp = getRP();
-        V2D_PointDouble p = getP();
-        V2D_PointDouble q = getQ();
-        V2D_PointDouble r = getR();
-        V2D_PointDouble lsp = ls.getP();
-        V2D_PointDouble lsq = ls.getQ();
-        if ((pq.l.isOnSameSide(r, lsp, epsilon)
-                || pq.l.isOnSameSide(r, lsq, epsilon))
-                && (qr.l.isOnSameSide(p, lsp, epsilon)
-                || qr.l.isOnSameSide(p, lsq, epsilon))
-                && (rp.l.isOnSameSide(q, lsp, epsilon)
-                || rp.l.isOnSameSide(q, lsq, epsilon))) {
-            return true;
+        if (getEnvelope().isIntersectedBy(ls.getEnvelope())) {
+            V2D_PointDouble lsp = ls.getP();
+            if (en.isIntersectedBy(lsp)) {
+                return true;
+            }
+            V2D_PointDouble lsq = ls.getQ();
+            if (en.isIntersectedBy(lsq)) {
+                return true;
+            }
+            V2D_LineSegmentDouble pq = getPQ();
+            if (pq.isIntersectedBy(ls, epsilon)) {
+                return true;
+            }
+            V2D_LineSegmentDouble qr = getQR();
+            if (qr.isIntersectedBy(ls, epsilon)) {
+                return true;
+            }
+            V2D_LineSegmentDouble rp = getRP();
+            if (rp.isIntersectedBy(ls, epsilon)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param ls The line segments to test for intersection.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return True iff there is an intersection.
+     */
+    public boolean isIntersectedBy(double epsilon, V2D_LineSegmentDouble... ls) {
+        if (getEnvelope().isIntersectedBy(new V2D_EnvelopeDouble(ls))) {
+            for (V2D_LineSegmentDouble l : ls) {
+                if (isIntersectedBy(l, epsilon)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param t The triangle to test for intersection.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return True iff there is an intersection.
+     */
+    public boolean isIntersectedBy(V2D_TriangleDouble t, double epsilon) {
+        if (t.getEnvelope().isIntersectedBy(getEnvelope())) {
+            if (isIntersectedBy(t.getP(), epsilon)) {
+                return true;
+            }
+            if (isIntersectedBy(t.getQ(), epsilon)) {
+                return true;
+            }
+            if (isIntersectedBy(t.getR(), epsilon)) {
+                return true;
+            }
+            if (t.isIntersectedBy(getP(), epsilon)) {
+                return true;
+            }
+            if (t.isIntersectedBy(getQ(), epsilon)) {
+                return true;
+            }
+            if (t.isIntersectedBy(getR(), epsilon)) {
+                return true;
+            }
         }
         return false;
     }
@@ -1325,10 +1378,11 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
         ArrayList<V2D_PointDouble> points = V2D_PointDouble.getUnique(s, epsilon);
         return points.toArray(V2D_PointDouble[]::new);
     }
-    
+
     /**
      * Computes and returns the circumcentre of the circmcircle.
      * https://en.wikipedia.org/wiki/Circumcircle
+     *
      * @return The circumcentre of a circumcircle of this triangle.
      */
     public V2D_PointDouble getCircumcenter() {
@@ -1429,6 +1483,30 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
 
     @Override
     public boolean isIntersectedBy(V2D_EnvelopeDouble aabb, double epsilon) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        en = getEnvelope();
+        if (en.isIntersectedBy(aabb, epsilon)) {
+            if (aabb.isIntersectedBy(getP())) {
+                return true;
+            }
+            if (aabb.isIntersectedBy(getQ())) {
+                return true;
+            }
+            if (aabb.isIntersectedBy(getR())) {
+                return true;
+            }
+            if (isIntersectedBy(aabb.getLeft(), epsilon)) {
+                return true;
+            }
+            if (isIntersectedBy(aabb.getRight(), epsilon)) {
+                return true;
+            }
+            if (isIntersectedBy(aabb.getTop(), epsilon)) {
+                return true;
+            }
+            if (isIntersectedBy(aabb.getBottom(), epsilon)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

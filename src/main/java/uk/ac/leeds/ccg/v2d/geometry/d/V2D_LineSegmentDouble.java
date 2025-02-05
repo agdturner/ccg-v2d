@@ -36,23 +36,12 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
     public final V2D_LineDouble l;
 
     /**
-     * For defining {@link q} which is given relative to {@link #offset}.
-     */
-    protected V2D_VectorDouble qv;
-
-    /**
-     * For defining the other end point of the line segment (the other given in
-     * {@link #l}.
-     */
-    protected V2D_PointDouble q;
-
-    /**
      * For storing the line at l.getP() orthogonal to qv.
      */
     protected V2D_LineDouble pl;
 
     /**
-     * For storing the line at getQ() orthogonal to qv.
+     * For storing the line at getQ() orthogonal to l.v.
      */
     protected V2D_LineDouble ql;
 
@@ -92,7 +81,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
             V2D_VectorDouble q) {
         super(offset);
         l = new V2D_LineDouble(offset, p, q);
-        this.qv = q;
+        //this.qv = q;
     }
 
     /**
@@ -106,7 +95,6 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
         V2D_PointDouble q2 = new V2D_PointDouble(q);
         q2.setOffset(offset);
         l = new V2D_LineDouble(offset, p.rel, q2.rel);
-        this.qv = q2.rel;
     }
 
     /**
@@ -133,7 +121,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
             }
         }
         this.l = ls.l;
-        this.qv = ls.qv;
+        //this.qv = ls.qv;
     }
 
     /**
@@ -142,16 +130,33 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
     public V2D_PointDouble getP() {
         return l.getP();
     }
-
+    
     /**
-     * @return {@link #qv} with {@link #offset} applied.
+     * @return {@link #l} pv with {@link #l} offset applied.
      */
     public V2D_PointDouble getQ() {
-        if (q == null) {
-            q = new V2D_PointDouble(offset, qv);
-        }
-        return q;
+        return l.getQ();
     }
+
+//    /**
+//     * @return {@link #qv} with {@link #offset} applied.
+//     */
+//    public V2D_PointDouble getQ() {
+//        if (q == null) {
+//            q = new V2D_PointDouble(offset, qv);
+//        }
+//        return q;
+//    }
+
+//    /**
+//     * @return {@link #qv} with {@link #offset} applied.
+//     */
+//    public V2D_PointDouble getQV() {
+//        if (qv == null) {
+//            qv = new V2D_VectorDouble(getP(), getQ());
+//        }
+//        return q;
+//    }
 
     /**
      * Translate (move relative to the origin).
@@ -161,9 +166,6 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
     public void translate(V2D_VectorDouble v) {
         super.translate(v);
         l.translate(v);
-        if (q != null) {
-            q.translate(v);
-        }
         if (pl != null) {
             pl.translate(v);
         }
@@ -228,7 +230,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
                 + pad + ",\n";
         r += pad + "l=" + l.toStringFields(pad) + "\n"
                 + pad + ",\n"
-                + pad + "q=" + qv.toStringFields(pad);
+                + pad + "q=" + getQ().toStringFields(pad);
 //        if (l.qv == null) {
 //            r += pad + "pv=" + l.getP().toString(pad) + "\n"
 //                    + pad + ",\n"
@@ -261,7 +263,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
     protected String toStringFieldsSimple(String pad) {
         String r = super.toStringFieldsSimple(pad) + ",\n";
         r += pad + "l=" + l.toStringFieldsSimple(pad) + ",\n"
-                + pad + "q=" + qv.toStringFieldsSimple("");
+                + pad + "q=" + getQ().toStringFieldsSimple("");
 //        if (l.qv == null) {
 //            r += pad + "pv=" + l.getP().toStringSimple("") + ",\n"
 //                    + pad + "qv=null" + ",\n"
@@ -412,6 +414,25 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
     }
 
     /**
+     * @param l A line segment to test for intersection.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     */
+    public boolean isIntersectedBy(V2D_LineSegmentDouble l, double epsilon) {
+        //if (l.isIntersectedBy(getEnvelope(), epsilon)) {
+        //    if (isIntersectedBy(l.getEnvelope(), epsilon)) {
+                if (getIntersection(epsilon, l) == null) {
+                    return false;
+                } else {
+                    return true;
+                }
+        //    }
+        //}
+        //return false;
+    }
+
+    /**
      * Intersects {@code this} with {@code l}. If they are equivalent then
      * return {@code this}. If they overlap in a line return the part that
      * overlaps (the order of points is not defined). If they intersect at a
@@ -480,7 +501,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
             return this;
         }
         double t = (((x1 - x3) * (y3 - y4)) - ((y1 - y3) * (x3 - x4))) / den;
-        
+
         boolean ti = (t >= -epsilon) && (t <= 1D + epsilon);
         if (ti) {
             return (V2D_PointDouble) li;
@@ -515,10 +536,10 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
         double x2 = getQ().getX();
         double x3 = ls.getP().getX();
         double x4 = ls.getQ().getX();
-        double y1 = l.p.getY();
-        double y2 = l.q.getY();
-        double y3 = ls.l.p.getY();
-        double y4 = ls.l.q.getY();
+        double y1 = getP().getY();
+        double y2 = getP().getY();
+        double y3 = ls.getP().getY();
+        double y4 = ls.getQ().getY();
         double den = V2D_LineDouble.getIntersectionDenominator(x1, x2, x3, x4, y1, y2, y3, y4);
         // Get intersection with infinite lines.
         V2D_GeometryDouble li = l.getIntersection(epsilon, ls.l, den, x1, x2, x3, x4, y1, y2, y3, y4);
@@ -729,7 +750,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
             }
         }
     }
-    
+
     /**
      * If the distance from a point to the line is less than the distance of the
      * point from either end of the line and the distance from either end of the
@@ -1081,28 +1102,28 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
                                 return new V2D_LineSegmentDouble(lsp, tp);
                             } else {
                                 return new V2D_LineSegmentDouble(lsq, tq);
-                            }                            
+                            }
                         } else {
                             if (lsqd2tp < lsqd2tq) {
                                 return new V2D_LineSegmentDouble(lsq, tp);
                             } else {
                                 return new V2D_LineSegmentDouble(lsq, tq);
                             }
-                        }                        
+                        }
                     } else {
                         if (lspd2tq < lsqd2tp) {
                             if (lspd2tq < lsqd2tq) {
                                 return new V2D_LineSegmentDouble(lsp, tq);
                             } else {
                                 return new V2D_LineSegmentDouble(lsq, tq);
-                            }                            
+                            }
                         } else {
                             if (lsqd2tp < lsqd2tq) {
                                 return new V2D_LineSegmentDouble(lsq, tp);
                             } else {
                                 return new V2D_LineSegmentDouble(lsq, tq);
                             }
-                        }       
+                        }
                     }
                 }
                 V2D_PointDouble tip;
@@ -1245,8 +1266,8 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      * @return The minimum distance to {@code l}.
      */
     public double getDistanceSquared(V2D_LineDouble ld, double epsilon) {
-        double pd = ld.getDistanceSquared(l.getP(), epsilon);
-        double qd = ld.getDistanceSquared(l.getQ(), epsilon);
+        double pd = ld.getDistanceSquared(getP(), epsilon);
+        double qd = ld.getDistanceSquared(getQ(), epsilon);
         return Math.min(pd, qd);
     }
 
@@ -1314,6 +1335,28 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
 //    }
     @Override
     public boolean isIntersectedBy(V2D_EnvelopeDouble aabb, double epsilon) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (getEnvelope().isIntersectedBy(aabb, epsilon)) {
+            V2D_PointDouble p = getP();
+            if (aabb.isIntersectedBy(p)) {
+                return true;
+            }
+            V2D_PointDouble q = getQ();
+            if (aabb.isIntersectedBy(q)) {
+                return true;
+            }
+            if (isIntersectedBy(aabb.getLeft(), epsilon)) {
+                return true;
+            }
+            if (isIntersectedBy(aabb.getRight(), epsilon)) {
+                return true;
+            }
+            if (isIntersectedBy(aabb.getTop(), epsilon)) {
+                return true;
+            }
+            if (isIntersectedBy(aabb.getBottom(), epsilon)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

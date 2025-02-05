@@ -173,7 +173,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
             throw new RuntimeException("Vector " + v + " is the zero vector "
                     + "which cannot be used to define a line.");
         }
-        this.pv = new V2D_VectorDouble(p);
+        pv = new V2D_VectorDouble(p);
         this.v = new V2D_VectorDouble(v);
         isDefinedByVector = true;
     }

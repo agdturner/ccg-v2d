@@ -64,7 +64,32 @@ public class V2D_EnvelopeDouble implements Serializable {
     /**
      * Create a new instance.
      *
-     * @param points The points used to form the envelop.
+     * @param x The x-coordinate of a point.
+     * @param y The y-coordinate of a point.
+     */
+    public V2D_EnvelopeDouble(double x, double y) {
+        this(new V2D_PointDouble(x, y));
+    }
+
+    /**
+     * Create a new instance.
+     *
+     * @param xMin What {@link xMin} is set to.
+     * @param xMax What {@link xMax} is set to.
+     * @param yMin What {@link yMin} is set to.
+     * @param yMax What {@link yMax} is set to.
+     */
+    public V2D_EnvelopeDouble(
+            double xMin, double xMax,
+            double yMin, double yMax) {
+        this(new V2D_PointDouble(xMin, yMin),
+                new V2D_PointDouble(xMax, yMax));
+    }
+
+    /**
+     * Create a new instance.
+     *
+     * @param points The points used to form the envelope.
      */
     public V2D_EnvelopeDouble(V2D_PointDouble... points) {
         //offset = points[0].offset;
@@ -104,30 +129,32 @@ public class V2D_EnvelopeDouble implements Serializable {
             }
         }
     }
-
+    
     /**
      * Create a new instance.
      *
-     * @param x The x-coordinate of a point.
-     * @param y The y-coordinate of a point.
+     * @param gs The geometries used to form the envelope.
      */
-    public V2D_EnvelopeDouble(double x, double y) {
-        this(new V2D_PointDouble(x, y));
+    public V2D_EnvelopeDouble(V2D_FiniteGeometryDouble... gs) {
+        V2D_EnvelopeDouble e = new V2D_EnvelopeDouble(gs[0]);
+        for (V2D_FiniteGeometryDouble g: gs) {
+            e = e.union(new V2D_EnvelopeDouble(g));
+        }
+        this.offset = e.offset;
+        this.pts = e.pts;
+        this.xMax = e.xMax;
+        this.xMin = e.xMin;
+        this.yMax = e.yMax;
+        this.yMin = e.yMin;
     }
-
+    
     /**
      * Create a new instance.
      *
-     * @param xMin What {@link xMin} is set to.
-     * @param xMax What {@link xMax} is set to.
-     * @param yMin What {@link yMin} is set to.
-     * @param yMax What {@link yMax} is set to.
+     * @param g The geometry used to form the envelope.
      */
-    public V2D_EnvelopeDouble(
-            double xMin, double xMax,
-            double yMin, double yMax) {
-        this(new V2D_PointDouble(xMin, yMin),
-                new V2D_PointDouble(xMax, yMax));
+    public V2D_EnvelopeDouble(V2D_FiniteGeometryDouble g) {
+        this(g.getPoints());
     }
 
     /**
@@ -172,7 +199,7 @@ public class V2D_EnvelopeDouble implements Serializable {
      * @return {@code true} if this intersects with {@code e}.
      */
     public boolean isIntersectedBy(V2D_EnvelopeDouble e) {
-        return isIntersectedBy(e, 0.0d);
+        return isIntersectedBy(e, 0d);
     }
 
     /**
@@ -199,7 +226,7 @@ public class V2D_EnvelopeDouble implements Serializable {
      */
     public static boolean isBeyond(V2D_EnvelopeDouble e1,
             V2D_EnvelopeDouble e2) {
-        return isBeyond(e1, e2, 0.0d);
+        return isBeyond(e1, e2, 0d);
     }
 
     /**
@@ -350,6 +377,42 @@ public class V2D_EnvelopeDouble implements Serializable {
         return pts;
     }
 
+    /**
+     * Return the left of the envelope as a line segment.
+     */
+    public V2D_LineSegmentDouble getLeft() {
+        return new V2D_LineSegmentDouble(
+            new V2D_PointDouble(getXMin(), getYMin()),
+            new V2D_PointDouble(getXMin(), getYMax()));
+    }
+    
+    /**
+     * Return the left of the envelope as a line segment.
+     */
+    public V2D_LineSegmentDouble getRight() {
+        return new V2D_LineSegmentDouble(
+            new V2D_PointDouble(getXMax(), getYMin()),
+            new V2D_PointDouble(getXMax(), getYMax()));
+    }
+    
+    /**
+     * Return the top of the envelope as a line segment.
+     */
+    public V2D_LineSegmentDouble getTop() {
+        return new V2D_LineSegmentDouble(
+            new V2D_PointDouble(getXMin(), getYMax()),
+            new V2D_PointDouble(getXMax(), getYMax()));
+    }
+    
+    /**
+     * Return the bottom of the envelope as a line segment.
+     */
+    public V2D_LineSegmentDouble getBottom() {
+        return new V2D_LineSegmentDouble(
+            new V2D_PointDouble(getXMin(), getYMin()),
+            new V2D_PointDouble(getXMax(), getYMin()));
+    }
+    
     /**
      * A collection method to add l to ls iff there is not already an l in ls.
      *

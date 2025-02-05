@@ -63,4 +63,20 @@ public class V2D_GeometricsDouble {
         }
         return r;
     }
+    
+    /**
+     * @param ps The points the index of the min of which is returned.
+     * @return The minimum point (smallest y, smallest x).
+     */
+    public static int getMin(V2D_PointDouble... ps) {
+        int r = 0;
+        V2D_PointDouble max = ps[0];
+        double n = ps.length;
+        for (int i = 1; i < n; i ++) {
+            if (ps[i].compareTo(max) == -1) {
+                r = i;
+            }
+        }
+        return r;
+    }
 }

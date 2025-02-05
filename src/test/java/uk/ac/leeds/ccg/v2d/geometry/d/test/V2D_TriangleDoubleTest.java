@@ -584,6 +584,14 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
                 new V2D_PointDouble(0d, 50d),
                 new V2D_PointDouble(-25d, 0d),
                 new V2D_PointDouble(0d, -50d)));
+//        expected.add(new V2D_TriangleDouble(
+//                new V2D_PointDouble(-25d, 0d),
+//                new V2D_PointDouble(0d, 50d),
+//                new V2D_PointDouble(25d, 0d)));
+//        expected.add(new V2D_TriangleDouble(
+//                new V2D_PointDouble(-25d, 0d),
+//                new V2D_PointDouble(25d, 0d),
+//                new V2D_PointDouble(0d, -50d)));
         // Calculate the intersection
         // We are expecting a convex hull with 4 points that can be tested to 
         // see if they are made up of the two triangles as expected.
@@ -615,6 +623,22 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
                 new V2D_PointDouble(-10d, -30d),
                 new V2D_PointDouble(-10d, 30d),
                 new V2D_PointDouble(-20d, 0)));
+//        expected.add(new V2D_TriangleDouble(
+//                new V2D_PointDouble(-20d, 0d),
+//                new V2D_PointDouble(-10d, 30d),
+//                new V2D_PointDouble(20d, 0d)));
+//        expected.add(new V2D_TriangleDouble(
+//                new V2D_PointDouble(-20d, 0d),
+//                new V2D_PointDouble(20d, 0d),
+//                new V2D_PointDouble(10d, 30d)));
+//        expected.add(new V2D_TriangleDouble(
+//                new V2D_PointDouble(-20d, 0d),
+//                new V2D_PointDouble(10d, 30d),
+//                new V2D_PointDouble(-10d, -30d)));
+//        expected.add(new V2D_TriangleDouble(
+//                new V2D_PointDouble(-20d, 0d),
+//                new V2D_PointDouble(-10d, -30d),
+//                new V2D_PointDouble(10d, -30d)));
         // Calculate the intersection
         // Expecting a convex hull with 6 points that can be tested to 
         // see if they are made up of the four triangles as expected.

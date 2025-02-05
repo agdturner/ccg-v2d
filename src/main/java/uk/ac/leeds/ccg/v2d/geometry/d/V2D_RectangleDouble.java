@@ -23,11 +23,11 @@ import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
  * angled quadrilateral. The four corners are the points
  * {@link #p}, {@link #q}, {@link #r} and {@link #s}. The following depicts a
  * rectangle {@code
- q  *-----* r
-    |   / |
-    |  /  | 
-    | /   |
-  p *-----* s
+ * q  *-----* r
+ * |   / |
+ * |  /  |
+ * | /   |
+ * p *-----* s
  * }
  * The angles PQR, QRS, RSP, SPQ are all 90 degrees or Pi/2 radians.
  *
@@ -50,7 +50,7 @@ public class V2D_RectangleDouble extends V2D_FiniteGeometryDouble {
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param r Another rectangle.
      */
     public V2D_RectangleDouble(V2D_RectangleDouble r) {
@@ -78,7 +78,8 @@ public class V2D_RectangleDouble extends V2D_FiniteGeometryDouble {
     /**
      * Creates a new instance.
      *
-     * @param p Used to initialise {@link #offset}, {@link #pqr} and {@link #rsp}.
+     * @param p Used to initialise {@link #offset}, {@link #pqr} and
+     * {@link #rsp}.
      * @param q Used to initialise {@link #pqr} and {@link #rsp}.
      * @param r Used to initialise {@link #pqr} and {@link #rsp}.
      * @param s Used to initialise {@link #rsp}.
@@ -143,14 +144,14 @@ public class V2D_RectangleDouble extends V2D_FiniteGeometryDouble {
     public V2D_TriangleDouble getPQR() {
         return pqr;
     }
-    
+
     /**
      * @return {@link #rsp}.
      */
     public V2D_TriangleDouble getRSP() {
         return rsp;
     }
-    
+
     /**
      * @return {@link #p} with {@link #offset} applied.
      */
@@ -182,22 +183,65 @@ public class V2D_RectangleDouble extends V2D_FiniteGeometryDouble {
     @Override
     public V2D_EnvelopeDouble getEnvelope() {
         if (en == null) {
-            en = rsp.getEnvelope().union(pqr.getEnvelope());
+            en = getRSP().getEnvelope().union(getPQR().getEnvelope());
         }
         return en;
     }
 
     /**
-     * @param pt The point to intersect with.
+     * @param pt The point to test for intersect with.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
      * @return A point or line segment.
      */
     public boolean isIntersectedBy(V2D_PointDouble pt, double epsilon) {
-        if (pqr.isIntersectedBy(pt, epsilon)) {
+        if (getPQR().isIntersectedBy(pt, epsilon)) {
             return true;
         } else {
-            return rsp.isIntersectedBy(pt, epsilon);
+            return getRSP().isIntersectedBy(pt, epsilon);
+        }
+    }
+    
+    /**
+     * @param l The line segment to test for intersect with.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return A point or line segment.
+     */
+    public boolean isIntersectedBy(V2D_LineSegmentDouble l, double epsilon) {
+        if (getPQR().isIntersectedBy(l, epsilon)) {
+            return true;
+        } else {
+            return getRSP().isIntersectedBy(l, epsilon);
+        }
+    }
+    
+    /**
+     * @param ls The line segments to test for intersection.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return True iff there is an intersection.
+     */
+    public boolean isIntersectedBy(double epsilon, V2D_LineSegmentDouble... ls) {
+        for (V2D_LineSegmentDouble l : ls) {
+            if (isIntersectedBy(l, epsilon)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param t The triangle segment to test for intersect with.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return A point or line segment.
+     */
+    public boolean isIntersectedBy(V2D_TriangleDouble t, double epsilon) {
+        if (pqr.isIntersectedBy(t, epsilon)) {
+            return true;
+        } else {
+            return rsp.isIntersectedBy(t, epsilon);
         }
     }
 
@@ -223,9 +267,9 @@ public class V2D_RectangleDouble extends V2D_FiniteGeometryDouble {
      */
     public V2D_FiniteGeometryDouble getIntersection(V2D_LineDouble l,
             double epsilon) {
-            V2D_FiniteGeometryDouble pqri = pqr.getIntersection(l, epsilon);
-            V2D_FiniteGeometryDouble rspi = rsp.getIntersection(l, epsilon);
-            return join(epsilon, pqri, rspi);
+        V2D_FiniteGeometryDouble pqri = pqr.getIntersection(l, epsilon);
+        V2D_FiniteGeometryDouble rspi = rsp.getIntersection(l, epsilon);
+        return join(epsilon, pqri, rspi);
     }
 
     private V2D_FiniteGeometryDouble join(double epsilon,
@@ -267,9 +311,9 @@ public class V2D_RectangleDouble extends V2D_FiniteGeometryDouble {
      */
     public V2D_FiniteGeometryDouble getIntersection(V2D_LineSegmentDouble l,
             double epsilon) {
-            V2D_FiniteGeometryDouble pqri = pqr.getIntersection(l, epsilon);
-            V2D_FiniteGeometryDouble rspi = rsp.getIntersection(l, epsilon);
-            return join(epsilon, pqri, rspi);
+        V2D_FiniteGeometryDouble pqri = pqr.getIntersection(l, epsilon);
+        V2D_FiniteGeometryDouble rspi = rsp.getIntersection(l, epsilon);
+        return join(epsilon, pqri, rspi);
     }
 
     public double getPerimeter() {
@@ -316,7 +360,7 @@ public class V2D_RectangleDouble extends V2D_FiniteGeometryDouble {
         pqr.translate(v);
         rsp.translate(v);
     }
-    
+
     @Override
     public V2D_RectangleDouble rotate(V2D_PointDouble pt, double theta,
             double epsilon) {
@@ -343,7 +387,7 @@ public class V2D_RectangleDouble extends V2D_FiniteGeometryDouble {
      * The intersection could be: null, a point, a line segment, a triangle, or
      * a convex hull (with 4, 5, 6 or 7 sides).
      *
-     * @param t The triangle intersect with this.
+     * @param t The triangle to intersect with this.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
      * @return The intersection between {@code t} and {@code this} or
@@ -351,32 +395,48 @@ public class V2D_RectangleDouble extends V2D_FiniteGeometryDouble {
      */
     public V2D_FiniteGeometryDouble getIntersection(V2D_TriangleDouble t,
             double epsilon) {
-            V2D_FiniteGeometryDouble pqrit = pqr.getIntersection(t, epsilon);
-            V2D_FiniteGeometryDouble rspit = rsp.getIntersection(t, epsilon);
-            if (pqrit == null) {
-                return rspit;
-            } else if (pqrit instanceof V2D_PointDouble) {
-                if (rspit == null) {
-                    return pqrit;
-                } else {
-                    return rspit;
-                }
-            } else if (pqrit instanceof V2D_LineSegmentDouble) {
-                if (rspit == null) {
-                    return pqrit;
-                } else {
-                    return rspit;
-                }
+        V2D_FiniteGeometryDouble pqrit = pqr.getIntersection(t, epsilon);
+        V2D_FiniteGeometryDouble rspit = rsp.getIntersection(t, epsilon);
+        if (pqrit == null) {
+            return rspit;
+        } else if (pqrit instanceof V2D_PointDouble) {
+            if (rspit == null) {
+                return pqrit;
             } else {
-                if (rspit == null) {
-                    return pqrit;
-                }
-                V2D_PointDouble[] pqritps = pqrit.getPoints();
-                V2D_PointDouble[] rspitps = rspit.getPoints();
-                V2D_PointDouble[] pts = Arrays.copyOf(pqritps, pqritps.length + rspitps.length);
-                System.arraycopy(rspitps, 0, pts, pqritps.length, rspitps.length);
-                return V2D_ConvexHullDouble.getGeometry(epsilon, pts);
+                return rspit;
             }
+        } else if (pqrit instanceof V2D_LineSegmentDouble) {
+            if (rspit == null) {
+                return pqrit;
+            } else {
+                return rspit;
+            }
+        } else {
+            if (rspit == null) {
+                return pqrit;
+            }
+            V2D_PointDouble[] pqritps = pqrit.getPoints();
+            V2D_PointDouble[] rspitps = rspit.getPoints();
+            V2D_PointDouble[] pts = Arrays.copyOf(pqritps, pqritps.length + rspitps.length);
+            System.arraycopy(rspitps, 0, pts, pqritps.length, rspitps.length);
+            return V2D_ConvexHullDouble.getGeometry(epsilon, pts);
+        }
+    }
+    
+    /**
+     * Computes and returns the intersection between {@code this} and {@code t}.
+     * The intersection could be: null, a point, a line segment, a triangle, or
+     * a convex hull (with 4, 5, 6 or 7 sides).
+     *
+     * @param ch The convex hull to intersect with this.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return The intersection between {@code t} and {@code this} or
+     * {@code null} if there is no intersection.
+     */
+    public V2D_FiniteGeometryDouble getIntersection(V2D_ConvexHullDouble ch,
+            double epsilon) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     /**
@@ -539,7 +599,7 @@ public class V2D_RectangleDouble extends V2D_FiniteGeometryDouble {
         }
         return false;
     }
-    
+
     @Override
     public boolean isIntersectedBy(V2D_EnvelopeDouble aabb, double epsilon) {
         if (pqr.isIntersectedBy(aabb, epsilon)) {

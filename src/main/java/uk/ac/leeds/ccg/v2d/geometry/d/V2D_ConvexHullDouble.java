@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
 import uk.ac.leeds.ccg.v2d.geometrics.d.V2D_GeometricsDouble;
 import uk.ac.leeds.ccg.v2d.geometrics.d.V2D_SortByAngleDouble;
@@ -88,6 +89,31 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
         this(epsilon, V2D_TriangleDouble.getPoints(triangles));
     }
 
+//    /**
+//     * Create a new instance.
+//     *
+//     * @param epsilon The tolerance within which two vectors are regarded as
+//     * equal.
+//     * @param points A non-empty list of points in a plane given by n.
+//     */
+//    public V2D_ConvexHullDouble(double epsilon, V2D_PointDouble... points) {
+//        super();
+//        ArrayList<V2D_PointDouble> uniquePoints = V2D_PointDouble.getUnique(Arrays.asList(points), epsilon);
+//        V2D_PointDouble[] up = new V2D_PointDouble[uniquePoints.size()];
+//        up = uniquePoints.toArray(up);
+//        V2D_PointDouble max = up[V2D_GeometricsDouble.getMax(up)];
+//        V2D_PointDouble centroid = V2D_GeometricsDouble.getCentroid(up);
+//        V2D_SortByAngleDouble sbc = new V2D_SortByAngleDouble(centroid, max);
+//        Arrays.sort(up, sbc);
+    ////        System.out.println("After sorting");
+////        for (int i = 0; i < up.length; i++) {
+////            System.out.println("i=" + i);
+////            System.out.println(up[i].toStringSimple(""));
+////        }
+//        this.points = new ArrayList<>(Arrays.asList(up));
+//        this.triangles = new ArrayList<>();
+//    }
+    
     /**
      * Create a new instance.
      *
@@ -97,20 +123,36 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
      */
     public V2D_ConvexHullDouble(double epsilon, V2D_PointDouble... points) {
         super();
+        ArrayList<V2D_PointDouble> h = new ArrayList<>();
         ArrayList<V2D_PointDouble> uniquePoints = V2D_PointDouble.getUnique(Arrays.asList(points), epsilon);
-        V2D_PointDouble[] up = new V2D_PointDouble[uniquePoints.size()];
-        up = uniquePoints.toArray(up);
-        V2D_PointDouble max = up[V2D_GeometricsDouble.getMax(up)];
-        V2D_PointDouble centroid = V2D_GeometricsDouble.getCentroid(up);
-        V2D_SortByAngleDouble sbc = new V2D_SortByAngleDouble(centroid, max);
-        Arrays.sort(up, sbc);
-//        System.out.println("After sorting");
-//        for (int i = 0; i < up.length; i++) {
-//            System.out.println("i=" + i);
-//            System.out.println(up[i].toStringSimple(""));
-//        }
-        this.points = new ArrayList<>(Arrays.asList(up));
+        uniquePoints.sort(V2D_PointDouble::compareTo);
+        // Compute convex hull
+        // https://rosettacode.org/wiki/Convex_hull#Java
+        // lower hull
+        for (V2D_PointDouble pt : uniquePoints) {
+            while (h.size() >= 2 && !ccw(h.get(h.size() - 2), h.get(h.size() - 1), pt)) {
+                h.remove(h.size() - 1);
+            }
+            h.add(pt);
+        }
+        // upper hull
+        int t = h.size() + 1;
+        for (int i = uniquePoints.size() - 1; i >= 0; i--) {
+            V2D_PointDouble pt = uniquePoints.get(i);
+            while (h.size() >= t && !ccw(h.get(h.size() - 2), h.get(h.size() - 1), pt)) {
+                h.remove(h.size() - 1);
+            }
+            h.add(pt);
+        }
+        this.points = V2D_PointDouble.getUnique(h, epsilon);
         this.triangles = new ArrayList<>();
+    }
+
+    // ccw returns true if the three points make a counter-clockwise turn
+    private static boolean ccw(V2D_PointDouble a, V2D_PointDouble b, V2D_PointDouble c) {
+        double ax = a.getX();
+        double ay = a.getY();
+        return ((b.getX() - ax) * (c.getY() - ay)) > ((b.getY() - ay) * (c.getX() - ax));
     }
 
     /**
@@ -123,7 +165,7 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
     public V2D_ConvexHullDouble(V2D_ConvexHullDouble ch, double epsilon) {
         this(epsilon, V2D_FiniteGeometryDouble.getPoints(ch));
     }
-    
+
     /**
      * Create a new instance.
      *
@@ -288,13 +330,109 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
         // Check envelopes intersect.
         if (getEnvelope().isIntersectedBy(pt)) {
             // Check point is in a triangle
-            for (var t : triangles) {
-                //if (t.isIntersectedBy(pt, epsilon)) {
-                if (t.isAligned(pt, epsilon)) {
+            for (var t : getTriangles()) {
+                if (t.isIntersectedBy(pt, epsilon)) {
+                    //if (t.isAligned(pt, epsilon)) {
                     return true;
                 }
             }
         }
+        return false;
+    }
+
+    /**
+     * Identify if this is intersected by point {@code p}.
+     *
+     * @param l The line segment to test for intersection with.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff the geometry is intersected by {@code p}.
+     */
+    public boolean isIntersectedBy(V2D_LineSegmentDouble l, double epsilon) {
+        // Check envelopes intersect.
+        if(getEnvelope().isIntersectedBy(l.getEnvelope())) {
+        //if (l.isIntersectedBy(getEnvelope(), epsilon)) {
+            for (V2D_TriangleDouble t : getTriangles()) {
+                if (t.isIntersectedBy(l, epsilon)) {
+                    return true;
+                }
+            }
+        //}
+        }
+        return false;
+    }
+
+    /**
+     * Identify if this is intersected by point {@code p}.
+     *
+     * @param t The triangle to test for intersection with.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff the geometry is intersected by {@code p}.
+     */
+    public boolean isIntersectedBy(V2D_TriangleDouble t, double epsilon) {
+        // Check envelopes intersect.
+        if (t.isIntersectedBy(getEnvelope(), epsilon)) {
+            if (isIntersectedBy(t.getEnvelope(), epsilon)) {
+                for (V2D_TriangleDouble tt : getTriangles()) {
+                    if (tt.isIntersectedBy(t, epsilon)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Identify if this is intersected by point {@code p}.
+     *
+     * @param r The rectangle to test for intersection with.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff the geometry is intersected by {@code p}.
+     */
+    public boolean isIntersectedBy(V2D_RectangleDouble r, double epsilon) {
+        // Check envelopes intersect.
+        if (r.isIntersectedBy(getEnvelope(), epsilon)) {
+            if (isIntersectedBy(r.getEnvelope(), epsilon)) {
+                for (V2D_TriangleDouble t : getTriangles()) {
+                    if (r.isIntersectedBy(t, epsilon)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Identify if this is intersected by point {@code p}.
+     *
+     * @param ch The convex hull to test for intersection with.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff the geometry is intersected by {@code ch.
+     */
+    public boolean isIntersectedBy(V2D_ConvexHullDouble ch, double epsilon) {
+        // Check envelopes intersect.
+        //if (ch.getEnvelope().isIntersectedBy(getEnvelope())) {
+        if (ch.isIntersectedBy(en, epsilon)) {
+            if (isIntersectedBy(ch.en, epsilon)) {
+//                // Could do the two ways in parallel for speed up...
+//                for (V2D_TriangleDouble t : ch.getTriangles()) {
+//                    if (isIntersectedBy(t, epsilon)) {
+//                        return true;
+//                    }
+//                }
+                for (V2D_TriangleDouble t : getTriangles()) {
+                    if (ch.isIntersectedBy(t, epsilon)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        //}
         return false;
     }
 
@@ -305,7 +443,7 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
      * @return {@code true} if the point is aligned with any of the parts.
      */
     protected boolean isAligned(V2D_PointDouble pt, double epsilon) {
-        for (V2D_TriangleDouble triangle : triangles) {
+        for (V2D_TriangleDouble triangle : getTriangles()) {
             if (triangle.isAligned(pt, epsilon)) {
                 return true;
             }
@@ -337,7 +475,7 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
      */
     public double getArea() {
         double sum = 0d;
-        for (var t : triangles) {
+        for (var t : getTriangles()) {
             sum = sum + t.getArea();
         }
         return sum;
@@ -409,7 +547,7 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
 
     @Override
     public V2D_ConvexHullDouble rotateN(V2D_PointDouble pt, double theta, double epsilon) {
-        V2D_TriangleDouble[] rts = new V2D_TriangleDouble[triangles.size()];
+        V2D_TriangleDouble[] rts = new V2D_TriangleDouble[getTriangles().size()];
         for (int i = 0; i < triangles.size(); i++) {
             rts[0] = triangles.get(i).rotateN(pt, theta, epsilon);
         }
@@ -513,7 +651,14 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
 
     @Override
     public boolean isIntersectedBy(V2D_EnvelopeDouble aabb, double epsilon) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (getEnvelope().isIntersectedBy(aabb, epsilon)) {
+            for (V2D_TriangleDouble t : getTriangles()) {
+                if (t.isIntersectedBy(aabb, epsilon)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 //
 //    /**

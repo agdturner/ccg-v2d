@@ -70,10 +70,10 @@ public class V2D_LineSegmentDoubleTest extends V2D_TestDouble {
                             l= offset=V2D_VectorDouble(dx=0.0, dy=0.0),
                             p=V2D_PointDouble(offset=V2D_VectorDouble(dx=0.0, dy=0.0), rel=V2D_VectorDouble(dx=0.0, dy=0.0)),
                             v= V2D_VectorDouble(dx=1.0, dy=0.0),
-                            q=dx=1.0, dy=0.0
+                            q=offset=V2D_VectorDouble(dx=0.0, dy=0.0), rel=V2D_VectorDouble(dx=1.0, dy=0.0)
                            )""";
         String result = instance.toString();
-        //System.out.println(result);
+        System.out.println(result);
         assertTrue(expResult.equalsIgnoreCase(result));
     }
 

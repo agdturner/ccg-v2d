@@ -286,30 +286,21 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of getRSP method, of class V2D_RectangleDouble.
+     * Test of isIntersectedBy method, of class V2D_RectangleDouble.
      */
     @Test
-    public void testGetRSP() {
-        System.out.println("getRSP");
-        // No test
-    }
-
-    /**
-     * Test of getPQR method, of class V2D_RectangleDouble.
-     */
-    @Test
-    public void testGetPQR() {
-        System.out.println("getPQR");
-        // No test
-    }
-
-    /**
-     * Test of isIntersectedBy0 method, of class V2D_RectangleDouble.
-     */
-    @Test
-    public void testIsIntersectedBy0() {
-        System.out.println("isIntersectedBy0");
-        // No test
+    public void testIsIntersectedBy_V2D_LineSegmentDouble_double() {
+        System.out.println("isIntersectedBy");
+        double epsilon = 1d / 10000000d;
+        V2D_RectangleDouble r = new V2D_RectangleDouble(
+                new V2D_PointDouble(-30, -22),
+                new V2D_PointDouble(-30, -21),
+                new V2D_PointDouble(-29, -21),
+                new V2D_PointDouble(-29, -22));
+        V2D_LineSegmentDouble l = new V2D_LineSegmentDouble(
+                new V2D_PointDouble(-30, -30),
+                new V2D_PointDouble(-20, 0));
+        assertTrue(!r.isIntersectedBy(l, epsilon));
     }
 
     /**
