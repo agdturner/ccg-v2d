@@ -15,9 +15,8 @@ There are two main implementations in the library that are distinguished by the 
 - Please see the [POM](https://github.com/agdturner/ccg-v2d/blob/master/pom.xml) for details.
 
 ## Development plans/ideas
-- Develop more comprehensive unit tests.
-- Improve documentation.
-- Extend functionality and representations.
+- Add functionality for clipping.
+- Add functionality for merging.
 - Make a versioned release on Maven Central.
 
 ## Development history
@@ -31,5 +30,5 @@ There are two main implementations in the library that are distinguished by the 
 - [APACHE LICENSE, VERSION 2.0](https://www.apache.org/licenses/LICENSE-2.0)
 
 ## Acknowledgements and thanks
-- The [University of Leeds](http://www.leeds.ac.uk) and externally funded research grants have supported the development of this library.
+- The [University of Leeds](http://www.leeds.ac.uk) and some externally funded research grants have supported the development of libraries dependencies.
 - Thank you Eric for the [BigMath](https://github.com/eobermuhlner/big-math) library.
