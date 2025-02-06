@@ -203,6 +203,49 @@ public class V2D_Rectangle extends V2D_FiniteGeometry {
             return rsp.isIntersectedBy(pt, oom, rm);
         }
     }
+    
+    /**
+     * @param l The line segment to test for intersect with.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return A point or line segment.
+     */
+    public boolean isIntersectedBy(V2D_LineSegment l, int oom, RoundingMode rm) {
+        if (getPQR().isIntersectedBy(l, oom, rm)) {
+            return true;
+        } else {
+            return getRSP().isIntersectedBy(l, oom, rm);
+        }
+    }
+    
+    /**
+     * @param ls The line segments to test for intersection.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return True iff there is an intersection.
+     */
+    public boolean isIntersectedBy(int oom, RoundingMode rm, V2D_LineSegment... ls) {
+        for (V2D_LineSegment l : ls) {
+            if (isIntersectedBy(l, oom, rm)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * @param t The triangle segment to test for intersect with.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return A point or line segment.
+     */
+    public boolean isIntersectedBy(V2D_Triangle t, int oom, RoundingMode rm) {
+        if (pqr.isIntersectedBy(t, oom, rm)) {
+            return true;
+        } else {
+            return rsp.isIntersectedBy(t, oom, rm);
+        }
+    }
 
     /**
      * @return The line segment from {@link #r} to {@link #s}.

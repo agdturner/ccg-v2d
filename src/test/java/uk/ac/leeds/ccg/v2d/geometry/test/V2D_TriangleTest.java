@@ -620,21 +620,37 @@ public class V2D_TriangleTest extends V2D_Test {
         t1 = t0.rotate(origin, theta, bd, oom, rm);
         expected = new ArrayList<>();
         expected.add(new V2D_Triangle(
+                new V2D_Point(-10d, -30d),
                 new V2D_Point(10d, -30d),
+                new V2D_Point(20d, 0d), oom, rm));
+        expected.add(new V2D_Triangle(
+                new V2D_Point(-10d, -30d),
                 new V2D_Point(20d, 0d),
                 new V2D_Point(10d, 30d), oom, rm));
         expected.add(new V2D_Triangle(
-                new V2D_Point(10d, -30d),
+                new V2D_Point(-10d, -30d),
                 new V2D_Point(10d, 30d),
                 new V2D_Point(-10d, 30d), oom, rm));
         expected.add(new V2D_Triangle(
-                new V2D_Point(10d, -30d),
-                new V2D_Point(-10d, 30d),
-                new V2D_Point(-20d, 0d), oom, rm));
-        expected.add(new V2D_Triangle(
                 new V2D_Point(-10d, -30d),
-                new V2D_Point(-20d, 0d),
-                new V2D_Point(10d, -30d), oom, rm));
+                new V2D_Point(-10d, 30d),
+                new V2D_Point(-20d, 0), oom, rm));
+//        expected.add(new V2D_Triangle(
+//                new V2D_Point(10d, -30d),
+//                new V2D_Point(20d, 0d),
+//                new V2D_Point(10d, 30d), oom, rm));
+//        expected.add(new V2D_Triangle(
+//                new V2D_Point(10d, -30d),
+//                new V2D_Point(10d, 30d),
+//                new V2D_Point(-10d, 30d), oom, rm));
+//        expected.add(new V2D_Triangle(
+//                new V2D_Point(10d, -30d),
+//                new V2D_Point(-10d, 30d),
+//                new V2D_Point(-20d, 0d), oom, rm));
+//        expected.add(new V2D_Triangle(
+//                new V2D_Point(-10d, -30d),
+//                new V2D_Point(-20d, 0d),
+//                new V2D_Point(10d, -30d), oom, rm));
         // Calculate the intersection
         // Expecting a convex hull with 6 points that can be tested to 
         // see if they are made up of the four triangles as expected.

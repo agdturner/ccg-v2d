@@ -19,14 +19,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
-import uk.ac.leeds.ccg.v2d.geometrics.d.V2D_GeometricsDouble;
-import uk.ac.leeds.ccg.v2d.geometrics.d.V2D_SortByAngleDouble;
 
 /**
  * A class for representing convex hulls. These are a special types of polygon:
- * They have no holes and all the angles are convex. Below is a basic algorithm
+ * They have no holes and are convex. Below is a basic algorithm
  * for generating a convex hull from a set of coplanar points known as the
  * "quick hull" algorithm (see
  * <a href="https://en.wikipedia.org/wiki/Quickhull">
@@ -105,11 +102,6 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
 //        V2D_PointDouble centroid = V2D_GeometricsDouble.getCentroid(up);
 //        V2D_SortByAngleDouble sbc = new V2D_SortByAngleDouble(centroid, max);
 //        Arrays.sort(up, sbc);
-    ////        System.out.println("After sorting");
-////        for (int i = 0; i < up.length; i++) {
-////            System.out.println("i=" + i);
-////            System.out.println(up[i].toStringSimple(""));
-////        }
 //        this.points = new ArrayList<>(Arrays.asList(up));
 //        this.triangles = new ArrayList<>();
 //    }
@@ -251,39 +243,6 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
             }
         }
         return true;
-
-//        /**
-//         * The triangularisation of this and i might be different and the number
-//         * of points in each might be different, but the areas they define might
-//         * be the same. For the areas to be the same each triangle from each
-//         * must either be in the other, or it must fully intersect the other.
-//         */
-//        if (!this.triangles.get(0).pl.equals(i.triangles.get(0).pl)) {
-//            // If they are not in the same plane, they are unequal!
-//            return false;
-//        }
-//        for (V2D_Triangle t : triangles) {
-//            V2D_Geometry g = i.getIntersection(t);
-//            if (g instanceof V2D_Triangle gt) {
-//                if (!t.equals(gt)) {
-    
-
-    ////                    System.out.println(gt);
-////                    System.out.println(t);
-////                    t.equals(gt);
-//                    return false;
-//                }
-//            }
-//        }
-//        for (V2D_Triangle t : i.triangles) {
-//            V2D_Geometry g = getIntersection(t);
-//            if (g instanceof V2D_Triangle gt) {
-//                if (!t.equals(gt)) {
-//                    return false;
-//                }
-//            }
-//        }
-//        return true;
     }
 
     @Override
@@ -310,9 +269,9 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
         if (isTriangle()) {
             return new V2D_TriangleDouble(points.get(0), points.get(1),
                     points.get(2));
-//        } else if (isRectangle(epsilon)) {
-//            return new V2D_RectangleDouble(points.get(0), points.get(2),
-//                    points.get(1), points.get(3));
+        } else if (isRectangle(epsilon)) {
+            return new V2D_RectangleDouble(points.get(0), points.get(2),
+                    points.get(1), points.get(3));
         } else {
             return this;
         }
@@ -749,20 +708,21 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
         return points.size() == 3;
     }
 
-//    /**
-//     * If all {@link #triangles} form a single triangle return true
-//     *
-//     * @param epsilon The tolerance within which two vectors are regarded as
-//     * equal.
-//     * @return {@code true} iff this is a rectangle.
-//     */
-//    public boolean isRectangle(double epsilon) {
-//        if (points.size() == 4) {
-//            return V2D_RectangleDouble.isRectangle(points.get(0),
-//                    points.get(1), points.get(2), points.get(3), epsilon);
-//        }
-//        return false;
-//    }
+    /**
+     * If all {@link #triangles} form a single triangle return true
+     *
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff this is a rectangle.
+     */
+    public boolean isRectangle(double epsilon) {
+        if (points.size() == 4) {
+            return V2D_RectangleDouble.isRectangle(points.get(0),
+                    points.get(1), points.get(2), points.get(3), epsilon);
+        }
+        return false;
+    }
+    
 //    /**
 //     * Clips this using t.
 //     *

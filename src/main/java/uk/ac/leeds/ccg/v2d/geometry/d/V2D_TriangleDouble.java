@@ -589,7 +589,8 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
         V2D_FiniteGeometryDouble g = getIntersection(r.l, epsilon);
         if (g == null) {
             return null;
-        } else if (g instanceof V2D_PointDouble gp) {
+        }
+        if (g instanceof V2D_PointDouble gp) {
 //            if (r.getPl().isOnSameSide(gp, r.l.getQ(), epsilon)) {
 //                return gp;
 //            } else {
@@ -600,7 +601,7 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
             } else {
                 return null;
             }
-        } else {
+        }
             V2D_LineSegmentDouble ls = (V2D_LineSegmentDouble) g;
             V2D_PointDouble lsp = ls.getP();
             V2D_PointDouble lsq = ls.getQ();
@@ -630,7 +631,6 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
 //                    throw new RuntimeException();
 //                }
 //            }
-        }
     }
 
     /**

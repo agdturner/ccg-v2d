@@ -17,15 +17,7 @@ package uk.ac.leeds.ccg.v2d.geometry;
 
 import ch.obermuhlner.math.big.BigRational;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Objects;
-import uk.ac.leeds.ccg.math.arithmetic.Math_BigRational;
-import uk.ac.leeds.ccg.v2d.geometry.V2D_FiniteGeometry;
-import uk.ac.leeds.ccg.v2d.geometry.V2D_Geometry;
-import uk.ac.leeds.ccg.v2d.geometry.V2D_Line;
-import uk.ac.leeds.ccg.v2d.geometry.V2D_LineSegment;
-import uk.ac.leeds.ccg.v2d.geometry.V2D_Point;
 
 /**
  * An envelope contains all the extreme values with respect to the X and Y axes.
@@ -83,7 +75,12 @@ public class V2D_Envelope implements Serializable {
      * The left edge.
      */
     protected V2D_FiniteGeometry l;
-
+    
+    /**
+     * For storing all the corner points. These are in order: lb, lt, rt, rb.
+     */
+    protected V2D_Point[] pts;
+    
     /**
      * @param e An envelop.
      */
@@ -97,7 +94,38 @@ public class V2D_Envelope implements Serializable {
         b = e.b;
         l = e.l;
     }
+    
+    /**
+     * Create a new instance.
+     *
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @param gs The geometries used to form the envelope.
+     */
+    public V2D_Envelope(int oom, RoundingMode rm, V2D_FiniteGeometry... gs) {
+        V2D_Envelope e = new V2D_Envelope(gs[0], oom, rm);
+        for (V2D_FiniteGeometry g : gs) {
+            e = e.union(new V2D_Envelope(g, oom, rm), oom);
+        }
+        this.offset = e.offset;
+        this.pts = e.pts;
+        this.xMax = e.xMax;
+        this.xMin = e.xMin;
+        this.yMax = e.yMax;
+        this.yMin = e.yMin;
+    }
 
+    /**
+     * Create a new instance.
+     *
+     * @param g The geometry used to form the envelope.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     */
+    public V2D_Envelope(V2D_FiniteGeometry g, int oom, RoundingMode rm) {
+        this(oom, g.getPoints(oom, rm));
+    }
+    
     /**
      * @param oom The Order of Magnitude for the precision.
      * @param points The points used to form the envelop.
@@ -105,13 +133,14 @@ public class V2D_Envelope implements Serializable {
      */
     public V2D_Envelope(int oom, V2D_Point... points) {
         //offset = points[0].offset;
-        offset = V2D_Vector.ZERO;
+        //offset = V2D_Vector.ZERO;
         int len = points.length;
         switch (len) {
             case 0 ->
                 throw new RuntimeException("Cannot create envelope from an empty "
                         + "collection of points.");
             case 1 -> {
+                offset = V2D_Vector.ZERO;
                 xMin = points[0].getX(oom, RoundingMode.FLOOR);
                 xMax = points[0].getX(oom, RoundingMode.CEILING);
                 yMin = points[0].getY(oom, RoundingMode.FLOOR);
@@ -122,6 +151,7 @@ public class V2D_Envelope implements Serializable {
                 b = t;
             }
             default -> {
+                offset = V2D_Vector.ZERO;
                 BigRational xmin = points[0].getX(oom, RoundingMode.FLOOR);
                 BigRational xmax = points[0].getX(oom, RoundingMode.CEILING);
                 BigRational ymin = points[0].getY(oom, RoundingMode.FLOOR);
