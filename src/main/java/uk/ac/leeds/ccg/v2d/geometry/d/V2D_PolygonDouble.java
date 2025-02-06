@@ -42,7 +42,7 @@ public class V2D_PolygonDouble extends V2D_FiniteGeometryDouble {
     /**
      * The collection of holes.
      */
-    protected final ArrayList<V2D_ConvexHullDouble> holes;
+    protected final ArrayList<V2D_PolygonDouble> holes;
 
     /**
      * The collection of edges.
@@ -62,13 +62,34 @@ public class V2D_PolygonDouble extends V2D_FiniteGeometryDouble {
 
     /**
      * Create a new instance.
+     *
+     * @param ch The convex hull.
+     */
+    public V2D_PolygonDouble(V2D_ConvexHullDouble ch) {
+        this(ch, new ArrayList<>(), new ArrayList<>());
+    }
+
+    /**
+     * Create a new instance.
+     *
+     * @param ch The convex hull.
+     * @param holes The holes.
+     */
+    public V2D_PolygonDouble(V2D_ConvexHullDouble ch,
+            ArrayList<V2D_PolygonDouble> holes) {
+        this(ch, new ArrayList<>(), holes);
+    }
+
+    /**
+     * Create a new instance.
+     *
      * @param ch The convex hull.
      * @param edges The edges.
-     * @param holes A potentially empty list of V2D_ConvexHullDouble holes.
+     * @param holes A potentially empty list of holes.
      */
-    public V2D_PolygonDouble(V2D_ConvexHullDouble ch, 
+    public V2D_PolygonDouble(V2D_ConvexHullDouble ch,
             ArrayList<V2D_LineSegmentDouble> edges,
-            ArrayList<V2D_ConvexHullDouble> holes) {
+            ArrayList<V2D_PolygonDouble> holes) {
         super();
         this.ch = ch;
         this.edges = edges;
@@ -84,7 +105,7 @@ public class V2D_PolygonDouble extends V2D_FiniteGeometryDouble {
         {
             if (holes != null) {
                 s += "\nHoles(\n";
-                Iterator<V2D_ConvexHullDouble> ite = holes.iterator();
+                Iterator<V2D_PolygonDouble> ite = holes.iterator();
                 s += ite.next().toString();
                 while (ite.hasNext()) {
                     s += ", " + ite.next();
@@ -115,16 +136,16 @@ public class V2D_PolygonDouble extends V2D_FiniteGeometryDouble {
         }
         return r;
     }
-    
+
     /**
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
      * @return A copy of {@link holes} with the given tolerance applied.
      */
-    public ArrayList<V2D_ConvexHullDouble> getHoles(double epsilon) {
-        ArrayList<V2D_ConvexHullDouble> r = new ArrayList<>();
-        for (V2D_ConvexHullDouble h : holes) {
-            r.add(new V2D_ConvexHullDouble(h, epsilon));
+    public ArrayList<V2D_PolygonDouble> getHoles(double epsilon) {
+        ArrayList<V2D_PolygonDouble> r = new ArrayList<>();
+        for (V2D_PolygonDouble h : holes) {
+            r.add(new V2D_PolygonDouble(h, epsilon));
         }
         return r;
     }
@@ -134,7 +155,7 @@ public class V2D_PolygonDouble extends V2D_FiniteGeometryDouble {
         V2D_PointDouble[] ePs = ch.getPoints();
         int np = ePs.length;
         for (var x : holes) {
-            np += x.points.size();
+            np += x.getPoints().length;
         }
         V2D_PointDouble[] r = new V2D_PointDouble[np];
         int i = 0;
@@ -143,7 +164,7 @@ public class V2D_PolygonDouble extends V2D_FiniteGeometryDouble {
             i++;
         }
         for (var h : holes) {
-            for (var p : h.points) {
+            for (var p : h.getPoints()) {
                 r[i] = p;
                 i++;
             }
@@ -170,7 +191,7 @@ public class V2D_PolygonDouble extends V2D_FiniteGeometryDouble {
     public boolean isIntersectedBy(V2D_PointDouble pt, double epsilon) {
         if (getEnvelope().isIntersectedBy(pt)) {
             if (ch.isIntersectedBy(pt, epsilon)) {
-                for (V2D_ConvexHullDouble h : holes) {
+                for (V2D_PolygonDouble h : holes) {
                     if (h.isIntersectedBy(pt, epsilon)) {
                         return false;
                     }
@@ -194,14 +215,18 @@ public class V2D_PolygonDouble extends V2D_FiniteGeometryDouble {
         // Check envelopes intersect.
         if (l.getEnvelope().isIntersectedBy(en, epsilon)) {
             if (l.isIntersectedBy(en, epsilon)) {
-                // First check holes
-                for (V2D_ConvexHullDouble h : holes) {
-                    if (h.isIntersectedBy(l, epsilon)) {
-                        return false;
-                    }
-                }
                 for (V2D_TriangleDouble t : ch.triangles) {
                     if (t.isIntersectedBy(l, epsilon)) {
+                        /**
+                         * If the lineSegment is fully in a hole, then it does
+                         * not intersect otherwise it might! At the moment this 
+                         * implementation biases holes!
+                         */
+                        for (V2D_PolygonDouble h : holes) {
+                            if (h.isIntersectedBy(l, epsilon)) {
+                                return false;
+                            }
+                        }
                         return true;
                     }
                 }
@@ -225,7 +250,12 @@ public class V2D_PolygonDouble extends V2D_FiniteGeometryDouble {
         if (t.isIntersectedBy(getEnvelope(), epsilon)) {
             if (isIntersectedBy(t.getEnvelope(), epsilon)) {
                 if (getConvexHull(epsilon).isIntersectedBy(t, epsilon)) {
-                    for (V2D_ConvexHullDouble h : getHoles(epsilon)) {
+                    for (V2D_PolygonDouble h : getHoles(epsilon)) {
+                        /**
+                         * If the triangle is fully in a hole, then it does
+                         * not intersect otherwise it might! At the moment this 
+                         * implementation biases holes!
+                         */
                         if (h.isIntersectedBy(t, epsilon)) {
                             return false;
                         }
@@ -236,7 +266,7 @@ public class V2D_PolygonDouble extends V2D_FiniteGeometryDouble {
         }
         return false;
     }
-    
+
     /**
      * Identify if this is intersected by point {@code p}.
      *
@@ -274,7 +304,12 @@ public class V2D_PolygonDouble extends V2D_FiniteGeometryDouble {
         if (ch.isIntersectedBy(getEnvelope(), epsilon)) {
             if (isIntersectedBy(ch.getEnvelope(), epsilon)) {
                 if (getConvexHull(epsilon).isIntersectedBy(ch, epsilon)) {
-                    for (V2D_ConvexHullDouble h : getHoles(epsilon)) {
+                    for (V2D_PolygonDouble h : getHoles(epsilon)) {
+                        /**
+                         * If the convex hull is fully in a hole, then it does
+                         * not intersect otherwise it might! At the moment this 
+                         * implementation biases holes!
+                         */
                         if (h.isIntersectedBy(ch, epsilon)) {
                             return false;
                         }
@@ -343,8 +378,8 @@ public class V2D_PolygonDouble extends V2D_FiniteGeometryDouble {
     @Override
     public V2D_PolygonDouble rotateN(V2D_PointDouble pt, double theta, double epsilon) {
         V2D_ConvexHullDouble rch = getConvexHull(epsilon).rotate(pt, theta, epsilon);
-        ArrayList<V2D_ConvexHullDouble> rholes = new ArrayList<>();
-        ArrayList<V2D_ConvexHullDouble> tholes = getHoles(epsilon);
+        ArrayList<V2D_PolygonDouble> rholes = new ArrayList<>();
+        ArrayList<V2D_PolygonDouble> tholes = getHoles(epsilon);
         if (tholes != null) {
             for (int i = 0; i < tholes.size(); i++) {
                 rholes.add(tholes.get(i).rotate(pt, theta, epsilon));
