@@ -1541,7 +1541,7 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
                 }
             }
             V2D_FiniteGeometryDouble t = aabb.getTop();
-            if (l instanceof V2D_LineSegmentDouble tl) {
+            if (t instanceof V2D_LineSegmentDouble tl) {
                 if (isIntersectedBy(tl, epsilon)) {
                     return true;
                 }

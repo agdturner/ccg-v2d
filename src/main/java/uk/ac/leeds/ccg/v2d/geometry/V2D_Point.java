@@ -473,7 +473,7 @@ public class V2D_Point extends V2D_FiniteGeometry {
     /**
      * @param p The point to compare this with
      * @param oom The Order of Magnitude for the precision.
-     * @param rm The RoundingMode.
+     * @param rm The RoundingMode for any rounding.
      * @return 1 if this is greater than p, -1 if this is less than p, and 0 
      * otherwise for the given oom and rm. 
      */

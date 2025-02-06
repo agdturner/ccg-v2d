@@ -2000,7 +2000,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
                 }
             }
             V2D_FiniteGeometry t = aabb.getTop(oom, rm);
-            if (l instanceof V2D_LineSegment tl) {
+            if (t instanceof V2D_LineSegment tl) {
                 if (isIntersectedBy(tl, oom, rm)) {
                     return true;
                 }
