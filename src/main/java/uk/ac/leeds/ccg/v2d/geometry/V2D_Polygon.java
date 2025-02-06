@@ -43,14 +43,25 @@ public class V2D_Polygon extends V2D_FiniteGeometry {
     protected final V2D_ConvexHull ch;
 
     /**
-     * The collection of holes.
+     * The collection of externalEdges.
      */
-    protected final ArrayList<V2D_Polygon> holes;
+    protected final ArrayList<V2D_LineSegment> externalEdges;
 
     /**
-     * The collection of edges.
+     * The collection of externalHoles.
      */
-    protected final ArrayList<V2D_LineSegment> edges;
+    protected final ArrayList<V2D_Polygon> externalHoles;
+
+    /**
+     * /**
+     * The collection of internalEdges.
+     */
+    protected final ArrayList<V2D_LineSegment> internalEdges;
+
+    /**
+     * The collection of internalHoles.
+     */
+    protected final ArrayList<V2D_Polygon> internalHoles;
 
     /**
      * Create a new instance.
@@ -60,13 +71,15 @@ public class V2D_Polygon extends V2D_FiniteGeometry {
      * @param rm The RoundingMode.
      */
     public V2D_Polygon(V2D_Polygon p, int oom, RoundingMode rm) {
-        this(p.getConvexHull(oom, rm), p.getEdges(), p.getHoles(oom, rm));
+        this(p.getConvexHull(oom, rm), p.getExternalEdges(),
+                p.getExternalHoles(oom, rm), p.getInternalEdges(),
+                p.getInternalHoles(oom, rm));
     }
-    
+
     /**
      * Create a new instance.
      *
-     * @param ch The convex hull.
+     * @param ch What {@link #ch} is set to.
      */
     public V2D_Polygon(V2D_ConvexHull ch) {
         this(ch, new ArrayList<>(), new ArrayList<>());
@@ -75,27 +88,47 @@ public class V2D_Polygon extends V2D_FiniteGeometry {
     /**
      * Create a new instance.
      *
-     * @param ch The convex hull.
-     * @param holes The holes.
+     * @param ch What {@link #ch} is set to.
+     * @param externalHoles What {@link #externalHoles} is set to.
      */
-    public V2D_Polygon(V2D_ConvexHull ch, ArrayList<V2D_Polygon> holes) {
-        this(ch, new ArrayList<>(), holes);
+    public V2D_Polygon(V2D_ConvexHull ch, ArrayList<V2D_Polygon> externalHoles) {
+        this(ch, new ArrayList<>(), externalHoles);
     }
 
     /**
      * Create a new instance.
      *
-     * @param ch The convex hull.
-     * @param edges The edges.
-     * @param holes A potentially empty list of V2D_ConvexHull holes.
+     * @param ch What {@link #ch} is set to.
+     * @param externalEdges What {@link #externalEdges} is set to.
+     * @param externalHoles What {@link #externalHoles} is set to.
      */
     public V2D_Polygon(V2D_ConvexHull ch,
-            ArrayList<V2D_LineSegment> edges,
-            ArrayList<V2D_Polygon> holes) {
+            ArrayList<V2D_LineSegment> externalEdges,
+            ArrayList<V2D_Polygon> externalHoles) {
+        this(ch, externalEdges, externalHoles, new ArrayList<>(),
+                new ArrayList<>());
+    }
+
+    /**
+     * Create a new instance.
+     *
+     * @param ch What {@link #ch} is set to.
+     * @param externalEdges What {@link #externalEdges} is set to.
+     * @param externalHoles What {@link #externalHoles} is set to.
+     * @param internalEdges What {@link #internalEdges} is set to.
+     * @param internalHoles What {@link #internalHoles} is set to.
+     */
+    public V2D_Polygon(V2D_ConvexHull ch,
+            ArrayList<V2D_LineSegment> externalEdges,
+            ArrayList<V2D_Polygon> externalHoles,
+            ArrayList<V2D_LineSegment> internalEdges,
+            ArrayList<V2D_Polygon> internalHoles) {
         super();
         this.ch = ch;
-        this.edges = edges;
-        this.holes = holes;
+        this.externalEdges = externalEdges;
+        this.externalHoles = externalHoles;
+        this.internalEdges = internalEdges;
+        this.internalHoles = internalHoles;
     }
 
     @Override
@@ -105,9 +138,42 @@ public class V2D_Polygon extends V2D_FiniteGeometry {
             s += "\nCh(\n" + ch.toString() + "\n)\n";
         }
         {
-            if (holes != null) {
-                s += "\nHoles(\n";
-                Iterator<V2D_Polygon> ite = holes.iterator();
+            if (externalEdges != null) {
+                s += "\nexternalEdges(\n";
+                Iterator<V2D_LineSegment> ite = externalEdges.iterator();
+                s += ite.next().toString();
+                while (ite.hasNext()) {
+                    s += ", " + ite.next();
+                }
+                s += "\n)\n";
+            }
+        }
+        {
+            if (externalHoles != null) {
+                s += "\nexternalHoles(\n";
+                Iterator<V2D_Polygon> ite = externalHoles.iterator();
+                s += ite.next().toString();
+                while (ite.hasNext()) {
+                    s += ", " + ite.next();
+                }
+                s += "\n)\n";
+            }
+        }
+        {
+            if (internalEdges != null) {
+                s += "\ninternalEdges(\n";
+                Iterator<V2D_LineSegment> ite = internalEdges.iterator();
+                s += ite.next().toString();
+                while (ite.hasNext()) {
+                    s += ", " + ite.next();
+                }
+                s += "\n)\n";
+            }
+        }
+        {
+            if (internalHoles != null) {
+                s += "\ninternalHoles(\n";
+                Iterator<V2D_Polygon> ite = internalHoles.iterator();
                 s += ite.next().toString();
                 while (ite.hasNext()) {
                     s += ", " + ite.next();
@@ -129,11 +195,22 @@ public class V2D_Polygon extends V2D_FiniteGeometry {
     }
 
     /**
-     * @return A copy of {@link holes} with the given tolerance applied.
+     * @return A copy of {@link externalEdges}.
      */
-    public ArrayList<V2D_LineSegment> getEdges() {
+    public ArrayList<V2D_LineSegment> getExternalEdges() {
         ArrayList<V2D_LineSegment> r = new ArrayList<>();
-        for (V2D_LineSegment l : edges) {
+        for (V2D_LineSegment l : externalEdges) {
+            r.add(new V2D_LineSegment(l));
+        }
+        return r;
+    }
+
+    /**
+     * @return A copy of {@link internalEdges}.
+     */
+    public ArrayList<V2D_LineSegment> getInternalEdges() {
+        ArrayList<V2D_LineSegment> r = new ArrayList<>();
+        for (V2D_LineSegment l : internalEdges) {
             r.add(new V2D_LineSegment(l));
         }
         return r;
@@ -142,11 +219,24 @@ public class V2D_Polygon extends V2D_FiniteGeometry {
     /**
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
-     * @return A copy of {@link holes} with the given tolerance applied.
+     * @return A copy of {@link externalHoles} with the given tolerance applied.
      */
-    public ArrayList<V2D_Polygon> getHoles(int oom, RoundingMode rm) {
+    public ArrayList<V2D_Polygon> getExternalHoles(int oom, RoundingMode rm) {
         ArrayList<V2D_Polygon> r = new ArrayList<>();
-        for (V2D_Polygon h : holes) {
+        for (V2D_Polygon h : externalHoles) {
+            r.add(new V2D_Polygon(h, oom, rm));
+        }
+        return r;
+    }
+
+    /**
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return A copy of {@link internalHoles} with the given tolerance applied.
+     */
+    public ArrayList<V2D_Polygon> getInternalHoles(int oom, RoundingMode rm) {
+        ArrayList<V2D_Polygon> r = new ArrayList<>();
+        for (V2D_Polygon h : internalHoles) {
             r.add(new V2D_Polygon(h, oom, rm));
         }
         return r;
@@ -156,7 +246,7 @@ public class V2D_Polygon extends V2D_FiniteGeometry {
     public V2D_Point[] getPoints(int oom, RoundingMode rm) {
         V2D_Point[] ePs = ch.getPoints(oom, rm);
         int np = ePs.length;
-        for (var x : holes) {
+        for (var x : externalHoles) {
             np += x.getPoints(oom, rm).length;
         }
         V2D_Point[] r = new V2D_Point[np];
@@ -165,7 +255,7 @@ public class V2D_Polygon extends V2D_FiniteGeometry {
             r[i] = p;
             i++;
         }
-        for (var h : holes) {
+        for (var h : externalHoles) {
             for (var p : h.getPoints(oom, rm)) {
                 r[i] = p;
                 i++;
@@ -193,7 +283,12 @@ public class V2D_Polygon extends V2D_FiniteGeometry {
     public boolean isIntersectedBy(V2D_Point pt, int oom, RoundingMode rm) {
         if (getEnvelope(oom, rm).isIntersectedBy(pt, oom, rm)) {
             if (ch.isIntersectedBy(pt, oom, rm)) {
-                for (V2D_Polygon h : holes) {
+                for (V2D_Polygon h : externalHoles) {
+                    if (h.isIntersectedBy(pt, oom, rm)) {
+                        return false;
+                    }
+                }
+                for (V2D_Polygon h : internalHoles) {
                     if (h.isIntersectedBy(pt, oom, rm)) {
                         return false;
                     }
@@ -224,7 +319,12 @@ public class V2D_Polygon extends V2D_FiniteGeometry {
                          * not intersect otherwise it might! At the moment this
                          * implementation biases holes!
                          */
-                        for (V2D_Polygon h : holes) {
+                        for (V2D_Polygon h : externalHoles) {
+                            if (h.isIntersectedBy(l, oom, rm)) {
+                                return false;
+                            }
+                        }
+                        for (V2D_Polygon h : internalHoles) {
                             if (h.isIntersectedBy(l, oom, rm)) {
                                 return false;
                             }
@@ -252,12 +352,17 @@ public class V2D_Polygon extends V2D_FiniteGeometry {
         if (t.isIntersectedBy(getEnvelope(oom, rm), oom, rm)) {
             if (isIntersectedBy(t.getEnvelope(oom, rm), oom, rm)) {
                 if (getConvexHull(oom, rm).isIntersectedBy(t, oom, rm)) {
-                        /**
-                         * If the lineSegment is fully in a hole, then it does
-                         * not intersect otherwise it might! At the moment this
-                         * implementation biases holes!
-                         */
-                    for (V2D_Polygon h : getHoles(oom, rm)) {
+                    /**
+                     * If the lineSegment is fully in a hole, then it does not
+                     * intersect otherwise it might! At the moment this
+                     * implementation biases holes!
+                     */
+                    for (V2D_Polygon h : externalHoles) {
+                        if (h.isIntersectedBy(t, oom, rm)) {
+                            return false;
+                        }
+                    }
+                    for (V2D_Polygon h : internalHoles) {
                         if (h.isIntersectedBy(t, oom, rm)) {
                             return false;
                         }
@@ -306,12 +411,17 @@ public class V2D_Polygon extends V2D_FiniteGeometry {
         if (ch.isIntersectedBy(getEnvelope(oom, rm), oom, rm)) {
             if (isIntersectedBy(ch.getEnvelope(oom, rm), oom, rm)) {
                 if (getConvexHull(oom, rm).isIntersectedBy(ch, oom, rm)) {
-                    for (V2D_Polygon h : getHoles(oom, rm)) {
-                        /**
-                         * If the convex hull is fully in a hole, then it does
-                         * not intersect otherwise it might! At the moment this 
-                         * implementation biases holes!
-                         */
+                    /**
+                     * If the convex hull is fully in a hole, then it does not
+                     * intersect otherwise it might! At the moment this
+                     * implementation biases holes!
+                     */
+                    for (V2D_Polygon h : externalHoles) {
+                        if (h.isIntersectedBy(ch, oom, rm)) {
+                            return false;
+                        }
+                    }
+                    for (V2D_Polygon h : internalHoles) {
                         if (h.isIntersectedBy(ch, oom, rm)) {
                             return false;
                         }
@@ -359,9 +469,24 @@ public class V2D_Polygon extends V2D_FiniteGeometry {
             en.translate(v, oom, rm);
         }
         ch.translate(v, oom, rm);
-        if (holes != null) {
-            for (int i = 0; i < holes.size(); i++) {
-                holes.get(i).translate(v, oom, rm);
+        if (externalEdges != null) {
+            for (int i = 0; i < externalEdges.size(); i++) {
+                externalEdges.get(i).translate(v, oom, rm);
+            }
+        }
+        if (externalHoles != null) {
+            for (int i = 0; i < externalHoles.size(); i++) {
+                externalHoles.get(i).translate(v, oom, rm);
+            }
+        }
+        if (internalEdges != null) {
+            for (int i = 0; i < internalEdges.size(); i++) {
+                internalEdges.get(i).translate(v, oom, rm);
+            }
+        }
+        if (internalHoles != null) {
+            for (int i = 0; i < internalHoles.size(); i++) {
+                internalHoles.get(i).translate(v, oom, rm);
             }
         }
     }
@@ -371,7 +496,9 @@ public class V2D_Polygon extends V2D_FiniteGeometry {
             Math_BigDecimal bd, int oom, RoundingMode rm) {
         theta = Math_AngleBigRational.normalise(theta, bd, oom, rm);
         if (theta.compareTo(BigRational.ZERO) == 0) {
-            return new V2D_Polygon(getConvexHull(oom, rm), getEdges(), getHoles(oom, rm));
+            return new V2D_Polygon(getConvexHull(oom, rm), getExternalEdges(), 
+                    getExternalHoles(oom, rm), getInternalEdges(), 
+                    getInternalHoles(oom, rm));
         } else {
             return rotateN(pt, theta, bd, oom, rm);
         }
@@ -381,21 +508,31 @@ public class V2D_Polygon extends V2D_FiniteGeometry {
     public V2D_Polygon rotateN(V2D_Point pt, BigRational theta,
             Math_BigDecimal bd, int oom, RoundingMode rm) {
         V2D_ConvexHull rch = getConvexHull(oom, rm).rotate(pt, theta, bd, oom, rm);
-        ArrayList<V2D_Polygon> rholes = new ArrayList<>();
-        ArrayList<V2D_Polygon> tholes = getHoles(oom, rm);
-        if (tholes != null) {
-            for (int i = 0; i < tholes.size(); i++) {
-                rholes.add(tholes.get(i).rotate(pt, theta, bd, oom, rm));
+        ArrayList<V2D_LineSegment> rExternalEdges = new ArrayList<>();
+        if (externalEdges != null) {
+            for (int i = 0; i < externalEdges.size(); i++) {
+                rExternalEdges.add(externalEdges.get(i).rotate(pt, theta, bd, oom, rm));
             }
         }
-        ArrayList<V2D_LineSegment> tedges = getEdges();
-        ArrayList<V2D_LineSegment> redges = new ArrayList<>();
-        if (tedges != null) {
-            for (int i = 0; i < tedges.size(); i++) {
-                redges.add(tedges.get(i).rotate(pt, theta, bd, oom, rm));
+        ArrayList<V2D_Polygon> rExternalHoles = new ArrayList<>();
+        if (externalHoles != null) {
+            for (int i = 0; i < externalHoles.size(); i++) {
+                rExternalHoles.add(externalHoles.get(i).rotate(pt, theta, bd, oom, rm));
             }
         }
-        return new V2D_Polygon(rch, redges, rholes);
+        ArrayList<V2D_LineSegment> rInternalEdges = new ArrayList<>();
+        if (internalEdges != null) {
+            for (int i = 0; i < internalEdges.size(); i++) {
+                rInternalEdges.add(internalEdges.get(i).rotate(pt, theta, bd, oom, rm));
+            }
+        }
+        ArrayList<V2D_Polygon> rInternalHoles = new ArrayList<>();
+        if (internalHoles != null) {
+            for (int i = 0; i < internalHoles.size(); i++) {
+                rInternalHoles.add(internalHoles.get(i).rotate(pt, theta, bd, oom, rm));
+            }
+        }
+        return new V2D_Polygon(rch, rExternalEdges, rExternalHoles, rInternalEdges, rInternalHoles);
     }
 
     @Override
