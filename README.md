@@ -1,6 +1,6 @@
 # [ccg-v2d](https://github.com/agdturner/ccg-v2d)
 
-A modularised Java [2D](https://en.wikipedia.org/wiki/Two-dimensional_space) Euclidean spatial vector geometry library.
+A modular [2D](https://en.wikipedia.org/wiki/Two-dimensional_space) Euclidean spatial vector geometry Java library.
 
 Spatial dimensions are defined by orthogonal coordinate axes X and Y that meet at the origin point <x,y> where the coordinates x=y=0.
 
