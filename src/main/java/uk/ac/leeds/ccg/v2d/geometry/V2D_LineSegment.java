@@ -751,7 +751,14 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
         if (isIntersectedBy(pt, oom, rm)) {
             return BigRational.ZERO;
         }
-        V2D_Point poi = l.getPointOfIntersection(pt, oom, rm);
+        
+        V2D_Point poi = null;
+        try {
+         poi = l.getPointOfIntersection(pt, oom, rm);
+        } catch (Exception e) {
+         poi = l.getPointOfIntersection(pt, oom, rm);
+            
+        }
         if (isAligned(poi, oom, rm)) {
             return poi.getDistanceSquared(pt, oom, rm);
         } else {

@@ -545,7 +545,7 @@ public class V2D_Line extends V2D_Geometry {
             int oom, RoundingMode rm) {
         if (isIntersectedBy(l, den, oom, rm)) {
             // Check for coincident lines
-            if (equals(l, oom, rm)) {
+            if (equals(l, oom -1, rm)) {
                 return l;
             }
             BigRational x1y2sy1x2 = ((x1.multiply(y2)).subtract(y1.multiply(x2)));

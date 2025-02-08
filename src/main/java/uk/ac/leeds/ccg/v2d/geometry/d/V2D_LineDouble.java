@@ -501,7 +501,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
             double y2, double y3, double y4) {
         if (isIntersectedBy(epsilon, l, den)) {
             // Check for coincident lines
-            if (equals(epsilon, l)) {
+            if (equals(epsilon / 10d, l)) {
                 return l;
             }
             double x1y2sy1x2 = (x1 * y2 - y1 * x2);
