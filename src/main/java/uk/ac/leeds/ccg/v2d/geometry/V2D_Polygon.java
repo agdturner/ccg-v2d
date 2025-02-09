@@ -139,46 +139,54 @@ public class V2D_Polygon extends V2D_FiniteGeometry {
         }
         {
             if (externalEdges != null) {
-                s += "\nexternalEdges(\n";
-                Iterator<V2D_LineSegment> ite = externalEdges.iterator();
-                s += ite.next().toString();
-                while (ite.hasNext()) {
-                    s += ", " + ite.next();
+                if (externalEdges.size() > 0) {
+                    s += "\nexternalEdges(\n";
+                    Iterator<V2D_LineSegment> ite = externalEdges.iterator();
+                    s += ite.next().toString();
+                    while (ite.hasNext()) {
+                        s += ", " + ite.next();
+                    }
+                    s += "\n)\n";
                 }
-                s += "\n)\n";
             }
         }
         {
             if (externalHoles != null) {
-                s += "\nexternalHoles(\n";
-                Iterator<V2D_Polygon> ite = externalHoles.iterator();
-                s += ite.next().toString();
-                while (ite.hasNext()) {
-                    s += ", " + ite.next();
+                if (externalHoles.size() > 0) {
+                    s += "\nexternalHoles(\n";
+                    Iterator<V2D_Polygon> ite = externalHoles.iterator();
+                    s += ite.next().toString();
+                    while (ite.hasNext()) {
+                        s += ", " + ite.next();
+                    }
+                    s += "\n)\n";
                 }
-                s += "\n)\n";
             }
         }
         {
             if (internalEdges != null) {
-                s += "\ninternalEdges(\n";
-                Iterator<V2D_LineSegment> ite = internalEdges.iterator();
-                s += ite.next().toString();
-                while (ite.hasNext()) {
-                    s += ", " + ite.next();
+                if (internalEdges.size() > 0) {
+                    s += "\ninternalEdges(\n";
+                    Iterator<V2D_LineSegment> ite = internalEdges.iterator();
+                    s += ite.next().toString();
+                    while (ite.hasNext()) {
+                        s += ", " + ite.next();
+                    }
+                    s += "\n)\n";
                 }
-                s += "\n)\n";
             }
         }
         {
             if (internalHoles != null) {
-                s += "\ninternalHoles(\n";
-                Iterator<V2D_Polygon> ite = internalHoles.iterator();
-                s += ite.next().toString();
-                while (ite.hasNext()) {
-                    s += ", " + ite.next();
+                if (internalHoles.size() > 0) {
+                    s += "\ninternalHoles(\n";
+                    Iterator<V2D_Polygon> ite = internalHoles.iterator();
+                    s += ite.next().toString();
+                    while (ite.hasNext()) {
+                        s += ", " + ite.next();
+                    }
+                    s += "\n)\n";
                 }
-                s += "\n)\n";
             }
         }
         s += "\n)";
@@ -496,8 +504,8 @@ public class V2D_Polygon extends V2D_FiniteGeometry {
             Math_BigDecimal bd, int oom, RoundingMode rm) {
         theta = Math_AngleBigRational.normalise(theta, bd, oom, rm);
         if (theta.compareTo(BigRational.ZERO) == 0) {
-            return new V2D_Polygon(getConvexHull(oom, rm), getExternalEdges(), 
-                    getExternalHoles(oom, rm), getInternalEdges(), 
+            return new V2D_Polygon(getConvexHull(oom, rm), getExternalEdges(),
+                    getExternalHoles(oom, rm), getInternalEdges(),
                     getInternalHoles(oom, rm));
         } else {
             return rotateN(pt, theta, bd, oom, rm);

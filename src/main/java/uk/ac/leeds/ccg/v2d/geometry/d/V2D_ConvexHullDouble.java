@@ -117,7 +117,8 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
         super();
         ArrayList<V2D_PointDouble> h = new ArrayList<>();
         ArrayList<V2D_PointDouble> uniquePoints = V2D_PointDouble.getUnique(Arrays.asList(points), epsilon);
-        uniquePoints.sort(V2D_PointDouble::compareTo);
+        //uniquePoints.sort(V2D_PointDouble::compareTo);
+        uniquePoints.sort((p1, p2) -> p1.compareTo(p2));
         // Compute convex hull
         // https://rosettacode.org/wiki/Convex_hull#Java
         // lower hull
