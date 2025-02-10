@@ -18,6 +18,7 @@ package uk.ac.leeds.ccg.v2d.geometry;
 import ch.obermuhlner.math.big.BigRational;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
@@ -249,7 +250,106 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
         }
         return false;
     }
+    
+    /**
+     * Identify if this contains pt.
+     *
+     * @param pt The point to test for containment.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} iff there is an intersection.
+     */
+    public boolean contains(V2D_Point pt, int oom, RoundingMode rm) {
+        if (isIntersectedBy(pt, oom, rm)) {
+            return !V2D_LineSegment.isIntersectedBy(oom, rm, pt, externalEdges.values());
+        }
+        return false;
+    }
 
+    /**
+     * Identify if this contains ls.
+     *
+     * @param ls The line segment to test for containment.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} iff there is an intersection.
+     */
+    public boolean contains(V2D_LineSegment ls, int oom, RoundingMode rm) {
+        if (contains(ls.getP(), oom, rm)) {
+            return contains(ls.getQ(oom, rm), oom, rm);
+        }
+        return false;
+    }
+
+    /**
+     * Identify if this contains t.
+     *
+     * @param t The triangle to test for containment.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} iff there is containment.
+     */
+    public boolean contains(V2D_Triangle t, int oom, RoundingMode rm) {
+        if (contains(t.getP(), oom, rm)) {
+            if (contains(t.getQ(), oom, rm)) {
+                return contains(t.getR(), oom, rm);
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Identify if this contains r.
+     *
+     * @param r The rectangle to test for containment.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} iff there is containment.
+     */
+    public boolean contains(V2D_Rectangle r, int oom, RoundingMode rm) {
+        if (contains(r.getP(), oom, rm)) {
+            if (contains(r.getQ(), oom, rm)) {
+                if (contains(r.getR(), oom, rm)) {
+                    return contains(r.getS(), oom, rm);
+                }
+            }
+        }
+        return false;
+    }
+            
+    /**
+     * Identify if this contains ch.
+     *
+     * @param ch The convex hull to test for containment.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} iff there is containment.
+     */
+    public boolean contains(V2D_ConvexHull ch, int oom, RoundingMode rm) {
+        if (isIntersectedBy(ch, oom, rm)) {
+            return Arrays.asList(ch.getPoints(oom, rm)).parallelStream().allMatch(x -> contains(x, oom, rm));
+        }
+        return false;
+    }
+
+    /**
+     * Identify if this contains the polygon.
+     *
+     * @param p The polygon to test for containment.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} iff {@code this} contains {@code p}.
+     */
+    public boolean contains(V2D_PolygonNoInternalHoles p, int oom, RoundingMode rm) {
+        if (isIntersectedBy(p, oom, rm)) {
+            if (p.externalEdges.values().parallelStream().anyMatch(x -> 
+                    V2D_LineSegment.isIntersectedBy(oom, rm, x, externalEdges.values()))) {
+                return false;
+            }
+        }
+        return false;
+    }
+    
     /**
      * Identify if this is intersected by l.
      *
@@ -272,9 +372,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
     }
 
     /**
-     * Identify if this is intersected by t. There is a boundary issue with
-     * this: The edge of the holes are regarded as non-intersecting and this
-     * might not bee desirable!
+     * Identify if this is intersected by t.
      *
      * @param t The triangle to test for intersection with.
      * @param oom The Order of Magnitude for the precision.
@@ -282,11 +380,22 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
      * @return {@code true} iff there is an intersection.
      */
     public boolean isIntersectedBy(V2D_Triangle t, int oom, RoundingMode rm) {
-        // Check envelopes intersect.
         if (t.isIntersectedBy(getEnvelope(oom, rm), oom, rm)) {
             if (isIntersectedBy(t.getEnvelope(oom, rm), oom, rm)) {
                 if (ch.isIntersectedBy(t, oom, rm)) {
-                    externalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(t, oom, rm));
+                    if (t.getExternalEdges(oom, rm).parallelStream().anyMatch(x -> 
+                            V2D_LineSegment.isIntersectedBy(oom, rm, x, externalEdges.values()))) {
+                        return true;
+                    }
+                    V2D_Point tp = t.getP();
+                    V2D_Point tq = t.getQ();
+                    V2D_Point tr = t.getR();
+                    if (externalHoles.values().parallelStream().anyMatch(x
+                            -> x.isIntersectedBy(tp, oom, rm)
+                            || x.isIntersectedBy(tq, oom, rm)
+                            || x.isIntersectedBy(tr, oom, rm))) {
+                        return true;
+                    }
                 }
             }
         }
@@ -331,6 +440,28 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
             if (isIntersectedBy(ch.getEnvelope(oom, rm), oom, rm)) {
                 if (this.ch.isIntersectedBy(ch, oom, rm)) {
                     externalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(ch, oom, rm));
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Identify if this is intersected by the polygon.
+     *
+     * @param p The convex hull to test for intersection with.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} iff this is intersected by {@code p}.
+     */
+    public boolean isIntersectedBy(V2D_PolygonNoInternalHoles p, int oom, RoundingMode rm) {
+        if (ch.isIntersectedBy(getEnvelope(oom, rm), oom, rm)) {
+            if (isIntersectedBy(ch.getEnvelope(oom, rm), oom, rm)) {
+                if (Arrays.asList(getPoints(oom, rm)).parallelStream().anyMatch(x -> p.isIntersectedBy(x, oom, rm))) {
+                    return true;
+                }
+                if (Arrays.asList(p.getPoints(oom, rm)).parallelStream().anyMatch(x -> isIntersectedBy(x, oom, rm))) {
+                    return true;
                 }
             }
         }

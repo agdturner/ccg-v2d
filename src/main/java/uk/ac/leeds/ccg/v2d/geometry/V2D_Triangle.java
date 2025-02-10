@@ -18,6 +18,8 @@ package uk.ac.leeds.ccg.v2d.geometry;
 import ch.obermuhlner.math.big.BigRational;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
@@ -532,6 +534,19 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
         re[1] = getQ();
         re[2] = getR();
         return re;
+    }
+    
+    /**
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return A collection of the external edges.
+     */
+    public Collection<V2D_LineSegment> getExternalEdges(int oom, RoundingMode rm) {
+        HashSet<V2D_LineSegment> r = new HashSet<>();
+        r.add(getPQ(oom, rm));
+        r.add(getQR(oom, rm));
+        r.add(getRP(oom, rm));
+        return r;
     }
 
     /**

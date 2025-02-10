@@ -16,6 +16,8 @@
 package uk.ac.leeds.ccg.v2d.geometry.d;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
@@ -290,6 +292,17 @@ public class V2D_TriangleDouble extends V2D_FiniteGeometryDouble {
         return re;
     }
 
+    /**
+     * @return A collection of the external edges.
+     */
+    public Collection<V2D_LineSegmentDouble> getExternalEdges() {
+        HashSet<V2D_LineSegmentDouble> r = new HashSet<>();
+        r.add(getPQ());
+        r.add(getQR());
+        r.add(getRP());
+        return r;
+    }
+    
     /**
      * @param pt The point to test for intersection.
      * @param epsilon The tolerance within which two vectors are regarded as

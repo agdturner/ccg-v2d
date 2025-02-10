@@ -16,12 +16,13 @@
 package uk.ac.leeds.ccg.v2d.geometry.d;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
 
 /**
- * For representing a polygon with no internal holes. External holes are similar 
+ * For representing a polygon with no internal holes. External holes are similar
  * polygons that share some part of an edge with the convex hull.
  *
  * @author Andy Turner
@@ -246,19 +247,101 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_FiniteGeometryDouble {
         }
         return false;
     }
-    
+
     /**
-     * Identify if this is intersected by pt.
+     * Identify if this contains pt.
      *
-     * @param pt The point to test for intersection with.
+     * @param pt The point to test for containment.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
      * @return {@code true} iff there is an intersection.
      */
-    public boolean isIntersectedBy(V2D_PointDouble pt, double epsilon) {
-        if (getEnvelope().isIntersectedBy(pt)) {
-            if (ch.isIntersectedBy(pt, epsilon)) {
-                externalHoles.values().parallelStream().anyMatch(x -> x.contains(pt, epsilon));
+    public boolean contains(V2D_PointDouble pt, double epsilon) {
+        if (isIntersectedBy(pt, epsilon)) {
+            return !V2D_LineSegmentDouble.isIntersectedBy(epsilon, pt, externalEdges.values());
+        }
+        return false;
+    }
+
+    /**
+     * Identify if this contains ls.
+     *
+     * @param ls The line segment to test for containment.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff there is an intersection.
+     */
+    public boolean contains(V2D_LineSegmentDouble ls, double epsilon) {
+        if (contains(ls.getP(), epsilon)) {
+            return contains(ls.getQ(), epsilon);
+        }
+        return false;
+    }
+
+    /**
+     * Identify if this contains t.
+     *
+     * @param t The triangle to test for containment.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff there is containment.
+     */
+    public boolean contains(V2D_TriangleDouble t, double epsilon) {
+        if (contains(t.getP(), epsilon)) {
+            if (contains(t.getQ(), epsilon)) {
+                return contains(t.getR(), epsilon);
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Identify if this contains r.
+     *
+     * @param r The rectangle to test for containment.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff there is containment.
+     */
+    public boolean contains(V2D_RectangleDouble r, double epsilon) {
+        if (contains(r.getP(), epsilon)) {
+            if (contains(r.getQ(), epsilon)) {
+                if (contains(r.getR(), epsilon)) {
+                    return contains(r.getS(), epsilon);
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Identify if this contains ch.
+     *
+     * @param ch The convex hull to test for containment.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff there is containment.
+     */
+    public boolean contains(V2D_ConvexHullDouble ch, double epsilon) {
+        if (isIntersectedBy(ch, epsilon)) {
+            return Arrays.asList(ch.getPoints()).parallelStream().allMatch(x -> contains(x, epsilon));
+        }
+        return false;
+    }
+
+    /**
+     * Identify if this contains the polygon.
+     *
+     * @param p The polygon to test for containment.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff {@code this} contains {@code p}.
+     */
+    public boolean contains(V2D_PolygonNoInternalHolesDouble p, double epsilon) {
+        if (isIntersectedBy(p, epsilon)) {
+            if (p.externalEdges.values().parallelStream().anyMatch(x -> 
+                    V2D_LineSegmentDouble.isIntersectedBy(epsilon, x, externalEdges.values()))) {
+                return false;
             }
         }
         return false;
@@ -270,7 +353,7 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_FiniteGeometryDouble {
      * @param l The line segment to test for intersection with.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
-     * @return {@code true} iff there is an intersection.
+     * @return {@code true} iff this is intersected by l.
      */
     public boolean isIntersectedBy(V2D_LineSegmentDouble l, double epsilon) {
         en = getEnvelope();
@@ -286,21 +369,30 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_FiniteGeometryDouble {
     }
 
     /**
-     * Identify if this is intersected by t. There is a boundary issue with
-     * this: The edge of the holes are regarded as non-intersecting and this
-     * might not bee desirable!
+     * Identify if this is intersected by the triangle.
      *
      * @param t The triangle to test for intersection with.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
-     * @return {@code true} iff there is an intersection.
+     * @return {@code true} iff this is intersected by {@code t}.
      */
     public boolean isIntersectedBy(V2D_TriangleDouble t, double epsilon) {
-        // Check envelopes intersect.
         if (t.isIntersectedBy(getEnvelope(), epsilon)) {
             if (isIntersectedBy(t.getEnvelope(), epsilon)) {
                 if (ch.isIntersectedBy(t, epsilon)) {
-                    externalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(t, epsilon));
+                    if (t.getExternalEdges().parallelStream().anyMatch(x -> 
+                            V2D_LineSegmentDouble.isIntersectedBy(epsilon, x, externalEdges.values()))) {
+                        return true;
+                    }
+                    V2D_PointDouble tp = t.getQ();
+                    V2D_PointDouble tq = t.getQ();
+                    V2D_PointDouble tr = t.getR();
+                    if (externalHoles.values().parallelStream().anyMatch(x
+                            -> x.isIntersectedBy(tp, epsilon)
+                            || x.isIntersectedBy(tq, epsilon)
+                            || x.isIntersectedBy(tr, epsilon))) {
+                        return true;
+                    }
                 }
             }
         }
@@ -308,12 +400,12 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_FiniteGeometryDouble {
     }
 
     /**
-     * Identify if this is intersected by point {@code p}.
+     * Identify if this is intersected by the rectangle.
      *
      * @param r The convex hull to test for intersection with.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
-     * @return {@code true} iff the geometry is intersected by {@code ch.
+     * @return {@code true} iff this is intersected by {@code r}.
      */
     public boolean isIntersectedBy(V2D_RectangleDouble r, double epsilon) {
         // Check envelopes intersect.
@@ -332,19 +424,40 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_FiniteGeometryDouble {
     }
 
     /**
-     * Identify if this is intersected by point {@code p}.
+     * Identify if this is intersected by the convex hull.
      *
      * @param ch The convex hull to test for intersection with.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
-     * @return {@code true} iff the geometry is intersected by {@code ch.
+     * @return {@code true} iff this is intersected by {@code ch}.
      */
     public boolean isIntersectedBy(V2D_ConvexHullDouble ch, double epsilon) {
-        // Check envelopes intersect.
         if (ch.isIntersectedBy(getEnvelope(), epsilon)) {
             if (isIntersectedBy(ch.getEnvelope(), epsilon)) {
                 if (this.ch.isIntersectedBy(ch, epsilon)) {
                     externalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(ch, epsilon));
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Identify if this is intersected by the polygon.
+     *
+     * @param p The convex hull to test for intersection with.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff this is intersected by {@code p}.
+     */
+    public boolean isIntersectedBy(V2D_PolygonNoInternalHolesDouble p, double epsilon) {
+        if (ch.isIntersectedBy(getEnvelope(), epsilon)) {
+            if (isIntersectedBy(ch.getEnvelope(), epsilon)) {
+                if (Arrays.asList(getPoints()).parallelStream().anyMatch(x -> p.isIntersectedBy(x, epsilon))) {
+                    return true;
+                }
+                if (Arrays.asList(p.getPoints()).parallelStream().anyMatch(x -> isIntersectedBy(x, epsilon))) {
+                    return true;
                 }
             }
         }
@@ -440,9 +553,10 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_FiniteGeometryDouble {
         }
         return false;
     }
-    
+
     /**
      * Adds an external hole and return its assigned id.
+     *
      * @param p
      * @return the id assigned to the external hole
      */
