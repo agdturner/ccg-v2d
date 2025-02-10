@@ -19,8 +19,8 @@ import ch.obermuhlner.math.big.BigRational;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
-import uk.ac.leeds.ccg.math.arithmetic.Math_BigRational;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
 import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
 
@@ -348,15 +348,63 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      */
     public boolean isIntersectedBy(V2D_Line l, int oom, RoundingMode rm) {
         if (this.l.isIntersectedBy(l, oom, rm)) {
-            if (getIntersection(l, oom, rm) == null) {
-                return false;
-            } else {
-                return true;
-            }
+            return getIntersection(l, oom, rm) != null;
         }
         return false;
     }
+    
+    /**
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @param l A line to test for with any of the lines in ls.
+     * @param ls The other lines to test for intersection with l.
+     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     */
+    public static boolean isIntersectedBy(int oom, RoundingMode rm, V2D_LineSegment l, V2D_LineSegment... ls) {
+        return isIntersectedBy(oom, rm, l, Arrays.asList(ls));
+//        for (var l2: ls) {
+//            if (l2.isIntersectedBy(l, oom, rm)) {
+//                return true;
+//            }
+//        }
+//        return false;
+    }
+    
+    /**
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @param l A line to test for with any of the lines in ls.
+     * @param ls The other lines to test for intersection with l.
+     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     */
+    public static boolean isIntersectedBy(int oom, RoundingMode rm, 
+            V2D_LineSegment l, Collection<V2D_LineSegment> ls) {
+        return ls.parallelStream().anyMatch(x -> x.isIntersectedBy(l, oom, rm));
+    }
+    
+    /**
+     * @param p A point to test for intersection.
+     * @param ls The lines to test for intersection with p.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     */
+    public static boolean isIntersectedBy(int oom, RoundingMode rm, V2D_Point p, 
+            V2D_LineSegment... ls) {
+        return isIntersectedBy(oom, rm, p, Arrays.asList(ls));
+    }
 
+    /**
+     * @param p A point to test for intersection.
+     * @param ls The lines to test for intersection with p.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     */
+    public static boolean isIntersectedBy(int oom, RoundingMode rm, V2D_Point p, Collection<V2D_LineSegment> ls) {
+        return ls.parallelStream().anyMatch(x -> x.isIntersectedBy(p, oom, rm));
+    }
+    
     /**
      * @param l A line segment to test for intersection.
      * @param oom The Order of Magnitude for the precision.
@@ -366,11 +414,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
     public boolean isIntersectedBy(V2D_LineSegment l, int oom, RoundingMode rm) {
         //if (l.isIntersectedBy(getEnvelope(oom, rm), epsilon)) {
         //    if (isIntersectedBy(l.getEnvelope(oom, rm), epsilon)) {
-        if (getIntersection(l, oom, rm) == null) {
-            return false;
-        } else {
-            return true;
-        }
+        return getIntersection(l, oom, rm) != null;
         //    }
         //}
         //return false;
@@ -751,14 +795,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
         if (isIntersectedBy(pt, oom, rm)) {
             return BigRational.ZERO;
         }
-        
-        V2D_Point poi = null;
-        try {
-         poi = l.getPointOfIntersection(pt, oom, rm);
-        } catch (Exception e) {
-         poi = l.getPointOfIntersection(pt, oom, rm);
-            
-        }
+        V2D_Point poi = l.getPointOfIntersection(pt, oom, rm);
         if (isAligned(poi, oom, rm)) {
             return poi.getDistanceSquared(pt, oom, rm);
         } else {
@@ -991,6 +1028,8 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * Calculates the shortest line segment which all line segments intersect
      * with.
      *
+     * @param oom The Order of Magnitude for the precision of the result.
+     * @param rm The RoundingMode if rounding is needed.
      * @param ls Collinear line segments.
      * @return The shortest line segment which all the line segment points in ls
      * intersect with.
@@ -1453,13 +1492,13 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
             if (aabb.isIntersectedBy(q, oom, rm)) {
                 return true;
             }
-            V2D_FiniteGeometry l = aabb.getLeft(oom, rm);
-            if (l instanceof V2D_LineSegment ll) {
+            V2D_FiniteGeometry left = aabb.getLeft(oom, rm);
+            if (left instanceof V2D_LineSegment ll) {
                 if (isIntersectedBy(ll, oom, rm)) {
                     return true;
                 }
             } else {
-                if (isIntersectedBy((V2D_Point) l, oom, rm)) {
+                if (isIntersectedBy((V2D_Point) left, oom, rm)) {
                     return true;
                 }
             }
@@ -1474,7 +1513,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
                 }
             }
             V2D_FiniteGeometry t = aabb.getTop(oom, rm);
-            if (l instanceof V2D_LineSegment tl) {
+            if (left instanceof V2D_LineSegment tl) {
                 if (isIntersectedBy(tl, oom, rm)) {
                     return true;
                 }

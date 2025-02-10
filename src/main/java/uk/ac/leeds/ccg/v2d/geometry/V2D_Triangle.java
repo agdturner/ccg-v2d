@@ -26,8 +26,7 @@ import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
 import uk.ac.leeds.ccg.v2d.geometry.light.V2D_VTriangle;
 
 /**
- * For representing and processing triangles in 2D. A triangle has a non-zero
- * area. The corner points are {@link #p}, {@link #q} and {@link #r}.
+ * For representing and processing triangles in 2D.
  *
  * @author Andy Turner
  * @version 1.0
@@ -39,17 +38,17 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
     /**
      * Defines one of the corners of the triangle.
      */
-    public V2D_Vector p;
+    public V2D_Vector pv;
 
     /**
      * Defines one of the corners of the triangle.
      */
-    public V2D_Vector q;
+    public V2D_Vector qv;
 
     /**
      * Defines one of the corners of the triangle.
      */
-    public V2D_Vector r;
+    public V2D_Vector rv;
 
     /**
      * The order of magnitude used for the calculation of {@link #pl}.
@@ -110,46 +109,10 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
     RoundingMode rprm;
 
 //    /**
-//     * For storing the plane aligning with {@link #pq} in the direction of the
-//     * plane normal and with a normal orthogonal to the plane normal.
-//     */
-//    private V2D_Plane pqpl;
-//
-//    /**
-//     * For storing the plane aligning with {@link #qr} in the direction of the
-//     * plane normal and with a normal orthogonal to the plane normal.
-//     */
-//    private V2D_Plane qrpl;
-//
-//    /**
-//     * For storing the plane aligning with {@link #rp} in the direction of the
-//     * plane normal and with a normal orthogonal to the plane normal.
-//     */
-//    private V2D_Plane rppl;
-//
-//    /**
-//     * For storing the midpoint between {@link #getP()} and {@link #getQ()} at
-//     * a given Order of Magnitude and RoundingMode precision.
-//     */
-//    private V2D_Point mpq;
-//
-//    /**
-//     * For storing the midpoint between {@link #getQ()} and {@link #getR()} at
-//     * a given Order of Magnitude and RoundingMode precision.
-//     */
-//    private V2D_Point mqr;
-//
-//    /**
-//     * For storing the midpoint between {@link #getR()} and {@link #getP()} at
-//     * a given Order of Magnitude and RoundingMode precision.
-//     */
-//    private V2D_Point mrp;
-//
-//    /**
-//     * For storing the centroid at a specific Order of Magnitude and 
-//     * RoundingMode precision.
+//     * For storing the centroid.
 //     */
 //    private V2D_Point c;
+    
     /**
      * Creates a new triangle.
      *
@@ -157,9 +120,9 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
      */
     public V2D_Triangle(V2D_Triangle t) {
         super(new V2D_Vector(t.offset));
-        p = new V2D_Vector(t.p);
-        q = new V2D_Vector(t.q);
-        r = new V2D_Vector(t.r);
+        pv = new V2D_Vector(t.pv);
+        qv = new V2D_Vector(t.qv);
+        rv = new V2D_Vector(t.rv);
     }
 
     /**
@@ -177,12 +140,11 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
     }
 
     /**
-     * Creates a new triangle. {@link #offset} is set to
-     * {@link V2D_Vector#ZERO}.
+     * Creates a new triangle.{@link #offset} is set to {@link V2D_Vector#ZERO}.
      *
      * @param p What {@link #pl} is set to.
-     * @param q What {@link #q} is set to.
-     * @param r What {@link #r} is set to.
+     * @param q What {@link #qv} is set to.
+     * @param r What {@link #rv} is set to.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
      */
@@ -195,9 +157,9 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
      * Creates a new triangle.
      *
      * @param offset What {@link #offset} is set to.
-     * @param p What {@link #p} is set to.
-     * @param q What {@link #q} is set to.
-     * @param r What {@link #r} is set to.
+     * @param p What {@link #pv} is set to.
+     * @param q What {@link #qv} is set to.
+     * @param r What {@link #rv} is set to.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
      */
@@ -206,33 +168,28 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
         super(offset);
         this.oom = oom;
         this.rm = rm;
-        this.p = p;
-        this.q = q;
-        this.r = r;
+        this.pv = p;
+        this.qv = q;
+        this.rv = r;
     }
 
     /**
-     * Creates a new triangle.
+     * Creates a new triangle.Warning pv, qv and rv must all be different. No
+     * checks are done for efficiency reasons.
      *
-     * Warning p, q and r must all be different. No checks are done for
-     * efficiency reasons.
-     *
-     * @param pl What {@link #pl} is set to.
      * @param offset What {@link #offset} is set to.
-     * @param p What {@link #p} is set to.
-     * @param q What {@link #q} is set to.
-     * @param r What {@link #r} is set to.
+     * @param p What {@link #pv} is set to.
+     * @param q What {@link #qv} is set to.
+     * @param r What {@link #rv} is set to.
      */
     public V2D_Triangle(V2D_Vector offset, V2D_Vector p, V2D_Vector q,
             V2D_Vector r) {
         super(offset);
-        this.p = p;
-        this.q = q;
-        this.r = r;
-        
-        // Debugging code
+        this.pv = p;
+        this.qv = q;
+        this.rv = r;
+        // Debugging code:
         if (p.equals(q) || p.equals(r) || q.equals(r)) {
-            int debug = 1;
             throw new RuntimeException("p.equals(q) || p.equals(r) || q.equals(r)");
         }
     }
@@ -241,23 +198,28 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
      * Creates a new instance.
      *
      * @param p Used to initialise {@link #offset} and {@link #pl}.
-     * @param q Used to initialise {@link #q}.
-     * @param r Used to initialise {@link #r}.
+     * @param q Used to initialise {@link #qv}.
+     * @param r Used to initialise {@link #rv}.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
      */
     public V2D_Triangle(V2D_Point p, V2D_Point q, V2D_Point r, int oom,
             RoundingMode rm) {
         super(new V2D_Vector(p.offset));
-        this.p = new V2D_Vector(p.rel);
-        this.q = q.getVector(oom, rm).subtract(p.offset, oom, rm);
-        this.r = r.getVector(oom, rm).subtract(p.offset, oom, rm);
+        this.pv = new V2D_Vector(p.rel);
+        this.qv = q.getVector(oom, rm).subtract(p.offset, oom, rm);
+        this.rv = r.getVector(oom, rm).subtract(p.offset, oom, rm);
         this.oom = oom;
         this.rm = rm;
     }
 
     /**
      * Creates a new triangle.
+     * 
+     * @param ls A line segment.
+     * @param pt A point.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
      */
     public V2D_Triangle(V2D_LineSegment ls, V2D_Point pt, int oom, RoundingMode rm) {
         this(ls.getP(), ls.getQ(oom, rm), pt, oom, rm);
@@ -282,7 +244,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
 //    }
 //
 //    private void initPl(int oom, RoundingMode rm) {
-//        pl = new V2D_Plane(offset, p, q, r, oom, rm);
+//        pl = new V2D_Plane(offset, pv, qv, rv, oom, rm);
 //    }
 //
 //    /**
@@ -305,27 +267,27 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
 //    }
 //
 //    private void initPl(V2D_Point pt, int oom, RoundingMode rm) {
-//        pl = new V2D_Plane(pt, offset, p, q, r, oom, rm);
+//        pl = new V2D_Plane(pt, offset, pv, qv, rv, oom, rm);
 //    }
     /**
-     * @return A new point based on {@link #p} and {@link #offset}.
+     * @return A new point based on {@link #pv} and {@link #offset}.
      */
     public final V2D_Point getP() {
-        return new V2D_Point(offset, p);
+        return new V2D_Point(offset, pv);
     }
 
     /**
-     * @return A new point based on {@link #q} and {@link #offset}.
+     * @return A new point based on {@link #qv} and {@link #offset}.
      */
     public final V2D_Point getQ() {
-        return new V2D_Point(offset, q);
+        return new V2D_Point(offset, qv);
     }
 
     /**
-     * @return A new point based on {@link #r} and {@link #offset}.
+     * @return A new point based on {@link #rv} and {@link #offset}.
      */
     public final V2D_Point getR() {
-        return new V2D_Point(offset, r);
+        return new V2D_Point(offset, rv);
     }
 
     /**
@@ -334,7 +296,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
      *
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
-     * @return Line segment from r to pv.
+     * @return Line segment from rv to pv.
      */
     public final V2D_LineSegment getPQ(int oom, RoundingMode rm) {
         if (pq == null) {
@@ -352,7 +314,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
     }
 
     private void initPQ(int oom, RoundingMode rm) {
-        pq = new V2D_LineSegment(offset, p, q, oom, rm);
+        pq = new V2D_LineSegment(offset, pv, qv, oom, rm);
         pqoom = oom;
         pqrm = rm;
     }
@@ -363,25 +325,25 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
      * @return {@code qv.subtract(pv, oom, rm)}
      */
     public final V2D_Vector getPQV(int oom, RoundingMode rm) {
-        return q.subtract(p, oom, rm);
+        return qv.subtract(pv, oom, rm);
     }
 
     /**
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
-     * @return {@code r.subtract(qv, oom, rm)}
+     * @return {@code rv.subtract(qv, oom, rm)}
      */
     public final V2D_Vector getQRV(int oom, RoundingMode rm) {
-        return r.subtract(q, oom, rm);
+        return rv.subtract(qv, oom, rm);
     }
 
     /**
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
-     * @return {@code pv.subtract(r, oom, rm)}
+     * @return {@code pv.subtract(rv, oom, rm)}
      */
     public final V2D_Vector getRPV(int oom, RoundingMode rm) {
-        return p.subtract(r, oom, rm);
+        return pv.subtract(rv, oom, rm);
     }
 
     /**
@@ -390,7 +352,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
      *
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
-     * @return Line segment from r to pv.
+     * @return Line segment from rv to pv.
      */
     public final V2D_LineSegment getQR(int oom, RoundingMode rm) {
         if (qr == null) {
@@ -408,7 +370,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
     }
 
     private void initQR(int oom, RoundingMode rm) {
-        qr = new V2D_LineSegment(offset, q, r, oom, rm);
+        qr = new V2D_LineSegment(offset, qv, rv, oom, rm);
         qroom = oom;
         qrrm = rm;
     }
@@ -419,7 +381,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
      *
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
-     * @return Line segment from r to pv.
+     * @return Line segment from rv to pv.
      */
     public final V2D_LineSegment getRP(int oom, RoundingMode rm) {
         if (rp == null) {
@@ -437,36 +399,36 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
     }
 
     private void initRP(int oom, RoundingMode rm) {
-        rp = new V2D_LineSegment(offset, r, p, oom, rm);
+        rp = new V2D_LineSegment(offset, rv, pv, oom, rm);
         rpoom = oom;
         rprm = rm;
     }
-    
+
     /**
      *
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
-     * @return The internal angle at {@link #p}.
+     * @return The internal angle at {@link #pv}.
      */
     public final BigRational getAngleP(int oom, RoundingMode rm) {
         return getPQV(oom, rm).getAngle(getRPV(oom, rm).reverse(), oom, rm);
     }
-    
+
     /**
      *
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
-     * @return The internal angle at {@link #q}.
+     * @return The internal angle at {@link #qv}.
      */
     public final BigRational getAngleQ(int oom, RoundingMode rm) {
         return getPQV(oom, rm).reverse().getAngle(getQRV(oom, rm), oom, rm);
     }
-    
+
     /**
      *
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
-     * @return The internal angle at {@link #r}.
+     * @return The internal angle at {@link #rv}.
      */
     public final BigRational getAngleR(int oom, RoundingMode rm) {
         return getQRV(oom, rm).reverse().getAngle(getRPV(oom, rm), oom, rm);
@@ -576,7 +538,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
      * @param pt The point to intersect with.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
-     * @return A point or line segment.
+     * @return True iff there is an intersection.
      */
     public boolean isIntersectedBy(V2D_Point pt, int oom, RoundingMode rm) {
         if (getEnvelope(oom, rm).isIntersectedBy(pt, oom, rm)) {
@@ -587,7 +549,26 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
         }
         return false;
     }
-    
+
+    /**
+     * @param pt The point to intersect with.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return True iff pt is in the triangle and not on the edge.
+     */
+    public boolean contains(V2D_Point pt, int oom, RoundingMode rm) {
+        if (isIntersectedBy(pt, oom, rm)) {
+            if (this.getPQ(oom, rm).isIntersectedBy(pt, oom, rm)) {
+                return false;
+            }
+            if (this.getQR(oom, rm).isIntersectedBy(pt, oom, rm)) {
+                return false;
+            }
+            return !this.getRP(oom, rm).isIntersectedBy(pt, oom, rm);
+        }
+        return false;
+    }
+
     /**
      * @param ls The line segment to test for intersection.
      * @param oom The Order of Magnitude for the precision.
@@ -627,19 +608,16 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
      * @return True iff there is an intersection.
      */
     protected boolean isIntersectedBy0(V2D_LineSegment ls, int oom, RoundingMode rm) {
-        V2D_LineSegment pq = getPQ(oom, rm);
-        V2D_LineSegment qr = getQR(oom, rm);
-        V2D_LineSegment rp = getRP(oom, rm);
         V2D_Point p = getP();
         V2D_Point q = getQ();
         V2D_Point r = getR();
         V2D_Point lsp = ls.getP();
         V2D_Point lsq = ls.getQ(oom, rm);
-        if ((pq.l.isOnSameSide(r, lsp, oom, rm)
+        if ((getPQ(oom, rm).l.isOnSameSide(r, lsp, oom, rm)
                 || pq.l.isOnSameSide(r, lsq, oom, rm))
-                && (qr.l.isOnSameSide(p, lsp, oom, rm)
+                && (getQR(oom, rm).l.isOnSameSide(p, lsp, oom, rm)
                 || qr.l.isOnSameSide(p, lsq, oom, rm))
-                && (rp.l.isOnSameSide(q, lsp, oom, rm)
+                && (getRP(oom, rm).l.isOnSameSide(q, lsp, oom, rm)
                 || rp.l.isOnSameSide(q, lsq, oom, rm))) {
             return true;
         }
@@ -659,6 +637,19 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
                     return true;
                 }
             }
+        }
+        return false;
+    }
+
+    /**
+     * @param ls The line segments to test for containment.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return True iff ls is contained in the triangle.
+     */
+    public boolean contains(V2D_LineSegment ls, int oom, RoundingMode rm) {
+        if (contains(ls.getP(), oom, rm)) {
+            return contains(ls.getQ(oom, rm), oom, rm);
         }
         return false;
     }
@@ -692,7 +683,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
         }
         return false;
     }
-    
+
     /**
      * The point pt aligns with this if it is on the same side of each plane
      * defined a triangle edge (with a normal given by the cross product of the
@@ -861,7 +852,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
     }
 
     /**
-     * Get the intersection between the geometry and the ray {@code r}.
+     * Get the intersection between the geometry and the ray {@code rv}.
      *
      * @param r The ray to intersect with.
      * @param oom The Order of Magnitude for the precision.
@@ -885,27 +876,27 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
         V2D_Point lsp = ls.getP();
         V2D_Point lsq = ls.getQ(oom, rm);
         if (r.getPl().isOnSameSide(lsp, r.l.getQ(oom, rm), oom, rm)) {
-                if (r.getPl().isOnSameSide(lsq, r.l.getQ(oom, rm), oom, rm)) {
-                    return ls;
-                } else {
-                    return V2D_LineSegment.getGeometry(r.l.getP(), lsp, oom, rm);
-                }
+            if (r.getPl().isOnSameSide(lsq, r.l.getQ(oom, rm), oom, rm)) {
+                return ls;
             } else {
-                if (r.getPl().isOnSameSide(lsq, r.l.getQ(oom, rm), oom, rm)) {
-                    return V2D_LineSegment.getGeometry(r.l.getP(), lsq, oom, rm);
-                } else {
-                    throw new RuntimeException();
-                }
+                return V2D_LineSegment.getGeometry(r.l.getP(), lsp, oom, rm);
             }
-//        if (r.isAligned(lsp, oom, rm)) {
-//            if (r.isAligned(lsq, oom, rm)) {
+        } else {
+            if (r.getPl().isOnSameSide(lsq, r.l.getQ(oom, rm), oom, rm)) {
+                return V2D_LineSegment.getGeometry(r.l.getP(), lsq, oom, rm);
+            } else {
+                throw new RuntimeException();
+            }
+        }
+//        if (rv.isAligned(lsp, oom, rm)) {
+//            if (rv.isAligned(lsq, oom, rm)) {
 //                return ls;
 //            } else {
-//                return V2D_LineSegment.getGeometry(r.l.getP(), lsp, oom, rm);
+//                return V2D_LineSegment.getGeometry(rv.l.getP(), lsp, oom, rm);
 //            }
 //        } else {
-//            if (r.isAligned(lsq, oom, rm)) {
-//                return V2D_LineSegment.getGeometry(r.l.getP(), lsq, oom, rm);
+//            if (rv.isAligned(lsq, oom, rm)) {
+//                return V2D_LineSegment.getGeometry(rv.l.getP(), lsq, oom, rm);
 //            } else {
 //                throw new RuntimeException("Exception in triangle-linesegment intersection.");
 //            }
@@ -1186,10 +1177,10 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
      */
     public V2D_Point getCentroid(int oom, RoundingMode rm) {
         oom -= 6;
-        BigRational dx = (p.getDX(oom, rm).add(q.getDX(oom, rm))
-                .add(r.getDX(oom, rm))).divide(3);
-        BigRational dy = (p.getDY(oom, rm).add(q.getDY(oom, rm))
-                .add(r.getDY(oom, rm))).divide(3);
+        BigRational dx = (pv.getDX(oom, rm).add(qv.getDX(oom, rm))
+                .add(rv.getDX(oom, rm))).divide(3);
+        BigRational dy = (pv.getDY(oom, rm).add(qv.getDY(oom, rm))
+                .add(rv.getDY(oom, rm))).divide(3);
         return new V2D_Point(offset, new V2D_Vector(dx, dy));
     }
 
@@ -1296,9 +1287,9 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
     public String toString(String pad) {
         String r = pad + this.getClass().getSimpleName() + "(\n";
         r += pad + " offset=(" + this.offset.toString(pad + " ") + "),\n"
-                + pad + " p=(" + this.p.toString(pad + " ") + "),\n"
-                + pad + " q=(" + this.q.toString(pad + " ") + "),\n"
-                + pad + " r=(" + this.r.toString(pad + " ") + "))";
+                + pad + " p=(" + this.pv.toString(pad + " ") + "),\n"
+                + pad + " q=(" + this.qv.toString(pad + " ") + "),\n"
+                + pad + " r=(" + this.rv.toString(pad + " ") + "))";
         return r;
     }
 
@@ -1309,9 +1300,9 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
     public String toStringSimple(String pad) {
         String r = pad + this.getClass().getSimpleName() + "(\n";
         r += pad + " offset=(" + this.offset.toStringSimple("") + "),\n"
-                + pad + " p=(" + this.p.toStringSimple("") + "),\n"
-                + pad + " q=(" + this.q.toStringSimple("") + "),\n"
-                + pad + " r=(" + this.r.toStringSimple("") + "))";
+                + pad + " p=(" + this.pv.toStringSimple("") + "),\n"
+                + pad + " q=(" + this.qv.toStringSimple("") + "),\n"
+                + pad + " r=(" + this.rv.toStringSimple("") + "))";
         return r;
     }
 
@@ -1322,7 +1313,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
     }
 
     /**
-     * If p, q and r are equal then the point is returned. If two of the points
+     * If p, q and r are equal then the point is returned.If two of the points
      * are the same, then a line segment is returned. If all points are
      * different then a triangle is returned.
      *
@@ -1332,7 +1323,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
      * @return either {@code pl} or {@code new V2D_LineSegment(pl, qv)} or
-     * {@code new V2D_Triangle(pl, qv, r)}
+     * {@code new V2D_Triangle(pl, qv, rv)}
      */
     public static V2D_FiniteGeometry getGeometry(V2D_Point p, V2D_Point q,
             V2D_Point r, int oom, RoundingMode rm) {
@@ -1361,14 +1352,14 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
                     return new V2D_Triangle(p, q, r, oom, rm);
 //                    return new V2D_Triangle(pl.e, V2D_Vector.ZERO,
 //                            pl.getVector(pl.e.oom),
-//                            qv.getVector(pl.e.oom), r.getVector(pl.e.oom));
+//                            qv.getVector(pl.e.oom), rv.getVector(pl.e.oom));
                 }
             }
         }
     }
 
     /**
-     * Used in intersecting two triangles to give the overall intersection. If
+     * Used in intersecting two triangles to give the overall intersection.If
      * l1, l2 and l3 are equal then the line segment is returned. If there are 3
      * unique points then a triangle is returned. If there are 4 or more unique
      * points, then a V2D_ConvexHull is returned.
@@ -1380,7 +1371,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
      * @return either {@code pl} or {@code new V2D_LineSegment(pl, qv)} or
-     * {@code new V2D_Triangle(pl, qv, r)}
+     * {@code new V2D_Triangle(pl, qv, rv)}
      */
     protected static V2D_FiniteGeometry getGeometry(V2D_LineSegment l1,
             V2D_LineSegment l2, V2D_LineSegment l3, int oom, RoundingMode rm) {
@@ -1420,7 +1411,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
     }
 
     /**
-     * Used in intersecting two triangles to give the overall intersection. If
+     * Used in intersecting two triangles to give the overall intersection.If
      * there are 3 unique points then a triangle is returned. If there are 4 or
      * more unique points, then a V2D_ConvexHull is returned.
      *
@@ -1430,7 +1421,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
      * @return either {@code pl} or {@code new V2D_LineSegment(pl, qv)} or
-     * {@code new V2D_Triangle(pl, qv, r)}
+     * {@code new V2D_Triangle(pl, qv, rv)}
      */
     protected static V2D_FiniteGeometry getGeometry(V2D_LineSegment l1,
             V2D_LineSegment l2, V2D_Point pt, int oom, RoundingMode rm) {
@@ -1466,7 +1457,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
     }
 
     /**
-     * Used in intersecting a triangle and a tetrahedron. If there are 3 unique
+     * Used in intersecting a triangle and a tetrahedron.If there are 3 unique
      * points then a triangle is returned. If there are 4 points, then a
      * V2D_ConvexHull is returned.
      *
@@ -1475,7 +1466,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
      * @return either {@code pl} or {@code new V2D_LineSegment(pl, qv)} or
-     * {@code new V2D_Triangle(pl, qv, r)}
+     * {@code new V2D_Triangle(pl, qv, rv)}
      */
     protected static V2D_FiniteGeometry getGeometry2(V2D_LineSegment l1,
             V2D_LineSegment l2, int oom, RoundingMode rm) {
@@ -1779,10 +1770,11 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
         ArrayList<V2D_Point> points = V2D_Point.getUnique(s, oom, rm);
         return points.toArray(V2D_Point[]::new);
     }
-    
+
     /**
      * Computes and returns the circumcentre of the circmcircle.
      * https://en.wikipedia.org/wiki/Circumcircle
+     *
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
      * @return The circumcentre of a circumcircle of this triangle.
@@ -1794,7 +1786,7 @@ public class V2D_Triangle extends V2D_FiniteGeometry {
         V2D_Point b = getQ();
         BigRational bx = b.getX(oom, rm);
         BigRational by = b.getY(oom, rm);
-        V2D_Point c = getR();        
+        V2D_Point c = getR();
         BigRational cx = c.getX(oom, rm);
         BigRational cy = c.getY(oom, rm);
         BigRational byscy = by.subtract(cy);

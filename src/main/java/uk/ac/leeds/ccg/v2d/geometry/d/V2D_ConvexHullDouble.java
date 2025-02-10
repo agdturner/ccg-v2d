@@ -17,63 +17,37 @@ package uk.ac.leeds.ccg.v2d.geometry.d;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
 
 /**
- * A class for representing convex hulls. These are a special types of polygon:
- * They have no holes and are convex. Below is a basic algorithm
- * for generating a convex hull from a set of coplanar points known as the
- * "quick hull" algorithm (see
- * <a href="https://en.wikipedia.org/wiki/Quickhull">
- * https://en.wikipedia.org/wiki/Quickhull</a>) :
- * <ol>
- * <li>Partition the points:
- * <ul>
- * <li>Calculate the distances between the points with the minimum and maximum
- * x, the minimum and maximum y, and the minimum and maximum z values.</li>
- * <li>Choose the points that have the largest distance between them to define
- * the dividing plane that is orthogonal to the plane of the polygon.</li>
- * <li>Let the points on one side of the dividing plane be one group and those
- * on the other be the another group.</li>
- * </ul></li>
- * <li>Add the two end points of the partition to the convex hull.</li>
- * <li>Deal with each group of points in turn.</li>
- * <li>If there is only one other point on a side of the partition then add it
- * to the convex hull.</li>
- * <li>If there are more than one, then find the one with the biggest distance
- * from the partition and add this to the convex hull.</li>
- * <li>We can now ignore all the other points that intersect the triangle given
- * by the 3 points now in the convex hull.</li>
- * <li>Create a new plane dividing the remaining points on this side of the
- * first dividing plane. Two points on the plane are the last point added to the
- * convex hull and the closest point on the line defined by the other two points
- * in the convex hull. The new dividing plane is orthogonal to the first
- * dividing plane.</li>
- * <li>Let the points in this group that are on one side of the dividing plane
- * be another group and those on the other be the another group.</li>
- * <li>Repeat the process dealing with each group in turn (Steps 3 to 9) in a
- * depth first manner.</li>
- * </ol>
- *
+ * For representing convex hulls - convex shapes with no holes.
+ * 
  * @author Andy Turner
- * @version 1.0
+ * @version 2.0
  */
 public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * The collection of triangles.
-     */
-    protected final ArrayList<V2D_TriangleDouble> triangles;
-
-    /**
      * The collection of points in a clockwise order.
      */
-    protected ArrayList<V2D_PointDouble> points;
+    public HashMap<Integer, V2D_PointDouble> points;
 
+    /**
+     * The collection of edges. These are the points in clockwise order as a
+     * linear ring. Keys are IDs
+     */
+    public HashMap<Integer, V2D_LineSegmentDouble> edges;
+
+    /**
+     * For storing the contiguous triangles.
+     */
+    public ArrayList<V2D_TriangleDouble> triangles;
+    
     /**
      * Create a new instance.
      *
@@ -85,30 +59,42 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
             V2D_TriangleDouble... triangles) {
         this(epsilon, V2D_TriangleDouble.getPoints(triangles));
     }
-
-//    /**
-//     * Create a new instance.
-//     *
-//     * @param epsilon The tolerance within which two vectors are regarded as
-//     * equal.
-//     * @param points A non-empty list of points in a plane given by n.
-//     */
-//    public V2D_ConvexHullDouble(double epsilon, V2D_PointDouble... points) {
-//        super();
-//        ArrayList<V2D_PointDouble> uniquePoints = V2D_PointDouble.getUnique(Arrays.asList(points), epsilon);
-//        V2D_PointDouble[] up = new V2D_PointDouble[uniquePoints.size()];
-//        up = uniquePoints.toArray(up);
-//        V2D_PointDouble max = up[V2D_GeometricsDouble.getMax(up)];
-//        V2D_PointDouble centroid = V2D_GeometricsDouble.getCentroid(up);
-//        V2D_SortByAngleDouble sbc = new V2D_SortByAngleDouble(centroid, max);
-//        Arrays.sort(up, sbc);
-//        this.points = new ArrayList<>(Arrays.asList(up));
-//        this.triangles = new ArrayList<>();
-//    }
     
     /**
-     * Create a new instance.
-     *
+     * Create a new instance. An algorithm for generating a convex hull from a
+     * set of coplanar points known as the "quick hull" algorithm (see
+     * <a href="https://en.wikipedia.org/wiki/Quickhull">
+     * https://en.wikipedia.org/wiki/Quickhull</a>) :
+     * <ol>
+     * <li>Partition the points:
+     * <ul>
+     * <li>Calculate the distances between the points with the minimum and
+     * maximum x, the minimum and maximum y, and the minimum and maximum z
+     * values.</li>
+     * <li>Choose the points that have the largest distance between them to
+     * define the dividing plane that is orthogonal to the plane of the
+     * polygon.</li>
+     * <li>Let the points on one side of the dividing plane be one group and
+     * those on the other be the another group.</li>
+     * </ul></li>
+     * <li>Add the two end points of the partition to the convex hull.</li>
+     * <li>Deal with each group of points in turn.</li>
+     * <li>If there is only one other point on a side of the partition then add
+     * it to the convex hull.</li>
+     * <li>If there are more than one, then find the one with the biggest
+     * distance from the partition and add this to the convex hull.</li>
+     * <li>We can now ignore all the other points that intersect the triangle
+     * given by the 3 points now in the convex hull.</li>
+     * <li>Create a new plane dividing the remaining points on this side of the
+     * first dividing plane. Two points on the plane are the last point added to
+     * the convex hull and the closest point on the line defined by the other
+     * two points in the convex hull. The new dividing plane is orthogonal to
+     * the first dividing plane.</li>
+     * <li>Let the points in this group that are on one side of the dividing
+     * plane be another group and those on the other be the another group.</li>
+     * <li>Repeat the process dealing with each group in turn (Steps 3 to 9) in
+     * a depth first manner.</li>
+     * </ol>
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
      * @param points A non-empty list of points in a plane given by n.
@@ -137,8 +123,11 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
             }
             h.add(pt);
         }
-        this.points = V2D_PointDouble.getUnique(h, epsilon);
-        this.triangles = new ArrayList<>();
+        ArrayList<V2D_PointDouble> ups = V2D_PointDouble.getUnique(h, epsilon);        
+        this.points = new HashMap<>();
+        for (var p: ups) {
+            this.points.put(this.points.size(), p);
+        }
     }
 
     // ccw returns true if the three points make a counter-clockwise turn
@@ -177,33 +166,54 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
     public V2D_PointDouble[] getPoints() {
         int np = points.size();
         V2D_PointDouble[] pts = new V2D_PointDouble[np];
-        return points.toArray(pts);
+        for (int i = 0; i < np; i++) {
+            pts[i] = new V2D_PointDouble(points.get(i));
+        }
+        return pts;
     }
 
     @Override
     public String toString() {
-        String s = this.getClass().getName() + "(";
-        Iterator<V2D_PointDouble> ite = points.iterator();
-        s += ite.next().toString();
-        while (ite.hasNext()) {
-            s += ", " + ite.next().toString("");
+        StringBuilder s = new StringBuilder();
+        s.append(this.getClass().getName()).append("(");
+        {
+            s.append("\npoints (\n");
+                for(var entry : points.entrySet()) {
+                    s.append("(");
+                    s.append(entry.getKey());
+                    s.append(",");
+                    s.append(entry.getValue().toString());
+                    s.append("), ");
+                }
+            int l = s.length();
+            s = s.delete(l - 2, l);
+            s.append("\n)\n");
         }
-        s += ")";
-        return s;
+        s.append("\n)");
+        return s.toString();
     }
 
     /**
      * @return Simple string representation.
      */
     public String toStringSimple() {
-        String s = this.getClass().getName() + "(";
-        Iterator<V2D_PointDouble> ite = points.iterator();
-        s += ite.next().toString();
-        while (ite.hasNext()) {
-            s += ", " + ite.next().toStringSimple(s);
+        StringBuilder s = new StringBuilder();
+        s.append(this.getClass().getName()).append("(");
+        {
+            s.append("points (");
+                for(var entry : points.entrySet()) {
+                    s.append("(");
+                    s.append(entry.getKey());
+                    s.append(",");
+                    s.append(entry.getValue().toString());
+                    s.append("), ");
+                }
+            int l = s.length();
+            s = s.delete(l - 2, l);
+            s.append(")");
         }
-        s += ")";
-        return s;
+        s.append(")");
+        return s.toString();
     }
 
     /**
@@ -216,7 +226,7 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
      */
     public boolean equals(V2D_ConvexHullDouble c, double epsilon) {
         HashSet<Integer> indexes = new HashSet<>();
-        for (var x : points) {
+        for (var x : points.values()) {
             boolean found = false;
             for (int i = 0; i < c.points.size(); i++) {
                 if (x.equals(epsilon, c.points.get(i))) {
@@ -232,7 +242,7 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
         for (int i = 0; i < c.points.size(); i++) {
             if (!indexes.contains(i)) {
                 boolean found = false;
-                for (var x : points) {
+                for (var x : points.values()) {
                     if (x.equals(epsilon, c.points.get(i))) {
                         found = true;
                         break;
@@ -279,7 +289,7 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
     }
 
     /**
-     * Identify if this is intersected by point {@code p}.
+     * Identify if this is intersected by point.
      *
      * @param pt The point to test for intersection with.
      * @param epsilon The tolerance within which two vectors are regarded as
@@ -289,13 +299,37 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
     public boolean isIntersectedBy(V2D_PointDouble pt, double epsilon) {
         // Check envelopes intersect.
         if (getEnvelope().isIntersectedBy(pt)) {
-            // Check point is in a triangle
-            for (var t : getTriangles()) {
-                if (t.isIntersectedBy(pt, epsilon)) {
-                    //if (t.isAligned(pt, epsilon)) {
-                    return true;
-                }
-            }
+            return getTriangles().parallelStream().anyMatch(x -> x.isIntersectedBy(pt, epsilon));
+        }
+        return false;
+    }
+    
+    /**
+     * Identify if this contains point.
+     *
+     * @param pt The point to test for intersection with.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff the geometry is intersected by {@code p}.
+     */
+    public boolean contains(V2D_PointDouble pt, double epsilon) {
+        if (isIntersectedBy(pt, epsilon)) {
+            return !V2D_LineSegmentDouble.isIntersectedBy(epsilon, pt, edges.values());
+        }
+        return false;
+    }
+    
+    /**
+     * Identify if this contains line segment.
+     *
+     * @param l The line segment to test for containment with.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff the geometry is intersected by {@code p}.
+     */
+    public boolean contains(V2D_LineSegmentDouble l, double epsilon) {
+        if (isIntersectedBy(l, epsilon)) {
+            return !V2D_LineSegmentDouble.isIntersectedBy(epsilon, l, edges.values());
         }
         return false;
     }
@@ -309,15 +343,8 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
      * @return {@code true} iff the geometry is intersected by {@code p}.
      */
     public boolean isIntersectedBy(V2D_LineSegmentDouble l, double epsilon) {
-        // Check envelopes intersect.
         if(getEnvelope().isIntersectedBy(l.getEnvelope())) {
-        //if (l.isIntersectedBy(getEnvelope(), epsilon)) {
-            for (V2D_TriangleDouble t : getTriangles()) {
-                if (t.isIntersectedBy(l, epsilon)) {
-                    return true;
-                }
-            }
-        //}
+            return getTriangles().parallelStream().anyMatch(x -> x.isIntersectedBy(l, epsilon));
         }
         return false;
     }
@@ -331,14 +358,9 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
      * @return {@code true} iff the geometry is intersected by {@code p}.
      */
     public boolean isIntersectedBy(V2D_TriangleDouble t, double epsilon) {
-        // Check envelopes intersect.
         if (t.isIntersectedBy(getEnvelope(), epsilon)) {
             if (isIntersectedBy(t.getEnvelope(), epsilon)) {
-                for (V2D_TriangleDouble tt : getTriangles()) {
-                    if (tt.isIntersectedBy(t, epsilon)) {
-                        return true;
-                    }
-                }
+                return getTriangles().parallelStream().anyMatch(x -> x.isIntersectedBy(t, epsilon));
             }
         }
         return false;
@@ -356,11 +378,7 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
         // Check envelopes intersect.
         if (r.isIntersectedBy(getEnvelope(), epsilon)) {
             if (isIntersectedBy(r.getEnvelope(), epsilon)) {
-                for (V2D_TriangleDouble t : getTriangles()) {
-                    if (r.isIntersectedBy(t, epsilon)) {
-                        return true;
-                    }
-                }
+                return getTriangles().parallelStream().anyMatch(x -> r.isIntersectedBy(x, epsilon));
             }
         }
         return false;
@@ -375,24 +393,11 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
      * @return {@code true} iff the geometry is intersected by {@code ch.
      */
     public boolean isIntersectedBy(V2D_ConvexHullDouble ch, double epsilon) {
-        // Check envelopes intersect.
-        //if (ch.getEnvelope().isIntersectedBy(getEnvelope())) {
-        if (ch.isIntersectedBy(en, epsilon)) {
+        if (ch.isIntersectedBy(getEnvelope(), epsilon)) {
             if (isIntersectedBy(ch.en, epsilon)) {
-//                // Could do the two ways in parallel for speed up...
-//                for (V2D_TriangleDouble t : ch.getTriangles()) {
-//                    if (isIntersectedBy(t, epsilon)) {
-//                        return true;
-//                    }
-//                }
-                for (V2D_TriangleDouble t : getTriangles()) {
-                    if (ch.isIntersectedBy(t, epsilon)) {
-                        return true;
-                    }
-                }
+                return getTriangles().parallelStream().anyMatch(x -> ch.isIntersectedBy(x, epsilon));
             }
         }
-        //}
         return false;
     }
 
@@ -476,7 +481,7 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
 //            return new V2D_ConvexHullDouble(t.pl.n, epsilon,
 //                    tsu.toArray(V2D_PointDouble[]::new)).simplify(epsilon);
 //        }
-    ////        switch (size) {
+////        switch (size) {
 ////            case 0:
 ////                return null;
 ////            case 1:
@@ -507,198 +512,20 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
 
     @Override
     public V2D_ConvexHullDouble rotateN(V2D_PointDouble pt, double theta, double epsilon) {
-        V2D_TriangleDouble[] rts = new V2D_TriangleDouble[getTriangles().size()];
-        for (int i = 0; i < triangles.size(); i++) {
-            rts[0] = triangles.get(i).rotateN(pt, theta, epsilon);
+        V2D_PointDouble[] pts = new V2D_PointDouble[points.size()];
+        for (int i = 0; i < points.size(); i++) {
+            pts[0] = points.get(i).rotateN(pt, theta, epsilon);
         }
-        return new V2D_ConvexHullDouble(epsilon, rts);
+        return new V2D_ConvexHullDouble(epsilon, pts);
     }
-//
-//    /**
-//     * @param pts The points from which the convex hull is formed.
-//     * @param p0 A point in pts that along with p1 and n defines a plane used to
-//     * divide the points into 3 types, on, above and below.
-//     * @param p1 A point in pts that along with p0 and n defines a plane used to
-//     * divide the points into 3 types, on, above and below.
-//     * @param n The normal to the plane.
-//     * @param index The index into which points that form the convex hull are
-//     * added.
-//     * @param epsilon The tolerance within which two vectors are regarded as
-//     * equal.
-//     */
-//    private void compute(ArrayList<V2D_PointDouble> pts, V2D_PointDouble p0,
-//            V2D_PointDouble p1, V2D_VectorDouble n, int index, double epsilon) {
-//        V2D_PlaneDouble pl = new V2D_PlaneDouble(p0, p1, new V2D_PointDouble(
-//                p0.offset, p0.rel.add(n)));
-//        AB ab = new AB(pts, p0, p1, pl, epsilon);
-//        // Process ab.a
-//        if (!ab.a.isEmpty()) {
-//            if (ab.a.size() == 1) {
-//                points.add(index, ab.a.get(0));
-//                index++;
-//            } else {
-//                V2D_PointDouble apt = ab.a.get(ab.maxaIndex);
-//                points.add(index, apt);
-//                index++;
-//                V2D_TriangleDouble atr = new V2D_TriangleDouble(p0, p1, apt);
-//                TreeSet<Integer> removeIndexes = new TreeSet<>();
-//                for (int i = 0; i < ab.a.size(); i++) {
-//                    if (atr.isIntersectedBy(ab.a.get(i), epsilon)) {
-//                        removeIndexes.add(i);
-//                        //index--;
-//                    }
-//                }
-//                Iterator<Integer> ite = removeIndexes.descendingIterator();
-//                while (ite.hasNext()) {
-//                    ab.a.remove(ite.next().intValue());
-//                }
-//                if (!ab.a.isEmpty()) {
-//                    if (ab.a.size() == 1) {
-//                        points.add(index, ab.a.get(0));
-//                        index++;
-//                    } else {
-//                        // Divide again
-//                        V2D_LineDouble l = new V2D_LineDouble(p0, p1);
-//                        V2D_PointDouble proj = l.getPointOfIntersection(apt, epsilon);
-//                        compute(ab.a, proj, apt, n, index, epsilon);
-//                    }
-//                }
-//            }
-//        }
-//        // Process ab.b
-//        if (!ab.b.isEmpty()) {
-//            if (ab.b.size() == 1) {
-//                points.add(index, ab.b.get(0));
-//                index++;
-//            } else {
-//                V2D_PointDouble bpt = ab.b.get(ab.maxbIndex);
-//                points.add(index, bpt);
-//                index++;
-//                
-//                // Debug
-//                if (bpt.equals(epsilon, p1)) {
-//                    int debug = 1;
-//                    ab = new AB(pts, p0, p1, pl, epsilon);
-//                }
-//                
-//                V2D_TriangleDouble btr = new V2D_TriangleDouble(p0, p1, bpt); // p1 and bpt might be the same!
-//                TreeSet<Integer> removeIndexes = new TreeSet<>();
-//                for (int i = 0; i < ab.b.size(); i++) {
-//                    if (btr.isIntersectedBy(ab.b.get(i), epsilon)) {
-//                        removeIndexes.add(i);
-//                        //index--;
-//                    }
-//                }
-//                Iterator<Integer> ite = removeIndexes.descendingIterator();
-//                while (ite.hasNext()) {
-//                    ab.b.remove(ite.next().intValue());
-//                }
-//                if (!ab.b.isEmpty()) {
-//                    if (ab.b.size() == 1) {
-//                        points.add(index, ab.b.get(0));
-//                        index++;
-//                    } else {
-//                        // Divide again
-//                        V2D_LineDouble l = new V2D_LineDouble(p0, p1);
-//                        V2D_PointDouble proj = l.getPointOfIntersection(bpt, epsilon);
-//                        compute(ab.b, bpt, proj, n, index, epsilon);
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
 
     @Override
     public boolean isIntersectedBy(V2D_EnvelopeDouble aabb, double epsilon) {
         if (getEnvelope().isIntersectedBy(aabb, epsilon)) {
-            for (V2D_TriangleDouble t : getTriangles()) {
-                if (t.isIntersectedBy(aabb, epsilon)) {
-                    return true;
-                }
-            }
+            return getTriangles().parallelStream().anyMatch(x -> x.isIntersectedBy(aabb, epsilon));
         }
         return false;
     }
-//
-//    /**
-//     * A class for helping to calculate a convex hull.
-//     */
-//    public class AB {
-//
-//        /**
-//         * The points that are above the plane.
-//         */
-//        public ArrayList<V2D_PointDouble> a;
-//
-//        /**
-//         * For storing the index of the point in {@link #a} that is the maximum
-//         * distance from the plane.
-//         */
-//        int maxaIndex;
-//
-//        /**
-//         * The points that are below the plane.
-//         */
-//        public ArrayList<V2D_PointDouble> b;
-//
-//        /**
-//         * For storing the index of the point in {@link #b} that is the maximum
-//         * distance from the plane.
-//         */
-//        int maxbIndex;
-//
-//        /**
-//         * Create a new instance.
-//         *
-//         * @param pts The points from which to calculate the convex hull.
-//         * @param epsilon The tolerance within which two vectors are considered
-//         * equal.
-//         */
-//        public AB(ArrayList<V2D_PointDouble> pts, V2D_PointDouble p0,
-//                double epsilon) {
-//            a = new ArrayList<>();
-//            b = new ArrayList<>();
-//            // Find points on, above and below the plane.
-//            for (int i = 0; i < pts.size(); i++) {
-//                V2D_PointDouble pt = pts.get(i);
-//                int sop = pl.getSideOfPlane(pt, epsilon);
-//                if (sop > 0) {
-//                    a.add(pt);
-//                } else if (sop < 0) {
-//                    b.add(pt);
-//                }
-//            }
-//            a = V2D_PointDouble.getUnique(a, epsilon);
-//            maxaIndex = 0;
-//            if (a.size() > 1) {
-//                V2D_PointDouble pt0 = a.get(0);
-//                double maxds = pl.getDistanceSquared(pt0, epsilon);
-//                for (int i = 1; i < a.size(); i++) {
-//                    V2D_PointDouble pt = a.get(i);
-//                    double ds = pl.getDistanceSquared(pt, epsilon);
-//                    if (ds > maxds) {
-//                        maxds = ds;
-//                        maxaIndex = i;
-//                    }
-//                }
-//            }
-//            b = V2D_PointDouble.getUnique(b, epsilon);
-//            maxbIndex = 0;
-//            if (b.size() > 1) {
-//                V2D_PointDouble pt0 = b.get(0);
-//                double maxds = pl.getDistanceSquared(pt0, epsilon);
-//                for (int i = 1; i < b.size(); i++) {
-//                    V2D_PointDouble pt = b.get(i);
-//                    double ds = pl.getDistanceSquared(pt, epsilon);
-//                    if (ds > maxds) {
-//                        maxds = ds;
-//                        maxbIndex = i;
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     /**
      * If all {@link #triangles} form a single triangle return true
@@ -844,39 +671,47 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
         }
     }
 
-//    /**
-//     * This implementation computes a centroid and uses that to construct 
-//     * triangles with each edge.
-//     * @return A list of triangles that make up the convex hull. 
-//     */
-//    public ArrayList<V2D_TriangleDouble> getTriangles() {
-//        ArrayList<V2D_TriangleDouble> result = new ArrayList<>();
-//        V2D_PointDouble[] ps = getPoints();
-//        V2D_PointDouble centroid = V2D_GeometricsDouble.getCentroid(ps);
-//        V2D_PointDouble p0 = ps[0];
-//        for (int i = 1; i < ps.length; i ++) {
-//            V2D_PointDouble p1 = ps[i];
-//            result.add(new V2D_TriangleDouble(centroid, p0, p1));
-//            p0 = p1;
-//        }
-//        return result;
-//    }
     /**
+     * Returns the contiguous triangles constructing them first if necessary.
+     *
      * This implementation does not computes a centroid and alternates between
      * clockwise and anticlockwise to fill the space with triangles.
      *
      * @return A list of triangles that make up the convex hull.
      */
     public ArrayList<V2D_TriangleDouble> getTriangles() {
-        ArrayList<V2D_TriangleDouble> result = new ArrayList<>();
-        V2D_PointDouble[] ps = getPoints();
-        V2D_PointDouble p0 = ps[0];
-        V2D_PointDouble p1 = ps[1];
-        for (int i = 2; i < ps.length; i++) {
-            V2D_PointDouble p2 = ps[i];
-            result.add(new V2D_TriangleDouble(p0, p1, p2));
-            p1 = p2;
+        if (triangles == null) {
+            triangles = new ArrayList<>();
+            V2D_PointDouble[] ps = getPoints();
+            V2D_PointDouble p0 = ps[0];
+            V2D_PointDouble p1 = ps[1];
+            for (int i = 2; i < ps.length; i++) {
+                V2D_PointDouble p2 = ps[i];
+                triangles.add(new V2D_TriangleDouble(p0, p1, p2));
+                p1 = p2;
+            }
         }
-        return result;
+        return triangles;
+    }
+    
+    /**
+     * Returns the edges constructing them first if necessary.
+     *
+     * @return A list of triangles that make up the convex hull.
+     */
+    public HashMap<Integer, V2D_LineSegmentDouble> getEdges() {
+        if (edges == null) {
+            edges = new HashMap<>();
+            V2D_PointDouble p0 = this.points.get(0);
+            V2D_PointDouble p1 = this.points.get(1);
+            this.edges.put(this.edges.size(), new V2D_LineSegmentDouble(p0, p1));
+            for (int i = 2; i < this.points.size(); i++) {
+                p0 = p1;
+                p1 = this.points.get(i);
+                this.edges.put(this.edges.size(), new V2D_LineSegmentDouble(p0, p1));
+            }
+            edges.put(this.edges.size(),new V2D_LineSegmentDouble(p1, this.points.get(0)));
+        }
+        return edges;
     }
 }

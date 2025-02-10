@@ -15,7 +15,8 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry.d;
 
-import ch.obermuhlner.math.big.BigRational;
+import java.util.Arrays;
+import java.util.Collection;
 import uk.ac.leeds.ccg.math.arithmetic.Math_Double;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
 
@@ -332,6 +333,54 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
     }
 
     /**
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @param l A line to test for with any of the lines in ls.
+     * @param ls The other lines to test for intersection with l.
+     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     */
+    public static boolean isIntersectedBy(double epsilon, 
+            V2D_LineSegmentDouble l, V2D_LineSegmentDouble... ls) {
+        return isIntersectedBy(epsilon, l, Arrays.asList(ls));
+    }
+    
+    /**
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @param l A line to test for with any of the lines in ls.
+     * @param ls The other lines to test for intersection with l.
+     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     */
+    public static boolean isIntersectedBy(double epsilon, 
+            V2D_LineSegmentDouble l, Collection<V2D_LineSegmentDouble> ls) {
+        return ls.parallelStream().anyMatch(x -> x.isIntersectedBy(l, epsilon));
+    }
+    
+    /**
+     * @param p A point to test for intersection.
+     * @param ls The lines to test for intersection with p.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     */
+    public static boolean isIntersectedBy(double epsilon,
+            V2D_PointDouble p, V2D_LineSegmentDouble... ls) {
+        return isIntersectedBy(epsilon, p, Arrays.asList(ls));
+    }
+
+    /**
+     * @param p A point to test for intersection.
+     * @param ls The lines to test for intersection with p.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     */
+    public static boolean isIntersectedBy(double epsilon,
+            V2D_PointDouble p, Collection<V2D_LineSegmentDouble> ls) {
+        return ls.parallelStream().anyMatch(x -> x.isIntersectedBy(p, epsilon));
+    }
+    
+    /**
      * @param l A line to test for intersection.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
@@ -339,11 +388,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      */
     public boolean isIntersectedBy(V2D_LineDouble l, double epsilon) {
         if (this.l.isIntersectedBy(epsilon, l)) {
-            if (getIntersection(epsilon, l) == null) {
-                return false;
-            } else {
-                return true;
-            }
+            return getIntersection(epsilon, l) != null;
         }
         return false;
     }
@@ -357,11 +402,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
     public boolean isIntersectedBy(V2D_LineSegmentDouble l, double epsilon) {
         //if (l.isIntersectedBy(getEnvelope(), epsilon)) {
         //    if (isIntersectedBy(l.getEnvelope(), epsilon)) {
-                if (getIntersection(epsilon, l) == null) {
-                    return false;
-                } else {
-                    return true;
-                }
+        return getIntersection(epsilon, l) != null;
         //    }
         //}
         //return false;
@@ -745,6 +786,8 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      * normal vector as the vector of the line.
      *
      * @param pt The point.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
      * @return {@code true} If pt is in line with this.
      */
     public boolean isAligned(V2D_PointDouble pt, double epsilon) {
@@ -760,6 +803,8 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      * {@link #isAligned(uk.ac.leeds.ccg.v3d.geometry.d.V2D_PointDouble)}.
      *
      * @param l The line segment.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
      * @return {@code true} If pt is in line with this.
      */
     public boolean isAligned(V2D_LineSegmentDouble l, double epsilon) {
@@ -1169,6 +1214,8 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      *
      * @param pt The point to test if it is between {@link #qv} and the point of
      * {@link #l}.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
      * @return {@code true} iff pt lies between the planes at the end of the
      * line segment.
      */
@@ -1289,13 +1336,13 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
             if (aabb.isIntersectedBy(q)) {
                 return true;
             }
-            V2D_FiniteGeometryDouble l = aabb.getLeft();
-            if (l instanceof V2D_LineSegmentDouble ll) {
+            V2D_FiniteGeometryDouble left = aabb.getLeft();
+            if (left instanceof V2D_LineSegmentDouble ll) {
                 if (isIntersectedBy(ll, epsilon)) {
                     return true;
                 }
             } else {
-                if (isIntersectedBy((V2D_PointDouble) l, epsilon)) {
+                if (isIntersectedBy((V2D_PointDouble) left, epsilon)) {
                     return true;
                 }
             }
@@ -1310,7 +1357,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
                 }
             }
             V2D_FiniteGeometryDouble t = aabb.getTop();
-            if (l instanceof V2D_LineSegmentDouble tl) {
+            if (left instanceof V2D_LineSegmentDouble tl) {
                 if (isIntersectedBy(tl, epsilon)) {
                     return true;
                 }

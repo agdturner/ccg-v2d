@@ -16,10 +16,9 @@
 package uk.ac.leeds.ccg.v2d.geometry;
 
 import java.math.RoundingMode;
-import uk.ac.leeds.ccg.v2d.geometry.V2D_Point;
-import uk.ac.leeds.ccg.v2d.geometry.V2D_Vector;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * V2D_FiniteGeometry for representing finite geometries.
@@ -95,9 +94,29 @@ public abstract class V2D_FiniteGeometry extends V2D_Geometry {
     }
     
     /**
+     * For collecting and returning all the points.
+     *
+     * @param gs The input.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return A Set of points that are the corners of the triangles.
+     */
+    public static V2D_Point[] getPoints(V2D_FiniteGeometry[] gs, int oom, RoundingMode rm) {
+        List<V2D_Point> s = new ArrayList<>();
+        for (var g : gs) {
+            V2D_Point[] gps = g.getPoints(oom, rm);
+            s.addAll(Arrays.asList(gps));
+        }
+        ArrayList<V2D_Point> points = V2D_Point.getUnique(s, oom, rm);
+        return points.toArray(V2D_Point[]::new);
+    }
+
+    /**
      * Translate (move relative to the origin).
      *
      * @param v The vector to translate.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
      */
     @Override
     public void translate(V2D_Vector v, int oom, RoundingMode rm) {
