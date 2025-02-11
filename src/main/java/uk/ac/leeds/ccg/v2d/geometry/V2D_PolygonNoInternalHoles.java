@@ -245,7 +245,10 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
     public boolean isIntersectedBy(V2D_Point pt, int oom, RoundingMode rm) {
         if (getEnvelope(oom, rm).isIntersectedBy(pt, oom, rm)) {
             if (ch.isIntersectedBy(pt, oom, rm)) {
-                externalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(pt, oom, rm));
+                if (V2D_LineSegment.isIntersectedBy(oom, rm, pt, externalEdges.values())) {
+                    return true;
+                }
+                return !externalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(pt, oom, rm));
             }
         }
         return false;
@@ -318,6 +321,29 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
     }
             
     /**
+     * Identify if this contains aabb.
+     *
+     * @param aabb The envelope to test for containment.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} iff there is containment.
+     */
+    public boolean contains(V2D_Envelope aabb, int oom, RoundingMode rm) {
+        BigRational xmin = aabb.getXMin(oom);
+        BigRational xmax = aabb.getXMax(oom);
+        BigRational ymin = aabb.getYMin(oom);
+        BigRational ymax = aabb.getYMax(oom);
+        if (contains(new V2D_Point(xmin, ymin), oom, rm)) {
+            if (contains(new V2D_Point(xmin, ymax), oom, rm)) {
+                if (contains(new V2D_Point(xmax, ymax), oom, rm)) {
+                    return contains(new V2D_Point(xmax, ymin), oom, rm);
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
      * Identify if this contains ch.
      *
      * @param ch The convex hull to test for containment.
@@ -364,7 +390,10 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
         if (l.getEnvelope(oom, rm).isIntersectedBy(en, oom)) {
             if (l.isIntersectedBy(en, oom, rm)) {
                 if (ch.isIntersectedBy(l, oom, rm)) {
-                    externalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(l, oom, rm));
+                    if (V2D_LineSegment.isIntersectedBy(oom, rm, l, externalEdges.values())) {
+                        return true;
+                    }
+                    return !externalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(l, oom, rm));
                 }
             }
         }
@@ -383,18 +412,27 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
         if (t.isIntersectedBy(getEnvelope(oom, rm), oom, rm)) {
             if (isIntersectedBy(t.getEnvelope(oom, rm), oom, rm)) {
                 if (ch.isIntersectedBy(t, oom, rm)) {
+                    V2D_Point tp = t.getP();
+                    if (isIntersectedBy(tp, oom, rm)) {
+                        return true;
+                    }
+                    V2D_Point tq = t.getQ();
+                    if (isIntersectedBy(tq, oom, rm)) {
+                        return true;
+                    }
+                    V2D_Point tr = t.getR();
+                    if (isIntersectedBy(tr, oom, rm)) {
+                        return true;
+                    }
                     if (t.getExternalEdges(oom, rm).parallelStream().anyMatch(x -> 
                             V2D_LineSegment.isIntersectedBy(oom, rm, x, externalEdges.values()))) {
                         return true;
                     }
-                    V2D_Point tp = t.getP();
-                    V2D_Point tq = t.getQ();
-                    V2D_Point tr = t.getR();
                     if (externalHoles.values().parallelStream().anyMatch(x
                             -> x.isIntersectedBy(tp, oom, rm)
                             || x.isIntersectedBy(tq, oom, rm)
                             || x.isIntersectedBy(tr, oom, rm))) {
-                        return true;
+                        return false;
                     }
                 }
             }
@@ -427,19 +465,22 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
     }
 
     /**
-     * Identify if this is intersected by point {@code p}.
+     * Identify if this is intersected by {@code ch}.
      *
      * @param ch The convex hull to test for intersection with.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
-     * @return {@code true} iff the geometry is intersected by {@code ch.
+     * @return {@code true} iff this is intersected by {@code ch}.
      */
     public boolean isIntersectedBy(V2D_ConvexHull ch, int oom, RoundingMode rm) {
         // Check envelopes intersect.
         if (ch.isIntersectedBy(getEnvelope(oom, rm), oom, rm)) {
             if (isIntersectedBy(ch.getEnvelope(oom, rm), oom, rm)) {
-                if (this.ch.isIntersectedBy(ch, oom, rm)) {
-                    externalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(ch, oom, rm));
+                if (Arrays.asList(ch.getPoints(oom, rm)).parallelStream().anyMatch(x -> isIntersectedBy(x, oom, rm))) {
+                    return true;
+                }
+                if (Arrays.asList(getPoints(oom, rm)).parallelStream().anyMatch(x -> ch.isIntersectedBy(x, oom, rm))) {
+                    return true;
                 }
             }
         }
@@ -455,8 +496,8 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
      * @return {@code true} iff this is intersected by {@code p}.
      */
     public boolean isIntersectedBy(V2D_PolygonNoInternalHoles p, int oom, RoundingMode rm) {
-        if (ch.isIntersectedBy(getEnvelope(oom, rm), oom, rm)) {
-            if (isIntersectedBy(ch.getEnvelope(oom, rm), oom, rm)) {
+        if (p.isIntersectedBy(getEnvelope(oom, rm), oom, rm)) {
+            if (isIntersectedBy(p.getEnvelope(oom, rm), oom, rm)) {
                 if (Arrays.asList(getPoints(oom, rm)).parallelStream().anyMatch(x -> p.isIntersectedBy(x, oom, rm))) {
                     return true;
                 }
@@ -549,8 +590,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
 
     @Override
     public boolean isIntersectedBy(V2D_Envelope aabb, int oom, RoundingMode rm) {
-        en = getEnvelope(oom, rm);
-        if (en.isIntersectedBy(aabb, oom)) {
+        if (getEnvelope(oom, rm).isIntersectedBy(aabb, oom)) {
             if (ch.isIntersectedBy(aabb, oom, rm)) {
                 return true;
             }

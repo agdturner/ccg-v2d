@@ -143,6 +143,9 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
     @Override
     public boolean isIntersectedBy(V2D_Rectangle r, int oom, RoundingMode rm) {
         if (super.isIntersectedBy(r, oom, rm)) {
+            if (internalHoles.size() == 0) {
+                return true;
+            }
             return !internalHoles.values().parallelStream().anyMatch(x -> x.contains(r, oom, rm));
         }
         return false;
