@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Andy Turner, University of Leeds.
+ * Copyright 2025 Andy Turner, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,15 @@
 package uk.ac.leeds.ccg.v2d.geometry.d;
 
 import java.util.Arrays;
+import java.util.Collection;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
 
 /**
  * For representing and processing rectangles in 2D. A rectangle is a right
- * angled quadrilateral. The four corners are the points
- * {@link #p}, {@link #q}, {@link #r} and {@link #s}. The following depicts a
- * rectangle {@code
- * q  *-----* r
- * |   / |
- * |  /  |
- * | /   |
- * p *-----* s
- * }
- * The angles PQR, QRS, RSP, SPQ are all 90 degrees or Pi/2 radians.
+ * angled quadrilateral.
  *
  * @author Andy Turner
- * @version 1.0
+ * @version 2.0
  */
 public class V2D_RectangleDouble extends V2D_FiniteGeometryDouble {
 
@@ -223,12 +215,17 @@ public class V2D_RectangleDouble extends V2D_FiniteGeometryDouble {
      * @return True iff there is an intersection.
      */
     public boolean isIntersectedBy(double epsilon, V2D_LineSegmentDouble... ls) {
-        for (V2D_LineSegmentDouble l : ls) {
-            if (isIntersectedBy(l, epsilon)) {
-                return true;
-            }
-        }
-        return false;
+        return isIntersectedBy(epsilon, Arrays.asList(ls));
+    }
+    
+    /**
+     * @param ls The line segments to test for intersection.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return True iff there is an intersection.
+     */
+    public boolean isIntersectedBy(double epsilon, Collection<V2D_LineSegmentDouble> ls) {
+        return ls.parallelStream().anyMatch(x -> isIntersectedBy(x, epsilon));
     }
 
     /**

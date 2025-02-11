@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Andy Turner, University of Leeds.
+ * Copyright 2025 Andy Turner, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,19 @@
 package uk.ac.leeds.ccg.v2d.geometry;
 
 import ch.obermuhlner.math.big.BigRational;
-import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
+import java.util.Collection;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
-import uk.ac.leeds.ccg.math.arithmetic.Math_BigRational;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
 import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
 
 /**
  * For representing and processing rectangles in 2D. A rectangle is a right
- * angled quadrilateral. The four corners are the points
- * {@link #p}, {@link #q}, {@link #r} and {@link #s}. The following depicts a
- * rectangle {@code
- q  *-----* r
-    |   / |
-    |  /  | 
-    | /   |
-  p *-----* s
- * }
- * The angles PQR, QRS, RSP, SPQ are all 90 degrees or Pi/2 radians.
- *
+ * angled quadrilateral.
+ * 
  * @author Andy Turner
- * @version 1.0
+ * @version 2.0
  */
 public class V2D_Rectangle extends V2D_FiniteGeometry {
 
@@ -225,12 +215,17 @@ public class V2D_Rectangle extends V2D_FiniteGeometry {
      * @return True iff there is an intersection.
      */
     public boolean isIntersectedBy(int oom, RoundingMode rm, V2D_LineSegment... ls) {
-        for (V2D_LineSegment l : ls) {
-            if (isIntersectedBy(l, oom, rm)) {
-                return true;
-            }
-        }
-        return false;
+        return isIntersectedBy(oom, rm, Arrays.asList(ls));
+    }
+    
+    /**
+     * @param ls The line segments to test for intersection.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return True iff there is an intersection.
+     */
+    public boolean isIntersectedBy(int oom, RoundingMode rm, Collection<V2D_LineSegment> ls) {
+        return ls.parallelStream().anyMatch(x -> isIntersectedBy(x, oom, rm));
     }
     
     /**
