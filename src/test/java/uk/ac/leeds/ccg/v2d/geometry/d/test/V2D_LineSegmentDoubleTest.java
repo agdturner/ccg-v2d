@@ -118,10 +118,10 @@ public class V2D_LineSegmentDoubleTest extends V2D_TestDouble {
         double epsilon = 1d / 1000000d;
         V2D_LineSegmentDouble l = new V2D_LineSegmentDouble(pP0P0, pP1P0);
         V2D_LineSegmentDouble instance = new V2D_LineSegmentDouble(pP0P0, pP1P0);
-        assertTrue(instance.equals(epsilon, l));
+        assertTrue(instance.equals(l, epsilon));
         // Test 2
         instance = new V2D_LineSegmentDouble(pP1P0, pP0P0);
-        assertFalse(instance.equals(epsilon, l));
+        assertFalse(instance.equals(l, epsilon));
     }
 
     /**

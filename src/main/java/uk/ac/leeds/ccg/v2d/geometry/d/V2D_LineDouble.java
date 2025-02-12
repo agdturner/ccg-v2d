@@ -276,7 +276,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @return {@code true} iff {@code l} is the same as {@code this} within
      * epsilon.
      */
-    public boolean equals(double epsilon, V2D_LineDouble l) {
+    public boolean equals(V2D_LineDouble l, double epsilon) {
         //if (v.isScalarMultiple(epsilon, l.v)) {
         if (l.isIntersectedBy(epsilon, getP())) {
             if (l.isIntersectedBy(epsilon, getQ())) {
@@ -340,10 +340,10 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
     public boolean isIntersectedBy(double epsilon, V2D_PointDouble pt) {
         V2D_PointDouble tp = getP();
         V2D_PointDouble tq = getQ();
-        if (tp.equals(epsilon, pt)) {
+        if (tp.equals(pt, epsilon)) {
             return true;
         }
-        if (tq.equals(epsilon, pt)) {
+        if (tq.equals(pt, epsilon)) {
             return true;
         }
         V2D_VectorDouble dpt = new V2D_VectorDouble(
@@ -457,16 +457,17 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
     public boolean isIntersectedBy(double epsilon, V2D_LineDouble l, double den) {
         if (den == 0d) {
             // Lines are parallel or coincident.
-            return equals(epsilon, l);
+            return equals(l, epsilon);
         }
         return true;
     }
     
     /**
      * https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
-     * @param epsilon The tolerance within which two lines are considered equal.
+     * @param epsilon The tolerance within which vector components are
+     * considered equal.
      * @param l Line to intersect with.
-     * @returns The geometry or null if there is no intersection.
+     * @return The geometry or null if there is no intersection.
      */
     public V2D_GeometryDouble getIntersection(double epsilon, V2D_LineDouble l) {
         double x1 = getP().getX();
@@ -501,7 +502,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
             double y2, double y3, double y4) {
         if (isIntersectedBy(epsilon, l, den)) {
             // Check for coincident lines
-            if (equals(epsilon / 10d, l)) {
+            if (equals(l, epsilon / 10d)) {
                 return l;
             }
             double x1y2sy1x2 = (x1 * y2 - y1 * x2);
@@ -623,7 +624,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @return The minimum distance between this and {@code l}.
      */
     public double getDistanceSquared(V2D_LineDouble l, double epsilon) {
-        if (this.equals(epsilon, l)) {
+        if (this.equals(l, epsilon)) {
             return 0D;
         }
         if (this.isParallel(l, epsilon)) {
@@ -776,6 +777,8 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * check for collinearity of all the points. It returns a line defined by 
      * the first points that have the greatest distance between them.
      * 
+     * @param epsilon The tolerance within which vector components are
+     * considered equal.
      * @param points Any number of points, but with two being different.
      * @return A line defined by any two different points or null if the points
      * are coincident.

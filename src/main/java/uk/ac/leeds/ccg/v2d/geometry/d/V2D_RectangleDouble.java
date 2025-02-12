@@ -17,7 +17,9 @@ package uk.ac.leeds.ccg.v2d.geometry.d;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
+import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
 
 /**
  * For representing and processing rectangles in 2D. A rectangle is a right
@@ -26,7 +28,7 @@ import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
  * @author Andy Turner
  * @version 2.0
  */
-public class V2D_RectangleDouble extends V2D_FiniteGeometryDouble {
+public class V2D_RectangleDouble extends V2D_ShapeDouble {
 
     private static final long serialVersionUID = 1L;
 
@@ -43,15 +45,17 @@ public class V2D_RectangleDouble extends V2D_FiniteGeometryDouble {
     /**
      * Create a new instance.
      *
+     * @param env The environment.
      * @param r Another rectangle.
      */
-    public V2D_RectangleDouble(V2D_RectangleDouble r) {
-        this(r.getP(), r.getQ(), r.getR(), r.getS());
+    public V2D_RectangleDouble(V2D_EnvironmentDouble env, V2D_RectangleDouble r) {
+        this(env, r.getP(), r.getQ(), r.getR(), r.getS());
     }
 
     /**
      * Create a new instance.
      *
+     * @param env The environment.
      * @param offset What {@link #offset} is set to.
      * @param p The bottom left corner of the rectangle.
      * @param q The top left corner of the rectangle.
@@ -60,25 +64,27 @@ public class V2D_RectangleDouble extends V2D_FiniteGeometryDouble {
      * @throws java.lang.RuntimeException iff the points do not define a
      * rectangle.
      */
-    public V2D_RectangleDouble(V2D_VectorDouble offset, V2D_VectorDouble p,
+    public V2D_RectangleDouble(V2D_EnvironmentDouble env, 
+            V2D_VectorDouble offset, V2D_VectorDouble p,
             V2D_VectorDouble q, V2D_VectorDouble r, V2D_VectorDouble s) {
-        super(offset);
-        pqr = new V2D_TriangleDouble(p, q, r);
-        rsp = new V2D_TriangleDouble(r, s, p);
+        super(env, offset);
+        pqr = new V2D_TriangleDouble(env, p, q, r);
+        rsp = new V2D_TriangleDouble(env, r, s, p);
     }
 
     /**
      * Creates a new instance.
      *
+     * @param env The environment.
      * @param p Used to initialise {@link #offset}, {@link #pqr} and
      * {@link #rsp}.
      * @param q Used to initialise {@link #pqr} and {@link #rsp}.
      * @param r Used to initialise {@link #pqr} and {@link #rsp}.
      * @param s Used to initialise {@link #rsp}.
      */
-    public V2D_RectangleDouble(V2D_PointDouble p, V2D_PointDouble q,
+    public V2D_RectangleDouble(V2D_EnvironmentDouble env, V2D_PointDouble p, V2D_PointDouble q,
             V2D_PointDouble r, V2D_PointDouble s) {
-        this(V2D_VectorDouble.ZERO, p.getVector(), q.getVector(), r.getVector(), s.getVector());
+        this(env, V2D_VectorDouble.ZERO, p.getVector(), q.getVector(), r.getVector(), s.getVector());
 //        V2D_PointDouble qn = new V2D_PointDouble(q);
 //        qn.setOffset(p.offset);
 //        V2D_PointDouble rn = new V2D_PointDouble(r);
@@ -119,15 +125,25 @@ public class V2D_RectangleDouble extends V2D_FiniteGeometryDouble {
                 + pad + "pqr=" + getPQR().toStringSimple(pad) + ",\n"
                 + pad + "rsp=" + getRSP().toStringSimple(pad);
     }
+    
+    @Override
+    public V2D_PointDouble[] getPointsArray() {
+        V2D_PointDouble[] r = new V2D_PointDouble[4];
+        r[0] = getP();
+        r[1] = getQ();
+        r[2] = getR();
+        r[3] = getS();
+        return r;
+    }
 
     @Override
-    public V2D_PointDouble[] getPoints() {
-        V2D_PointDouble[] re = new V2D_PointDouble[4];
-        re[0] = getP();
-        re[1] = getQ();
-        re[2] = getR();
-        re[3] = getS();
-        return re;
+    public HashMap<Integer, V2D_PointDouble> getPoints() {
+        HashMap<Integer, V2D_PointDouble> r = new HashMap<>(4);
+        r.put(0, getP());
+        r.put(1, getQ());
+        r.put(2, getR());
+        r.put(3, getS());
+        return r;
     }
 
     /**
@@ -363,7 +379,7 @@ public class V2D_RectangleDouble extends V2D_FiniteGeometryDouble {
             double epsilon) {
         theta = Math_AngleDouble.normalise(theta);
         if (theta == 0d) {
-            return new V2D_RectangleDouble(this);
+            return new V2D_RectangleDouble(env, this);
         } else {
             return rotateN(pt, theta, epsilon);
         }
@@ -372,7 +388,7 @@ public class V2D_RectangleDouble extends V2D_FiniteGeometryDouble {
     @Override
     public V2D_RectangleDouble rotateN(V2D_PointDouble pt,
             double theta, double epsilon) {
-        return new V2D_RectangleDouble(
+        return new V2D_RectangleDouble(env, 
                 getP().rotateN(pt, theta, epsilon),
                 getQ().rotateN(pt, theta, epsilon),
                 getR().rotateN(pt, theta, epsilon),
@@ -412,11 +428,11 @@ public class V2D_RectangleDouble extends V2D_FiniteGeometryDouble {
             if (rspit == null) {
                 return pqrit;
             }
-            V2D_PointDouble[] pqritps = pqrit.getPoints();
-            V2D_PointDouble[] rspitps = rspit.getPoints();
+            V2D_PointDouble[] pqritps = pqrit.getPointsArray();
+            V2D_PointDouble[] rspitps = rspit.getPointsArray();
             V2D_PointDouble[] pts = Arrays.copyOf(pqritps, pqritps.length + rspitps.length);
             System.arraycopy(rspitps, 0, pts, pqritps.length, rspitps.length);
-            return V2D_ConvexHullDouble.getGeometry(epsilon, pts);
+            return V2D_ConvexHullDouble.getGeometry(env, epsilon, pts);
         }
     }
     
@@ -543,33 +559,34 @@ public class V2D_RectangleDouble extends V2D_FiniteGeometryDouble {
      * @return {@code true} iff this is equal to r.
      */
     public boolean equals(V2D_RectangleDouble r, double epsilon) {
-        V2D_PointDouble[] pts = getPoints();
-        V2D_PointDouble[] rpts = r.getPoints();
-        for (var x : pts) {
-            boolean found = false;
-            for (var y : rpts) {
-                if (x.equals(epsilon, y)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                return false;
-            }
-        }
-        for (var x : rpts) {
-            boolean found = false;
-            for (var y : pts) {
-                if (x.equals(epsilon, y)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                return false;
-            }
-        }
-        return true;
+        Collection<V2D_PointDouble> ps = getPoints().values();
+        Collection<V2D_PointDouble> rps = r.getPoints().values();
+        return ps.parallelStream().allMatch(x -> x.equalsAny(rps, epsilon));
+//        for (var x : pts) {
+//            boolean found = false;
+//            for (var y : rpts) {
+//                if (x.equals(epsilon, y)) {
+//                    found = true;
+//                    break;
+//                }
+//            }
+//            if (!found) {
+//                return false;
+//            }
+//        }
+//        for (var x : rpts) {
+//            boolean found = false;
+//            for (var y : pts) {
+//                if (x.equals(epsilon, y)) {
+//                    found = true;
+//                    break;
+//                }
+//            }
+//            if (!found) {
+//                return false;
+//            }
+//        }
+//        return true;
     }
 
     /**

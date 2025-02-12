@@ -16,8 +16,10 @@
 package uk.ac.leeds.ccg.v2d.geometry.d;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import uk.ac.leeds.ccg.math.arithmetic.Math_Double;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
 
@@ -133,6 +135,23 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
         return pad + super.toStringFieldsSimple("") + ", rel=" + rel.toStringSimple("");
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o != null) {
+            if (o instanceof V2D_PointDouble p) {
+                return equals(p);
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 89 * hash + Objects.hashCode(this.rel);
+        return hash;
+    }
+    
     /**
      * Two points are equal if they are at the same location defined by each
      * points relative start location and translation vector.
@@ -153,26 +172,8 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
     }
 
     /**
-     * For determining if all points are coincident.
-     *
-     * @param ps The points to test if they are all equal.
-     * @return {@code true} iff {@code pv} is the same as {@code this}.
-     */
-    public static boolean equals(V2D_PointDouble... ps) {
-        if (ps.length < 2) {
-            return true;
-        }
-        for (int i = 1; i < ps.length; i++) {
-            if (!ps[0].equals(ps[i])) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * For determining if all points are coincident within a tolerance given by
-     * epsilon.
+     * Two points are equal if they are at the same location defined by each
+     * points relative start location and translation vector.
      *
      * @param epsilon The tolerance within which vector components are
      * considered equal.
@@ -180,7 +181,7 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
      * @return {@code true} iff {@code pv} is equal to {@code this} given the
      * epsilon.
      */
-    public boolean equals(double epsilon, V2D_PointDouble p) {
+    public boolean equals(V2D_PointDouble p, double epsilon) {
         if (p == null) {
             return false;
         }
@@ -191,33 +192,51 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
         return Math_Double.equals(x, px, epsilon)
                 && Math_Double.equals(y, py, epsilon);
     }
-
+    
     /**
-     * Two points are equal if they are at the same location defined by each
-     * points relative start location and translation vector.
-     *
      * @param epsilon The tolerance within which vector components are
      * considered equal.
-     * @param ps The points to test if they are all equal.
-     * @return {@code true} iff {@code pv} is the same as {@code this}.
+     * @param ps The points to test if they are coincident.
+     * @return {@code true} iff all the points are coincident.
      */
     public static boolean equals(double epsilon, V2D_PointDouble... ps) {
         if (ps.length < 2) {
             return true;
         }
         for (int i = 1; i < ps.length; i++) {
-            if (!ps[0].equals(epsilon, ps[i])) {
+            if (!ps[0].equals(ps[i], epsilon)) {
                 return false;
             }
         }
         return true;
     }
+    
+    /**
+     * For determining if all points in {@code ps} are coincident to 
+     * {@code this} within a tolerance given by {@code epsilon}.
+     *
+     * @param ps The points to test if they are equal to this.
+     * @param epsilon The tolerance within which vector components are
+     * considered equal.
+     * @return {@code true} iff all points in {@code ps} are equal to 
+     * {@code this}.
+     */
+    public boolean equalsAll(Collection<V2D_PointDouble> ps, double epsilon) {
+        return ps.parallelStream().allMatch(x -> equals(x, epsilon));
+    }
 
-    @Override
-    public V2D_PointDouble[] getPoints() {
-        V2D_PointDouble[] r = new V2D_PointDouble[1];
-        r[0] = this;
-        return r;
+    /**
+     * For determining if all points in {@code ps} are coincident to 
+     * {@code this} within a tolerance given by {@code epsilon}.
+     *
+     * @param ps The points to test if they are equal to this.
+     * @param epsilon The tolerance within which vector components are
+     * considered equal.
+     * @return {@code true} iff all points in {@code ps} are equal to 
+     * {@code this}.
+     */
+    public boolean equalsAny(Collection<V2D_PointDouble> ps, double epsilon) {
+        return ps.parallelStream().anyMatch(x -> equals(x, epsilon));
     }
 
     /**
@@ -246,6 +265,13 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
      */
     public boolean isOrigin() {
         return equals(ORIGIN);
+    }
+    
+    @Override
+    public V2D_PointDouble[] getPointsArray() {
+        V2D_PointDouble[] r = new V2D_PointDouble[1];
+        r[0] = this;
+        return r;
     }
 
     /**
@@ -412,7 +438,7 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
                 for (int j = i + 1; j < pts.size(); j++) {
                     if (!indexes.contains(j)) {
                         V2D_PointDouble p2 = pts.get(j);
-                        if (p.equals(epsilon, p2)) {
+                        if (p.equals(p2, epsilon)) {
                             indexes.add(j);
                         }
                     }

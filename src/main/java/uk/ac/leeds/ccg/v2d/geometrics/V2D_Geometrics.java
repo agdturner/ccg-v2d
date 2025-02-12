@@ -26,6 +26,11 @@ import uk.ac.leeds.ccg.v2d.geometry.V2D_Point;
 public class V2D_Geometrics {
     
     /**
+     * Create a new instance.
+     */
+    public V2D_Geometrics(){}
+    
+    /**
      * https://en.wikipedia.org/wiki/Centroid
      * This centroid point is the minimum of the sum of squared Euclidean 
      * distances between itself and each input point. This is not a barycentre.

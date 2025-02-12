@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Andy Turner, University of Leeds.
+ * Copyright 2025 Andy Turner, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,70 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.leeds.ccg.v2d.core;
+package uk.ac.leeds.ccg.v2d.core.d;
 
+import uk.ac.leeds.ccg.v2d.core.*;
 import ch.obermuhlner.math.big.BigRational;
 import java.io.Serializable;
 import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.TreeSet;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
-import uk.ac.leeds.ccg.v2d.geometry.V2D_Shape;
+import uk.ac.leeds.ccg.v2d.geometry.d.V2D_ShapeDouble;
 
 /**
  * V2D_Environment
  *
  * @author Andy Turner
- * @version 1.0
+ * @version 2.0
  */
-public class V2D_Environment implements Serializable {
+public class V2D_EnvironmentDouble implements Serializable {
     
     private static final long serialVersionUID = 1L;
 
     /**
-     * 0
+     * The epsilon for judging if two vectors are the same.
      */
-    public static final BigRational P0 = BigRational.ZERO;
-    
-    /**
-     * 1
-     */
-    public static final BigRational P1 = BigRational.ONE;
-    
-    /**
-     * 2
-     */
-    public static final BigRational P2 = BigRational.TWO;
-    
-    /**
-     * 3
-     */
-    public static final BigRational P3 = BigRational.valueOf(3);
-    
-    /**
-     * -1
-     */
-    public static final BigRational N1 = BigRational.ONE.negate();
-
-    /**
-     * An instance that helps with calculations involving PI and Taylor series.
-     */
-    public static final Math_BigDecimal bd = new Math_BigDecimal();
-    
-    /**
-     * The default Order of Magnitude.
-     */
-    public static final int DEFAULT_OOM = -3;
-    
-    /**
-     * The default RoundingMode.
-     */
-    public static final RoundingMode DEFAULT_RM = RoundingMode.HALF_UP;
+    public double epsilon;
     
     /**
      * The shapes.
      */
-    public HashMap<Integer, V2D_Shape> shapes;
+    public HashMap<Integer, V2D_ShapeDouble> shapes;
     
     /**
      * The ids of shapes.
@@ -86,7 +53,7 @@ public class V2D_Environment implements Serializable {
     /**
      * Creates a new instance.
      */
-    public V2D_Environment(){
+    public V2D_EnvironmentDouble(double epsilon){
         shapes = new HashMap<>();
         ids = new HashSet<>();
     }
@@ -109,7 +76,7 @@ public class V2D_Environment implements Serializable {
      * @param shape The shape to be put in {@link #shapes}.
      * @return The id of the shape allocated. 
      */
-    public int add(V2D_Shape shape) {
+    public int add(V2D_ShapeDouble shape) {
         int id = getNextID();
         shapes.put(id, shape);
         return id;

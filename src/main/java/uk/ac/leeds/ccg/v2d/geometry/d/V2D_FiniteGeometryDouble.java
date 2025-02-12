@@ -17,6 +17,7 @@ package uk.ac.leeds.ccg.v2d.geometry.d;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * V2D_FiniteGeometry for representing finite geometries.
@@ -68,23 +69,6 @@ public abstract class V2D_FiniteGeometryDouble extends V2D_GeometryDouble {
     public abstract boolean isIntersectedBy(V2D_EnvelopeDouble aabb, double epsilon);
     
     /**
-     * @return A copy of the points of the geometry.
-     */
-    public abstract V2D_PointDouble[] getPoints();
-    
-    /**
-     * @return A copy of the points of the geometries gs.
-     * @param gs The geometries.
-     */
-    public static V2D_PointDouble[] getPoints(V2D_FiniteGeometryDouble... gs) {
-        ArrayList<V2D_PointDouble> list = new ArrayList<>();
-        for (var x: gs) {
-            list.addAll(Arrays.asList(x.getPoints()));
-        }
-        return list.toArray(V2D_PointDouble[]::new);
-    }
-    
-    /**
      * Translate (move relative to the origin).
      *
      * @param v The vector to translate.
@@ -96,5 +80,19 @@ public abstract class V2D_FiniteGeometryDouble extends V2D_GeometryDouble {
             en.translate(v);
         }
         //en = null;
+    }
+    
+    public abstract V2D_PointDouble[] getPointsArray();
+    
+    /**
+     * @return A copy of the points of the geometries gs.
+     * @param gs The geometries.
+     */
+    public static V2D_PointDouble[] getPoints(V2D_FiniteGeometryDouble... gs) {
+        ArrayList<V2D_PointDouble> list = new ArrayList<>();
+        for (var x: gs) {
+            list.addAll(Arrays.asList(x.getPointsArray()));
+        }
+        return list.toArray(V2D_PointDouble[]::new);
     }
 }

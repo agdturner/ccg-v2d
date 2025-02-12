@@ -14,9 +14,13 @@ module uk.ac.leeds.ccg.v2d {
     /**
      * Exports.
      */
-    exports uk.ac.leeds.ccg.v2d.geometrics.d;
+    exports uk.ac.leeds.ccg.v2d.core;
+    exports uk.ac.leeds.ccg.v2d.geometrics;
     exports uk.ac.leeds.ccg.v2d.geometry;
     exports uk.ac.leeds.ccg.v2d.geometry.light;
+    
+    exports uk.ac.leeds.ccg.v2d.core.d;
+    exports uk.ac.leeds.ccg.v2d.geometrics.d;
     exports uk.ac.leeds.ccg.v2d.geometry.d;
     exports uk.ac.leeds.ccg.v2d.geometry.d.light;
     exports uk.ac.leeds.ccg.v2d.projection.d;

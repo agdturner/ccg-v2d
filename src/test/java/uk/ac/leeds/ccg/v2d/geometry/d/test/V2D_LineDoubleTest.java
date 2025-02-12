@@ -315,14 +315,14 @@ public class V2D_LineDoubleTest extends V2D_TestDouble {
         instance = new V2D_LineDouble(pP0P0, pP1P1);
         expResult = new V2D_LineDouble(pP0P0, pP1P1);
         result = instance.getIntersection(epsilon, l);
-        assertTrue(((V2D_LineDouble) expResult).equals(epsilon,
-                (V2D_LineDouble) result));
+        assertTrue(((V2D_LineDouble) expResult).equals(
+                (V2D_LineDouble) result, epsilon));
         // Test 19
         instance = new V2D_LineDouble(pP1P1, pP0P0);
         expResult = new V2D_LineDouble(pP0P0, pP1P1);
         result = instance.getIntersection(epsilon, l);
-        assertTrue(((V2D_LineDouble) expResult).equals(epsilon,
-                (V2D_LineDouble) result));
+        assertTrue(((V2D_LineDouble) expResult).equals(
+                (V2D_LineDouble) result, epsilon));
         // Test 20
         //instance = new V2D_LineDouble(P0P1, P0N1);
         instance = new V2D_LineDouble(pP0N1, pP0P1);
@@ -330,8 +330,8 @@ public class V2D_LineDoubleTest extends V2D_TestDouble {
         expResult = pP0P0;
         epsilon = 1d / 100000000000d;
         result = instance.getIntersection(epsilon, l);
-        assertTrue(((V2D_PointDouble) expResult).equals(epsilon,
-                (V2D_PointDouble) result));
+        assertTrue(((V2D_PointDouble) expResult).equals(
+                (V2D_PointDouble) result, epsilon));
         // Test 21
         instance = new V2D_LineDouble(pN1P1, pP1N1);
         l = new V2D_LineDouble(pP0P2, pP1P1);
@@ -344,15 +344,15 @@ public class V2D_LineDoubleTest extends V2D_TestDouble {
         instance = new V2D_LineDouble(pN1P1, pP1N1);
         expResult = pP0P0;
         result = instance.getIntersection(epsilon, l);
-        assertTrue(((V2D_PointDouble) expResult).equals(epsilon,
-                (V2D_PointDouble) result));
+        assertTrue(((V2D_PointDouble) expResult).equals(
+                (V2D_PointDouble) result, epsilon));
         // Test 23
         l = new V2D_LineDouble(pN1N1, pP1P1);
         instance = new V2D_LineDouble(pN1P1, pP1N1);
         expResult = pP0P0;
         result = instance.getIntersection(epsilon, l);
-        assertTrue(((V2D_PointDouble) expResult).equals(epsilon,
-                (V2D_PointDouble) result));
+        assertTrue(((V2D_PointDouble) expResult).equals(
+                (V2D_PointDouble) result, epsilon));
         // Test 24
         l = new V2D_LineDouble(new V2D_PointDouble(-1d + (0.1d), -1d + (0.1d)),
                 new V2D_PointDouble(1d + (0.1d), 1d + (0.1d)));
@@ -360,8 +360,8 @@ public class V2D_LineDoubleTest extends V2D_TestDouble {
                 new V2D_PointDouble(1d + (0.1d), -1d + (0.1d)));
         expResult = new V2D_PointDouble(0d + (0.1d), 0d + (0.1d));
         result = instance.getIntersection(epsilon, l);
-        assertTrue(((V2D_PointDouble) expResult).equals(epsilon,
-                (V2D_PointDouble) result));
+        assertTrue(((V2D_PointDouble) expResult).equals(
+                (V2D_PointDouble) result, epsilon));
         // Test 25
         epsilon = 1d / 100000d;
         l = new V2D_LineDouble(new V2D_PointDouble(-100d, -100d),
@@ -373,8 +373,8 @@ public class V2D_LineDoubleTest extends V2D_TestDouble {
 //        expResult = new V2D_LineDouble(new V2D_PointDouble(-100d, -100d),
 //                new V2D_PointDouble(100d, 100d));
         result = instance.getIntersection(epsilon, l);
-        assertTrue(((V2D_LineDouble) expResult).equals(epsilon,
-                (V2D_LineDouble) result));
+        assertTrue(((V2D_LineDouble) expResult).equals(
+                (V2D_LineDouble) result, epsilon));
     }
 
     /**
@@ -386,17 +386,17 @@ public class V2D_LineDoubleTest extends V2D_TestDouble {
         double epsilon = 1d / 10000000d;
         V2D_LineDouble l = new V2D_LineDouble(pP0P0, pP1P1);
         V2D_LineDouble instance = new V2D_LineDouble(pP0P0, pP1P1);
-        assertTrue(instance.equals(epsilon, l));
+        assertTrue(instance.equals(l, epsilon));
         // Test 2
         instance = new V2D_LineDouble(pP1P1, pP0P0);
-        assertTrue(instance.equals(epsilon, l));
+        assertTrue(instance.equals(l, epsilon));
         // Test 3
         l = V2D_LineDouble.X_AXIS;
         instance = V2D_LineDouble.X_AXIS;
-        assertTrue(instance.equals(epsilon, l));
+        assertTrue(instance.equals(l, epsilon));
         // Test 4
         instance = V2D_LineDouble.Y_AXIS;
-        assertFalse(instance.equals(epsilon, l));
+        assertFalse(instance.equals(l, epsilon));
     }
 
     /**
@@ -528,25 +528,25 @@ public class V2D_LineDoubleTest extends V2D_TestDouble {
         V2D_LineDouble instance = new V2D_LineDouble(pP0P0, pP0P2);
         V2D_PointDouble expResult = pP0P0;
         V2D_PointDouble result = instance.getPointOfIntersection(pt, epsilon);
-        assertTrue(expResult.equals(epsilon, result));
+        assertTrue(expResult.equals(result, epsilon));
         // Test 2
         pt = pN2P0;
         instance = new V2D_LineDouble(pP0P0, pP0P2);
         expResult = pP0P0;
         result = instance.getPointOfIntersection(pt, epsilon);
-        assertTrue(expResult.equals(epsilon, result));
+        assertTrue(expResult.equals(result, epsilon));
         // Test 3
         pt = pN2P2;
         instance = new V2D_LineDouble(pP0P0, pP0P2);
         expResult = pP0P2;
         result = instance.getPointOfIntersection(pt, epsilon);
-        assertTrue(expResult.equals(epsilon, result));
+        assertTrue(expResult.equals(result, epsilon));
         // Test 4
         pt = pN2N2;
         instance = new V2D_LineDouble(pP0P0, pP0P2);
         expResult = pP0N2;
         result = instance.getPointOfIntersection(pt, epsilon);
-        assertTrue(expResult.equals(epsilon, result));
+        assertTrue(expResult.equals(result, epsilon));
     }
 
     /**
@@ -565,7 +565,7 @@ public class V2D_LineDoubleTest extends V2D_TestDouble {
         l = new V2D_LineDouble(pP0P0, pP0P1);
         result = l.getLineOfIntersection(p, epsilon);
         expResult = new V2D_PointDouble(pP0P0);
-        assertTrue(((V2D_PointDouble) expResult).equals(epsilon, (V2D_PointDouble) result));
+        assertTrue(((V2D_PointDouble) expResult).equals((V2D_PointDouble) result, epsilon));
     }
 
     /**
@@ -674,16 +674,16 @@ public class V2D_LineDoubleTest extends V2D_TestDouble {
         V2D_LineDouble instance = new V2D_LineDouble(pP0P0, pP1P0);
         V2D_LineDouble expResult = new V2D_LineDouble(pP0P0, pP0P1);
         V2D_LineDouble result = instance.rotate(pP0P0, -theta, epsilon);
-        assertTrue(expResult.equals(epsilon, result));
+        assertTrue(expResult.equals(result, epsilon));
         // Test 2
         expResult = new V2D_LineDouble(pP0P0, pP0N1);
         result = instance.rotate(pP0P0, theta, epsilon);
-        assertTrue(expResult.equals(epsilon, result));
+        assertTrue(expResult.equals(result, epsilon));
         // Test 3
         instance = new V2D_LineDouble(pP0P0, pP0P1);
         expResult = new V2D_LineDouble(pP0P0, pP1P0);
         result = instance.rotate(pP0P0, theta, epsilon);
-        assertTrue(expResult.equals(epsilon, result));
+        assertTrue(expResult.equals(result, epsilon));
     }
     
     /**

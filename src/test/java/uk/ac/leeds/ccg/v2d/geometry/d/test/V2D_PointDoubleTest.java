@@ -73,22 +73,6 @@ public class V2D_PointDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of isCoincident method, of class V2D_LineDouble.
-     */
-    @Test
-    public void testEquals_V2D_PointDoubleArray() {
-        System.out.println("equals");
-        V2D_PointDouble[] points = new V2D_PointDouble[2];
-        points[0] = pP0P0;
-        points[1] = pP0P0;
-        assertTrue(V2D_PointDouble.equals(points));
-        points[1] = pP0P1;
-        assertFalse(V2D_PointDouble.equals(points));
-        points[0] = pP0P1;
-        assertTrue(V2D_PointDouble.equals(points));
-    }
-
-    /**
      * Test of isBetween method, of class V2D_PointDouble.
      */
     @Test
@@ -364,13 +348,13 @@ public class V2D_PointDoubleTest extends V2D_TestDouble {
         double theta = Pi;
         V2D_PointDouble result = instance.rotate(pt, theta, epsilon);
         V2D_PointDouble expResult = pN1P0;
-        assertTrue(expResult.equals(epsilon, result));
+        assertTrue(expResult.equals(result, epsilon));
         // Test 2
         instance = new V2D_PointDouble(pP0P1);
         theta = Pi;
         result = instance.rotate(pt, theta, epsilon);
         expResult = pP0N1;
-        assertTrue(expResult.equals(epsilon, result));
+        assertTrue(expResult.equals(result, epsilon));
         // Test 3
         V2D_VectorDouble offset = new V2D_VectorDouble(2, 0);
         V2D_VectorDouble rel = new V2D_VectorDouble(1, 0);
@@ -378,7 +362,7 @@ public class V2D_PointDoubleTest extends V2D_TestDouble {
         theta = Pi;
         result = instance.rotate(pt, theta, epsilon);
         expResult = new V2D_PointDouble(-3, 0);
-        assertTrue(expResult.equals(epsilon, result));
+        assertTrue(expResult.equals(result, epsilon));
         // Test 4
         offset = new V2D_VectorDouble(1, 0);
         rel = new V2D_VectorDouble(2, 0);
@@ -386,7 +370,7 @@ public class V2D_PointDoubleTest extends V2D_TestDouble {
         theta = Pi;
         result = instance.rotate(pt, theta, epsilon);
         expResult = new V2D_PointDouble(-3, 0);
-        assertTrue(expResult.equals(epsilon, result));
+        assertTrue(expResult.equals(result, epsilon));
 
         // Test 5
         pt = pP0P1;
@@ -394,19 +378,19 @@ public class V2D_PointDoubleTest extends V2D_TestDouble {
         theta = Pi;
         result = instance.rotate(pt, theta, epsilon);
         expResult = pN1P2;
-        assertTrue(expResult.equals(epsilon, result));
+        assertTrue(expResult.equals(result, epsilon));
 //        // Test 6
 //        instance = new V2D_PointDouble(pP2P0P0);
 //        theta = Pi;
 //        result = instance.rotate(pt, uv, theta, epsilon);
 //        expResult = pN2P0P0;
-//        assertTrue(expResult.equals(epsilon, result));
+//        assertTrue(expResult.equals(result, epsilon));
 //        // Test 7
 //        instance = new V2D_PointDouble(pN2P0P0);
 //        theta = Pi;
 //        result = instance.rotate(pt, uv, theta, epsilon);
 //        expResult = pP2P0P0;
-//        assertTrue(expResult.equals(epsilon, result));
+//        assertTrue(expResult.equals(result, epsilon));
 //
 //        // Test 8
 //        pt = new V2D_RayDouble(P0P0P0, V2D_VectorDouble.IJK);
@@ -415,18 +399,18 @@ public class V2D_PointDoubleTest extends V2D_TestDouble {
 //        theta = Pi;
 //        result = instance.rotate(pt, uv, theta, epsilon);
 //        expResult = pP1P1P1;
-//        assertTrue(expResult.equals(epsilon, result));
+//        assertTrue(expResult.equals(result, epsilon));
 //        // Test 9
 //        instance = new V2D_PointDouble(pP1P1P0);
 //        theta = 2d * Pi / 3d;
 //        result = instance.rotate(pt, uv, theta, epsilon);
 //        expResult = pP0P1P1;
-//        assertTrue(expResult.equals(epsilon, result));
+//        assertTrue(expResult.equals(result, epsilon));
 //        // Test 10
 //        theta = 4d * Pi / 3d;
 //        result = instance.rotate(pt, uv, theta, epsilon);
 //        expResult = pP1P0P1;
-//        assertTrue(expResult.equals(epsilon, result));
+//        assertTrue(expResult.equals(result, epsilon));
     }
 
     /**
@@ -439,11 +423,11 @@ public class V2D_PointDoubleTest extends V2D_TestDouble {
         V2D_VectorDouble offset = P0P1;
         double epsilon = 1 / 100000000d;
         instance.translate(offset);
-        assertTrue(instance.equals(epsilon, pP0P1));
+        assertTrue(instance.equals(pP0P1, epsilon));
         // Test 2
         offset = N2N2;
         instance.translate(offset);
-        assertTrue(instance.equals(epsilon, pN2N1));
+        assertTrue(instance.equals(pN2N1, epsilon));
     }
 
     /**
@@ -531,7 +515,7 @@ public class V2D_PointDoubleTest extends V2D_TestDouble {
         boolean t = false;
         for (var x : result) {
             for (var y : expResult) {
-                if (x.equals(epsilon, y)) {
+                if (x.equals(y, epsilon)) {
                     t = true;
                     break;
                 }
@@ -541,7 +525,7 @@ public class V2D_PointDoubleTest extends V2D_TestDouble {
         t = false;
         for (var x : expResult) {
             for (var y : result) {
-                if (x.equals(epsilon, y)) {
+                if (x.equals(y, epsilon)) {
                     t = true;
                     break;
                 }

@@ -20,7 +20,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
+import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
 
 /**
  * For representing convex hulls - convex shapes with no holes.
@@ -28,7 +30,7 @@ import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
  * @author Andy Turner
  * @version 2.0
  */
-public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
+public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
 
     private static final long serialVersionUID = 1L;
 
@@ -51,13 +53,16 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
     /**
      * Create a new instance.
      *
-     * @param epsilon The tolerance within which two vectors are regarded as
-     * equal.
+     * @param env The environment.
      * @param triangles A non-empty list of coplanar triangles.
      */
-    public V2D_ConvexHullDouble(double epsilon,
+    public V2D_ConvexHullDouble(V2D_EnvironmentDouble env,
             V2D_TriangleDouble... triangles) {
-        this(epsilon, V2D_TriangleDouble.getPoints(triangles));
+        this(env, V2D_TriangleDouble.getPoints(triangles, env.epsilon));
+    }
+    
+    public V2D_ConvexHullDouble(V2D_EnvironmentDouble env, V2D_PointDouble... points) {
+        this(env, points[0].offset, Arrays.asList(points));
     }
     
     /**
@@ -95,14 +100,15 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
      * <li>Repeat the process dealing with each group in turn (Steps 3 to 9) in
      * a depth first manner.</li>
      * </ol>
-     * @param epsilon The tolerance within which two vectors are regarded as
-     * equal.
+     * @param env The environment.
+     * @param offset What {@link #offset} is set to.
      * @param points A non-empty list of points in a plane given by n.
      */
-    public V2D_ConvexHullDouble(double epsilon, V2D_PointDouble... points) {
-        super();
+    public V2D_ConvexHullDouble(V2D_EnvironmentDouble env, 
+            V2D_VectorDouble offset, List<V2D_PointDouble> points) {
+        super(env, offset);
         ArrayList<V2D_PointDouble> h = new ArrayList<>();
-        ArrayList<V2D_PointDouble> uniquePoints = V2D_PointDouble.getUnique(Arrays.asList(points), epsilon);
+        ArrayList<V2D_PointDouble> uniquePoints = V2D_PointDouble.getUnique(points, env.epsilon);
         //uniquePoints.sort(V2D_PointDouble::compareTo);
         uniquePoints.sort((p1, p2) -> p1.compareTo(p2));
         // Compute convex hull
@@ -123,10 +129,18 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
             }
             h.add(pt);
         }
-        ArrayList<V2D_PointDouble> ups = V2D_PointDouble.getUnique(h, epsilon);        
+        ArrayList<V2D_PointDouble> ups = V2D_PointDouble.getUnique(h, env.epsilon);        
         this.points = new HashMap<>();
         for (var p: ups) {
             this.points.put(this.points.size(), p);
+        }
+        // Add edge
+        edges = new HashMap<>();
+        V2D_PointDouble p0 = this.points.get(0);
+        V2D_PointDouble p1;
+        for (int i = 1; i < this.points.size(); i ++) {
+            p1 = this.points.get(i);
+            edges.put(edges.size(), new V2D_LineSegmentDouble(p0, p1));
         }
     }
 
@@ -141,35 +155,37 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
      * Create a new instance.
      *
      * @param ch The convex hull.
-     * @param epsilon The tolerance within which two vectors are regarded as
-     * equal.
      */
-    public V2D_ConvexHullDouble(V2D_ConvexHullDouble ch, double epsilon) {
-        this(epsilon, V2D_FiniteGeometryDouble.getPoints(ch));
+    public V2D_ConvexHullDouble(V2D_ConvexHullDouble ch) {
+        this(ch.env, ch.getPointsArray());
     }
 
     /**
      * Create a new instance.
      *
+     * @param env The environment.
      * @param ch The convex hull to add to the convex hull with t.
      * @param t The triangle used to set the normal and to add to the convex
      * hull with ch.
-     * @param epsilon The tolerance within which two vectors are regarded as
-     * equal.
      */
-    public V2D_ConvexHullDouble(V2D_ConvexHullDouble ch, V2D_TriangleDouble t,
-            double epsilon) {
-        this(epsilon, V2D_FiniteGeometryDouble.getPoints(ch, t));
+    public V2D_ConvexHullDouble(V2D_EnvironmentDouble env, V2D_ConvexHullDouble ch,
+            V2D_TriangleDouble t) {
+        this(env, V2D_FiniteGeometryDouble.getPoints(ch, t));
     }
 
     @Override
-    public V2D_PointDouble[] getPoints() {
+    public V2D_PointDouble[] getPointsArray() {
         int np = points.size();
         V2D_PointDouble[] pts = new V2D_PointDouble[np];
         for (int i = 0; i < np; i++) {
             pts[i] = new V2D_PointDouble(points.get(i));
         }
         return pts;
+    }
+
+    @Override
+    public HashMap<Integer, V2D_PointDouble> getPoints() {
+        return points;
     }
 
     @Override
@@ -217,7 +233,7 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
     }
 
     /**
-     * Check if {@code this} is equal to {@code i}.
+     * Check if {@code this} is equal to {@code c}.
      *
      * @param c An instance to compare for equality.
      * @param epsilon The tolerance within which two vectors are regarded as
@@ -225,35 +241,41 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
      * @return {@code true} iff all the triangles are the same.
      */
     public boolean equals(V2D_ConvexHullDouble c, double epsilon) {
-        HashSet<Integer> indexes = new HashSet<>();
-        for (var x : points.values()) {
-            boolean found = false;
-            for (int i = 0; i < c.points.size(); i++) {
-                if (x.equals(epsilon, c.points.get(i))) {
-                    found = true;
-                    indexes.add(i);
-                    break;
-                }
-            }
-            if (!found) {
-                return false;
-            }
+        if (points.values().parallelStream().allMatch(x -> 
+                x.equalsAny(c.points.values(), epsilon))) {
+            return c.points.values().parallelStream().allMatch(x -> 
+                x.equalsAny(points.values(), epsilon));
         }
-        for (int i = 0; i < c.points.size(); i++) {
-            if (!indexes.contains(i)) {
-                boolean found = false;
-                for (var x : points.values()) {
-                    if (x.equals(epsilon, c.points.get(i))) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return false;
+//        HashSet<Integer> indexes = new HashSet<>();
+//        for (var x : points.values()) {
+//            boolean found = false;
+//            for (int i = 0; i < c.points.size(); i++) {
+//                if (x.equals(epsilon, c.points.get(i))) {
+//                    found = true;
+//                    indexes.add(i);
+//                    break;
+//                }
+//            }
+//            if (!found) {
+//                return false;
+//            }
+//        }
+//        for (int i = 0; i < c.points.size(); i++) {
+//            if (!indexes.contains(i)) {
+//                boolean found = false;
+//                for (var x : points.values()) {
+//                    if (x.equals(epsilon, c.points.get(i))) {
+//                        found = true;
+//                        break;
+//                    }
+//                }
+//                if (!found) {
+//                    return false;
+//                }
+//            }
+//        }
+//        return true;
     }
 
     @Override
@@ -278,10 +300,10 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
      */
     public V2D_FiniteGeometryDouble simplify(double epsilon) {
         if (isTriangle()) {
-            return new V2D_TriangleDouble(points.get(0), points.get(1),
+            return new V2D_TriangleDouble(env, points.get(0), points.get(1),
                     points.get(2));
         } else if (isRectangle(epsilon)) {
-            return new V2D_RectangleDouble(points.get(0), points.get(2),
+            return new V2D_RectangleDouble(env, points.get(0), points.get(2),
                     points.get(1), points.get(3));
         } else {
             return this;
@@ -504,7 +526,7 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
             double epsilon) {
         theta = Math_AngleDouble.normalise(theta);
         if (theta == 0d) {
-            return new V2D_ConvexHullDouble(this, epsilon);
+            return new V2D_ConvexHullDouble(this);
         } else {
             return rotateN(pt, theta, epsilon);
         }
@@ -516,7 +538,7 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
         for (int i = 0; i < points.size(); i++) {
             pts[0] = points.get(i).rotateN(pt, theta, epsilon);
         }
-        return new V2D_ConvexHullDouble(epsilon, pts);
+        return new V2D_ConvexHullDouble(env, pts);
     }
 
     @Override
@@ -638,7 +660,26 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
      * @return Either a V2D_Point, V2D_LineSegment, V2D_Triangle, or
      * V2D_ConvexHullCoplanar.
      */
-    public static V2D_FiniteGeometryDouble getGeometry(double epsilon, V2D_PointDouble... pts) {
+    public static V2D_FiniteGeometryDouble getGeometry(
+            V2D_EnvironmentDouble env, double epsilon, 
+            ArrayList<V2D_PointDouble> pts) {
+        return getGeometry(env, epsilon, pts.toArray(V2D_PointDouble[]::new));
+    }
+    
+    /**
+     * If pts are all equal then a V2D_Point is returned. If two are different,
+     * then a V2D_LineSegment is returned. Three different, then a V2D_Triangle
+     * is returned. If four or more are different then a V2D_ConvexHullCoplanar
+     * is returned.
+     *
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @param pts The points.
+     * @return Either a V2D_Point, V2D_LineSegment, V2D_Triangle, or
+     * V2D_ConvexHullCoplanar.
+     */
+    public static V2D_FiniteGeometryDouble getGeometry(
+            V2D_EnvironmentDouble env, double epsilon, V2D_PointDouble... pts) {
         ArrayList<V2D_PointDouble> upts = V2D_PointDouble.getUnique(Arrays.asList(pts), epsilon);
         Iterator<V2D_PointDouble> i = upts.iterator();
         switch (upts.size()) {
@@ -652,7 +693,7 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
                 if (V2D_LineDouble.isCollinear(epsilon, pts)) {
                     return V2D_LineSegmentDouble.getGeometry(epsilon, pts);
                 } else {
-                    return new V2D_TriangleDouble(i.next(), i.next(), i.next());
+                    return new V2D_TriangleDouble(env, i.next(), i.next(), i.next());
                 }
             }
             default -> {
@@ -665,7 +706,7 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
                 if (V2D_LineDouble.isCollinear(epsilon, ip, iq, ir)) {
                     return new V2D_LineSegmentDouble(epsilon, pts);
                 } else {
-                    return new V2D_ConvexHullDouble(epsilon, pts);
+                    return new V2D_ConvexHullDouble(env, pts);
                 }
             }
         }
@@ -682,12 +723,12 @@ public class V2D_ConvexHullDouble extends V2D_FiniteGeometryDouble {
     public ArrayList<V2D_TriangleDouble> getTriangles() {
         if (triangles == null) {
             triangles = new ArrayList<>();
-            V2D_PointDouble[] ps = getPoints();
+            V2D_PointDouble[] ps = getPointsArray();
             V2D_PointDouble p0 = ps[0];
             V2D_PointDouble p1 = ps[1];
             for (int i = 2; i < ps.length; i++) {
                 V2D_PointDouble p2 = ps[i];
-                triangles.add(new V2D_TriangleDouble(p0, p1, p2));
+                triangles.add(new V2D_TriangleDouble(env, p0, p1, p2));
                 p1 = p2;
             }
         }

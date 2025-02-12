@@ -15,6 +15,7 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry.d;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import uk.ac.leeds.ccg.math.arithmetic.Math_Double;
@@ -101,9 +102,21 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
     /**
      * Create a new instance that intersects all points.
      *
-     * @param points Any number of collinear points, with two being different.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
+     * @param points Any number of collinear points, with two being different.
+     */
+    public V2D_LineSegmentDouble(double epsilon, ArrayList<V2D_PointDouble> points) {
+        this(epsilon, points.toArray(V2D_PointDouble[]::new));
+    }
+    
+    
+    /**
+     * Create a new instance that intersects all points.
+     *
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @param points Any number of collinear points, with two being different.
      */
     public V2D_LineSegmentDouble(double epsilon, V2D_PointDouble... points) {
         super(points[0].offset);
@@ -152,14 +165,6 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
         if (ql != null) {
             ql.translate(v);
         }
-    }
-
-    @Override
-    public V2D_PointDouble[] getPoints() {
-        V2D_PointDouble[] r = new V2D_PointDouble[2];
-        r[0] = getP();
-        r[1] = getQ();
-        return r;
     }
 
     /**
@@ -223,28 +228,27 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
     }
 
     /**
-     * @param l The line segment to test if it is the same as {@code this}.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
+     * @param l The line segment to test if it is the same as {@code this}.
      * @return {@code true} iff {@code l} is the same as {@code this}.
      */
-    public boolean equals(double epsilon, V2D_LineSegmentDouble l) {
+    public boolean equals(V2D_LineSegmentDouble l, double epsilon) {
         if (equalsIgnoreDirection(epsilon, l)) {
-            return this.l.getP().equals(epsilon, l.getP());
+            return this.l.getP().equals(l.getP(), epsilon);
         }
         return false;
     }
 
     /**
-     * @param l The line segment to test if it is equal to {@code this}.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
+     * @param l The line segment to test if it is equal to {@code this}.
      * @return {@code true} iff {@code this} is equal to {@code l}. This ignores
      * the order of the point of {@link #l} and {@link #qv}.
      */
-    public boolean equalsIgnoreDirection(double epsilon,
-            V2D_LineSegmentDouble l) {
-        if (this.l.equals(epsilon, l.l)) {
+    public boolean equalsIgnoreDirection(double epsilon, V2D_LineSegmentDouble l) {
+        if (this.l.equals(l.l, epsilon)) {
             return isIntersectedBy(l.getQ(), epsilon)
                     && l.isIntersectedBy(getQ(), epsilon);
         }
@@ -274,6 +278,14 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
             en = new V2D_EnvelopeDouble(getP(), getQ());
         }
         return en;
+    }
+    
+    @Override
+    public V2D_PointDouble[] getPointsArray() {
+        V2D_PointDouble[] r = new V2D_PointDouble[2];
+        r[0] = getP();
+        r[1] = getQ();
+        return r;
     }
 
     /**
@@ -519,7 +531,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
         double den = V2D_LineDouble.getIntersectionDenominator(x1, x2, x3, x4, y1, y2, y3, y4);
         if (den == 0) {
             // Either the line segments are collinear or parallel but not collinear.
-            if (this.l.equals(epsilon, ls.l)) {
+            if (this.l.equals(ls.l, epsilon)) {
                 return getIntersectionLS(epsilon, ls);
             } else {
                 return null;
@@ -681,7 +693,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
                 // Cases: 1, 2, 8, 9, 20, 21, 27, 28
                 if (ls.isBetween(tp, epsilon)) {
                     // Cases: 8, 9, 20, 21
-                    if (tp.equals(epsilon, lp)) {
+                    if (tp.equals(lp, epsilon)) {
                         // Cases: 8, 21
                         return tp;
                     } else {
@@ -690,7 +702,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
                     }
                 } else {
                     // Case: 1, 2, 27, 28
-                    if (lp.equals(epsilon, tq)) {
+                    if (lp.equals(tq, epsilon)) {
                         // Case: 1, 28
                         return lp;
                     } else {
@@ -710,7 +722,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
                         return V2D_LineSegmentDouble.getGeometry(lq, tp, epsilon);
                     } else {
                         // Cases: 6, 7, 22, 
-                        if (tp.equals(epsilon, lq)) {
+                        if (tp.equals(lq, epsilon)) {
                             // Cases: 7, 22
                             return tp;
                         } else {
@@ -720,7 +732,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
                     }
                 } else {
                     // Cases: 13, 14, 15, 16
-                    if (tq.equals(epsilon, lq)) {
+                    if (tq.equals(lq, epsilon)) {
                         // Cases: 14, 15
                         return tq;
                     } else {
@@ -885,7 +897,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      */
     public static V2D_FiniteGeometryDouble getGeometry(V2D_PointDouble p,
             V2D_PointDouble q, double epsilon) {
-        if (p.equals(epsilon, q)) {
+        if (p.equals(q, epsilon)) {
             return p;
         } else {
             return new V2D_LineSegmentDouble(p, q);
@@ -905,11 +917,11 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      */
     public static V2D_FiniteGeometryDouble getGeometry(V2D_PointDouble p,
             V2D_PointDouble q, V2D_PointDouble r, double epsilon) {
-        if (p.equals(epsilon, q)) {
+        if (p.equals(q, epsilon)) {
             return getGeometry(epsilon, p, r);
-        } else if (q.equals(epsilon, r)) {
+        } else if (q.equals(r, epsilon)) {
             return getGeometry(epsilon, p, r);
-        } else if (p.equals(epsilon, r)) {
+        } else if (p.equals(r, epsilon)) {
             return getGeometry(epsilon, p, q);
         } else {
             V2D_LineSegmentDouble ls = new V2D_LineSegmentDouble(epsilon, p, q);

@@ -105,7 +105,7 @@ public class V2D_EnvelopeDouble implements Serializable {
         this(new V2D_PointDouble(xMin, yMin),
                 new V2D_PointDouble(xMax, yMax));
     }
-
+    
     /**
      * Create a new instance.
      *
@@ -174,7 +174,16 @@ public class V2D_EnvelopeDouble implements Serializable {
      * @param g The geometry used to form the envelope.
      */
     public V2D_EnvelopeDouble(V2D_FiniteGeometryDouble g) {
-        this(g.getPoints());
+        this(g.getPointsArray());
+    }
+
+    /**
+     * Create a new instance.
+     *
+     * @param ls The line segment used to form the envelope.
+     */
+    public V2D_EnvelopeDouble(V2D_LineSegmentDouble ls) {
+        this(ls.getP(), ls.getQ());
     }
 
     /**

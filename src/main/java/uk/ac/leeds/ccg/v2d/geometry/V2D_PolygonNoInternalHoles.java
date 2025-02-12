@@ -25,7 +25,7 @@ import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
 
 /**
- * For representing a polygon with no internal holes. External holes are similar 
+ * For representing a polygon with no internal holes. External holes are similar
  * polygons that share some part of an edge with the convex hull.
  *
  * @author Andy Turner
@@ -88,44 +88,63 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
     public V2D_PolygonNoInternalHoles(V2D_Point[] points, int oom, RoundingMode rm) {
         super();
         ch = new V2D_ConvexHull(oom, rm, points);
-        // construct edges and points
+        // Construct points, externalEdges and externalHoles.
         externalEdges = new HashMap<>();
         externalHoles = new HashMap<>();
         V2D_Point p0 = points[0];
         boolean isHole = false;
         boolean p0int = V2D_LineSegment.isIntersectedBy(oom, rm, p0, ch.edges.values());
+        boolean p1int;
         V2D_Point p1 = points[1];
-        externalEdges.put(externalEdges.size(), new V2D_LineSegment(p0, p1, oom, rm));
-        boolean p1int = V2D_LineSegment.isIntersectedBy(oom, rm, p1, ch.edges.values());
         ArrayList<V2D_Point> pts = new ArrayList<>();
-        if (p0int) {
-            if (!p1int) {
-                pts.add(p0);
-                isHole = true;
+        this.points = new HashMap<>();
+        if (p0.equals(p1, oom, rm)) {
+            p1int = p0int;
+        } else {
+            this.points.put(this.points.size(), p0);
+            externalEdges.put(externalEdges.size(), new V2D_LineSegment(p0, p1, oom, rm));
+            p1int = V2D_LineSegment.isIntersectedBy(oom, rm, p1, ch.edges.values());
+            if (p0int) {
+                if (!p1int) {
+                    pts.add(p0);
+                    isHole = true;
+                }
             }
         }
         for (int i = 2; i < this.points.size(); i++) {
             p0 = p1;
             p0int = p1int;
-            p1 = this.points.get(i);
-            p1int = V2D_LineSegment.isIntersectedBy(oom, rm, p1, ch.edges.values());
-            if (isHole) {
-                if (p1int) {
-                    externalHoles.put(externalHoles.size(), new V2D_PolygonNoInternalHoles(pts.toArray(V2D_Point[]::new), oom, rm));
-                    pts = new ArrayList<>();
-                    isHole = false;
-                } else {
-                    pts.add(p1);
-                }
+            p1 = points[i];
+            if (p0.equals(p1, oom, rm)) {
+                p1int = p0int;
             } else {
+                p1int = V2D_LineSegment.isIntersectedBy(oom, rm, p1, ch.edges.values());
                 if (p0int) {
                     if (!p1int) {
                         pts.add(p0);
                         isHole = true;
                     }
                 }
+                if (isHole) {
+                    if (p1int) {
+                        if (pts.size() > 2) {
+                            externalHoles.put(externalHoles.size(), new V2D_PolygonNoInternalHoles(pts.toArray(V2D_Point[]::new), oom, rm));
+                        }
+                        pts = new ArrayList<>();
+                        isHole = false;
+                    } else {
+                        pts.add(p1);
+                    }
+                } else {
+                    if (p0int) {
+                        if (!p1int) {
+                            pts.add(p0);
+                            isHole = true;
+                        }
+                    }
+                }
+                externalEdges.put(externalEdges.size(), new V2D_LineSegment(p0, p1, oom, rm));
             }
-            externalEdges.put(externalEdges.size(), new V2D_LineSegment(p0, p1, oom, rm));
         }
         externalEdges.put(externalEdges.size(), new V2D_LineSegment(p1, this.points.get(0), oom, rm));
     }
@@ -253,7 +272,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
         }
         return false;
     }
-    
+
     /**
      * Identify if this contains pt.
      *
@@ -300,7 +319,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
         }
         return false;
     }
-    
+
     /**
      * Identify if this contains r.
      *
@@ -319,7 +338,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
         }
         return false;
     }
-            
+
     /**
      * Identify if this contains aabb.
      *
@@ -342,7 +361,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
         }
         return false;
     }
-    
+
     /**
      * Identify if this contains ch.
      *
@@ -368,14 +387,14 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
      */
     public boolean contains(V2D_PolygonNoInternalHoles p, int oom, RoundingMode rm) {
         if (isIntersectedBy(p, oom, rm)) {
-            if (p.externalEdges.values().parallelStream().anyMatch(x -> 
-                    V2D_LineSegment.isIntersectedBy(oom, rm, x, externalEdges.values()))) {
+            if (p.externalEdges.values().parallelStream().anyMatch(x
+                    -> V2D_LineSegment.isIntersectedBy(oom, rm, x, externalEdges.values()))) {
                 return false;
             }
         }
         return false;
     }
-    
+
     /**
      * Identify if this is intersected by l.
      *
@@ -424,8 +443,8 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
                     if (isIntersectedBy(tr, oom, rm)) {
                         return true;
                     }
-                    if (t.getExternalEdges(oom, rm).parallelStream().anyMatch(x -> 
-                            V2D_LineSegment.isIntersectedBy(oom, rm, x, externalEdges.values()))) {
+                    if (t.getExternalEdges(oom, rm).parallelStream().anyMatch(x
+                            -> V2D_LineSegment.isIntersectedBy(oom, rm, x, externalEdges.values()))) {
                         return true;
                     }
                     if (externalHoles.values().parallelStream().anyMatch(x
@@ -486,7 +505,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
         }
         return false;
     }
-    
+
     /**
      * Identify if this is intersected by the polygon.
      *
@@ -597,9 +616,10 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
         }
         return false;
     }
-    
+
     /**
      * Adds an external hole and return its assigned id.
+     *
      * @param p
      * @return the id assigned to the external hole
      */
