@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Andy Turner, University of Leeds.
+ * Copyright 2025 Andy Turner, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
  * represent parts individually which may involve some rounding.
  *
  * @author Andy Turner
- * @version 1.0
+ * @version 2.0
  */
 public class V2D_PolygonDouble extends V2D_PolygonNoInternalHolesDouble {
 
@@ -140,6 +140,9 @@ public class V2D_PolygonDouble extends V2D_PolygonNoInternalHolesDouble {
     @Override
     public boolean isIntersectedBy(V2D_RectangleDouble r, double epsilon) {
         if (super.isIntersectedBy(r, epsilon)) {
+            if (internalHoles.isEmpty()) {
+                return true;
+            }
             return !internalHoles.values().parallelStream().anyMatch(x -> x.contains(r, epsilon));
         }
         return false;
@@ -156,6 +159,9 @@ public class V2D_PolygonDouble extends V2D_PolygonNoInternalHolesDouble {
     @Override
     public boolean isIntersectedBy(V2D_ConvexHullDouble ch, double epsilon) {
         if (super.isIntersectedBy(ch, epsilon)) {
+            if (internalHoles.isEmpty()) {
+                return true;
+            }
             return !internalHoles.values().parallelStream().anyMatch(x -> x.contains(ch, epsilon));
         }
         return false;
@@ -251,12 +257,12 @@ public class V2D_PolygonDouble extends V2D_PolygonNoInternalHolesDouble {
     /**
      * Adds an internal hole and return its assigned id.
      *
-     * @param p
-     * @return the id assigned to the external hole
+     * @param p The polygon to add.
+     * @return the id assigned to the internal hole
      */
     public int addInternalHole(V2D_PolygonDouble p) {
-        int id = internalHoles.size();
-        internalHoles.put(id, p);
-        return id;
+        int pid = internalHoles.size();
+        internalHoles.put(pid, p);
+        return pid;
     }
 }

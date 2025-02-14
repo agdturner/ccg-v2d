@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
-import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
 
 /**
  * For representing convex hulls - convex shapes with no holes.
@@ -60,7 +59,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
     }
     
     public V2D_ConvexHullDouble(V2D_PointDouble... points) {
-        this(points[0].offset, Arrays.asList(points));
+        this(Arrays.asList(points));
     }
     
     /**
@@ -98,12 +97,10 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * <li>Repeat the process dealing with each group in turn (Steps 3 to 9) in
      * a depth first manner.</li>
      * </ol>
-     * @param offset What {@link #offset} is set to.
      * @param points A non-empty list of points in a plane given by n.
      */
-    public V2D_ConvexHullDouble(
-            V2D_VectorDouble offset, List<V2D_PointDouble> points) {
-        super(points.get(0).env, offset);
+    public V2D_ConvexHullDouble(List<V2D_PointDouble> points) {
+        super(points.get(0).env, V2D_VectorDouble.ZERO);
         ArrayList<V2D_PointDouble> h = new ArrayList<>();
         ArrayList<V2D_PointDouble> uniquePoints = V2D_PointDouble.getUnique(points, env.epsilon);
         //uniquePoints.sort(V2D_PointDouble::compareTo);
@@ -160,13 +157,11 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
     /**
      * Create a new instance.
      *
-     * @param env The environment.
      * @param ch The convex hull to add to the convex hull with t.
      * @param t The triangle used to set the normal and to add to the convex
      * hull with ch.
      */
-    public V2D_ConvexHullDouble(V2D_EnvironmentDouble env, V2D_ConvexHullDouble ch,
-            V2D_TriangleDouble t) {
+    public V2D_ConvexHullDouble(V2D_ConvexHullDouble ch, V2D_TriangleDouble t) {
         this(V2D_FiniteGeometryDouble.getPoints(ch, t));
     }
 
@@ -316,7 +311,6 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @return {@code true} iff the geometry is intersected by {@code p}.
      */
     public boolean isIntersectedBy(V2D_PointDouble pt, double epsilon) {
-        // Check envelopes intersect.
         if (getEnvelope().isIntersectedBy(pt)) {
             return getTriangles().parallelStream().anyMatch(x -> x.isIntersectedBy(pt, epsilon));
         }
@@ -436,22 +430,6 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
         //return triangles.parallelStream().anyMatch(t -> (t.isIntersectedBy0(pt, oom)));
     }
 
-//    /**
-//     * @param pt The point.
-//     * @param epsilon The tolerance within which two vectors are regarded as
-//     * equal.
-//     * @return {@code true} if this intersects with {@code pt}.
-//     */
-//    @Deprecated
-//    protected boolean isIntersectedBy0(V2D_PointDouble pt, double epsilon) {
-//        for (V2D_TriangleDouble triangle : triangles) {
-//            if (triangle.isIntersectedBy0(pt, epsilon)) {
-//                return true;
-//            }
-//        }
-//        return false;
-//        //return triangles.parallelStream().anyMatch(t -> (t.isIntersectedBy0(pt, oom)));
-//    }
     /**
      * This sums all the areas irrespective of any overlaps.
      *

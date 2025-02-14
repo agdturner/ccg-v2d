@@ -143,7 +143,7 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
     @Override
     public boolean isIntersectedBy(V2D_Rectangle r, int oom, RoundingMode rm) {
         if (super.isIntersectedBy(r, oom, rm)) {
-            if (internalHoles.size() == 0) {
+            if (internalHoles.isEmpty()) {
                 return true;
             }
             return !internalHoles.values().parallelStream().anyMatch(x -> x.contains(r, oom, rm));
@@ -161,7 +161,10 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
      */
     @Override
     public boolean isIntersectedBy(V2D_ConvexHull ch, int oom, RoundingMode rm) {
-         if (super.isIntersectedBy(ch, oom, rm)) {
+        if (super.isIntersectedBy(ch, oom, rm)) {
+            if (internalHoles.isEmpty()) {
+                return true;
+            }
             return !internalHoles.values().parallelStream().anyMatch(x -> x.contains(ch, oom, rm));
         }
         return false;
@@ -199,20 +202,6 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
     @Override
     public void translate(V2D_Vector v, int oom, RoundingMode rm) {
         super.translate(v, oom, rm);
-        if (en != null) {
-            en.translate(v, oom, rm);
-        }
-        ch.translate(v, oom, rm);
-        if (externalEdges != null) {
-            for (int i = 0; i < externalEdges.size(); i++) {
-                externalEdges.get(i).translate(v, oom, rm);
-            }
-        }
-        if (externalHoles != null) {
-            for (int i = 0; i < externalHoles.size(); i++) {
-                externalHoles.get(i).translate(v, oom, rm);
-            }
-        }
         if (internalHoles != null) {
             for (int i = 0; i < internalHoles.size(); i++) {
                 internalHoles.get(i).translate(v, oom, rm);
@@ -266,5 +255,17 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
             }
         }
         return false;
+    }
+    
+    /**
+     * Adds an internal hole and return its assigned id.
+     *
+     * @param p The polygon to add.
+     * @return the id assigned to the internal hole
+     */
+    public int addInternalHole(V2D_Polygon p) {
+        int pid = internalHoles.size();
+        internalHoles.put(pid, p);
+        return pid;
     }
 }

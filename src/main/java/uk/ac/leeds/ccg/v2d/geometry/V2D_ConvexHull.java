@@ -20,7 +20,6 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
@@ -32,7 +31,7 @@ import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
  * @author Andy Turner
  * @version 2.0
  */
-public class V2D_ConvexHull extends V2D_FiniteGeometry {
+public class V2D_ConvexHull extends V2D_Shape {
 
     private static final long serialVersionUID = 1L;
 
@@ -105,7 +104,7 @@ public class V2D_ConvexHull extends V2D_FiniteGeometry {
      * must be at least three non-linear points.
      */
     public V2D_ConvexHull(int oom, RoundingMode rm, V2D_Point... points) {
-        super(points[0].env);
+        super(points[0].env, V2D_Vector.ZERO);
         ArrayList<V2D_Point> h = new ArrayList<>();
         ArrayList<V2D_Point> uniquePoints = V2D_Point.getUnique(Arrays.asList(points), oom, rm);
         //uniquePoints.sort(V2D_Point::compareTo);
@@ -159,7 +158,7 @@ public class V2D_ConvexHull extends V2D_FiniteGeometry {
      * @param rm The RoundingMode for any rounding.
      */
     public V2D_ConvexHull(V2D_ConvexHull ch, int oom, RoundingMode rm) {
-        this(oom, rm, V2D_FiniteGeometry.getPoints(oom, rm, ch));
+        this(oom, rm, ch.getPointsArray(oom, rm));
     }
 
     /**
@@ -170,7 +169,8 @@ public class V2D_ConvexHull extends V2D_FiniteGeometry {
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
      */
-    public V2D_ConvexHull(V2D_ConvexHull ch, V2D_Triangle t, int oom, RoundingMode rm) {
+    public V2D_ConvexHull(V2D_ConvexHull ch, V2D_Triangle t, 
+            int oom, RoundingMode rm) {
         this(oom, rm, V2D_FiniteGeometry.getPoints(oom, rm, ch, t));
     }
 
@@ -182,6 +182,11 @@ public class V2D_ConvexHull extends V2D_FiniteGeometry {
             pts[i] = new V2D_Point(points.get(i));
         }
         return pts;
+    }
+    
+    @Override
+    public HashMap<Integer, V2D_Point> getPoints(int oom, RoundingMode rm) {
+        return points;
     }
 
     @Override
@@ -237,35 +242,41 @@ public class V2D_ConvexHull extends V2D_FiniteGeometry {
      * @return {@code true} iff all the triangles are the same.
      */
     public boolean equals(V2D_ConvexHull c, int oom, RoundingMode rm) {
-        HashSet<Integer> indexes = new HashSet<>();
-        for (var x : points.values()) {
-            boolean found = false;
-            for (int i = 0; i < c.points.size(); i++) {
-                if (x.equals(c.points.get(i), oom, rm)) {
-                    found = true;
-                    indexes.add(i);
-                    break;
-                }
-            }
-            if (!found) {
-                return false;
-            }
+        if (points.values().parallelStream().allMatch(x -> 
+                x.equalsAny(c.points.values(), oom, rm))) {
+            return c.points.values().parallelStream().allMatch(x -> 
+                x.equalsAny(points.values(), oom, rm));
         }
-        for (int i = 0; i < c.points.size(); i++) {
-            if (!indexes.contains(i)) {
-                boolean found = false;
-                for (var x : points.values()) {
-                    if (x.equals(c.points.get(i), oom, rm)) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return false;
+//        HashSet<Integer> indexes = new HashSet<>();
+//        for (var x : points.values()) {
+//            boolean found = false;
+//            for (int i = 0; i < c.points.size(); i++) {
+//                if (x.equals(c.points.get(i), oom, rm)) {
+//                    found = true;
+//                    indexes.add(i);
+//                    break;
+//                }
+//            }
+//            if (!found) {
+//                return false;
+//            }
+//        }
+//        for (int i = 0; i < c.points.size(); i++) {
+//            if (!indexes.contains(i)) {
+//                boolean found = false;
+//                for (var x : points.values()) {
+//                    if (x.equals(c.points.get(i), oom, rm)) {
+//                        found = true;
+//                        break;
+//                    }
+//                }
+//                if (!found) {
+//                    return false;
+//                }
+//            }
+//        }
+//        return true;
     }
 
     @Override
@@ -314,6 +325,36 @@ public class V2D_ConvexHull extends V2D_FiniteGeometry {
         }
         return false;
     }
+    
+    /**
+     * Identify if this contains point.
+     *
+     * @param pt The point to test for intersection with.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return {@code true} iff the geometry is intersected by {@code p}.
+     */
+    public boolean contains(V2D_Point pt, int oom, RoundingMode rm) {
+        if (isIntersectedBy(pt, oom, rm)) {
+            return !V2D_LineSegment.isIntersectedBy(oom, rm, pt, edges.values());
+        }
+        return false;
+    }
+    
+    /**
+     * Identify if this contains line segment.
+     *
+     * @param l The line segment to test for containment with.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return {@code true} iff the geometry is intersected by {@code p}.
+     */
+    public boolean contains(V2D_LineSegment l, int oom, RoundingMode rm) {
+        if (isIntersectedBy(l, oom, rm)) {
+            return !V2D_LineSegment.isIntersectedBy(oom, rm, l, edges.values());
+        }
+        return false;
+    }
 
     /**
      * Identify if this is intersected by point {@code p}.
@@ -339,7 +380,6 @@ public class V2D_ConvexHull extends V2D_FiniteGeometry {
      * @return {@code true} iff the geometry is intersected by {@code p}.
      */
     public boolean isIntersectedBy(V2D_Triangle t, int oom, RoundingMode rm) {
-        // Check envelopes intersect.
         if (t.isIntersectedBy(getEnvelope(oom, rm), oom, rm)) {
             if (isIntersectedBy(t.getEnvelope(oom, rm), oom, rm)) {
                 return getTriangles(oom, rm).parallelStream().anyMatch(x -> x.isIntersectedBy(t, oom, rm));
@@ -347,7 +387,7 @@ public class V2D_ConvexHull extends V2D_FiniteGeometry {
         }
         return false;
     }
-
+    
     /**
      * Identify if this is intersected by point {@code p}.
      *
@@ -639,6 +679,23 @@ public class V2D_ConvexHull extends V2D_FiniteGeometry {
 //            }
 //        }
 //    }
+    /**
+     * If pts are all equal then a V2D_Point is returned. If two are different,
+     * then a V2D_LineSegment is returned. Three different, then a V2D_Triangle
+     * is returned. If four or more are different then a V2D_ConvexHullCoplanar
+     * is returned.
+     *
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @param pts The points.
+     * @return Either a V2D_Point, V2D_LineSegment, V2D_Triangle, or
+     * V2D_ConvexHullCoplanar.
+     */
+    public static V2D_FiniteGeometry getGeometry(int oom, RoundingMode rm, 
+            ArrayList<V2D_Point> pts) {
+        return getGeometry(oom, rm, pts.toArray(V2D_Point[]::new));
+    }
+    
     /**
      * If pts are all equal then a V2D_Point is returned.If two are different,
      * then a V2D_LineSegment is returned. Three different, then a V2D_Triangle

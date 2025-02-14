@@ -19,6 +19,7 @@ import ch.obermuhlner.math.big.BigRational;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
@@ -214,6 +215,34 @@ public class V2D_Point extends V2D_FiniteGeometry {
             }
         }
         return true;
+    }
+    
+    /**
+     * For determining if all points in {@code ps} are coincident to 
+     * {@code this} within a tolerance given by {@code epsilon}.
+     *
+     * @param ps The points to test if they are equal to this.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} iff all points in {@code ps} are equal to 
+     * {@code this}.
+     */
+    public boolean equalsAll(Collection<V2D_Point> ps, int oom, RoundingMode rm) {
+        return ps.parallelStream().allMatch(x -> equals(x, oom, rm));
+    }
+
+    /**
+     * For determining if all points in {@code ps} are coincident to 
+     * {@code this} within a tolerance given by {@code epsilon}.
+     *
+     * @param ps The points to test if they are equal to this.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} iff all points in {@code ps} are equal to 
+     * {@code this}.
+     */
+    public boolean equalsAny(Collection<V2D_Point> ps, int oom, RoundingMode rm) {
+        return ps.parallelStream().anyMatch(x -> equals(x, oom, rm));
     }
 
     @Override

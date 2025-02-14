@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
-import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
 
 /**
  * For representing a polygon with no internal holes. External holes are similar
@@ -78,11 +77,10 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
     /**
      * Create a new instance.
      *
-     * @param env The environment.
      * @param points The external edge points in clockwise order.
      */
     public V2D_PolygonNoInternalHolesDouble(V2D_PointDouble[] points) {
-        super(points[0].env, points[0].offset);
+        super(points[0].env, V2D_VectorDouble.ZERO);
         ch = new V2D_ConvexHullDouble(points);
         // construct edges and points
         externalEdges = new HashMap<>();
@@ -169,7 +167,7 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
             V2D_ConvexHullDouble ch,
             HashMap<Integer, V2D_LineSegmentDouble> externalEdges,
             HashMap<Integer, V2D_PolygonNoInternalHolesDouble> externalHoles) {
-        super(ch.env, ch.offset);
+        super(ch.env, V2D_VectorDouble.ZERO);
         this.ch = ch;
         this.externalEdges = externalEdges;
         this.externalHoles = externalHoles;
@@ -348,6 +346,29 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
             if (contains(r.getQ(), epsilon)) {
                 if (contains(r.getR(), epsilon)) {
                     return contains(r.getS(), epsilon);
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Identify if this contains aabb.
+     *
+     * @param aabb The envelope to test for containment.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff there is containment.
+     */
+    public boolean contains(V2D_EnvelopeDouble aabb, double epsilon) {
+        double xmin = aabb.getXMin();
+        double xmax = aabb.getXMax();
+        double ymin = aabb.getYMin();
+        double ymax = aabb.getYMax();
+        if (contains(new V2D_PointDouble(env, xmin, ymin), epsilon)) {
+            if (contains(new V2D_PointDouble(env, xmin, ymax), epsilon)) {
+                if (contains(new V2D_PointDouble(env, xmax, ymax), epsilon)) {
+                    return contains(new V2D_PointDouble(env, xmax, ymin), epsilon);
                 }
             }
         }
@@ -604,8 +625,7 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
 
     @Override
     public boolean isIntersectedBy(V2D_EnvelopeDouble aabb, double epsilon) {
-        en = getEnvelope();
-        if (en.isIntersectedBy(aabb)) {
+        if (getEnvelope().isIntersectedBy(aabb)) {
             if (ch.isIntersectedBy(aabb, epsilon)) {
                 return true;
             }
@@ -620,8 +640,8 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      * @return the id assigned to the external hole
      */
     public int addExternalHole(V2D_PolygonNoInternalHolesDouble p) {
-        int ehid = externalHoles.size();
-        externalHoles.put(ehid, p);
-        return ehid;
+        int pid = externalHoles.size();
+        externalHoles.put(pid, p);
+        return pid;
     }
 }

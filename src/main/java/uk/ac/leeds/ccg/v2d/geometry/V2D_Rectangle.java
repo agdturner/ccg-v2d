@@ -19,6 +19,7 @@ import ch.obermuhlner.math.big.BigRational;
 import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
 import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
@@ -31,7 +32,7 @@ import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
  * @author Andy Turner
  * @version 2.0
  */
-public class V2D_Rectangle extends V2D_FiniteGeometry {
+public class V2D_Rectangle extends V2D_Shape {
 
     private static final long serialVersionUID = 1L;
 
@@ -128,6 +129,16 @@ public class V2D_Rectangle extends V2D_FiniteGeometry {
         re[2] = getR(oom, rm);
         re[3] = getS(oom, rm);
         return re;
+    }
+    
+    @Override
+    public HashMap<Integer, V2D_Point> getPoints(int oom, RoundingMode rm) {
+        HashMap<Integer, V2D_Point> pts = new HashMap<>(4);
+        pts.put(0, getP(oom, rm));
+        pts.put(1, getQ(oom, rm));
+        pts.put(2, getR(oom, rm));
+        pts.put(2, getS(oom, rm));
+        return pts;
     }
 
     /**
