@@ -25,7 +25,6 @@ import java.util.Iterator;
 import java.util.List;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
-import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
 
 /**
  * For representing a convex hulls - convex shapes with no holes.

@@ -363,7 +363,7 @@ public class V2D_Line extends V2D_Geometry {
         } else {
             if (oom < this.oom) {
                 initQ(oom, rm);
-            } else {
+            } else if (oom == this.oom) {
                 if (!rm.equals(this.rm)) {
                     initQ(oom, rm);
                 }

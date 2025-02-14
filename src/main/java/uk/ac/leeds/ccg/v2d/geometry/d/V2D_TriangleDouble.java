@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Andy Turner, University of Leeds.
+ * Copyright 2025 Andy Turner, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import uk.ac.leeds.ccg.v2d.geometry.d.light.V2D_VTriangleDouble;
  * For representing and processing triangles in 2D.
  *
  * @author Andy Turner
- * @version 1.0
+ * @version 2.0
  */
 public class V2D_TriangleDouble extends V2D_ShapeDouble {
 
@@ -87,6 +87,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
 //     * For storing the centroid.
 //     */
 //    private V2D_PointDouble c;
+    
     /**
      * Creates a new triangle.
      *
@@ -106,8 +107,11 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      * @param offset What {@link #offset} is set to.
      * @param t The triangle to initialise this from.
      */
-    public V2D_TriangleDouble(V2D_EnvironmentDouble env, V2D_VectorDouble offset, V2D_VTriangleDouble t) {
-        this(env, offset, new V2D_VectorDouble(t.pq.p), new V2D_VectorDouble(t.pq.q),
+    public V2D_TriangleDouble(V2D_EnvironmentDouble env, 
+            V2D_VectorDouble offset, V2D_VTriangleDouble t) {
+        this(env, offset, 
+                new V2D_VectorDouble(t.pq.p), 
+                new V2D_VectorDouble(t.pq.q),
                 new V2D_VectorDouble(t.qr.q));
     }
 
@@ -120,8 +124,8 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      * @param qv What {@link #qv} is set to.
      * @param rv What {@link #rv} is set to.
      */
-    public V2D_TriangleDouble(V2D_EnvironmentDouble env, V2D_VectorDouble pv, V2D_VectorDouble qv,
-            V2D_VectorDouble rv) {
+    public V2D_TriangleDouble(V2D_EnvironmentDouble env, V2D_VectorDouble pv, 
+            V2D_VectorDouble qv, V2D_VectorDouble rv) {
         this(env, V2D_VectorDouble.ZERO, pv, qv, rv);
     }
 
@@ -134,15 +138,19 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      * @param qv What {@link #qv} is set to.
      * @param rv What {@link #rv} is set to.
      */
-    public V2D_TriangleDouble(V2D_EnvironmentDouble env, V2D_VectorDouble offset, V2D_VectorDouble pv,
+    public V2D_TriangleDouble(V2D_EnvironmentDouble env, 
+            V2D_VectorDouble offset, V2D_VectorDouble pv,
             V2D_VectorDouble qv, V2D_VectorDouble rv) {
         super(env, offset);
         this.pv = pv;
         this.qv = qv;
         this.rv = rv;
         // Debugging code:
-        if (pv.equals(qv) || pv.equals(rv) || qv.equals(rv)) {
-            throw new RuntimeException("pv.equals(qv) || pv.equals(rv) || qv.equals(rv)");
+        if (pv.equals(env.epsilon, qv) || pv.equals(env.epsilon, rv) 
+                || qv.equals(env.epsilon, rv)) {
+            throw new RuntimeException("pv.equals(qv, env.epsilon) "
+                    + "|| pv.equals(rv, env.epsilon) "
+                    + "|| qv.equals(rv, env.epsilon)");
         }
     }
 

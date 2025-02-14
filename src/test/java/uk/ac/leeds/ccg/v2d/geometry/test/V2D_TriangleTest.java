@@ -191,7 +191,7 @@ public class V2D_TriangleTest extends V2D_Test {
                 (V2D_LineSegment) result, oom, rm));
         System.out.println("getIntersection");
         // Test 2
-        instance = new V2D_Triangle(env, P0P0, P1P0, P1P2, P2P0, oom, rm);
+        instance = new V2D_Triangle(env, P0P0, P1P0, P1P2, P2P0);
         l = new V2D_Line(pP1P1, pP1N1, oom, rm);
         result = instance.getIntersection(l, oom, rm);
         expResult = new V2D_LineSegment(pP1P0, pP1P2, oom, rm);
@@ -307,7 +307,7 @@ public class V2D_TriangleTest extends V2D_Test {
         // Test 4
         l = new V2D_LineSegment(pP2N2, pP2P1, oom, rm);
         instance = new V2D_Triangle(env, P0P0, P2P2,
-                new V2D_Vector(4, 0), oom, rm);
+                new V2D_Vector(4, 0));
         expResult = new V2D_LineSegment(pP2P0, pP2P1, oom, rm);
         result = instance.getIntersection(l, oom, rm);
         assertTrue(((V2D_LineSegment) expResult).equalsIgnoreDirection(
@@ -321,7 +321,8 @@ public class V2D_TriangleTest extends V2D_Test {
                 (V2D_LineSegment) result, oom, rm));
         // Test 6
         l = new V2D_LineSegment(new V2D_Point(env, 4d, -2d), pP2P0, oom, rm);
-        instance = new V2D_Triangle(pP0P0, new V2D_Point(env, 4d, 0d), new V2D_Point(env, 2d, -4d), oom, rm);
+        instance = new V2D_Triangle(pP0P0, new V2D_Point(env, 4d, 0d), 
+                new V2D_Point(env, 2d, -4d), oom, rm);
         expResult = new V2D_LineSegment(pP2P0, new V2D_Point(env, 10d/3d, - 4d/3d), oom, rm);
         result = instance.getIntersection(l, oom, rm);
         assertTrue(((V2D_LineSegment) expResult).equalsIgnoreDirection(
@@ -638,19 +639,19 @@ public class V2D_TriangleTest extends V2D_Test {
 //        expected.add(new V2D_Triangle(
 //                new V2D_Point(10d, -30d),
 //                new V2D_Point(20d, 0d),
-//                new V2D_Point(10d, 30d), oom, rm));
+//                new V2D_Point(10d, 30d)));
 //        expected.add(new V2D_Triangle(
 //                new V2D_Point(10d, -30d),
 //                new V2D_Point(10d, 30d),
-//                new V2D_Point(-10d, 30d), oom, rm));
+//                new V2D_Point(-10d, 30d)));
 //        expected.add(new V2D_Triangle(
 //                new V2D_Point(10d, -30d),
 //                new V2D_Point(-10d, 30d),
-//                new V2D_Point(-20d, 0d), oom, rm));
+//                new V2D_Point(-20d, 0d)));
 //        expected.add(new V2D_Triangle(
 //                new V2D_Point(-10d, -30d),
 //                new V2D_Point(-20d, 0d),
-//                new V2D_Point(10d, -30d), oom, rm));
+//                new V2D_Point(10d, -30d)));
         // Calculate the intersection
         // Expecting a convex hull with 6 points that can be tested to 
         // see if they are made up of the four triangles as expected.

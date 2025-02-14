@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
-import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
 
 /**
  * For representing a polygon with no internal holes. External holes are similar
@@ -326,9 +325,9 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
      * @return {@code true} iff there is containment.
      */
     public boolean contains(V2D_Triangle t, int oom, RoundingMode rm) {
-        if (contains(t.getP(), oom, rm)) {
-            if (contains(t.getQ(), oom, rm)) {
-                return contains(t.getR(), oom, rm);
+        if (contains(t.getP(oom, rm), oom, rm)) {
+            if (contains(t.getQ(oom, rm), oom, rm)) {
+                return contains(t.getR(oom, rm), oom, rm);
             }
         }
         return false;
@@ -343,10 +342,10 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
      * @return {@code true} iff there is containment.
      */
     public boolean contains(V2D_Rectangle r, int oom, RoundingMode rm) {
-        if (contains(r.getP(), oom, rm)) {
-            if (contains(r.getQ(), oom, rm)) {
-                if (contains(r.getR(), oom, rm)) {
-                    return contains(r.getS(), oom, rm);
+        if (contains(r.getP(oom, rm), oom, rm)) {
+            if (contains(r.getQ(oom, rm), oom, rm)) {
+                if (contains(r.getR(oom, rm), oom, rm)) {
+                    return contains(r.getS(oom, rm), oom, rm);
                 }
             }
         }
@@ -445,15 +444,15 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
         if (t.isIntersectedBy(getEnvelope(oom, rm), oom, rm)) {
             if (isIntersectedBy(t.getEnvelope(oom, rm), oom, rm)) {
                 if (ch.isIntersectedBy(t, oom, rm)) {
-                    V2D_Point tp = t.getP();
+                    V2D_Point tp = t.getP(oom, rm);
                     if (isIntersectedBy(tp, oom, rm)) {
                         return true;
                     }
-                    V2D_Point tq = t.getQ();
+                    V2D_Point tq = t.getQ(oom, rm);
                     if (isIntersectedBy(tq, oom, rm)) {
                         return true;
                     }
-                    V2D_Point tr = t.getR();
+                    V2D_Point tr = t.getR(oom, rm);
                     if (isIntersectedBy(tr, oom, rm)) {
                         return true;
                     }

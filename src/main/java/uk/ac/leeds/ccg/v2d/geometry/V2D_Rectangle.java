@@ -53,7 +53,7 @@ public class V2D_Rectangle extends V2D_FiniteGeometry {
      * @param rm The RoundingMode for any rounding.
      */
     public V2D_Rectangle(V2D_Rectangle r, int oom, RoundingMode rm) {
-        this(r.getP(), r.getQ(), r.getR(), r.getS(), oom, rm);
+        this(r.getP(oom, rm), r.getQ(oom, rm), r.getR(oom, rm), r.getS(oom, rm), oom, rm);
     }
 
     /**
@@ -65,16 +65,14 @@ public class V2D_Rectangle extends V2D_FiniteGeometry {
      * @param q The top left corner of the rectangle.
      * @param r The top right corner of the rectangle.
      * @param s The bottom right corner of the rectangle.
-     * @param oom The Order of Magnitude for the precision.
-     * @param rm The RoundingMode for any rounding.
      * @throws java.lang.RuntimeException iff the points do not define a
      * rectangle.
      */
     public V2D_Rectangle(V2D_Environment env, V2D_Vector offset, V2D_Vector p,
-            V2D_Vector q, V2D_Vector r, V2D_Vector s, int oom, RoundingMode rm) {
+            V2D_Vector q, V2D_Vector r, V2D_Vector s) {
         super(env, offset);
-        pqr = new V2D_Triangle(env, p, q, r, oom, rm);
-        rsp = new V2D_Triangle(env, r, s, p, oom, rm);
+        pqr = new V2D_Triangle(env, p, q, r);
+        rsp = new V2D_Triangle(env, r, s, p);
     }
 
     /**
@@ -90,7 +88,7 @@ public class V2D_Rectangle extends V2D_FiniteGeometry {
     public V2D_Rectangle(V2D_Point p, V2D_Point q, V2D_Point r, V2D_Point s,
             int oom, RoundingMode rm) {
         this(p.env, V2D_Vector.ZERO, p.getVector(oom, rm), q.getVector(oom, rm), 
-                r.getVector(oom, rm), s.getVector(oom, rm), oom, rm);
+                r.getVector(oom, rm), s.getVector(oom, rm));
     }
 
     @Override
@@ -125,10 +123,10 @@ public class V2D_Rectangle extends V2D_FiniteGeometry {
     @Override
     public V2D_Point[] getPointsArray(int oom, RoundingMode rm) {
         V2D_Point[] re = new V2D_Point[4];
-        re[0] = getP();
-        re[1] = getQ();
-        re[2] = getR();
-        re[3] = getS();
+        re[0] = getP(oom, rm);
+        re[1] = getQ(oom, rm);
+        re[2] = getR(oom, rm);
+        re[3] = getS(oom, rm);
         return re;
     }
 
@@ -147,31 +145,39 @@ public class V2D_Rectangle extends V2D_FiniteGeometry {
     }
     
     /**
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
      * @return {@link #p} with {@link #offset} applied.
      */
-    public V2D_Point getP() {
-        return getPQR().getP();
+    public V2D_Point getP(int oom, RoundingMode rm) {
+        return getPQR().getP(oom, rm);
     }
 
     /**
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
      * @return {@link #q} with {@link #offset} applied.
      */
-    public V2D_Point getQ() {
-        return getPQR().getQ();
+    public V2D_Point getQ(int oom, RoundingMode rm) {
+        return getPQR().getQ(oom, rm);
     }
 
     /**
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
      * @return {@link #r} with {@link #offset} applied.
      */
-    public V2D_Point getR() {
-        return getPQR().getR();
+    public V2D_Point getR(int oom, RoundingMode rm) {
+        return getPQR().getR(oom, rm);
     }
 
     /**
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
      * @return {@link #s} with {@link #offset} applied.
      */
-    public V2D_Point getS() {
-        return getRSP().getQ();
+    public V2D_Point getS(int oom, RoundingMode rm) {
+        return getRSP().getQ(oom, rm);
     }
 
     @Override
@@ -384,10 +390,10 @@ public class V2D_Rectangle extends V2D_FiniteGeometry {
     public V2D_Rectangle rotateN(V2D_Point pt, BigRational theta, 
             Math_BigDecimal bd, int oom, RoundingMode rm) {
         return new V2D_Rectangle(
-                getP().rotateN(pt, theta, bd, oom, rm),
-                getQ().rotateN(pt, theta, bd, oom, rm),
-                getR().rotateN(pt, theta, bd, oom, rm),
-                getS().rotateN(pt, theta, bd, oom, rm), oom, rm);
+                getP(oom, rm).rotateN(pt, theta, bd, oom, rm),
+                getQ(oom, rm).rotateN(pt, theta, bd, oom, rm),
+                getR(oom, rm).rotateN(pt, theta, bd, oom, rm),
+                getS(oom, rm).rotateN(pt, theta, bd, oom, rm), oom, rm);
     }
 
     /**
@@ -404,7 +410,7 @@ public class V2D_Rectangle extends V2D_FiniteGeometry {
     public V2D_FiniteGeometry getIntersection(V2D_Triangle t,
             int oom, RoundingMode rm) {
         int oomn2 = oom -2;
-            V2D_FiniteGeometry pqrit = pqr.getIntersection(t, oomn2, rm);
+            V2D_FiniteGeometry pqrit = pqr.getIntersection(t, oomn2-10, rm);
             V2D_FiniteGeometry rspit = rsp.getIntersection(t, oomn2, rm);
             if (pqrit == null) {
                 return rspit;

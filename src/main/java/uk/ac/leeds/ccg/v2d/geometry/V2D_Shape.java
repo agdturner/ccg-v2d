@@ -15,6 +15,7 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry;
 
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
@@ -36,6 +37,7 @@ public abstract class V2D_Shape extends V2D_FiniteGeometry {
     
     /**
      * Creates a new instance with offset V2D_Vector.ZERO.
+     * 
      * @param env What {@link #env} is set to.
      * @param offset What {@link #offset} is set to.
      */
@@ -46,17 +48,25 @@ public abstract class V2D_Shape extends V2D_FiniteGeometry {
     
     /**
      * For getting the points of a shape.
-     * @return 
+     * 
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return A HashMap of the points with integer identifier keys.
      */
-    public abstract HashMap<Integer, V2D_Point> getPoints();
+    public abstract HashMap<Integer, V2D_Point> getPoints(int oom, 
+            RoundingMode rm);
     
     /**
      * @return A copy of the points of the geometries gs.
+     * 
      * @param ss The geometries.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
      */
-    public ArrayList<V2D_Point> getPoints(HashMap<Integer, V2D_Shape> ss) {
+    public ArrayList<V2D_Point> getPoints(HashMap<Integer, V2D_Shape> ss, 
+            int oom, RoundingMode rm) {
         ArrayList<V2D_Point> list = new ArrayList<>();
-        ss.values().forEach(x -> list.addAll(x.getPoints().values()));
+        ss.values().forEach(x -> list.addAll(x.getPoints(oom, rm).values()));
         return list;
     }
 }

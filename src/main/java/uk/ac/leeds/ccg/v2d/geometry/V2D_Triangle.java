@@ -40,44 +40,70 @@ public class V2D_Triangle extends V2D_Shape {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Defines one of the corners of the triangle.
+     * A vector for a corner of the triangle. This is invariant under 
+     * translation and is relative to the other vector corners.
      */
-    protected V2D_Vector pv;
+    protected final V2D_Vector pv;
 
     /**
-     * Defines one of the corners of the triangle.
+     * A vector for a corner of the triangle. This is invariant under 
+     * translation and is relative to the other vector corners.
      */
-    protected V2D_Vector qv;
+    protected final V2D_Vector qv;
 
     /**
-     * Defines one of the corners of the triangle.
+     * A vector for a corner of the triangle. This is invariant under 
+     * translation and is relative to the other vector corners.
      */
-    protected V2D_Vector rv;
-    
+    protected final V2D_Vector rv;
+
     /**
-     * For storing one corner of the triangle.
+     * A point for a corner of the triangle.
      */
     protected V2D_Point p;
-    
+
     /**
-     * For storing one corner of the triangle.
+     * The Order of Magnitude for the precision of {@link #p}.
+     */
+    int poom;
+
+    /**
+     * The RoundingMode used for the calculation of {@link #p} or {@code null}
+     * if {@link #p} was input and not calculated.
+     */
+    RoundingMode prm;
+
+    /**
+     * A point for a corner of the triangle.
      */
     protected V2D_Point q;
-    
-    /**
-     * For storing one corner of the triangle.
-     */
-    protected V2D_Point r; 
 
     /**
-     * The order of magnitude used for the calculation of {@link #pl}.
+     * The Order of Magnitude for the precision of {@link #q}.
      */
-    public int oom;
+    int qoom;
 
     /**
-     * The RoundingMode used for the calculation of {@link #pl}.
+     * The RoundingMode used for the calculation of {@link #q} or {@code null}
+     * if {@link #q} was input and not calculated.
      */
-    public RoundingMode rm;
+    RoundingMode qrm;
+
+    /**
+     * A point for a corner of the triangle.
+     */
+    protected V2D_Point r;
+
+    /**
+     * The Order of Magnitude for the precision of {@link #r}.
+     */
+    int room;
+
+    /**
+     * The RoundingMode used for the calculation of {@link #r} or {@code null}
+     * if {@link #r} was input and not calculated.
+     */
+    RoundingMode rrm;
 
     /**
      * For storing the line segment from {@link #getP()} to {@link #getQ()} for
@@ -131,7 +157,6 @@ public class V2D_Triangle extends V2D_Shape {
 //     * For storing the centroid.
 //     */
 //    private V2D_Point c;
-    
     /**
      * Creates a new triangle.
      *
@@ -142,6 +167,36 @@ public class V2D_Triangle extends V2D_Shape {
         pv = new V2D_Vector(t.pv);
         qv = new V2D_Vector(t.qv);
         rv = new V2D_Vector(t.rv);
+        if (t.p != null) {
+            p = t.p;
+            poom = t.poom;
+            prm = t.prm;
+        }
+        if (t.q != null) {
+            q = t.q;
+            qoom = t.qoom;
+            qrm = t.qrm;
+        }
+        if (t.r != null) {
+            r = t.r;
+            room = t.room;
+            rrm = t.rrm;
+        }
+        if (t.pq != null) {
+            pq = t.pq;
+            pqoom = t.pqoom;
+            pqrm = t.pqrm;
+        }
+        if (t.qr != null) {
+            qr = t.qr;
+            qroom = t.qroom;
+            qrrm = t.qrrm;
+        }
+        if (t.rp != null) {
+            rp = t.rp;
+            rpoom = t.rpoom;
+            rprm = t.rprm;
+        }
     }
 
     /**
@@ -150,13 +205,13 @@ public class V2D_Triangle extends V2D_Shape {
      * @param env The environment.
      * @param offset What {@link #offset} is set to.
      * @param t The triangle to initialise this from.
-     * @param oom The Order of Magnitude for the precision.
-     * @param rm The RoundingMode if rounding is needed.
      */
-    public V2D_Triangle(V2D_Environment env, V2D_Vector offset, V2D_VTriangle t, int oom,
-            RoundingMode rm) {
-        this(env, offset, new V2D_Vector(t.pq.p), new V2D_Vector(t.pq.q),
-                new V2D_Vector(t.qr.q), oom, rm);
+    public V2D_Triangle(V2D_Environment env, V2D_Vector offset,
+            V2D_VTriangle t) {
+        this(env, offset,
+                new V2D_Vector(t.pq.p),
+                new V2D_Vector(t.pq.q),
+                new V2D_Vector(t.qr.q));
     }
 
     /**
@@ -166,189 +221,170 @@ public class V2D_Triangle extends V2D_Shape {
      * @param p What {@link #pl} is set to.
      * @param q What {@link #qv} is set to.
      * @param r What {@link #rv} is set to.
-     * @param oom The Order of Magnitude for the precision.
-     * @param rm The RoundingMode if rounding is needed.
      */
-    public V2D_Triangle(V2D_Environment env, V2D_Vector p, V2D_Vector q, V2D_Vector r, int oom,
-            RoundingMode rm) {
-        this(env, V2D_Vector.ZERO, p, q, r, oom, rm);
+    public V2D_Triangle(V2D_Environment env, V2D_Vector p, V2D_Vector q,
+            V2D_Vector r) {
+        this(env, V2D_Vector.ZERO, p, q, r);
+    }
+
+    /**
+     * Creates a new triangle. pv, qv and rv must all be different according to
+     * the {@code env.oom} and {@code env.rm}.
+     *
+     * @param env The environment.
+     * @param offset What {@link #offset} is set to.
+     * @param pv What {@link #pv} is set to.
+     * @param qv What {@link #qv} is set to.
+     * @param rv What {@link #rv} is set to.
+     */
+    public V2D_Triangle(V2D_Environment env, V2D_Vector offset, V2D_Vector pv,
+            V2D_Vector qv, V2D_Vector rv) {
+        super(env, offset);
+        this.pv = pv;
+        this.qv = qv;
+        this.rv = rv;
+        // Debugging code:
+        if (pv.equals(qv, env.oom, env.rm) || pv.equals(rv, env.oom, env.rm)
+                || qv.equals(rv, env.oom, env.rm)) {
+            throw new RuntimeException("pv.equals(qv, env.oom, env.rm) "
+                    + "|| pv.equals(rv, env.oom, env.rm) "
+                    + "|| qv.equals(rv, env.oom, env.rm)");
+        }
     }
 
     /**
      * Creates a new triangle.
      *
-     * @param env The environment.
-     * @param offset What {@link #offset} is set to.
-     * @param p What {@link #pv} is set to.
-     * @param q What {@link #qv} is set to.
-     * @param r What {@link #rv} is set to.
-     * @param oom The Order of Magnitude for the precision.
-     * @param rm The RoundingMode if rounding is needed.
+     * @param l A line segment representing one of the three edges of the
+     * triangle.
+     * @param r Defines the other point relative to l.offset that defines the
+     * triangle.
      */
-    public V2D_Triangle(V2D_Environment env, V2D_Vector offset, V2D_Vector p, V2D_Vector q,
-            V2D_Vector r, int oom, RoundingMode rm) {
-        super(env, offset);
-        this.oom = oom;
-        this.rm = rm;
-        this.pv = p;
-        this.qv = q;
-        this.rv = r;
-    }
-
-    /**
-     * Creates a new triangle.Warning pv, qv and rv must all be different. No
-     * checks are done for efficiency reasons.
-     *
-     * @param env The environment.
-     * @param offset What {@link #offset} is set to.
-     * @param p What {@link #pv} is set to.
-     * @param q What {@link #qv} is set to.
-     * @param r What {@link #rv} is set to.
-     */
-    public V2D_Triangle(V2D_Environment env, V2D_Vector offset, V2D_Vector p, V2D_Vector q,
-            V2D_Vector r) {
-        super(env, offset);
-        this.pv = p;
-        this.qv = q;
-        this.rv = r;
-        // Debugging code:
-        if (p.equals(q) || p.equals(r) || q.equals(r)) {
-            throw new RuntimeException("p.equals(q) || p.equals(r) || q.equals(r)");
-        }
+    public V2D_Triangle(V2D_LineSegment l, V2D_Vector r) {
+        this(l.env, new V2D_Vector(l.offset), new V2D_Vector(l.l.pv),
+                new V2D_Vector(l.l.v), new V2D_Vector(r));
     }
 
     /**
      * Creates a new instance.
      *
-     * @param p Used to initialise {@link #offset} and {@link #pl}.
+     * @param p Used to initialise {@link #offset} and {@link #pv}.
      * @param q Used to initialise {@link #qv}.
      * @param r Used to initialise {@link #rv}.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
      */
-    public V2D_Triangle(V2D_Point p, V2D_Point q, V2D_Point r, int oom,
-            RoundingMode rm) {
+    public V2D_Triangle(V2D_Point p, V2D_Point q, V2D_Point r, int oom, RoundingMode rm) {
         super(p.env, new V2D_Vector(p.offset));
         this.pv = new V2D_Vector(p.rel);
+        //this.p = new V2D_Point(p);
+        //this.p.translate(p.offset.reverse(), oom, rm);
         this.qv = q.getVector(oom, rm).subtract(p.offset, oom, rm);
+        //this.q = new V2D_Point(q);
+        //this.p.translate(p.offset.reverse(), oom, rm);
         this.rv = r.getVector(oom, rm).subtract(p.offset, oom, rm);
-        this.oom = oom;
-        this.rm = rm;
+        //this.r = new V2D_Point(r);
+        //this.p.translate(p.offset.reverse(), env.oom, env.rm);
     }
 
     /**
      * Creates a new triangle.
-     * 
+     *
      * @param ls A line segment.
      * @param pt A point.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
      */
     public V2D_Triangle(V2D_LineSegment ls, V2D_Point pt, int oom, RoundingMode rm) {
-        this(ls.getP(), ls.getQ(oom, rm), pt, oom, rm);
+        this(ls.getP(), ls.getQ(ls.env.oom, ls.env.rm), pt, oom, rm);
     }
 
-//    /**
-//     * @param oom The Order of Magnitude for the precision.
-//     * @param rm The RoundingMode if rounding is needed.
-//     * @return {@link pl} accurate to at least the oom precision using
-//     * RoundingMode rm.
-//     */
-//    public final V2D_Plane getPl(int oom, RoundingMode rm) {
-//        if (pl == null) {
-//            initPl(oom, rm);
-//        } else if (this.oom < oom) {
-//            return pl;
-//        } else if (this.oom == oom && this.rm.equals(rm)) {
-//            return pl;
-//        }
-//        initPl(oom, rm);
-//        return pl;
-//    }
-//
-//    private void initPl(int oom, RoundingMode rm) {
-//        pl = new V2D_Plane(offset, pv, qv, rv, oom, rm);
-//    }
-//
-//    /**
-//     * @param pt The normal will point to this side of the plane.
-//     * @param oom The Order of Magnitude for the precision.
-//     * @param rm The RoundingMode if rounding is needed.
-//     * @return {@link pl} accurate to at least the oom precision using
-//     * RoundingMode rm.
-//     */
-//    public final V2D_Plane getPl(V2D_Point pt, int oom, RoundingMode rm) {
-//        if (pl == null) {
-//            initPl(pt, oom, rm);
-//        } else if (this.oom < oom) {
-//            return pl;
-//        } else if (this.oom == oom && this.rm.equals(rm)) {
-//            return pl;
-//        }
-//        initPl(pt, oom, rm);
-//        return pl;
-//    }
-//
-//    private void initPl(V2D_Point pt, int oom, RoundingMode rm) {
-//        pl = new V2D_Plane(pt, offset, pv, qv, rv, oom, rm);
-//    }
     /**
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
      * @return A new point based on {@link #pv} and {@link #offset}.
      */
-    public final V2D_Point getP() {
+    public final V2D_Point getP(int oom, RoundingMode rm) {
         if (p == null) {
-            p = new V2D_Point(env, offset, pv);
+            initP(oom, rm);
+        } else {
+            if (prm != null) {
+                if (oom < poom) {
+                    initP(oom, rm);
+                } else {
+                    if (oom == poom) {
+                        if (!rm.equals(prm)) {
+                            initP(oom, rm);
+                        }
+                    }
+                }
+            }
         }
         return p;
     }
 
+    private void initP(int oom, RoundingMode rm) {
+        p = new V2D_Point(env, offset, pv);
+        poom = oom;
+        prm = rm;
+    }
+
     /**
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
      * @return A new point based on {@link #qv} and {@link #offset}.
      */
-    public final V2D_Point getQ() {
+    public final V2D_Point getQ(int oom, RoundingMode rm) {
         if (q == null) {
-            q = new V2D_Point(env, offset, qv);
+            initQ(oom, rm);
+        } else {
+            if (qrm != null) {
+                if (oom < this.qoom) {
+                    initQ(oom, rm);
+                } else {
+                    if (oom == this.qoom) {
+                        if (!rm.equals(this.qrm)) {
+                            initQ(oom, rm);
+                        }
+                    }
+                }
+            }
         }
         return q;
     }
 
+    private void initQ(int oom, RoundingMode rm) {
+        q = new V2D_Point(env, offset, qv);
+        qoom = oom;
+        qrm = rm;
+    }
+
     /**
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
      * @return A new point based on {@link #rv} and {@link #offset}.
      */
-    public final V2D_Point getR() {
+    public final V2D_Point getR(int oom, RoundingMode rm) {
         if (r == null) {
-            r = new V2D_Point(env, offset, rv);
+            initR(oom, rm);
+        } else {
+            if (rrm != null) {
+                if (oom < room) {
+                    initR(oom, rm);
+                } else if (oom == room) {
+                    if (!rrm.equals(rm)) {
+                        initR(oom, rm);
+                    }
+                }
+            }
         }
         return r;
     }
 
-    /**
-     * For getting the line segment from {@link #getP()} to {@link #getQ()} with
-     * at least oom precision given rm.
-     *
-     * @param oom The Order of Magnitude for the precision.
-     * @param rm The RoundingMode if rounding is needed.
-     * @return Line segment from rv to pv.
-     */
-    public final V2D_LineSegment getPQ(int oom, RoundingMode rm) {
-        if (pq == null) {
-            initPQ(oom, rm);
-        } else {
-            if (oom < pqoom) {
-                initPQ(oom, rm);
-            } else {
-                if (!pqrm.equals(rm)) {
-                    initPQ(oom, rm);
-                }
-            }
-        }
-        return pq;
-    }
-
-    private void initPQ(int oom, RoundingMode rm) {
-        pq = new V2D_LineSegment(env, offset, pv, qv, oom, rm);
-        pqoom = oom;
-        pqrm = rm;
+    private void initR(int oom, RoundingMode rm) {
+        r = new V2D_Point(env, offset, rv);
+        room = oom;
+        rrm = rm;
     }
 
     /**
@@ -379,6 +415,37 @@ public class V2D_Triangle extends V2D_Shape {
     }
 
     /**
+     * For getting the line segment from {@link #getP()} to {@link #getQ()} with
+     * at least oom precision given rm.
+     *
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return Line segment from rv to pv.
+     */
+    public final V2D_LineSegment getPQ(int oom, RoundingMode rm) {
+        if (pq == null) {
+            initPQ(oom, rm);
+        } else {
+            if (oom < pqoom) {
+                initPQ(oom, rm);
+            } else {
+                if (oom == pqoom) {
+                    if (!pqrm.equals(rm)) {
+                        initPQ(oom, rm);
+                    }
+                }
+            }
+        }
+        return pq;
+    }
+
+    private void initPQ(int oom, RoundingMode rm) {
+        pq = new V2D_LineSegment(env, offset, pv, qv, oom, rm);
+        pqoom = oom;
+        pqrm = rm;
+    }
+
+    /**
      * For getting the line segment from {@link #getQ()} to {@link #getR()} with
      * at least oom precision given rm.
      *
@@ -393,8 +460,10 @@ public class V2D_Triangle extends V2D_Shape {
             if (oom < qroom) {
                 initQR(oom, rm);
             } else {
-                if (!qrrm.equals(rm)) {
-                    initQR(oom, rm);
+                if (oom == qroom) {
+                    if (!qrrm.equals(rm)) {
+                        initQR(oom, rm);
+                    }
                 }
             }
         }
@@ -422,8 +491,10 @@ public class V2D_Triangle extends V2D_Shape {
             if (oom < rpoom) {
                 initRP(oom, rm);
             } else {
-                if (!rprm.equals(rm)) {
-                    initRP(oom, rm);
+                if (oom == rpoom) {
+                    if (!rprm.equals(rm)) {
+                        initRP(oom, rm);
+                    }
                 }
             }
         }
@@ -457,7 +528,6 @@ public class V2D_Triangle extends V2D_Shape {
     }
 
     /**
-     *
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
      * @return The internal angle at {@link #rv}.
@@ -466,93 +536,10 @@ public class V2D_Triangle extends V2D_Shape {
         return getQRV(oom, rm).reverse().getAngle(getRPV(oom, rm), oom, rm);
     }
 
-//    /**
-//     * For getting the plane through {@link #pq} in the direction of the normal.
-//     *
-//     * @param oom The Order of Magnitude for the precision.
-//     * @param rm The RoundingMode if rounding is needed.
-//     * @return The plane through {@link #pq} in the direction of the normal.
-//     */
-//    public V2D_Plane getPQPl(int oom, RoundingMode rm) {
-//        if (pqpl == null) {
-//            initPQPl(oom, rm);
-//        } else {
-//            if (oom < pqoom) {
-//                initPQPl(oom, rm);
-//            } else {
-//                if (!pqrm.equals(rm)) {
-//                    initPQPl(oom, rm);
-//                }
-//            }
-//        }
-//        return pqpl;
-//    }
-//
-//    private void initPQPl(int oom, RoundingMode rm) {
-//        pq = getPQ(oom, rm);
-//        pqpl = new V2D_Plane(pq.getP(), pq.l.v.getCrossProduct(
-//                getPl(oom, rm).n, oom, rm));
-//    }
-//
-//    /**
-//     * For getting the plane through {@link #qr} in the direction of the normal.
-//     *
-//     * @param oom The Order of Magnitude for the precision.
-//     * @param rm The RoundingMode if rounding is needed.
-//     * @return The plane through {@link #qr} in the direction of the normal.
-//     */
-//    public V2D_Plane getQRPl(int oom, RoundingMode rm) {
-//        if (qrpl == null) {
-//            initQRPl(oom, rm);
-//        } else {
-//            if (oom < qroom) {
-//                initQRPl(oom, rm);
-//            } else {
-//                if (!qrrm.equals(rm)) {
-//                    initQRPl(oom, rm);
-//                }
-//            }
-//        }
-//        return qrpl;
-//    }
-//
-//    private void initQRPl(int oom, RoundingMode rm) {
-//        qr = getQR(oom, rm);
-//        qrpl = new V2D_Plane(qr.getP(), qr.l.v.getCrossProduct(
-//                getPl(oom, rm).n, oom, rm));
-//    }
-//
-//    /**
-//     * For getting the plane through {@link #rp} in the direction of the normal.
-//     *
-//     * @param oom The Order of Magnitude for the precision.
-//     * @param rm The RoundingMode if rounding is needed.
-//     * @return The plane through {@link #rp} in the direction of the normal.
-//     */
-//    public V2D_Plane getRPPl(int oom, RoundingMode rm) {
-//        if (rppl == null) {
-//            initRPPl(oom, rm);
-//        } else {
-//            if (oom < rpoom) {
-//                initRPPl(oom, rm);
-//            } else {
-//                if (!rprm.equals(rm)) {
-//                    initRPPl(oom, rm);
-//                }
-//            }
-//        }
-//        return rppl;
-//    }
-//
-//    private void initRPPl(int oom, RoundingMode rm) {
-//        rp = getRP(oom, rm);
-//        rppl = new V2D_Plane(rp.getP(), rp.l.v.getCrossProduct(
-//                getPl(oom, rm).n, oom, rm));
-//    }
     @Override
     public V2D_Envelope getEnvelope(int oom, RoundingMode rm) {
         if (en == null) {
-            en = new V2D_Envelope(oom, getP(), getQ(), getR());
+            en = new V2D_Envelope(oom, getP(oom, rm), getQ(oom, rm), getR(oom, rm));
         }
         return en;
     }
@@ -560,21 +547,21 @@ public class V2D_Triangle extends V2D_Shape {
     @Override
     public V2D_Point[] getPointsArray(int oom, RoundingMode rm) {
         V2D_Point[] pts = new V2D_Point[3];
-        pts[0] = getP();
-        pts[1] = getQ();
-        pts[2] = getR();
+        pts[0] = getP(oom, rm);
+        pts[1] = getQ(oom, rm);
+        pts[2] = getR(oom, rm);
         return pts;
     }
-    
+
     @Override
-    public HashMap<Integer, V2D_Point> getPoints() {
+    public HashMap<Integer, V2D_Point> getPoints(int oom, RoundingMode rm) {
         HashMap<Integer, V2D_Point> pts = new HashMap<>(3);
-        pts.put(0, getP());
-        pts.put(1, getQ());
-        pts.put(2, getR());
+        pts.put(0, getP(oom, rm));
+        pts.put(1, getQ(oom, rm));
+        pts.put(2, getR(oom, rm));
         return pts;
     }
-    
+
     /**
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
@@ -657,9 +644,9 @@ public class V2D_Triangle extends V2D_Shape {
      * @return True iff there is an intersection.
      */
     protected boolean isIntersectedBy0(V2D_LineSegment ls, int oom, RoundingMode rm) {
-        getP();
-        getQ();
-        getR();
+        getP(oom, rm);
+        getQ(oom, rm);
+        getR(oom, rm);
         V2D_Point lsp = ls.getP();
         V2D_Point lsq = ls.getQ(oom, rm);
         return (getPQ(oom, rm).l.isOnSameSide(r, lsp, oom, rm)
@@ -708,22 +695,22 @@ public class V2D_Triangle extends V2D_Shape {
      */
     public boolean isIntersectedBy(V2D_Triangle t, int oom, RoundingMode rm) {
         if (t.getEnvelope(oom, rm).isIntersectedBy(getEnvelope(oom, rm), oom)) {
-            if (isIntersectedBy(t.getP(), oom, rm)) {
+            if (isIntersectedBy(t.getP(oom, rm), oom, rm)) {
                 return true;
             }
-            if (isIntersectedBy(t.getQ(), oom, rm)) {
+            if (isIntersectedBy(t.getQ(oom, rm), oom, rm)) {
                 return true;
             }
-            if (isIntersectedBy(t.getR(), oom, rm)) {
+            if (isIntersectedBy(t.getR(oom, rm), oom, rm)) {
                 return true;
             }
-            if (t.isIntersectedBy(getP(), oom, rm)) {
+            if (t.isIntersectedBy(getP(oom, rm), oom, rm)) {
                 return true;
             }
-            if (t.isIntersectedBy(getQ(), oom, rm)) {
+            if (t.isIntersectedBy(getQ(oom, rm), oom, rm)) {
                 return true;
             }
-            if (t.isIntersectedBy(getR(), oom, rm)) {
+            if (t.isIntersectedBy(getR(oom, rm), oom, rm)) {
                 return true;
             }
         }
@@ -743,9 +730,9 @@ public class V2D_Triangle extends V2D_Shape {
      * @return {@code true} iff pl is aligned with this.
      */
     public boolean isAligned(V2D_Point pt, int oom, RoundingMode rm) {
-        if (getPQ(oom, rm).l.isOnSameSide(pt, getR(), oom, rm)) {
-            if (getQR(oom, rm).l.isOnSameSide(pt, getP(), oom, rm)) {
-                if (getRP(oom, rm).l.isOnSameSide(pt, getQ(), oom, rm)) {
+        if (getPQ(oom, rm).l.isOnSameSide(pt, getR(oom, rm), oom, rm)) {
+            if (getQR(oom, rm).l.isOnSameSide(pt, getP(oom, rm), oom, rm)) {
+                if (getRP(oom, rm).l.isOnSameSide(pt, getQ(oom, rm), oom, rm)) {
                     return true;
                 }
             }
@@ -780,9 +767,9 @@ public class V2D_Triangle extends V2D_Shape {
      * @return {@code true} iff l is aligned with this.
      */
     public boolean isAligned(V2D_Triangle t, int oom, RoundingMode rm) {
-        if (isAligned(t.getP(), oom, rm)) {
-            if (isAligned(t.getQ(), oom, rm)) {
-                return isAligned(t.getR(), oom, rm);
+        if (isAligned(t.getP(oom, rm), oom, rm)) {
+            if (isAligned(t.getQ(oom, rm), oom, rm)) {
+                return isAligned(t.getR(oom, rm), oom, rm);
             }
         }
         return false;
@@ -807,10 +794,10 @@ public class V2D_Triangle extends V2D_Shape {
     }
 
     /**
-     * 
+     *
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
-     * @return 
+     * @return
      */
     public BigRational getPerimeter(int oom, RoundingMode rm) {
         int oomn2 = oom - 2;
@@ -1044,18 +1031,18 @@ public class V2D_Triangle extends V2D_Shape {
              * triangles.
              */
             // Check if vertices intersect
-            V2D_Point pttp = t.getP();
-            V2D_Point pttq = t.getQ();
-            V2D_Point pttr = t.getR();
+            V2D_Point pttp = t.getP(oom, rm);
+            V2D_Point pttq = t.getQ(oom, rm);
+            V2D_Point pttr = t.getR(oom, rm);
             boolean pi = isIntersectedBy(pttp, oomn2, rm);
             boolean qi = isIntersectedBy(pttq, oomn2, rm);
             boolean ri = isIntersectedBy(pttr, oomn2, rm);
             if (pi && qi && ri) {
                 return t;
             }
-            V2D_Point ptp = getP();
-            V2D_Point ptq = getQ();
-            V2D_Point ptr = getR();
+            V2D_Point ptp = getP(oom, rm);
+            V2D_Point ptq = getQ(oom, rm);
+            V2D_Point ptr = getR(oom, rm);
             boolean pit = t.isIntersectedBy(ptp, oomn2, rm);
             boolean qit = t.isIntersectedBy(ptq, oomn2, rm);
             boolean rit = t.isIntersectedBy(ptr, oomn2, rm);
@@ -1250,34 +1237,34 @@ public class V2D_Triangle extends V2D_Shape {
      * @return {@code true} iff {@code this} is equal to {@code t}.
      */
     public boolean equals(V2D_Triangle t, int oom, RoundingMode rm) {
-        V2D_Point tp = t.getP();
-        V2D_Point thisp = getP();
+        V2D_Point tp = t.getP(oom, rm);
+        V2D_Point thisp = getP(oom, rm);
         if (tp.equals(thisp, oom, rm)) {
-            V2D_Point tq = t.getQ();
-            V2D_Point thisq = getQ();
+            V2D_Point tq = t.getQ(oom, rm);
+            V2D_Point thisq = getQ(oom, rm);
             if (tq.equals(thisq, oom, rm)) {
-                return t.getR().equals(getR(), oom, rm);
-            } else if (tq.equals(getR(), oom, rm)) {
-                return t.getR().equals(thisq, oom, rm);
+                return t.getR(oom, rm).equals(getR(oom, rm), oom, rm);
+            } else if (tq.equals(getR(oom, rm), oom, rm)) {
+                return t.getR(oom, rm).equals(thisq, oom, rm);
             } else {
                 return false;
             }
-        } else if (tp.equals(getQ(), oom, rm)) {
-            V2D_Point tq = t.getQ();
-            V2D_Point thisr = getR();
+        } else if (tp.equals(getQ(oom, rm), oom, rm)) {
+            V2D_Point tq = t.getQ(oom, rm);
+            V2D_Point thisr = getR(oom, rm);
             if (tq.equals(thisr, oom, rm)) {
-                return t.getR().equals(thisp, oom, rm);
+                return t.getR(oom, rm).equals(thisp, oom, rm);
             } else if (tq.equals(thisp, oom, rm)) {
-                return t.getR().equals(thisr, oom, rm);
+                return t.getR(oom, rm).equals(thisr, oom, rm);
             } else {
                 return false;
             }
-        } else if (tp.equals(getR(), oom, rm)) {
-            V2D_Point tq = t.getQ();
+        } else if (tp.equals(getR(oom, rm), oom, rm)) {
+            V2D_Point tq = t.getQ(oom, rm);
             if (tq.equals(thisp, oom, rm)) {
-                return t.getR().equals(getQ(), oom, rm);
-            } else if (tq.equals(getQ(), oom, rm)) {
-                return t.getR().equals(thisp, oom, rm);
+                return t.getR(oom, rm).equals(getQ(oom, rm), oom, rm);
+            } else if (tq.equals(getQ(oom, rm), oom, rm)) {
+                return t.getR(oom, rm).equals(thisp, oom, rm);
             } else {
                 return false;
             }
@@ -1292,6 +1279,15 @@ public class V2D_Triangle extends V2D_Shape {
         if (en != null) {
             en.translate(v, oom, rm);
         }
+        if (p != null) {
+            p.translate(v, oom, rm);
+        }
+        if (q != null) {
+            q.translate(v, oom, rm);
+        }
+        if (r != null) {
+            r.translate(v, oom, rm);
+        }
         if (pq != null) {
             pq.translate(v, oom, rm);
         }
@@ -1301,18 +1297,6 @@ public class V2D_Triangle extends V2D_Shape {
         if (rp != null) {
             rp.translate(v, oom, rm);
         }
-//        if (pl != null) {
-//            pl.translate(v, oom, rm);
-//        }
-//        if (pqpl != null) {
-//            pqpl.translate(v, oom, rm);
-//        }
-//        if (qrpl != null) {
-//            qrpl.translate(v, oom, rm);
-//        }
-//        if (rppl != null) {
-//            rppl.translate(v, oom, rm);
-//        }
     }
 
     @Override
@@ -1330,9 +1314,9 @@ public class V2D_Triangle extends V2D_Shape {
     public V2D_Triangle rotateN(V2D_Point pt, BigRational theta,
             Math_BigDecimal bd, int oom, RoundingMode rm) {
         return new V2D_Triangle(
-                getP().rotateN(pt, theta, bd, oom, rm),
-                getQ().rotateN(pt, theta, bd, oom, rm),
-                getR().rotateN(pt, theta, bd, oom, rm), oom, rm);
+                getP(oom, rm).rotateN(pt, theta, bd, oom, rm),
+                getQ(oom, rm).rotateN(pt, theta, bd, oom, rm),
+                getR(oom, rm).rotateN(pt, theta, bd, oom, rm), oom, rm);
     }
 
     /**
@@ -1653,12 +1637,12 @@ public class V2D_Triangle extends V2D_Shape {
      */
     public V2D_Point getOpposite(V2D_LineSegment l, int oom, RoundingMode rm) {
         if (getPQ(oom, rm).equals(l, oom, rm)) {
-            return getR();
+            return getR(oom, rm);
         } else {
             if (getQR(oom, rm).equals(l, oom, rm)) {
-                return getP();
+                return getP(oom, rm);
             } else {
-                return getQ();
+                return getQ(oom, rm);
             }
         }
     }
@@ -1829,9 +1813,9 @@ public class V2D_Triangle extends V2D_Shape {
     public static V2D_Point[] getPoints(V2D_Triangle[] triangles, int oom, RoundingMode rm) {
         List<V2D_Point> s = new ArrayList<>();
         for (var t : triangles) {
-            s.add(t.getP());
-            s.add(t.getQ());
-            s.add(t.getR());
+            s.add(t.getP(oom, rm));
+            s.add(t.getQ(oom, rm));
+            s.add(t.getR(oom, rm));
         }
         ArrayList<V2D_Point> points = V2D_Point.getUnique(s, oom, rm);
         return points.toArray(V2D_Point[]::new);
@@ -1846,13 +1830,13 @@ public class V2D_Triangle extends V2D_Shape {
      * @return The circumcentre of a circumcircle of this triangle.
      */
     public V2D_Point getCircumcenter(int oom, RoundingMode rm) {
-        V2D_Point a = getP();
+        V2D_Point a = getP(oom, rm);
         BigRational ax = a.getX(oom, rm);
         BigRational ay = a.getY(oom, rm);
-        V2D_Point b = getQ();
+        V2D_Point b = getQ(oom, rm);
         BigRational bx = b.getX(oom, rm);
         BigRational by = b.getY(oom, rm);
-        V2D_Point c = getR();
+        V2D_Point c = getR(oom, rm);
         BigRational cx = c.getX(oom, rm);
         BigRational cy = c.getY(oom, rm);
         BigRational byscy = by.subtract(cy);
@@ -2028,13 +2012,13 @@ public class V2D_Triangle extends V2D_Shape {
     @Override
     public boolean isIntersectedBy(V2D_Envelope aabb, int oom, RoundingMode rm) {
         if (getEnvelope(oom, rm).isIntersectedBy(aabb, oom)) {
-            if (aabb.isIntersectedBy(getP(), oom, rm)) {
+            if (aabb.isIntersectedBy(getP(oom, rm), oom, rm)) {
                 return true;
             }
-            if (aabb.isIntersectedBy(getQ(), oom, rm)) {
+            if (aabb.isIntersectedBy(getQ(oom, rm), oom, rm)) {
                 return true;
             }
-            if (aabb.isIntersectedBy(getR(), oom, rm)) {
+            if (aabb.isIntersectedBy(getR(oom, rm), oom, rm)) {
                 return true;
             }
             V2D_FiniteGeometry l = aabb.getLeft(oom, rm);

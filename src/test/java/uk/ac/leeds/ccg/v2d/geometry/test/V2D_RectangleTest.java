@@ -164,9 +164,9 @@ public class V2D_RectangleTest extends V2D_Test {
         V2D_LineSegment l = new V2D_LineSegment(
                 new V2D_Point(env, -30, -30),
                 new V2D_Point(env, -20, 0), oom, rm);
-        //assertTrue(!r.isIntersectedBy(l, oom, rm));
+        assertTrue(!r.isIntersectedBy(l, oom, rm));
     }
-    
+
     /**
      * Test of getIntersection method, of class V2D_Rectangle.
      */
@@ -256,7 +256,6 @@ public class V2D_RectangleTest extends V2D_Test {
 //        BigRational result = instance.getPerimeter(oom, rm);
 //        assertTrue(Math_Double.equals(expResult, result, oom, rm));
 //    }
-
 //    /**
 //     * Test of getArea method, of class V2D_Rectangle.
 //     */
@@ -270,7 +269,6 @@ public class V2D_RectangleTest extends V2D_Test {
 //        BigRational result = instance.getArea(oom, rm);
 //        assertTrue(Math_BigRational.equals(expResult, result, oom, rm));
 //    }
-
     /**
      * Test of getDistance method, of class V2D_Rectangle.
      */
@@ -296,7 +294,7 @@ public class V2D_RectangleTest extends V2D_Test {
         RoundingMode rm = RoundingMode.HALF_UP;
         V2D_Rectangle instance = new V2D_Rectangle(pP0P0, pP0P1, pP1P1, pP1P0, oom, rm);
         V2D_Point expResult = pP1P0;
-        V2D_Point result = instance.getS();
+        V2D_Point result = instance.getS(oom, rm);
         assertTrue(expResult.equals(result, oom, rm));
     }
 
@@ -412,33 +410,33 @@ public class V2D_RectangleTest extends V2D_Test {
         V2D_Geometry result = instance.getIntersection(t, oom, rm);
         assertTrue(((V2D_Triangle) expResult).equals((V2D_Triangle) result, oom, rm));
         // Test 2
-         t = new V2D_Triangle(pP2P2, new V2D_Point(env, 4d,4d), 
-                 new V2D_Point(env, 2d, 4d), oom, rm);
-         instance = new V2D_Rectangle(
-                 new V2D_Point(env, 0d,0d),
-                 new V2D_Point(env, 0d,6d),
-                 new V2D_Point(env, 6d,6d),
-                 new V2D_Point(env, 6d,0d), oom, rm);
-         expResult = new V2D_Triangle(pP2P2, new V2D_Point(env, 4d,4d), 
-                 new V2D_Point(env, 2d, 4d), oom, rm);
-         result = instance.getIntersection(t, oom, rm);
+        t = new V2D_Triangle(pP2P2, new V2D_Point(env, 4d, 4d),
+                new V2D_Point(env, 2d, 4d), oom, rm);
+        instance = new V2D_Rectangle(
+                new V2D_Point(env, 0d, 0d),
+                new V2D_Point(env, 0d, 6d),
+                new V2D_Point(env, 6d, 6d),
+                new V2D_Point(env, 6d, 0d), oom, rm);
+        expResult = new V2D_Triangle(pP2P2, new V2D_Point(env, 4d, 4d),
+                new V2D_Point(env, 2d, 4d), oom, rm);
+        result = instance.getIntersection(t, oom, rm);
         assertTrue(((V2D_Triangle) expResult).equals(
                 (V2D_Triangle) result, oom, rm));
         // Test 3
-         t = new V2D_Triangle(
-                 new V2D_Point(env, -1d,4d),
-                 new V2D_Point(env, -1d,6d),
-                 new V2D_Point(env, 1d,4d), oom, rm);
-         instance = new V2D_Rectangle(
-                 new V2D_Point(env, 0d,0d),
-                 new V2D_Point(env, 0d,6d),
-                 new V2D_Point(env, 6d,6d),
-                 new V2D_Point(env, 6d,0d), oom, rm);
-         expResult =  new V2D_Triangle(
-                 new V2D_Point(env, 0d,4d),
-                 new V2D_Point(env, 0d,5d),
-                 new V2D_Point(env, 1d,4d), oom, rm);
-         result = instance.getIntersection(t, oom, rm);
+        t = new V2D_Triangle(
+                new V2D_Point(env, -1d, 4d),
+                new V2D_Point(env, -1d, 6d),
+                new V2D_Point(env, 1d, 4d), oom, rm);
+        instance = new V2D_Rectangle(
+                new V2D_Point(env, 0d, 0d),
+                new V2D_Point(env, 0d, 6d),
+                new V2D_Point(env, 6d, 6d),
+                new V2D_Point(env, 6d, 0d), oom, rm);
+        expResult = new V2D_Triangle(
+                new V2D_Point(env, 0d, 4d),
+                new V2D_Point(env, 0d, 5d),
+                new V2D_Point(env, 1d, 4d), oom, rm);
+        result = instance.getIntersection(t, oom, rm);
         assertTrue(((V2D_Triangle) expResult).equals(
                 (V2D_Triangle) result, oom, rm));
 //        // Test 3 This returns a coonvexhull, but this should be simplified to a triangle
