@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
+import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
 
 /**
  * For representing a polygon with no internal holes. External holes are similar
@@ -86,69 +87,82 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
      * @param rm The RoundingMode for any rounding.
      */
     public V2D_PolygonNoInternalHoles(V2D_Point[] points, int oom, RoundingMode rm) {
-        super(points[0].env);
+        super(points[0].env, points[0].offset);
         ch = new V2D_ConvexHull(oom, rm, points);
-        // Construct points, externalEdges and externalHoles.
+        // construct edges and points
         externalEdges = new HashMap<>();
         externalHoles = new HashMap<>();
-        V2D_Point p0 = points[0];
-        boolean isHole = false;
-        boolean p0int = V2D_LineSegment.isIntersectedBy(oom, rm, p0, ch.edges.values());
-        boolean p1int;
-        V2D_Point p1 = points[1];
-        ArrayList<V2D_Point> pts = new ArrayList<>();
+        PTThing p = new PTThing();
+        p.p0 = points[0];
+        p.isHole = false;
+        p.p0int = V2D_LineSegment.isIntersectedBy(oom, rm, p.p0, ch.edges.values());
+        p.p1 = points[1];
+        p.pts = new ArrayList<>();
+        p.points = points;
         this.points = new HashMap<>();
-        if (p0.equals(p1, oom, rm)) {
-            p1int = p0int;
+        if (p.p0.equals(p.p1, oom, rm)) {
+            p.p1int = p.p0int;
         } else {
-            this.points.put(this.points.size(), p0);
-            externalEdges.put(externalEdges.size(), new V2D_LineSegment(p0, p1, oom, rm));
-            p1int = V2D_LineSegment.isIntersectedBy(oom, rm, p1, ch.edges.values());
-            if (p0int) {
-                if (!p1int) {
-                    pts.add(p0);
-                    isHole = true;
+            this.points.put(this.points.size(), p.p0);
+            externalEdges.put(externalEdges.size(), new V2D_LineSegment(p.p0, p.p1, oom, rm));
+            p.p1int = V2D_LineSegment.isIntersectedBy(oom, rm, p.p1, ch.edges.values());
+            if (p.p0int) {
+                if (!p.p1int) {
+                    p.pts.add(p.p0);
+                    p.isHole = true;
                 }
             }
         }
-        for (int i = 2; i < this.points.size(); i++) {
-            p0 = p1;
-            p0int = p1int;
-            p1 = points[i];
-            if (p0.equals(p1, oom, rm)) {
-                p1int = p0int;
-            } else {
-                p1int = V2D_LineSegment.isIntersectedBy(oom, rm, p1, ch.edges.values());
-                if (p0int) {
-                    if (!p1int) {
-                        pts.add(p0);
-                        isHole = true;
-                    }
-                }
-                if (isHole) {
-                    if (p1int) {
-                        if (pts.size() > 2) {
-                            externalHoles.put(externalHoles.size(), new V2D_PolygonNoInternalHoles(pts.toArray(V2D_Point[]::new), oom, rm));
-                        }
-                        pts = new ArrayList<>();
-                        isHole = false;
-                    } else {
-                        pts.add(p1);
-                    }
-                } else {
-                    if (p0int) {
-                        if (!p1int) {
-                            pts.add(p0);
-                            isHole = true;
-                        }
-                    }
-                }
-                externalEdges.put(externalEdges.size(), new V2D_LineSegment(p0, p1, oom, rm));
-            }
+        for (int i = 2; i < points.length; i++) {
+           doThing(oom, rm, i, p);
         }
-        externalEdges.put(externalEdges.size(), new V2D_LineSegment(p1, this.points.get(0), oom, rm));
+        doThing(oom, rm, 0, p);
     }
-
+    
+    private void doThing(int oom, RoundingMode rm, int index, PTThing p) {
+        p.p0 = p.p1;
+        p.p0int = p.p1int;
+        p.p1 = p.points[index];
+        if (p.p0.equals(p.p1, env.oom, env.rm)) {
+            p.p1int = p.p0int;
+        } else {
+            p.p1int = V2D_LineSegment.isIntersectedBy(env.oom, env.rm, p.p1, ch.edges.values());
+            if (p.isHole) {
+                if (p.p1int) {
+                    if (p.pts.size() > 2) {
+                        externalHoles.put(externalHoles.size(), 
+                                new V2D_PolygonNoInternalHoles( 
+                                        p.pts.toArray(V2D_Point[]::new), oom, rm));
+                    }
+                    p.pts = new ArrayList<>();
+                    p.isHole = false;
+                } else {
+                    p.pts.add(p.p1);
+                }
+            } else {
+                if (p.p0int) {
+                    if (!p.p1int) {
+                        p.pts.add(p.p0);
+                        p.isHole = true;
+                    }
+                }
+            }
+            externalEdges.put(externalEdges.size(), new V2D_LineSegment(p.p0, p.p1, oom, rm));
+        }
+    }
+    
+    protected class PTThing {
+        boolean isHole;
+        boolean p0int;
+        boolean p1int;
+        ArrayList<V2D_Point> pts;
+        V2D_Point[] points;
+        V2D_Point p0;
+        V2D_Point p1;
+        
+        PTThing(){}
+    }
+    
     /**
      * Create a new instance.
      *
