@@ -83,7 +83,7 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      */
     public V2D_PolygonNoInternalHolesDouble(V2D_EnvironmentDouble env, V2D_PointDouble[] points) {
         super(env, points[0].offset);
-        ch = new V2D_ConvexHullDouble(env, points);
+        ch = new V2D_ConvexHullDouble(points);
         // construct edges and points
         externalEdges = new HashMap<>();
         externalHoles = new HashMap<>();

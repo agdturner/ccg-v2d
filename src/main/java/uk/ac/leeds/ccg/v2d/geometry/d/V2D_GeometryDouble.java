@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Andy Turner, University of Leeds.
+ * Copyright 2025 Andy Turner, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package uk.ac.leeds.ccg.v2d.geometry.d;
 
 import java.io.Serializable;
+import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
 
 /**
  * For 2D Euclidean geometrical objects. The two dimensions have
@@ -48,12 +49,17 @@ import java.io.Serializable;
  * }
  *
  * @author Andy Turner
- * @version 1.0
+ * @version 2.0
  */
 public abstract class V2D_GeometryDouble implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * The environment.
+     */
+    public final V2D_EnvironmentDouble env;
+    
     /**
      * The offset used to position a geometry object relative to the
      * {@link V2D_PointDouble#ORIGIN}.
@@ -62,17 +68,21 @@ public abstract class V2D_GeometryDouble implements Serializable {
 
     /**
      * Creates a new instance.
+     * 
+     * @param env The environment.
      */
-    public V2D_GeometryDouble() {
-        this(V2D_VectorDouble.ZERO);
+    public V2D_GeometryDouble(V2D_EnvironmentDouble env) {
+        this(env, V2D_VectorDouble.ZERO);
     }
 
     /**
      * Creates a new instance.
      *
+     * @param env The environment.
      * @param offset What {@link #offset} is set to.
      */
-    public V2D_GeometryDouble(V2D_VectorDouble offset) {
+    public V2D_GeometryDouble(V2D_EnvironmentDouble env, V2D_VectorDouble offset) {
+        this.env = env;
         this.offset = offset;
     }
 

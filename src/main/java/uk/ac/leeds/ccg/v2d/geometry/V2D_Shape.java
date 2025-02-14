@@ -15,7 +15,6 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry;
 
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
@@ -30,8 +29,6 @@ public abstract class V2D_Shape extends V2D_FiniteGeometry {
 
     private static final long serialVersionUID = 1L;
 
-    protected final V2D_Environment env;
-            
     /**
      * The id of the shape.
      */
@@ -43,8 +40,7 @@ public abstract class V2D_Shape extends V2D_FiniteGeometry {
      * @param offset What {@link #offset} is set to.
      */
     public V2D_Shape(V2D_Environment env, V2D_Vector offset) {
-        super(offset);
-        this.env = env;
+        super(env, offset);
         this.id = env.getNextID();
     }
     

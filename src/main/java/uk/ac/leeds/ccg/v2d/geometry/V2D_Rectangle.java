@@ -22,6 +22,7 @@ import java.util.Collection;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
 import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
+import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
 
 /**
  * For representing and processing rectangles in 2D. A rectangle is a right
@@ -58,6 +59,7 @@ public class V2D_Rectangle extends V2D_FiniteGeometry {
     /**
      * Create a new instance.
      *
+     * @param env The environment.
      * @param offset What {@link #offset} is set to.
      * @param p The bottom left corner of the rectangle.
      * @param q The top left corner of the rectangle.
@@ -68,11 +70,11 @@ public class V2D_Rectangle extends V2D_FiniteGeometry {
      * @throws java.lang.RuntimeException iff the points do not define a
      * rectangle.
      */
-    public V2D_Rectangle(V2D_Vector offset, V2D_Vector p,
+    public V2D_Rectangle(V2D_Environment env, V2D_Vector offset, V2D_Vector p,
             V2D_Vector q, V2D_Vector r, V2D_Vector s, int oom, RoundingMode rm) {
-        super(offset);
-        pqr = new V2D_Triangle(p, q, r, oom, rm);
-        rsp = new V2D_Triangle(r, s, p, oom, rm);
+        super(env, offset);
+        pqr = new V2D_Triangle(env, p, q, r, oom, rm);
+        rsp = new V2D_Triangle(env, r, s, p, oom, rm);
     }
 
     /**
@@ -87,7 +89,7 @@ public class V2D_Rectangle extends V2D_FiniteGeometry {
      */
     public V2D_Rectangle(V2D_Point p, V2D_Point q, V2D_Point r, V2D_Point s,
             int oom, RoundingMode rm) {
-        this(V2D_Vector.ZERO, p.getVector(oom, rm), q.getVector(oom, rm), 
+        this(p.env, V2D_Vector.ZERO, p.getVector(oom, rm), q.getVector(oom, rm), 
                 r.getVector(oom, rm), s.getVector(oom, rm), oom, rm);
     }
 
@@ -121,7 +123,7 @@ public class V2D_Rectangle extends V2D_FiniteGeometry {
     }
 
     @Override
-    public V2D_Point[] getPoints(int oom, RoundingMode rm) {
+    public V2D_Point[] getPointsArray(int oom, RoundingMode rm) {
         V2D_Point[] re = new V2D_Point[4];
         re[0] = getP();
         re[1] = getQ();
@@ -422,8 +424,8 @@ public class V2D_Rectangle extends V2D_FiniteGeometry {
                 if (rspit == null) {
                     return pqrit;
                 }
-                V2D_Point[] pqritps = pqrit.getPoints(oom, rm);
-                V2D_Point[] rspitps = rspit.getPoints(oom, rm);
+                V2D_Point[] pqritps = pqrit.getPointsArray(oom, rm);
+                V2D_Point[] rspitps = rspit.getPointsArray(oom, rm);
                 V2D_Point[] pts = Arrays.copyOf(pqritps, pqritps.length + rspitps.length);
                 System.arraycopy(rspitps, 0, pts, pqritps.length, rspitps.length);
                 return V2D_ConvexHull.getGeometry(oom, rm, pts);
@@ -536,8 +538,8 @@ public class V2D_Rectangle extends V2D_FiniteGeometry {
      * @return {@code true} iff this is equal to r.
      */
     public boolean equals(V2D_Rectangle r, int oom, RoundingMode rm) {
-        V2D_Point[] pts = getPoints(oom, rm);
-        V2D_Point[] rpts = r.getPoints(oom, rm);
+        V2D_Point[] pts = getPointsArray(oom, rm);
+        V2D_Point[] rpts = r.getPointsArray(oom, rm);
         for (var x : pts) {
             boolean found = false;
             for (var y : rpts) {

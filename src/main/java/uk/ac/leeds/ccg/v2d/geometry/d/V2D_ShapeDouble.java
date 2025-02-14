@@ -28,8 +28,6 @@ import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
 public abstract class V2D_ShapeDouble extends V2D_FiniteGeometryDouble {
 
     private static final long serialVersionUID = 1L;
-    
-    protected final V2D_EnvironmentDouble env;
             
     /**
      * The id of the shape.
@@ -42,8 +40,7 @@ public abstract class V2D_ShapeDouble extends V2D_FiniteGeometryDouble {
      * @param offset What {@link #offset} is set to.
      */
     public V2D_ShapeDouble(V2D_EnvironmentDouble env, V2D_VectorDouble offset) {
-        super(offset);
-        this.env = env;
+        super(env, offset);
         this.id = env.getNextID();
     }
     

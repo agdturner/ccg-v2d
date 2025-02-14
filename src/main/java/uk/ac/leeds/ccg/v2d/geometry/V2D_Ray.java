@@ -19,6 +19,7 @@ import ch.obermuhlner.math.big.BigRational;
 import java.math.RoundingMode;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
+import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
 
 /**
  * 2D representation of a ray - like a line, but one that starts at a point
@@ -36,7 +37,7 @@ public class V2D_Ray extends V2D_Geometry {
      * The line of this ray.
      */
     public V2D_Line l;
-
+    
     /**
      * For storing the line through the point P of {@link #l} at 90 degrees.
      */
@@ -48,7 +49,7 @@ public class V2D_Ray extends V2D_Geometry {
      * @param r What {@code this} is created from.
      */
     public V2D_Ray(V2D_Ray r) {
-        super();
+        super(r.env);
         l = new V2D_Line(r.l);
     }
 
@@ -59,35 +60,37 @@ public class V2D_Ray extends V2D_Geometry {
      * @param v What {@code this} is created from.
      */
     public V2D_Ray(V2D_Point p, V2D_Vector v) {
-        super(p.offset);
+        super(p.env, p.offset);
         l = new V2D_Line(p, v);
     }
 
     /**
      * Create a new instance. {@link #offset} is set to {@link V2D_Vector#ZERO}.
      *
+     * @param env What {@link #env} is set to.
      * @param p What {@code this} is created from.
      * @param q What {@code this} is created from.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
      */
-    public V2D_Ray(V2D_Vector p, V2D_Vector q, int oom, RoundingMode rm) {
-        this(V2D_Vector.ZERO, p, q, oom, rm);
+    public V2D_Ray(V2D_Environment env, V2D_Vector p, V2D_Vector q, int oom, RoundingMode rm) {
+        this(env, V2D_Vector.ZERO, p, q, oom, rm);
     }
 
     /**
      * Create a new instance.
      *
+     * @param env What {@link #env} is set to.
      * @param offset What {@link #offset} is set to.
      * @param p What {@link #l} point is set to.
      * @param q What {@link #l} vector is set from.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
      */
-    public V2D_Ray(V2D_Vector offset, V2D_Vector p,
+    public V2D_Ray(V2D_Environment env, V2D_Vector offset, V2D_Vector p,
             V2D_Vector q, int oom, RoundingMode rm) {
-        super(offset);
-        l = new V2D_Line(offset, p, q, oom, rm);
+        super(env, offset);
+        l = new V2D_Line(env, offset, p, q, oom, rm);
     }
 
     /**
@@ -96,7 +99,7 @@ public class V2D_Ray extends V2D_Geometry {
      * @param l What {@code this} is created from.
      */
     public V2D_Ray(V2D_Line l) {
-        super(l.offset);
+        super(l.env, l.offset);
         this.l = new V2D_Line(l);
     }
 
@@ -109,7 +112,7 @@ public class V2D_Ray extends V2D_Geometry {
      * @param rm The RoundingMode if rounding is needed.
      */
     public V2D_Ray(V2D_Point p, V2D_Point q, int oom, RoundingMode rm) {
-        super(p.offset);
+        super(p.env, p.offset);
         this.l = new V2D_Line(p, q, oom, rm);
     }
 
@@ -120,10 +123,17 @@ public class V2D_Ray extends V2D_Geometry {
      * @return {@code true} iff {@code r} is the same as {@code this}.
      */
     public boolean equals(V2D_Ray r, int oom, RoundingMode rm) {
-        return l.getP().equals(r.l.getP(), oom, rm)
-                && l.v.isScalarMultiple(r.l.v, oom, rm);
+        if (l.getP().equals(r.l.getP(), oom, rm)) {
+            if (l.v.getDirection() == r.l.v.getDirection()) {
+                return l.v.isScalarMultiple(r.l.v, oom, rm);
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
-
+    
     @Override
     public String toString() {
         //return toString("");
@@ -370,19 +380,20 @@ public class V2D_Ray extends V2D_Geometry {
         return getPl().isOnSameSide(pt, l.getQ(oom, rm), oom, rm);
     }
 
-//    /**
-//     * Translate (move relative to the origin).
-//     *
-//     * @param v The vector to translate.
-//     * @param oom The Order of Magnitude for the precision.
-//     * @param rm The RoundingMode if rounding is needed.
-//     */
-//    @Override
-//    public void translate(V2D_Vector v, int oom, RoundingMode rm) {
-//        super.translate(v, oom, rm);
-//        l.offset = offset;
-//        //l.translate(v, oom, rm);
-//    }
+    /**
+     * Translate (move relative to the origin).
+     *
+     * @param v The vector to translate.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     */
+    @Override
+    public void translate(V2D_Vector v, int oom, RoundingMode rm) {
+        l.translate(v, oom, rm);
+        if (pl != null) {
+            pl.translate(v, oom, rm);
+        }
+    }
 
     @Override
     public V2D_Ray rotate(V2D_Point pt, BigRational theta, Math_BigDecimal bd,

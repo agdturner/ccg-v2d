@@ -45,11 +45,10 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
     /**
      * Create a new instance.
      *
-     * @param env The environment.
      * @param r Another rectangle.
      */
-    public V2D_RectangleDouble(V2D_EnvironmentDouble env, V2D_RectangleDouble r) {
-        this(env, r.getP(), r.getQ(), r.getR(), r.getS());
+    public V2D_RectangleDouble(V2D_RectangleDouble r) {
+        this(r.getP(), r.getQ(), r.getR(), r.getS());
     }
 
     /**
@@ -75,16 +74,15 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
     /**
      * Creates a new instance.
      *
-     * @param env The environment.
      * @param p Used to initialise {@link #offset}, {@link #pqr} and
      * {@link #rsp}.
      * @param q Used to initialise {@link #pqr} and {@link #rsp}.
      * @param r Used to initialise {@link #pqr} and {@link #rsp}.
      * @param s Used to initialise {@link #rsp}.
      */
-    public V2D_RectangleDouble(V2D_EnvironmentDouble env, V2D_PointDouble p, V2D_PointDouble q,
+    public V2D_RectangleDouble(V2D_PointDouble p, V2D_PointDouble q,
             V2D_PointDouble r, V2D_PointDouble s) {
-        this(env, V2D_VectorDouble.ZERO, p.getVector(), q.getVector(), r.getVector(), s.getVector());
+        this(p.env, V2D_VectorDouble.ZERO, p.getVector(), q.getVector(), r.getVector(), s.getVector());
 //        V2D_PointDouble qn = new V2D_PointDouble(q);
 //        qn.setOffset(p.offset);
 //        V2D_PointDouble rn = new V2D_PointDouble(r);
@@ -379,7 +377,7 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
             double epsilon) {
         theta = Math_AngleDouble.normalise(theta);
         if (theta == 0d) {
-            return new V2D_RectangleDouble(env, this);
+            return new V2D_RectangleDouble(this);
         } else {
             return rotateN(pt, theta, epsilon);
         }
@@ -388,7 +386,7 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
     @Override
     public V2D_RectangleDouble rotateN(V2D_PointDouble pt,
             double theta, double epsilon) {
-        return new V2D_RectangleDouble(env, 
+        return new V2D_RectangleDouble( 
                 getP().rotateN(pt, theta, epsilon),
                 getQ().rotateN(pt, theta, epsilon),
                 getR().rotateN(pt, theta, epsilon),
@@ -432,7 +430,7 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
             V2D_PointDouble[] rspitps = rspit.getPointsArray();
             V2D_PointDouble[] pts = Arrays.copyOf(pqritps, pqritps.length + rspitps.length);
             System.arraycopy(rspitps, 0, pts, pqritps.length, rspitps.length);
-            return V2D_ConvexHullDouble.getGeometry(env, epsilon, pts);
+            return V2D_ConvexHullDouble.getGeometry(epsilon, pts);
         }
     }
     

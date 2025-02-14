@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Andy Turner, University of Leeds.
+ * Copyright 2025 Andy Turner, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package uk.ac.leeds.ccg.v2d.geometry;
 import ch.obermuhlner.math.big.BigRational;
 import java.io.Serializable;
 import java.math.RoundingMode;
+import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
 
 /**
  * An envelope contains all the extreme values with respect to the X and Y axes.
@@ -25,12 +26,17 @@ import java.math.RoundingMode;
  * direction. For a point the envelope is essentially the point.
  *
  * @author Andy Turner
- * @version 1.0
+ * @version 2.0
  */
 public class V2D_Envelope implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * The environment.
+     */
+    protected final V2D_Environment env;
+    
     /**
      * For storing the offset of this.
      */
@@ -85,6 +91,7 @@ public class V2D_Envelope implements Serializable {
      * @param e An envelop.
      */
     public V2D_Envelope(V2D_Envelope e) {
+        env = e.env;
         yMin = e.yMin;
         yMax = e.yMax;
         xMin = e.xMin;
@@ -113,6 +120,7 @@ public class V2D_Envelope implements Serializable {
         this.xMin = e.xMin;
         this.yMax = e.yMax;
         this.yMin = e.yMin;
+        env = gs[0].env;
     }
 
     /**
@@ -123,7 +131,7 @@ public class V2D_Envelope implements Serializable {
      * @param rm The RoundingMode if rounding is needed.
      */
     public V2D_Envelope(V2D_FiniteGeometry g, int oom, RoundingMode rm) {
-        this(oom, g.getPoints(oom, rm));
+        this(oom, g.getPointsArray(oom, rm));
     }
     
     /**
@@ -168,33 +176,36 @@ public class V2D_Envelope implements Serializable {
                 this.yMax = ymax;
             }
         }
+        env = points[0].env;
     }
 
     /**
      * Create a new instance.
      *
+     * @param env What {@link #env} is set to.
      * @param oom The Order of Magnitude for the precision.
      * @param x The x-coordinate of a point.
      * @param y The y-coordinate of a point.
      */
-    public V2D_Envelope(int oom, BigRational x, BigRational y) {
-        this(oom, new V2D_Point(x, y));
+    public V2D_Envelope(V2D_Environment env, int oom, BigRational x, BigRational y) {
+        this(oom, new V2D_Point(env, x, y));
     }
 
     /**
      * Create a new instance.
      *
+     * @param env What {@link #env} is set to.
      * @param oom The Order of Magnitude for the precision.
      * @param xMin What {@link xMin} is set to.
      * @param xMax What {@link xMax} is set to.
      * @param yMin What {@link yMin} is set to.
      * @param yMax What {@link yMax} is set to.
      */
-    public V2D_Envelope(int oom,
+    public V2D_Envelope(V2D_Environment env, int oom,
             BigRational xMin, BigRational xMax,
             BigRational yMin, BigRational yMax) {
-        this(oom, new V2D_Point(xMin, yMin),
-                new V2D_Point(xMax, yMax));
+        this(oom, new V2D_Point(env, xMin, yMin),
+                new V2D_Point(env, xMax, yMax));
     }
 
     @Override
@@ -233,7 +244,7 @@ public class V2D_Envelope implements Serializable {
         if (e.isContainedBy(this, oom)) {
             return this;
         } else {
-            return new V2D_Envelope(oom,
+            return new V2D_Envelope(env, oom,
                     BigRational.min(e.getXMin(oom), getXMin(oom)),
                     BigRational.max(e.getXMax(oom), getXMax(oom)),
                     BigRational.min(e.getYMin(oom), getYMin(oom)),
@@ -450,7 +461,7 @@ public class V2D_Envelope implements Serializable {
         if (!this.isIntersectedBy(en, oom)) {
             return null;
         }
-        return new V2D_Envelope(oom,
+        return new V2D_Envelope(env, oom,
                 BigRational.max(getXMin(oom), en.getXMin(oom)),
                 BigRational.min(getXMax(oom), en.getXMax(oom)),
                 BigRational.max(getYMin(oom), en.getYMin(oom)),
@@ -556,6 +567,8 @@ public class V2D_Envelope implements Serializable {
     }
     
     /**
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
      * @return the left of the envelope.
      */
     public V2D_FiniteGeometry getLeft(int oom, RoundingMode rm) {
@@ -564,17 +577,19 @@ public class V2D_Envelope implements Serializable {
             BigRational ymin = getYMin(oom);
             BigRational ymax = getYMax(oom);
             if (ymin.compareTo(ymax) == 0) {
-                l = new V2D_Point(xmin, ymax);
+                l = new V2D_Point(env, xmin, ymax);
             } else {
                 l = new V2D_LineSegment(
-                    new V2D_Point(xmin, ymin),
-                    new V2D_Point(xmin, ymax), oom, rm);
+                    new V2D_Point(env, xmin, ymin),
+                    new V2D_Point(env, xmin, ymax), oom, rm);
             }
         }
         return l;
     }
     
     /**
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
      * @return the right of the envelope.
      */
     public V2D_FiniteGeometry getRight(int oom, RoundingMode rm) {
@@ -583,17 +598,19 @@ public class V2D_Envelope implements Serializable {
             BigRational ymin = getYMin(oom);
             BigRational ymax = getYMax(oom);
             if (ymin.compareTo(ymax) == 0) {
-                r = new V2D_Point(xmax, ymax);
+                r = new V2D_Point(env, xmax, ymax);
             } else {
                 r = new V2D_LineSegment(
-                    new V2D_Point(xmax, ymin),
-                    new V2D_Point(xmax, ymax), oom, rm);
+                    new V2D_Point(env, xmax, ymin),
+                    new V2D_Point(env, xmax, ymax), oom, rm);
             }
         }
         return r;
     }
     
     /**
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
      * @return the top of the envelope.
      */
     public V2D_FiniteGeometry getTop(int oom, RoundingMode rm) {
@@ -602,17 +619,19 @@ public class V2D_Envelope implements Serializable {
             BigRational xmax = getXMax(oom);
             BigRational ymax = getYMax(oom);
             if (xmin.compareTo(xmax) == 0) {
-                t = new V2D_Point(xmin, ymax);
+                t = new V2D_Point(env, xmin, ymax);
             } else {
                 t = new V2D_LineSegment(
-                    new V2D_Point(xmin, ymax),
-                    new V2D_Point(xmax, ymax), oom, rm);
+                    new V2D_Point(env, xmin, ymax),
+                    new V2D_Point(env, xmax, ymax), oom, rm);
             }
         }
         return t;
     }
     
     /**
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
      * @return the bottom of the envelope.
      */
     public V2D_FiniteGeometry getBottom(int oom, RoundingMode rm) {
@@ -621,11 +640,11 @@ public class V2D_Envelope implements Serializable {
             BigRational xmax = getXMax(oom);
             BigRational ymin = getYMin(oom);
             if (xmin.compareTo(xmax) == 0) {
-                b = new V2D_Point(xmin, ymin);
+                b = new V2D_Point(env, xmin, ymin);
             } else {
                 b = new V2D_LineSegment(
-                    new V2D_Point(xmin, ymin),
-                    new V2D_Point(xmax, ymin), oom, rm);
+                    new V2D_Point(env, xmin, ymin),
+                    new V2D_Point(env, xmax, ymin), oom, rm);
             }
         }
         return b;

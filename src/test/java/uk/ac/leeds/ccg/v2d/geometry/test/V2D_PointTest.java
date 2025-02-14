@@ -70,13 +70,13 @@ public class V2D_PointTest extends V2D_Test {
         RoundingMode rm = RoundingMode.HALF_UP;
         double x = 0d;
         double y = 0d;
-        V2D_Point p = new V2D_Point(x, y);
+        V2D_Point p = new V2D_Point(env, x, y);
         assertTrue(instance.equals(p, oom, rm));
         // Test 2
         x = 1d;
         y = 10d;
-        instance = new V2D_Point(x, y);
-        p = new V2D_Point(x, y);
+        instance = new V2D_Point(env, x, y);
+        p = new V2D_Point(env, x, y);
         assertTrue(instance.equals(p, oom, rm));
     }
 
@@ -142,16 +142,16 @@ public class V2D_PointTest extends V2D_Test {
         result = instance.getDistance(p, oom, rm);
         assertTrue(expResult.compareTo(result) == 0);
         // Test 4
-        instance = new V2D_Point(3d, 4d);
+        instance = new V2D_Point(env, 3d, 4d);
         expResult = BigRational.valueOf(5d);
         result = instance.getDistance(p, oom, rm);
         assertTrue(expResult.compareTo(result) == 0);
         // Test 5
-        instance = new V2D_Point(-3d, -4d);
+        instance = new V2D_Point(env, -3d, -4d);
         result = instance.getDistance(p, oom, rm);
         assertTrue(expResult.compareTo(result) == 0);
         // Test 6
-        instance = new V2D_Point(-3d, 4d);
+        instance = new V2D_Point(env, -3d, 4d);
         result = instance.getDistance(p, oom, rm);
         assertTrue(expResult.compareTo(result) == 0);
         // Test 7
@@ -179,7 +179,7 @@ public class V2D_PointTest extends V2D_Test {
         BigRational result = pP0P0.getDistance(pP0P0, oom, rm);
         assertTrue(expResult.compareTo(result) == 0);
         // Test 2
-        V2D_Point instance = new V2D_Point(3d, 4d);
+        V2D_Point instance = new V2D_Point(env, 3d, 4d);
         expResult = BigRational.valueOf(25d);
         result = instance.getDistanceSquared(pP0P0, oom, rm);
         assertTrue(expResult.compareTo(result) == 0);
@@ -222,9 +222,7 @@ public class V2D_PointTest extends V2D_Test {
     public void testToString() {
         System.out.println("toString");
         V2D_Point instance = pP0P1;
-        String expResult = "V2D_Point("
-                + "offset=V2D_Vector(dx=0, dy=0), "
-                + "rel=V2D_Vector(dx=0, dy=1))";
+        String expResult = "V2D_Point(offset=V2D_Vector(dx=0, dy=0), rel=V2D_Vector(dx=0, dy=1))";
         String result = instance.toString();
         //System.out.println(result);
         assertEquals(expResult, result);
@@ -356,18 +354,18 @@ public class V2D_PointTest extends V2D_Test {
         // Test 3
         V2D_Vector offset = new V2D_Vector(2, 0);
         V2D_Vector rel = new V2D_Vector(1, 0);
-        instance = new V2D_Point(offset, rel);
+        instance = new V2D_Point(env, offset, rel);
         theta = Pi;
         result = instance.rotate(pt, theta, bd, oom, rm);
-        expResult = new V2D_Point(-3, 0);
+        expResult = new V2D_Point(env, -3, 0);
         assertTrue(expResult.equals(result, oom, rm));
         // Test 4
         offset = new V2D_Vector(1, 0);
         rel = new V2D_Vector(2, 0);
-        instance = new V2D_Point(offset, rel);
+        instance = new V2D_Point(env, offset, rel);
         theta = Pi;
         result = instance.rotate(pt, theta, bd, oom, rm);
-        expResult = new V2D_Point(-3, 0);
+        expResult = new V2D_Point(env, -3, 0);
         assertTrue(expResult.equals(result, oom, rm));
         // Test 5
         pt = pP0P1;

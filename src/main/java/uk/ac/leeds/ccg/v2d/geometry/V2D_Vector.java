@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Andy Turner, University of Leeds.
+ * Copyright 2025 Andy Turner, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,6 @@ import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigRational;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
 import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
-import uk.ac.leeds.ccg.math.number.Math_Quaternion_BigRational;
-import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
 import uk.ac.leeds.ccg.v2d.geometry.light.V2D_V;
 
 /**
@@ -36,7 +34,7 @@ import uk.ac.leeds.ccg.v2d.geometry.light.V2D_V;
  * higher levels of precision, instances are immutable.
  *
  * @author Andy Turner
- * @version 1.1
+ * @version 2.0
  */
 public class V2D_Vector implements Serializable {
     
@@ -316,6 +314,8 @@ public class V2D_Vector implements Serializable {
      * Indicates if {@code this} is the reverse of {@code v}.
      *
      * @param v The vector to compare with {@code this}.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode.
      * @return {@code true} iff {@code this} is the reverse of {@code v}.
      */
     public boolean isReverse(V2D_Vector v, int oom, RoundingMode rm) {
@@ -330,6 +330,8 @@ public class V2D_Vector implements Serializable {
     }
 
     /**
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode.
      * @return {@code true} if {@code this.equals(e.zeroVector)}
      */
     public boolean isZero(int oom, RoundingMode rm) {
@@ -478,7 +480,7 @@ public class V2D_Vector implements Serializable {
      */
     private Math_BigRationalSqrt getMagnitude() {
         if (m == null) {
-            initM(V2D_Environment.DEFAULT_OOM, V2D_Environment.DEFAULT_RM);
+            initM(0, RoundingMode.HALF_UP);
         }
         return m;
     }
@@ -554,20 +556,12 @@ public class V2D_Vector implements Serializable {
                             return true;
                         } else {
                             Math_BigRationalSqrt scalar = v.dx.divide(dx, oom, rm);
-                            if (v.dy.equals(dy.multiply(scalar, oom, rm), oom)) {
-                                return true;
-                            } else {
-                                return false;
-                            }
+                            return v.dy.equals(dy.multiply(scalar, oom, rm), oom);
                         }
                     } else {
                         // |dx| = |v.dx| != 0d, |dy| != |v.dy|
                         Math_BigRationalSqrt scalar = v.dx.divide(dx, oom, rm);
-                        if (v.dy.equals(dy.multiply(scalar, oom, rm), oom)) {
-                            return true;
-                        } else {
-                            return false;
-                        }
+                        return v.dy.equals(dy.multiply(scalar, oom, rm), oom);
                     }
                 }
             } else {
@@ -576,11 +570,7 @@ public class V2D_Vector implements Serializable {
                     return isZero;
                 } else {
                     Math_BigRationalSqrt scalar = v.dx.divide(dx, oom, rm);
-                    if (v.dy.equals(dy.multiply(scalar, oom, rm), oom)) {
-                        return true;
-                    } else {
-                        return false;
-                    }
+                    return v.dy.equals(dy.multiply(scalar, oom, rm), oom);
                 }
             }
         }

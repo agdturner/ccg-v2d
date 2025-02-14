@@ -15,6 +15,7 @@
  */
 package uk.ac.leeds.ccg.v2d.geometry.d.test;
 
+import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_PointDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_VectorDouble;
 
@@ -25,6 +26,8 @@ import uk.ac.leeds.ccg.v2d.geometry.d.V2D_VectorDouble;
  * @version 1.0
  */
 public abstract class V2D_TestDouble {
+    
+    public static final V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(0.00000001);
     public static final double P1E5 = 100000d;
     public static final double P1E6 = 1000000d;
     public static final double P1E7 = 10000000d;
@@ -100,33 +103,33 @@ public abstract class V2D_TestDouble {
     public static final V2D_VectorDouble N2N1 = new V2D_VectorDouble(-2.0d, -1.0);
     public static final V2D_VectorDouble N2N2 = new V2D_VectorDouble(-2.0d, -2.0d);
     // P2x
-    public static final V2D_PointDouble pP2P2 = new V2D_PointDouble(2.0d, 2.0d);
-    public static final V2D_PointDouble pP2P1 = new V2D_PointDouble(2.0d, 1.0d);
-    public static final V2D_PointDouble pP2P0 = new V2D_PointDouble(2.0d, 0.0d);
-    public static final V2D_PointDouble pP2N1 = new V2D_PointDouble(2.0d, -1.0d);
-    public static final V2D_PointDouble pP2N2 = new V2D_PointDouble(2.0d, -2.0d);
+    public static final V2D_PointDouble pP2P2 = new V2D_PointDouble(env, 2.0d, 2.0d);
+    public static final V2D_PointDouble pP2P1 = new V2D_PointDouble(env, 2.0d, 1.0d);
+    public static final V2D_PointDouble pP2P0 = new V2D_PointDouble(env, 2.0d, 0.0d);
+    public static final V2D_PointDouble pP2N1 = new V2D_PointDouble(env, 2.0d, -1.0d);
+    public static final V2D_PointDouble pP2N2 = new V2D_PointDouble(env, 2.0d, -2.0d);
     // P1x
-    public static final V2D_PointDouble pP1P2 = new V2D_PointDouble(1.0d, 2.0d);
-    public static final V2D_PointDouble pP1P1 = new V2D_PointDouble(1.0d, 1.0d);
-    public static final V2D_PointDouble pP1P0 = new V2D_PointDouble(1.0d, 0.0d);
-    public static final V2D_PointDouble pP1N1 = new V2D_PointDouble(1.0d, -1.0d);
-    public static final V2D_PointDouble pP1N2 = new V2D_PointDouble(1.0d, -2.0d);
+    public static final V2D_PointDouble pP1P2 = new V2D_PointDouble(env, 1.0d, 2.0d);
+    public static final V2D_PointDouble pP1P1 = new V2D_PointDouble(env, 1.0d, 1.0d);
+    public static final V2D_PointDouble pP1P0 = new V2D_PointDouble(env, 1.0d, 0.0d);
+    public static final V2D_PointDouble pP1N1 = new V2D_PointDouble(env, 1.0d, -1.0d);
+    public static final V2D_PointDouble pP1N2 = new V2D_PointDouble(env, 1.0d, -2.0d);
     // P0x
-    public static final V2D_PointDouble pP0P2 = new V2D_PointDouble(0.0d, 2.0d);
-    public static final V2D_PointDouble pP0P1 = new V2D_PointDouble(0.0d, 1.0d);
-    public static final V2D_PointDouble pP0P0 = new V2D_PointDouble(0.0d, 0.0d);
-    public static final V2D_PointDouble pP0N1 = new V2D_PointDouble(0.0d, -1.0d);
-    public static final V2D_PointDouble pP0N2 = new V2D_PointDouble(0.0d, -2.0d);
+    public static final V2D_PointDouble pP0P2 = new V2D_PointDouble(env, 0.0d, 2.0d);
+    public static final V2D_PointDouble pP0P1 = new V2D_PointDouble(env, 0.0d, 1.0d);
+    public static final V2D_PointDouble pP0P0 = new V2D_PointDouble(env, 0.0d, 0.0d);
+    public static final V2D_PointDouble pP0N1 = new V2D_PointDouble(env, 0.0d, -1.0d);
+    public static final V2D_PointDouble pP0N2 = new V2D_PointDouble(env, 0.0d, -2.0d);
     // N1x
-    public static final V2D_PointDouble pN1P2 = new V2D_PointDouble(-1.0d, 2.0d);
-    public static final V2D_PointDouble pN1P1 = new V2D_PointDouble(-1.0d, 1.0d);
-    public static final V2D_PointDouble pN1P0 = new V2D_PointDouble(-1.0d, 0.0d);
-    public static final V2D_PointDouble pN1N1 = new V2D_PointDouble(-1.0d, -1.0d);
-    public static final V2D_PointDouble pN1N2 = new V2D_PointDouble(-1.0d, -2.0d);
+    public static final V2D_PointDouble pN1P2 = new V2D_PointDouble(env, -1.0d, 2.0d);
+    public static final V2D_PointDouble pN1P1 = new V2D_PointDouble(env, -1.0d, 1.0d);
+    public static final V2D_PointDouble pN1P0 = new V2D_PointDouble(env, -1.0d, 0.0d);
+    public static final V2D_PointDouble pN1N1 = new V2D_PointDouble(env, -1.0d, -1.0d);
+    public static final V2D_PointDouble pN1N2 = new V2D_PointDouble(env, -1.0d, -2.0d);
     // N2x
-    public static final V2D_PointDouble pN2P2 = new V2D_PointDouble(-2.0d, 2.0d);
-    public static final V2D_PointDouble pN2P1 = new V2D_PointDouble(-2.0d, 1.0d);
-    public static final V2D_PointDouble pN2P0 = new V2D_PointDouble(-2.0d, 0.0d);
-    public static final V2D_PointDouble pN2N1 = new V2D_PointDouble(-2.0d, -1.0);
-    public static final V2D_PointDouble pN2N2 = new V2D_PointDouble(-2.0d, -2.0d);
+    public static final V2D_PointDouble pN2P2 = new V2D_PointDouble(env, -2.0d, 2.0d);
+    public static final V2D_PointDouble pN2P1 = new V2D_PointDouble(env, -2.0d, 1.0d);
+    public static final V2D_PointDouble pN2P0 = new V2D_PointDouble(env, -2.0d, 0.0d);
+    public static final V2D_PointDouble pN2N1 = new V2D_PointDouble(env, -2.0d, -1.0);
+    public static final V2D_PointDouble pN2N2 = new V2D_PointDouble(env, -2.0d, -2.0d);
 }

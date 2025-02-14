@@ -17,6 +17,7 @@ package uk.ac.leeds.ccg.v2d.geometry.d;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
 
 /**
  * An envelope contains all the extreme values with respect to the X and Y axes.
@@ -31,6 +32,11 @@ public class V2D_EnvelopeDouble implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * The environment.
+     */
+    protected final V2D_EnvironmentDouble env;
+    
     /**
      * For storing the offset of this.
      */
@@ -87,8 +93,8 @@ public class V2D_EnvelopeDouble implements Serializable {
      * @param x The x-coordinate of a point.
      * @param y The y-coordinate of a point.
      */
-    public V2D_EnvelopeDouble(double x, double y) {
-        this(new V2D_PointDouble(x, y));
+    public V2D_EnvelopeDouble(V2D_EnvironmentDouble env, double x, double y) {
+        this(new V2D_PointDouble(env, x, y));
     }
 
     /**
@@ -99,11 +105,11 @@ public class V2D_EnvelopeDouble implements Serializable {
      * @param yMin What {@link yMin} is set to.
      * @param yMax What {@link yMax} is set to.
      */
-    public V2D_EnvelopeDouble(
+    public V2D_EnvelopeDouble(V2D_EnvironmentDouble env, 
             double xMin, double xMax,
             double yMin, double yMax) {
-        this(new V2D_PointDouble(xMin, yMin),
-                new V2D_PointDouble(xMax, yMax));
+        this(new V2D_PointDouble(env, xMin, yMin),
+                new V2D_PointDouble(env, xMax, yMax));
     }
     
     /**
@@ -148,6 +154,7 @@ public class V2D_EnvelopeDouble implements Serializable {
                 yMax = ymax;
             }
         }
+        env = points[0].env;
     }
 
     /**
@@ -166,6 +173,7 @@ public class V2D_EnvelopeDouble implements Serializable {
         this.xMin = e.xMin;
         this.yMax = e.yMax;
         this.yMin = e.yMin;
+        env = gs[0].env;
     }
 
     /**
@@ -214,7 +222,8 @@ public class V2D_EnvelopeDouble implements Serializable {
         if (e.isContainedBy(this)) {
             return this;
         } else {
-            return new V2D_EnvelopeDouble(Math.min(e.getXMin(), getXMin()),
+            return new V2D_EnvelopeDouble(e.env, 
+                    Math.min(e.getXMin(), getXMin()),
                     Math.max(e.getXMax(), getXMax()),
                     Math.min(e.getYMin(), getYMin()),
                     Math.max(e.getYMax(), getYMax()));
@@ -323,7 +332,7 @@ public class V2D_EnvelopeDouble implements Serializable {
         if (!this.isIntersectedBy(en)) {
             return null;
         }
-        return new V2D_EnvelopeDouble(
+        return new V2D_EnvelopeDouble(en.env,
                 Math.max(getXMin(), en.getXMin()),
                 Math.min(getXMax(), en.getXMax()),
                 Math.max(getYMin(), en.getYMin()),
@@ -385,7 +394,7 @@ public class V2D_EnvelopeDouble implements Serializable {
      * @return The approximate or exact centre of this.
      */
     public V2D_PointDouble getCentroid() {
-        return new V2D_PointDouble(
+        return new V2D_PointDouble(env, 
                 (this.getXMax() + this.getXMin()) / 2d,
                 (this.getYMax() + this.getYMin()) / 2d);
     }
@@ -398,10 +407,10 @@ public class V2D_EnvelopeDouble implements Serializable {
     public V2D_PointDouble[] getPoints() {
         if (pts == null) {
             pts = new V2D_PointDouble[4];
-            pts[0] = new V2D_PointDouble(getXMin(), getYMin());
-            pts[1] = new V2D_PointDouble(getXMin(), getYMax());
-            pts[2] = new V2D_PointDouble(getXMax(), getYMax());
-            pts[3] = new V2D_PointDouble(getXMax(), getYMin());
+            pts[0] = new V2D_PointDouble(env, getXMin(), getYMin());
+            pts[1] = new V2D_PointDouble(env, getXMin(), getYMax());
+            pts[2] = new V2D_PointDouble(env, getXMax(), getYMax());
+            pts[3] = new V2D_PointDouble(env, getXMax(), getYMin());
         }
         return pts;
     }
@@ -415,11 +424,11 @@ public class V2D_EnvelopeDouble implements Serializable {
             double ymin = getYMax();
             double ymax = getYMax();
             if (ymin == ymax) {
-                l = new V2D_PointDouble(xmin, ymax);
+                l = new V2D_PointDouble(env, xmin, ymax);
             } else {
                 l = new V2D_LineSegmentDouble(
-                    new V2D_PointDouble(xmin, ymin),
-                    new V2D_PointDouble(xmin, ymax));
+                    new V2D_PointDouble(env, xmin, ymin),
+                    new V2D_PointDouble(env, xmin, ymax));
             }
         }
         return l;
@@ -434,11 +443,11 @@ public class V2D_EnvelopeDouble implements Serializable {
             double ymin = getYMax();
             double ymax = getYMax();
             if (ymin == ymax) {
-                r = new V2D_PointDouble(xmax, ymax);
+                r = new V2D_PointDouble(env, xmax, ymax);
             } else {
                 r = new V2D_LineSegmentDouble(
-                    new V2D_PointDouble(xmax, ymin),
-                    new V2D_PointDouble(xmax, ymax));
+                    new V2D_PointDouble(env, xmax, ymin),
+                    new V2D_PointDouble(env, xmax, ymax));
             }
         }
         return r;
@@ -453,11 +462,11 @@ public class V2D_EnvelopeDouble implements Serializable {
             double xmax = getXMax();
             double ymax = getYMax();
             if (xmin == xmax) {
-                t = new V2D_PointDouble(xmin, ymax);
+                t = new V2D_PointDouble(env, xmin, ymax);
             } else {
                 t = new V2D_LineSegmentDouble(
-                    new V2D_PointDouble(xmin, ymax),
-                    new V2D_PointDouble(xmax, ymax));
+                    new V2D_PointDouble(env, xmin, ymax),
+                    new V2D_PointDouble(env, xmax, ymax));
             }
         }
         return t;
@@ -472,11 +481,11 @@ public class V2D_EnvelopeDouble implements Serializable {
             double xmax = getXMax();
             double ymin = getYMin();
             if (xmin == xmax) {
-                b = new V2D_PointDouble(xmin, ymin);
+                b = new V2D_PointDouble(env, xmin, ymin);
             } else {
                 b = new V2D_LineSegmentDouble(
-                    new V2D_PointDouble(xmin, ymin),
-                    new V2D_PointDouble(xmax, ymin));
+                    new V2D_PointDouble(env, xmin, ymin),
+                    new V2D_PointDouble(env, xmax, ymin));
             }
         }
         return b;

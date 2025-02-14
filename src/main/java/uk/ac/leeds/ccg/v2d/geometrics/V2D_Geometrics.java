@@ -49,7 +49,7 @@ public class V2D_Geometrics {
         }
         x = x.divide(n);
         y = y.divide(n);
-        return new V2D_Point(x, y);
+        return new V2D_Point(ps[0].env, x, y);
     }
 
     /**

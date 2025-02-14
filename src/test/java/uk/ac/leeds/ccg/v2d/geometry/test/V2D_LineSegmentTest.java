@@ -505,7 +505,7 @@ public class V2D_LineSegmentTest extends V2D_Test {
         // Test 5
         l0 = new V2D_LineSegment(pP1P0, pP1P1, oom, rm);
         l1 = new V2D_Line(pN1P0, pP0P1, oom, rm);
-        expResult = new V2D_LineSegment(new V2D_Point(0.5d, 1.5d), pP1P1, oom, rm);
+        expResult = new V2D_LineSegment(new V2D_Point(env, 0.5d, 1.5d), pP1P1, oom, rm);
         result = l0.getLineOfIntersection(l1, oom, rm);
         assertTrue(((V2D_LineSegment) expResult).equalsIgnoreDirection(
                 (V2D_LineSegment) result, oom, rm));

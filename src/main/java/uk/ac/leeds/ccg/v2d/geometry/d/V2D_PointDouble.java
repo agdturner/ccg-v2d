@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 import uk.ac.leeds.ccg.math.arithmetic.Math_Double;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
+import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
 
 /**
  * A point is defined by two vectors: {@link #offset} and {@link #rel}. Adding
@@ -39,7 +40,7 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
     /**
      * The origin of the Euclidean space.
      */
-    public static final V2D_PointDouble ORIGIN = new V2D_PointDouble(0, 0);
+    public static final V2D_PointDouble ORIGIN = new V2D_PointDouble(null, 0, 0);
 
     /**
      * The position relative to the {@link #offset}. Taken together with
@@ -53,7 +54,7 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
      * @param p The point to clone/duplicate.
      */
     public V2D_PointDouble(V2D_PointDouble p) {
-        super(new V2D_VectorDouble(p.offset));
+        super(p.env, new V2D_VectorDouble(p.offset));
         rel = new V2D_VectorDouble(p.rel);
     }
 
@@ -61,20 +62,23 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
      * Create a new instance with {@link #offset} set to
      * {@link V2D_VectorDouble#ZERO}.
      *
+     * @param env The environment.
      * @param rel Cloned to initialise {@link #rel}.
      */
-    public V2D_PointDouble(V2D_VectorDouble rel) {
-        this(V2D_VectorDouble.ZERO, rel);
+    public V2D_PointDouble(V2D_EnvironmentDouble env, V2D_VectorDouble rel) {
+        this(env, V2D_VectorDouble.ZERO, rel);
     }
 
     /**
      * Create a new instance.
      *
+     * @param env The environment.
      * @param offset What {@link #offset} is set to.
      * @param rel Cloned to initialise {@link #rel}.
      */
-    public V2D_PointDouble(V2D_VectorDouble offset, V2D_VectorDouble rel) {
-        super(offset);
+    public V2D_PointDouble(V2D_EnvironmentDouble env, V2D_VectorDouble offset,
+            V2D_VectorDouble rel) {
+        super(env, offset);
         this.rel = new V2D_VectorDouble(rel);
     }
 
@@ -82,11 +86,12 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
      * Create a new instance with {@link #offset} set to
      * {@link V2D_VectorDouble#ZERO}.
      *
+     * @param env The environment.
      * @param x What {@link #rel} x component is set to.
      * @param y What {@link #rel} y component is set to.
      */
-    public V2D_PointDouble(double x, double y) {
-        super(V2D_VectorDouble.ZERO);
+    public V2D_PointDouble(V2D_EnvironmentDouble env, double x, double y) {
+        super(env, V2D_VectorDouble.ZERO);
         rel = new V2D_VectorDouble(x, y);
     }
 
@@ -409,7 +414,7 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
         V2D_PointDouble tp = new V2D_PointDouble(this);
         tp.translate(tv.reverse());
         V2D_VectorDouble tpv = tp.getVector();
-        V2D_PointDouble r = new V2D_PointDouble(tpv.rotateN(theta));
+        V2D_PointDouble r = new V2D_PointDouble(env, tpv.rotateN(theta));
         r.translate(tv);
         return r;
     }

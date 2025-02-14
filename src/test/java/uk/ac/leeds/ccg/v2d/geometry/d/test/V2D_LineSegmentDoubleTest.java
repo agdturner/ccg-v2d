@@ -481,7 +481,7 @@ public class V2D_LineSegmentDoubleTest extends V2D_TestDouble {
         // Test 5
         l0 = new V2D_LineSegmentDouble(pP1P0, pP1P1);
         l1 = new V2D_LineDouble(pN1P0, pP0P1);
-        expResult = new V2D_LineSegmentDouble(new V2D_PointDouble(0.5d, 1.5d), pP1P1);
+        expResult = new V2D_LineSegmentDouble(new V2D_PointDouble(env, 0.5d, 1.5d), pP1P1);
         result = l0.getLineOfIntersection(l1, epsilon);
         assertTrue(((V2D_LineSegmentDouble) expResult).equalsIgnoreDirection(
                 epsilon, (V2D_LineSegmentDouble) result));

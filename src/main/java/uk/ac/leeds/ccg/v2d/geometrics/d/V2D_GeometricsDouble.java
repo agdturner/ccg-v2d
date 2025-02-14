@@ -45,7 +45,7 @@ public class V2D_GeometricsDouble {
         }
         x /= n;
         y /= n;
-        return new V2D_PointDouble(x, y);
+        return new V2D_PointDouble(ps[0].env, x, y);
     }
 
     /**

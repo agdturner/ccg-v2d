@@ -64,14 +64,14 @@ public class V2D_Environment implements Serializable {
     public static final Math_BigDecimal bd = new Math_BigDecimal();
     
     /**
-     * The default Order of Magnitude.
+     * The Order of Magnitude for any rounding.
      */
-    public static final int DEFAULT_OOM = -3;
+    public int oom;
     
     /**
-     * The default RoundingMode.
+     * The RoundingMode for any rounding.
      */
-    public static final RoundingMode DEFAULT_RM = RoundingMode.HALF_UP;
+    public RoundingMode rm;
     
     /**
      * The shapes.
@@ -86,7 +86,9 @@ public class V2D_Environment implements Serializable {
     /**
      * Creates a new instance.
      */
-    public V2D_Environment(){
+    public V2D_Environment(int oom, RoundingMode rm){
+        this.oom = oom;
+        this.rm = rm;
         shapes = new HashMap<>();
         ids = new HashSet<>();
     }

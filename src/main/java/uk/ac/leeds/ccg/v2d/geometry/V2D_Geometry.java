@@ -19,6 +19,7 @@ import ch.obermuhlner.math.big.BigRational;
 import java.io.Serializable;
 import java.math.RoundingMode;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
+import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
 
 /**
  * For 2D Euclidean geometrical objects. The two dimensions have orthogonal axes
@@ -57,6 +58,11 @@ public abstract class V2D_Geometry implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
+     * The environment.
+     */
+    public final V2D_Environment env;
+    
+    /**
      * The offset used to position a geometry object relative to the
      * {@link V2D_Point#ORIGIN}.
      */
@@ -64,17 +70,21 @@ public abstract class V2D_Geometry implements Serializable {
 
     /**
      * Creates a new instance.
+     * 
+     * @param env The environment.
      */
-    public V2D_Geometry() {
-        this(V2D_Vector.ZERO);
+    public V2D_Geometry(V2D_Environment env) {
+        this(env, V2D_Vector.ZERO);
     }
 
     /**
      * Creates a new instance.
      *
+     * @param env The environment.
      * @param offset What {@link #offset} is set to.
      */
-    public V2D_Geometry(V2D_Vector offset) {
+    public V2D_Geometry(V2D_Environment env, V2D_Vector offset) {
+        this.env = env;
         this.offset = offset;
     }
 
@@ -98,6 +108,8 @@ public abstract class V2D_Geometry implements Serializable {
      * Translate (move relative to the origin).
      *
      * @param v The translation vector.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode.
      */
     public void translate(V2D_Vector v, int oom, RoundingMode rm) {
         offset = offset.add(v, oom, rm);

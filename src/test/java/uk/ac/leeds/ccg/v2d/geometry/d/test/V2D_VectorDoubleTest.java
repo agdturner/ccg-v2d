@@ -21,6 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_PointDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_VectorDouble;
 
@@ -593,10 +594,11 @@ public class V2D_VectorDoubleTest extends V2D_TestDouble {
     @Test
     public void testDivide() {
         System.out.println("divide");
+        V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(0.00000001d);
         double s = 2d;
         V2D_VectorDouble instance = V2D_VectorDouble.I;
         V2D_VectorDouble expResult = new V2D_VectorDouble(
-                new V2D_PointDouble(0.5d, 0d));
+                new V2D_PointDouble(env, 0.5d, 0d));
         V2D_VectorDouble result = instance.divide(s);
         assertTrue(expResult.equals(result));
     }

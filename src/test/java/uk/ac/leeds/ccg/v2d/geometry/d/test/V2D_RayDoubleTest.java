@@ -161,8 +161,8 @@ public class V2D_RayDoubleTest extends V2D_TestDouble {
         V2D_GeometryDouble expResult;
         V2D_GeometryDouble result;
         // Test 1
-        l = new V2D_LineSegmentDouble(P0P0, P0P0, P1P0);
-        instance = new V2D_RayDouble(P0P0, P1P0, P2P0);
+        l = new V2D_LineSegmentDouble(env, P0P0, P0P0, P1P0);
+        instance = new V2D_RayDouble(env, P0P0, P1P0, P2P0);
         result = instance.getIntersection(l, epsilon);
         expResult = pP1P0;
         assertTrue(((V2D_PointDouble) expResult).equals((V2D_PointDouble) result));
@@ -202,16 +202,16 @@ public class V2D_RayDoubleTest extends V2D_TestDouble {
         V2D_GeometryDouble expResult;
         V2D_GeometryDouble result;
         // Test 1: Collinear Pointing the same way
-        r = new V2D_RayDouble(P0P0, P0P0, P1P0);
-        instance = new V2D_RayDouble(P0P0, P1P0, P2P0);
+        r = new V2D_RayDouble(env, P0P0, P0P0, P1P0);
+        instance = new V2D_RayDouble(env, P0P0, P1P0, P2P0);
         result = instance.getIntersection(r, epsilon);
-        expResult = new V2D_RayDouble(P0P0, P1P0, P2P0);
+        expResult = new V2D_RayDouble(env, P0P0, P1P0, P2P0);
         assertTrue(((V2D_RayDouble) expResult).equals((V2D_RayDouble) result, epsilon));
         // Test 2: Collinear Pointing the same way 
-        r = new V2D_RayDouble(P0P0, N2P0, N1P0);
-        instance = new V2D_RayDouble(P0P0, P1P0, P2P0);
+        r = new V2D_RayDouble(env, P0P0, N2P0, N1P0);
+        instance = new V2D_RayDouble(env, P0P0, P1P0, P2P0);
         result = instance.getIntersection(r, epsilon);
-        expResult = new V2D_RayDouble(P0P0, P1P0, P2P0);
+        expResult = new V2D_RayDouble(env, P0P0, P1P0, P2P0);
         assertTrue(((V2D_RayDouble) expResult).equals((V2D_RayDouble) result, epsilon));
         /**
          * The rays may point along the same line. If they point in the same
@@ -222,34 +222,34 @@ public class V2D_RayDoubleTest extends V2D_TestDouble {
          * intersection is the line segment between them.
          */
         // Test 3: Collinear pointing opposite ways overlapping in a line segment.
-        r = new V2D_RayDouble(P0P0, P0P0, P1P0);
-        instance = new V2D_RayDouble(P0P0, P1P0, P0P0);
-        expResult = new V2D_LineSegmentDouble(P0P0, P0P0, P1P0);
+        r = new V2D_RayDouble(env, P0P0, P0P0, P1P0);
+        instance = new V2D_RayDouble(env, P0P0, P1P0, P0P0);
+        expResult = new V2D_LineSegmentDouble(env, P0P0, P0P0, P1P0);
         result = instance.getIntersection(r, epsilon);
         assertTrue(((V2D_LineSegmentDouble) expResult).equalsIgnoreDirection(epsilon, 
                 (V2D_LineSegmentDouble) result));
         // Test 4: Collinear pointing opposite ways overlapping at a point.
-        r = new V2D_RayDouble(P0P0, P0P0, P1P0);
-        instance = new V2D_RayDouble(P0P0, P0P0, N1P0);
+        r = new V2D_RayDouble(env, P0P0, P0P0, P1P0);
+        instance = new V2D_RayDouble(env, P0P0, P0P0, N1P0);
         expResult = pP0P0;
         result = instance.getIntersection(r, epsilon);
         assertTrue(((V2D_PointDouble) expResult).equals(
                 (V2D_PointDouble) result, epsilon));
         // Test 4: Collinear pointing opposite ways not overlapping.
-        r = new V2D_RayDouble(P0P0, P1P0, P2P0);
-        instance = new V2D_RayDouble(P0P0, P0P0, N1P0);
+        r = new V2D_RayDouble(env, P0P0, P1P0, P2P0);
+        instance = new V2D_RayDouble(env, P0P0, P0P0, N1P0);
         result = instance.getIntersection(r, epsilon);
         assertNull(result);
         // Test 5: Intersecting at a point.
-        r = new V2D_RayDouble(P0P0, N2P0, N1P0);
-        instance = new V2D_RayDouble(P0P0, P1P0, P1P1);
+        r = new V2D_RayDouble(env, P0P0, N2P0, N1P0);
+        instance = new V2D_RayDouble(env, P0P0, P1P0, P1P1);
         result = instance.getIntersection(r, epsilon);
         expResult = pP1P0;
         assertTrue(((V2D_PointDouble) expResult).equals(
                 (V2D_PointDouble) result, epsilon));
         // Test 6: Not intersecting.
-        r = new V2D_RayDouble(P0P0, P1P0, P2P0);
-        instance = new V2D_RayDouble(P0P0, P0P0, P1P1);
+        r = new V2D_RayDouble(env, P0P0, P1P0, P2P0);
+        instance = new V2D_RayDouble(env, P0P0, P0P0, P1P1);
         result = instance.getIntersection(r, epsilon);
         assertNull(result);
     }

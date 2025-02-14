@@ -18,7 +18,6 @@ package uk.ac.leeds.ccg.v2d.geometry.d;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
@@ -53,16 +52,15 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
     /**
      * Create a new instance.
      *
-     * @param env The environment.
+     * @param epsilon
      * @param triangles A non-empty list of coplanar triangles.
      */
-    public V2D_ConvexHullDouble(V2D_EnvironmentDouble env,
-            V2D_TriangleDouble... triangles) {
-        this(env, V2D_TriangleDouble.getPoints(triangles, env.epsilon));
+    public V2D_ConvexHullDouble(double epsilon, V2D_TriangleDouble... triangles) {
+        this(V2D_TriangleDouble.getPoints(triangles, epsilon));
     }
     
-    public V2D_ConvexHullDouble(V2D_EnvironmentDouble env, V2D_PointDouble... points) {
-        this(env, points[0].offset, Arrays.asList(points));
+    public V2D_ConvexHullDouble(V2D_PointDouble... points) {
+        this(points[0].offset, Arrays.asList(points));
     }
     
     /**
@@ -100,13 +98,12 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * <li>Repeat the process dealing with each group in turn (Steps 3 to 9) in
      * a depth first manner.</li>
      * </ol>
-     * @param env The environment.
      * @param offset What {@link #offset} is set to.
      * @param points A non-empty list of points in a plane given by n.
      */
-    public V2D_ConvexHullDouble(V2D_EnvironmentDouble env, 
+    public V2D_ConvexHullDouble(
             V2D_VectorDouble offset, List<V2D_PointDouble> points) {
-        super(env, offset);
+        super(points.get(0).env, offset);
         ArrayList<V2D_PointDouble> h = new ArrayList<>();
         ArrayList<V2D_PointDouble> uniquePoints = V2D_PointDouble.getUnique(points, env.epsilon);
         //uniquePoints.sort(V2D_PointDouble::compareTo);
@@ -157,7 +154,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @param ch The convex hull.
      */
     public V2D_ConvexHullDouble(V2D_ConvexHullDouble ch) {
-        this(ch.env, ch.getPointsArray());
+        this(ch.getPointsArray());
     }
 
     /**
@@ -170,7 +167,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      */
     public V2D_ConvexHullDouble(V2D_EnvironmentDouble env, V2D_ConvexHullDouble ch,
             V2D_TriangleDouble t) {
-        this(env, V2D_FiniteGeometryDouble.getPoints(ch, t));
+        this(V2D_FiniteGeometryDouble.getPoints(ch, t));
     }
 
     @Override
@@ -300,10 +297,10 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      */
     public V2D_FiniteGeometryDouble simplify(double epsilon) {
         if (isTriangle()) {
-            return new V2D_TriangleDouble(env, points.get(0), points.get(1),
+            return new V2D_TriangleDouble(points.get(0), points.get(1),
                     points.get(2));
         } else if (isRectangle(epsilon)) {
-            return new V2D_RectangleDouble(env, points.get(0), points.get(2),
+            return new V2D_RectangleDouble(points.get(0), points.get(2),
                     points.get(1), points.get(3));
         } else {
             return this;
@@ -538,7 +535,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
         for (int i = 0; i < points.size(); i++) {
             pts[0] = points.get(i).rotateN(pt, theta, epsilon);
         }
-        return new V2D_ConvexHullDouble(env, pts);
+        return new V2D_ConvexHullDouble(pts);
     }
 
     @Override
@@ -660,10 +657,9 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @return Either a V2D_Point, V2D_LineSegment, V2D_Triangle, or
      * V2D_ConvexHullCoplanar.
      */
-    public static V2D_FiniteGeometryDouble getGeometry(
-            V2D_EnvironmentDouble env, double epsilon, 
+    public static V2D_FiniteGeometryDouble getGeometry(double epsilon, 
             ArrayList<V2D_PointDouble> pts) {
-        return getGeometry(env, epsilon, pts.toArray(V2D_PointDouble[]::new));
+        return getGeometry(epsilon, pts.toArray(V2D_PointDouble[]::new));
     }
     
     /**
@@ -678,8 +674,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @return Either a V2D_Point, V2D_LineSegment, V2D_Triangle, or
      * V2D_ConvexHullCoplanar.
      */
-    public static V2D_FiniteGeometryDouble getGeometry(
-            V2D_EnvironmentDouble env, double epsilon, V2D_PointDouble... pts) {
+    public static V2D_FiniteGeometryDouble getGeometry(double epsilon, V2D_PointDouble... pts) {
         ArrayList<V2D_PointDouble> upts = V2D_PointDouble.getUnique(Arrays.asList(pts), epsilon);
         Iterator<V2D_PointDouble> i = upts.iterator();
         switch (upts.size()) {
@@ -693,7 +688,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
                 if (V2D_LineDouble.isCollinear(epsilon, pts)) {
                     return V2D_LineSegmentDouble.getGeometry(epsilon, pts);
                 } else {
-                    return new V2D_TriangleDouble(env, i.next(), i.next(), i.next());
+                    return new V2D_TriangleDouble(i.next(), i.next(), i.next());
                 }
             }
             default -> {
@@ -706,7 +701,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
                 if (V2D_LineDouble.isCollinear(epsilon, ip, iq, ir)) {
                     return new V2D_LineSegmentDouble(epsilon, pts);
                 } else {
-                    return new V2D_ConvexHullDouble(env, pts);
+                    return new V2D_ConvexHullDouble(pts);
                 }
             }
         }
@@ -728,7 +723,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
             V2D_PointDouble p1 = ps[1];
             for (int i = 2; i < ps.length; i++) {
                 V2D_PointDouble p2 = ps[i];
-                triangles.add(new V2D_TriangleDouble(env, p0, p1, p2));
+                triangles.add(new V2D_TriangleDouble(p0, p1, p2));
                 p1 = p2;
             }
         }

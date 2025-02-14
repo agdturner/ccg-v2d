@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Andy Turner, University of Leeds.
+ * Copyright 2025 Andy Turner, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package uk.ac.leeds.ccg.v2d.geometry.d;
 
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
+import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
 
 /**
  * 3D representation of a ray - like a line, but one that starts at a point
@@ -51,9 +52,9 @@ import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
  * }
  *
  * @author Andy Turner
- * @version 1.0
+ * @version 2.0
  */
-public class V2D_RayDouble extends V2D_GeometryDouble {
+public class V2D_RayDouble extends V2D_GeometryDouble  {
 
     private static final long serialVersionUID = 1L;
 
@@ -61,7 +62,7 @@ public class V2D_RayDouble extends V2D_GeometryDouble {
      * The line of this ray.
      */
     public V2D_LineDouble l;
-
+    
     /**
      * For storing the line perpendicular to this ray that goes through the 
      * start point.
@@ -74,7 +75,7 @@ public class V2D_RayDouble extends V2D_GeometryDouble {
      * @param r What {@code this} is created from.
      */
     public V2D_RayDouble(V2D_RayDouble r) {
-        super();
+        super(r.env);
         l = new V2D_LineDouble(r.l);
     }
 
@@ -85,7 +86,7 @@ public class V2D_RayDouble extends V2D_GeometryDouble {
      * @param v What {@code this} is created from.
      */
     public V2D_RayDouble(V2D_PointDouble p, V2D_VectorDouble v) {
-        super(p.offset);
+        super(p.env, p.offset);
         l = new V2D_LineDouble(p, v);
     }
 
@@ -93,24 +94,27 @@ public class V2D_RayDouble extends V2D_GeometryDouble {
      * Create a new instance. {@link #offset} is set to
      * {@link V2D_VectorDouble#ZERO}.
      *
+     * @param env What {@link #env} is set to.
      * @param p What {@code this} is created from.
      * @param q What {@code this} is created from.
      */
-    public V2D_RayDouble(V2D_VectorDouble p, V2D_VectorDouble q) {
-        this(V2D_VectorDouble.ZERO, p, q);
+    public V2D_RayDouble(V2D_EnvironmentDouble env, V2D_VectorDouble p, 
+            V2D_VectorDouble q) {
+        this(env, V2D_VectorDouble.ZERO, p, q);
     }
 
     /**
      * Create a new instance.
      *
+     * @param env What {@link #env} is set to.
      * @param offset What {@link #offset} is set to.
      * @param p What {@link #l} point is set to.
      * @param q What {@link #l} vector is set from.
      */
-    public V2D_RayDouble(V2D_VectorDouble offset, V2D_VectorDouble p,
-            V2D_VectorDouble q) {
-        super(offset);
-        l = new V2D_LineDouble(offset, p, q);
+    public V2D_RayDouble(V2D_EnvironmentDouble env, V2D_VectorDouble offset, 
+            V2D_VectorDouble p, V2D_VectorDouble q) {
+        super(env, offset);
+        l = new V2D_LineDouble(env, offset, p, q);
     }
 
     /**
@@ -119,7 +123,7 @@ public class V2D_RayDouble extends V2D_GeometryDouble {
      * @param l What {@code this} is created from.
      */
     public V2D_RayDouble(V2D_LineDouble l) {
-        super(l.offset);
+        super(l.env, l.offset);
         this.l = new V2D_LineDouble(l);
     }
 
@@ -130,7 +134,7 @@ public class V2D_RayDouble extends V2D_GeometryDouble {
      * @param q What {@link #l} vector is set from.
      */
     public V2D_RayDouble(V2D_PointDouble p, V2D_PointDouble q) {
-        super(p.offset);
+        super(p.env, p.offset);
         this.l = new V2D_LineDouble(p, q);
     }
 
@@ -427,6 +431,7 @@ public class V2D_RayDouble extends V2D_GeometryDouble {
      * same side of the ray start point plane as another point on the ray).
      *
      * @param pt The point.
+     * @param epsilon The tolerance within which two vectors are regarded as equal.
      * @return {@code true} If pt is in line with this.
      */
     public boolean isAligned(V2D_PointDouble pt, double epsilon) {
@@ -440,7 +445,10 @@ public class V2D_RayDouble extends V2D_GeometryDouble {
      */
     @Override
     public void translate(V2D_VectorDouble v) {
-        this.l.translate(v);
+        l.translate(v);
+        if (pl != null) {
+            pl.translate(v);
+        }
     }
     
     @Override

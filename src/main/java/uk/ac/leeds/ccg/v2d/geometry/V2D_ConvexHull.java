@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
+import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
 
 /**
  * For representing a convex hulls - convex shapes with no holes.
@@ -105,7 +106,7 @@ public class V2D_ConvexHull extends V2D_FiniteGeometry {
      * must be at least three non-linear points.
      */
     public V2D_ConvexHull(int oom, RoundingMode rm, V2D_Point... points) {
-        super();
+        super(points[0].env);
         ArrayList<V2D_Point> h = new ArrayList<>();
         ArrayList<V2D_Point> uniquePoints = V2D_Point.getUnique(Arrays.asList(points), oom, rm);
         //uniquePoints.sort(V2D_Point::compareTo);
@@ -175,7 +176,7 @@ public class V2D_ConvexHull extends V2D_FiniteGeometry {
     }
 
     @Override
-    public V2D_Point[] getPoints(int oom, RoundingMode rm) {
+    public V2D_Point[] getPointsArray(int oom, RoundingMode rm) {
         int np = points.size();
         V2D_Point[] pts = new V2D_Point[np];
         for (int i = 0; i < np; i++) {
@@ -439,7 +440,7 @@ public class V2D_ConvexHull extends V2D_FiniteGeometry {
         List<V2D_Point> ts = new ArrayList<>();
         for (V2D_Triangle t2 : triangles) {
             V2D_FiniteGeometry i = t2.getIntersection(t, oom, rm);
-            ts.addAll(Arrays.asList(i.getPoints(oom, rm)));
+            ts.addAll(Arrays.asList(i.getPointsArray(oom, rm)));
         }
         ArrayList<V2D_Point> tsu = V2D_Point.getUnique(ts, oom, rm);
         if (tsu.isEmpty()) {
@@ -693,7 +694,7 @@ public class V2D_ConvexHull extends V2D_FiniteGeometry {
     public ArrayList<V2D_Triangle> getTriangles(int oom, RoundingMode rm) {
         if (triangles == null) {
             triangles = new ArrayList<>();
-            V2D_Point[] ps = getPoints(oom, rm);
+            V2D_Point[] ps = getPointsArray(oom, rm);
             V2D_Point p0 = ps[0];
             V2D_Point p1 = ps[1];
             for (int i = 2; i < ps.length; i++) {

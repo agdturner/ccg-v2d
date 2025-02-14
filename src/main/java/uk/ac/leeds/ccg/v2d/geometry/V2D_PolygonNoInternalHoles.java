@@ -86,7 +86,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
      * @param rm The RoundingMode for any rounding.
      */
     public V2D_PolygonNoInternalHoles(V2D_Point[] points, int oom, RoundingMode rm) {
-        super();
+        super(points[0].env);
         ch = new V2D_ConvexHull(oom, rm, points);
         // Construct points, externalEdges and externalHoles.
         externalEdges = new HashMap<>();
@@ -159,7 +159,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
     public V2D_PolygonNoInternalHoles(V2D_ConvexHull ch,
             HashMap<Integer, V2D_LineSegment> externalEdges,
             HashMap<Integer, V2D_PolygonNoInternalHoles> externalHoles) {
-        super();
+        super(ch.env);
         this.ch = ch;
         this.externalEdges = externalEdges;
         this.externalHoles = externalHoles;
@@ -240,7 +240,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
     }
 
     @Override
-    public V2D_Point[] getPoints(int oom, RoundingMode rm) {
+    public V2D_Point[] getPointsArray(int oom, RoundingMode rm) {
         Collection<V2D_Point> pts = points.values();
         return pts.toArray(V2D_Point[]::new);
     }
@@ -352,10 +352,10 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
         BigRational xmax = aabb.getXMax(oom);
         BigRational ymin = aabb.getYMin(oom);
         BigRational ymax = aabb.getYMax(oom);
-        if (contains(new V2D_Point(xmin, ymin), oom, rm)) {
-            if (contains(new V2D_Point(xmin, ymax), oom, rm)) {
-                if (contains(new V2D_Point(xmax, ymax), oom, rm)) {
-                    return contains(new V2D_Point(xmax, ymin), oom, rm);
+        if (contains(new V2D_Point(env, xmin, ymin), oom, rm)) {
+            if (contains(new V2D_Point(env, xmin, ymax), oom, rm)) {
+                if (contains(new V2D_Point(env, xmax, ymax), oom, rm)) {
+                    return contains(new V2D_Point(env, xmax, ymin), oom, rm);
                 }
             }
         }
@@ -372,7 +372,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
      */
     public boolean contains(V2D_ConvexHull ch, int oom, RoundingMode rm) {
         if (isIntersectedBy(ch, oom, rm)) {
-            return Arrays.asList(ch.getPoints(oom, rm)).parallelStream().allMatch(x -> contains(x, oom, rm));
+            return Arrays.asList(ch.getPointsArray(oom, rm)).parallelStream().allMatch(x -> contains(x, oom, rm));
         }
         return false;
     }
@@ -495,10 +495,10 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
         // Check envelopes intersect.
         if (ch.isIntersectedBy(getEnvelope(oom, rm), oom, rm)) {
             if (isIntersectedBy(ch.getEnvelope(oom, rm), oom, rm)) {
-                if (Arrays.asList(ch.getPoints(oom, rm)).parallelStream().anyMatch(x -> isIntersectedBy(x, oom, rm))) {
+                if (Arrays.asList(ch.getPointsArray(oom, rm)).parallelStream().anyMatch(x -> isIntersectedBy(x, oom, rm))) {
                     return true;
                 }
-                if (Arrays.asList(getPoints(oom, rm)).parallelStream().anyMatch(x -> ch.isIntersectedBy(x, oom, rm))) {
+                if (Arrays.asList(getPointsArray(oom, rm)).parallelStream().anyMatch(x -> ch.isIntersectedBy(x, oom, rm))) {
                     return true;
                 }
             }
@@ -517,10 +517,10 @@ public class V2D_PolygonNoInternalHoles extends V2D_FiniteGeometry {
     public boolean isIntersectedBy(V2D_PolygonNoInternalHoles p, int oom, RoundingMode rm) {
         if (p.isIntersectedBy(getEnvelope(oom, rm), oom, rm)) {
             if (isIntersectedBy(p.getEnvelope(oom, rm), oom, rm)) {
-                if (Arrays.asList(getPoints(oom, rm)).parallelStream().anyMatch(x -> p.isIntersectedBy(x, oom, rm))) {
+                if (Arrays.asList(getPointsArray(oom, rm)).parallelStream().anyMatch(x -> p.isIntersectedBy(x, oom, rm))) {
                     return true;
                 }
-                if (Arrays.asList(p.getPoints(oom, rm)).parallelStream().anyMatch(x -> isIntersectedBy(x, oom, rm))) {
+                if (Arrays.asList(p.getPointsArray(oom, rm)).parallelStream().anyMatch(x -> isIntersectedBy(x, oom, rm))) {
                     return true;
                 }
             }

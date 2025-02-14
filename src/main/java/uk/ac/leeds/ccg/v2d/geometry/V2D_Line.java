@@ -21,6 +21,7 @@ import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
 import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
 import uk.ac.leeds.ccg.math.matrices.Math_Matrix_BR;
+import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
 
 /**
  * 2D representation of an infinite length line. The line passes through the
@@ -36,13 +37,13 @@ public class V2D_Line extends V2D_Geometry {
     /**
      * The x axis.
      */
-    public static final V2D_Line X_AXIS = new V2D_Line(
+    public static final V2D_Line X_AXIS = new V2D_Line(null,
             V2D_Vector.ZERO, V2D_Vector.I);
 
     /**
      * The y axis.
      */
-    public static final V2D_Line Y_AXIS = new V2D_Line(
+    public static final V2D_Line Y_AXIS = new V2D_Line(null,
             V2D_Vector.ZERO, V2D_Vector.J);
     
     /**
@@ -86,17 +87,10 @@ public class V2D_Line extends V2D_Geometry {
     public V2D_Vector v;
 
     /**
-     * Create a new instance.
-     */
-    public V2D_Line() {
-        super();
-    }
-
-    /**
      * @param l Used to initialise this.
      */
     public V2D_Line(V2D_Line l) {
-        super(new V2D_Vector(l.offset));
+        super(l.env, new V2D_Vector(l.offset));
         this.pv = new V2D_Vector(l.pv);
         if (l.p != null) {
             this.p = new V2D_Point(l.p);
@@ -121,18 +115,20 @@ public class V2D_Line extends V2D_Geometry {
      * {@code pv} should not be equal to {@code qv}. {@link #offset} is set to
      * {@link V2D_Vector#ZERO}.
      *
+     * @param env What {@link #env} is set to.
      * @param p What {@link #pv} is set to.
      * @param q Another point on the line from which {@link #v} is derived.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
      */
-    public V2D_Line(V2D_Vector p, V2D_Vector q, int oom, RoundingMode rm) {
-        this(V2D_Vector.ZERO, p, q, oom, rm);
+    public V2D_Line(V2D_Environment env, V2D_Vector p, V2D_Vector q, int oom, RoundingMode rm) {
+        this(env, V2D_Vector.ZERO, p, q, oom, rm);
     }
 
     /**
      * {@code pv} should not be equal to {@code qv}.
      *
+     * @param env What {@link #env} is set to.
      * @param offset What {@link #offset} is set to.
      * @param pv What {@link #pv} is cloned from.
      * @param qv Used to calculate {@link q} and {@link #v} (which is calculated
@@ -140,15 +136,15 @@ public class V2D_Line extends V2D_Geometry {
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
      */
-    public V2D_Line(V2D_Vector offset, V2D_Vector pv,
+    public V2D_Line(V2D_Environment env, V2D_Vector offset, V2D_Vector pv,
             V2D_Vector qv, int oom, RoundingMode rm) {
-        super(offset);
+        super(env, offset);
         this.pv = new V2D_Vector(pv);
         if (pv.equals(qv)) {
             throw new RuntimeException("" + pv + " and " + qv + " are the same"
                     + " so do not define a line.");
         }
-        q = new V2D_Point(offset, qv);
+        q = new V2D_Point(env, offset, qv);
         v = qv.subtract(pv, oom, rm);
         this.oom = oom;
         this.rm = rm;
@@ -160,12 +156,13 @@ public class V2D_Line extends V2D_Geometry {
      * {@code v} should not be the zero vector {@code <0,0,0>}. {@link #offset}
      * is set to {@link V2D_Vector#ZERO}.
      *
+     * @param env What {@link #env} is set to.
      * @param p What {@link #pv} is cloned from.
      * @param v The vector defining the line from {@link #pv}. What {@link #v}
      * is cloned from.
      */
-    public V2D_Line(V2D_Vector p, V2D_Vector v) {
-        this(V2D_Vector.ZERO, p, v);
+    public V2D_Line(V2D_Environment env, V2D_Vector p, V2D_Vector v) {
+        this(env, V2D_Vector.ZERO, p, v);
     }
 
     /**
@@ -175,19 +172,20 @@ public class V2D_Line extends V2D_Geometry {
      * @param v The vector defining the line from {@link #pv}.
      */
     public V2D_Line(V2D_Point p, V2D_Vector v) {
-        this(p.offset, p.rel, v);
+        this(p.env, p.offset, p.rel, v);
     }
 
     /**
      * Checks to ensure v is not the zero vector {@code <0,0,0>}.
      *
+     * @param env What {@link #env} is set to.
      * @param offset What {@link #offset} is set to.
      * @param p Used to initialise {@link #pv}.
      * @param v Used to initialise {@link #v}.
      * @throws RuntimeException if {@code v.isZero()}.
      */
-    public V2D_Line(V2D_Vector offset, V2D_Vector p, V2D_Vector v) {
-        super(offset);
+    public V2D_Line(V2D_Environment env, V2D_Vector offset, V2D_Vector p, V2D_Vector v) {
+        super(env, offset);
         if (v.isZero()) {
             throw new RuntimeException("Vector " + v + " is the zero vector "
                     + "which cannot be used to define a line.");
@@ -206,7 +204,7 @@ public class V2D_Line extends V2D_Geometry {
      * @param rm The RoundingMode for any rounding.
      */
     public V2D_Line(V2D_Point p, V2D_Point q, int oom, RoundingMode rm) {
-        super(new V2D_Vector(p.offset));
+        super(p.env, new V2D_Vector(p.offset));
         V2D_Point q2 = new V2D_Point(q);
         q2.setOffset(p.offset, oom, rm);
         if (p.rel.equals(q2.rel)) {
@@ -346,7 +344,7 @@ public class V2D_Line extends V2D_Geometry {
      */
     public V2D_Point getP() {
         if (p == null) {
-            p = new V2D_Point(offset, pv);
+            p = new V2D_Point(env, offset, pv);
         }
         return p;
     }
@@ -375,7 +373,7 @@ public class V2D_Line extends V2D_Geometry {
     }
 
     private void initQ(int oom, RoundingMode rm) {
-        q = new V2D_Point(offset, pv.add(v, oom, rm));
+        q = new V2D_Point(env, offset, pv.add(v, oom, rm));
         this.oom = oom;
         this.rm = rm;
     }
@@ -554,7 +552,7 @@ public class V2D_Line extends V2D_Geometry {
                     (x1.subtract(x2)).multiply(x3y4sy3x4));
             BigRational numy = (x1y2sy1x2.multiply(y3.subtract(y4))).subtract(
                     (y1.subtract(y2)).multiply(x3y4sy3x4));
-            return new V2D_Point(numx.divide(den), numy.divide(den));            
+            return new V2D_Point(env, numx.divide(den), numy.divide(den));            
         }
         return null;
     }
@@ -676,8 +674,8 @@ public class V2D_Line extends V2D_Geometry {
         //return new V2D_LineSegment(tpi, lpi, oom);
         //return new V2D_LineSegment(tpi.getVector(oom), lpi.getVector(oom), oom);
         //return new V2D_LineSegment(e, tpi, lpi);
-        V2D_Point loip = new V2D_Point(tpi);
-        V2D_Point loiq = new V2D_Point(lpi);
+        V2D_Point loip = new V2D_Point(env, tpi);
+        V2D_Point loiq = new V2D_Point(env, lpi);
         if (loip.equals(loiq, oom, rm)) {
             return null;
         } else {
@@ -924,6 +922,8 @@ public class V2D_Line extends V2D_Geometry {
     }
     
     /**
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
      * @param ps The points to test for collinearity.
      * @return {@code true} iff all points are collinear with l.
      */
@@ -936,9 +936,9 @@ public class V2D_Line extends V2D_Geometry {
     }
 
     /**
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
      * @param l The line to test points are collinear with.
-     * @param epsilon The tolerance within which vector components are
-     * considered equal.
      * @param ps The points to test if they are collinear with l.
      * @return {@code true} iff all points are collinear with l.
      */
@@ -957,6 +957,8 @@ public class V2D_Line extends V2D_Geometry {
      * check for collinearity of all the points. It returns a line defined by 
      * the first points that have the greatest distance between them.
      * 
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
      * @param points Any number of points, but with two being different.
      * @return A line defined by any two different points or null if the points
      * are coincident.
@@ -990,7 +992,8 @@ public class V2D_Line extends V2D_Geometry {
      * https://math.stackexchange.com/questions/162728/how-to-determine-if-2-points-are-on-opposite-sides-of-a-line
      * @param a A point.
      * @param b Another point.
-     * @param epsilon.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
      * @return True iff a and b are on the same side of this. (If a is on the 
      * line, then so must b for them to be on the same side.
      */

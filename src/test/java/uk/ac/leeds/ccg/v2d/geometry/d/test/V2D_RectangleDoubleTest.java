@@ -77,22 +77,22 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
         V2D_RectangleDouble instance;
         V2D_EnvelopeDouble expResult;
         V2D_EnvelopeDouble result;
-        instance = new V2D_RectangleDouble(env, pN1P1, pP1P1, pP1N1, pN1N1);
+        instance = new V2D_RectangleDouble(pN1P1, pP1P1, pP1N1, pN1N1);
         expResult = new V2D_EnvelopeDouble(pN1N1, pP1P1);
         result = instance.getEnvelope();
         assertTrue(expResult.equals(result));
         // Test 2
-        instance = new V2D_RectangleDouble(env, pN1P1, pP1P1, pP1N1, pN1N1);
+        instance = new V2D_RectangleDouble(pN1P1, pP1P1, pP1N1, pN1N1);
         expResult = new V2D_EnvelopeDouble(pN1N1, pP1P1);
         result = instance.getEnvelope();
         assertTrue(expResult.equals(result));
         // Test 3
-        instance = new V2D_RectangleDouble(env, pN1P1, pP1P1, pP1N1, pN1N1);
+        instance = new V2D_RectangleDouble(pN1P1, pP1P1, pP1N1, pN1N1);
         expResult = new V2D_EnvelopeDouble(pN1N1, pP1P1);
         result = instance.getEnvelope();
         assertTrue(expResult.equals(result));
         // Test 4
-        instance = new V2D_RectangleDouble(env, pN1N1, pP1N1, pP1P1, pN1P1);
+        instance = new V2D_RectangleDouble(pN1N1, pP1N1, pP1P1, pN1P1);
         expResult = new V2D_EnvelopeDouble(pN1N1, pP1P1);
         result = instance.getEnvelope();
         assertTrue(expResult.equals(result));
@@ -107,40 +107,40 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
         V2D_PointDouble pt = pP0P0;
-        V2D_RectangleDouble instance = new V2D_RectangleDouble(env, pN1P1, pP1P1, pP1N1, pN1N1);
+        V2D_RectangleDouble instance = new V2D_RectangleDouble(pN1P1, pP1P1, pP1N1, pN1N1);
         assertTrue(instance.isIntersectedBy(pt, epsilon));
         // Test 2
-        instance = new V2D_RectangleDouble(env, pN1P0, pP0P1, pP1P0, pP0N1);
+        instance = new V2D_RectangleDouble(pN1P0, pP0P1, pP1P0, pP0N1);
         assertTrue(instance.isIntersectedBy(pt, epsilon));
         // Test 3
         double half = 1d / 2d;
-        pt = new V2D_PointDouble(half, half);
+        pt = new V2D_PointDouble(env, half, half);
         assertTrue(instance.isIntersectedBy(pt, epsilon));
         // Test 4
         double halfpe = half + epsilon;
         double halfne = half - epsilon;
-        pt = new V2D_PointDouble(halfpe, half);
+        pt = new V2D_PointDouble(env, halfpe, half);
         assertFalse(instance.isIntersectedBy(pt, epsilon));
         // Test 5
-        pt = new V2D_PointDouble(-halfpe, half);
+        pt = new V2D_PointDouble(env, -halfpe, half);
         assertFalse(instance.isIntersectedBy(pt, epsilon));
         // Test 6
-        pt = new V2D_PointDouble(half, halfpe);
+        pt = new V2D_PointDouble(env, half, halfpe);
         assertFalse(instance.isIntersectedBy(pt, epsilon));
         // Test 7
-        pt = new V2D_PointDouble(half, -halfpe);
+        pt = new V2D_PointDouble(env, half, -halfpe);
         assertFalse(instance.isIntersectedBy(pt, epsilon));
         // Test 8
-        pt = new V2D_PointDouble(halfne, half);
+        pt = new V2D_PointDouble(env, halfne, half);
         assertTrue(instance.isIntersectedBy(pt, epsilon));
         // Test 9
-        pt = new V2D_PointDouble(-halfne, half);
+        pt = new V2D_PointDouble(env, -halfne, half);
         assertTrue(instance.isIntersectedBy(pt, epsilon));
         // Test 10
-        pt = new V2D_PointDouble(half, halfne);
+        pt = new V2D_PointDouble(env, half, halfne);
         assertTrue(instance.isIntersectedBy(pt, epsilon));
         // Test 11
-        pt = new V2D_PointDouble(half, -halfne);
+        pt = new V2D_PointDouble(env, half, -halfne);
         assertTrue(instance.isIntersectedBy(pt, epsilon));
     }
 
@@ -156,7 +156,7 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
         V2D_RectangleDouble instance;
         V2D_GeometryDouble expResult;
         V2D_GeometryDouble result;
-        instance = new V2D_RectangleDouble(env, pN1P1, pP1P1, pP1N1, pN1N1);
+        instance = new V2D_RectangleDouble(pN1P1, pP1P1, pP1N1, pN1N1);
         expResult = new V2D_LineSegmentDouble(pP0N1, pP0P1);
         result = instance.getIntersection(l, epsilon);
         assertTrue(((V2D_LineSegmentDouble) expResult).equalsIgnoreDirection(
@@ -171,7 +171,7 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
         System.out.println("toString");
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
-        V2D_RectangleDouble instance = new V2D_RectangleDouble(env, pP0P0, pP0P1, pP1P1, pP1P0);
+        V2D_RectangleDouble instance = new V2D_RectangleDouble(pP0P0, pP0P1, pP1P1, pP1P0);
         String expResult = """
                            V2D_RectangleDouble(
                            offset=V2D_VectorDouble(dx=0.0, dy=0.0),
@@ -199,21 +199,21 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
         V2D_LineSegmentDouble l = new V2D_LineSegmentDouble(pN1N1, pP2P2);
-        V2D_RectangleDouble instance = new V2D_RectangleDouble(env, pP0P0, pP0P1, pP1P1, pP1P0);
+        V2D_RectangleDouble instance = new V2D_RectangleDouble(pP0P0, pP0P1, pP1P1, pP1P0);
         V2D_GeometryDouble result = instance.getIntersection(l, epsilon);
         V2D_GeometryDouble expResult = new V2D_LineSegmentDouble(pP0P0, pP1P1);
         assertTrue(((V2D_LineSegmentDouble) expResult).equalsIgnoreDirection(
                 epsilon, (V2D_LineSegmentDouble) result));
         // Test 2
         l = new V2D_LineSegmentDouble(pP0P0, pP1P0);
-        instance = new V2D_RectangleDouble(env, pP0P0, pP1P0, pP1P1, pP0P1);
+        instance = new V2D_RectangleDouble(pP0P0, pP1P0, pP1P1, pP0P1);
         expResult = new V2D_LineSegmentDouble(pP0P0, pP1P0);
         result = instance.getIntersection(l, epsilon);
         assertTrue(((V2D_LineSegmentDouble) expResult).equalsIgnoreDirection(
                 epsilon, (V2D_LineSegmentDouble) result));
         // Test 3
         l = new V2D_LineSegmentDouble(pP1N1, pP1P2);
-        instance = new V2D_RectangleDouble(env, pP0P0, pP0P1, pP2P1, pP2P0);
+        instance = new V2D_RectangleDouble(pP0P0, pP0P1, pP2P1, pP2P0);
         expResult = new V2D_LineSegmentDouble(pP1P1, pP1P0);
         result = instance.getIntersection(l, epsilon);
         assertTrue(((V2D_LineSegmentDouble) expResult).equalsIgnoreDirection(
@@ -228,7 +228,7 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
         System.out.println("getPerimeter");
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
-        V2D_RectangleDouble instance = new V2D_RectangleDouble(env, pP0P0, pP0P1, pP1P1, pP1P0);
+        V2D_RectangleDouble instance = new V2D_RectangleDouble(pP0P0, pP0P1, pP1P1, pP1P0);
         double expResult = 4d;
         double result = instance.getPerimeter();
         assertTrue(Math_Double.equals(expResult, result, epsilon));
@@ -242,7 +242,7 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
         System.out.println("getArea");
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
-        V2D_RectangleDouble instance = new V2D_RectangleDouble(env, pP0P0, pP0P1, pP1P1, pP1P0);
+        V2D_RectangleDouble instance = new V2D_RectangleDouble(pP0P0, pP0P1, pP1P1, pP1P0);
         double expResult = 1d;
         double result = instance.getArea();
         assertTrue(Math_Double.equals(expResult, result, epsilon));
@@ -257,7 +257,7 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
         V2D_PointDouble p = pN1N1;
-        V2D_RectangleDouble instance = new V2D_RectangleDouble(env, pP0P0, pP0P1, pP1P1, pP1P0);
+        V2D_RectangleDouble instance = new V2D_RectangleDouble(pP0P0, pP0P1, pP1P1, pP1P0);
         double expResult = Math.sqrt(2d);
         double result = instance.getDistance(p, epsilon);
         assertTrue(Math_Double.equals(expResult, result, epsilon));
@@ -271,7 +271,7 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
         System.out.println("getS");
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
-        V2D_RectangleDouble instance = new V2D_RectangleDouble(env, pP0P0, pP0P1, pP1P1, pP1P0);
+        V2D_RectangleDouble instance = new V2D_RectangleDouble(pP0P0, pP0P1, pP1P1, pP1P0);
         V2D_PointDouble expResult = pP1P0;
         V2D_PointDouble result = instance.getS();
         assertTrue(expResult.equals(result, epsilon));
@@ -283,7 +283,7 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
         V2D_LineDouble l = new V2D_LineDouble(pP0P0, pP1P0);
-        V2D_RectangleDouble instance = new V2D_RectangleDouble(env, pP0P0, pP0P1, pP1P1, pP1P0);
+        V2D_RectangleDouble instance = new V2D_RectangleDouble(pP0P0, pP0P1, pP1P1, pP1P0);
         V2D_GeometryDouble expResult = new V2D_LineSegmentDouble(pP0P0, pP1P0);
         V2D_GeometryDouble result = instance.getIntersection(l, epsilon);
         assertTrue(((V2D_LineSegmentDouble) expResult).equalsIgnoreDirection(
@@ -298,14 +298,14 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
         System.out.println("isIntersectedBy");
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
-        V2D_RectangleDouble r = new V2D_RectangleDouble(env, 
-                new V2D_PointDouble(-30, -22),
-                new V2D_PointDouble(-30, -21),
-                new V2D_PointDouble(-29, -21),
-                new V2D_PointDouble(-29, -22));
+        V2D_RectangleDouble r = new V2D_RectangleDouble(
+                new V2D_PointDouble(env, -30, -22),
+                new V2D_PointDouble(env, -30, -21),
+                new V2D_PointDouble(env, -29, -21),
+                new V2D_PointDouble(env, -29, -22));
         V2D_LineSegmentDouble l = new V2D_LineSegmentDouble(
-                new V2D_PointDouble(-30, -30),
-                new V2D_PointDouble(-20, 0));
+                new V2D_PointDouble(env, -30, -30),
+                new V2D_PointDouble(env, -20, 0));
         assertTrue(!r.isIntersectedBy(l, epsilon));
     }
 
@@ -318,7 +318,7 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
         V2D_PointDouble p = pP0P0;
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
-        V2D_RectangleDouble instance = new V2D_RectangleDouble(env, pP0P0, pP0P1, pP2P1, pP2P0);
+        V2D_RectangleDouble instance = new V2D_RectangleDouble(pP0P0, pP0P1, pP2P1, pP2P0);
         double expResult = 0d;
         double result = instance.getDistance(p, epsilon);
         assertEquals(expResult, result);
@@ -338,7 +338,7 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
         V2D_PointDouble p = pP0P0;
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
-        V2D_RectangleDouble instance = new V2D_RectangleDouble(env, pP0P0, pP0P1, pP1P1, pP1P0);
+        V2D_RectangleDouble instance = new V2D_RectangleDouble(pP0P0, pP0P1, pP1P1, pP1P0);
         double expResult = 0d;
         double result = instance.getDistanceSquared(p, epsilon);
         assertEquals(expResult, result);
@@ -358,9 +358,9 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
         V2D_VectorDouble v = P1P1;
-        V2D_RectangleDouble instance = new V2D_RectangleDouble(env, pP0P0, pP0P1, pP1P1, pP1P0);
+        V2D_RectangleDouble instance = new V2D_RectangleDouble(pP0P0, pP0P1, pP1P1, pP1P0);
         instance.translate(v);
-        V2D_RectangleDouble instance2 = new V2D_RectangleDouble(env, pP1P1, pP1P2, pP2P2, pP2P1);
+        V2D_RectangleDouble instance2 = new V2D_RectangleDouble(pP1P1, pP1P2, pP2P2, pP2P1);
         assertTrue(instance.equals(instance2, epsilon));
     }
 
@@ -373,9 +373,9 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
         double theta = Math.PI;
-        V2D_RectangleDouble instance = new V2D_RectangleDouble(env, pP0P0, pP0P1, pP1P1, pP1P0);
+        V2D_RectangleDouble instance = new V2D_RectangleDouble(pP0P0, pP0P1, pP1P1, pP1P0);
         V2D_RectangleDouble result = instance.rotate(pP0P0, theta, epsilon);
-        V2D_RectangleDouble expResult = new V2D_RectangleDouble(env, pP0P0, pP0N1, pN1N1, pN1P0);
+        V2D_RectangleDouble expResult = new V2D_RectangleDouble(pP0P0, pP0N1, pN1N1, pN1P0);
         assertTrue(result.equals(expResult, epsilon));
     }
 
@@ -387,38 +387,38 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
         System.out.println("getIntersection");
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
-        V2D_TriangleDouble t = new V2D_TriangleDouble(env, pP0P0, pP0P1, pP1P1);
-        V2D_RectangleDouble instance = new V2D_RectangleDouble(env, pP0P0, pP0P1, pP1P1, pP1P0);
-        V2D_GeometryDouble expResult = new V2D_TriangleDouble(env, pP0P0, pP0P1, pP1P1);
+        V2D_TriangleDouble t = new V2D_TriangleDouble(pP0P0, pP0P1, pP1P1);
+        V2D_RectangleDouble instance = new V2D_RectangleDouble(pP0P0, pP0P1, pP1P1, pP1P0);
+        V2D_GeometryDouble expResult = new V2D_TriangleDouble(pP0P0, pP0P1, pP1P1);
         V2D_GeometryDouble result = instance.getIntersection(t, epsilon);
         assertTrue(((V2D_TriangleDouble) expResult).equals((V2D_TriangleDouble) result, epsilon));
         // Test 2
-         t = new V2D_TriangleDouble(env, pP2P2, new V2D_PointDouble(4d,4d), 
-                 new V2D_PointDouble(2d, 4d));
-         instance = new V2D_RectangleDouble(env, 
-                 new V2D_PointDouble(0d,0d),
-                 new V2D_PointDouble(0d,6d),
-                 new V2D_PointDouble(6d,6d),
-                 new V2D_PointDouble(6d,0d));
-         expResult = new V2D_TriangleDouble(env, pP2P2, new V2D_PointDouble(4d,4d), 
-                 new V2D_PointDouble(2d, 4d));
+         t = new V2D_TriangleDouble(pP2P2, new V2D_PointDouble(env, 4d,4d), 
+                 new V2D_PointDouble(env, 2d, 4d));
+         instance = new V2D_RectangleDouble( 
+                 new V2D_PointDouble(env, 0d,0d),
+                 new V2D_PointDouble(env, 0d,6d),
+                 new V2D_PointDouble(env, 6d,6d),
+                 new V2D_PointDouble(env, 6d,0d));
+         expResult = new V2D_TriangleDouble(pP2P2, new V2D_PointDouble(env, 4d,4d), 
+                 new V2D_PointDouble(env, 2d, 4d));
          result = instance.getIntersection(t, epsilon);
         assertTrue(((V2D_TriangleDouble) expResult).equals(
                 (V2D_TriangleDouble) result, epsilon));
         // Test 3
-         t = new V2D_TriangleDouble(env, 
-                 new V2D_PointDouble(-1d,4d),
-                 new V2D_PointDouble(-1d,6d),
-                 new V2D_PointDouble(1d,4d));
-         instance = new V2D_RectangleDouble(env, 
-                 new V2D_PointDouble(0d,0d),
-                 new V2D_PointDouble(0d,6d),
-                 new V2D_PointDouble(6d,6d),
-                 new V2D_PointDouble(6d,0d));
-         expResult =  new V2D_TriangleDouble(env, 
-                 new V2D_PointDouble(0d,4d),
-                 new V2D_PointDouble(0d,5d),
-                 new V2D_PointDouble(1d,4d));
+         t = new V2D_TriangleDouble( 
+                 new V2D_PointDouble(env, -1d,4d),
+                 new V2D_PointDouble(env, -1d,6d),
+                 new V2D_PointDouble(env, 1d,4d));
+         instance = new V2D_RectangleDouble(
+                 new V2D_PointDouble(env, 0d,0d),
+                 new V2D_PointDouble(env, 0d,6d),
+                 new V2D_PointDouble(env, 6d,6d),
+                 new V2D_PointDouble(env, 6d,0d));
+         expResult =  new V2D_TriangleDouble(
+                 new V2D_PointDouble(env, 0d,4d),
+                 new V2D_PointDouble(env, 0d,5d),
+                 new V2D_PointDouble(env, 1d,4d));
          result = instance.getIntersection(t, epsilon);
         assertTrue(((V2D_TriangleDouble) expResult).equals(
                 (V2D_TriangleDouble) result, epsilon));
@@ -526,7 +526,7 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
         V2D_LineDouble l = new V2D_LineDouble(pP0N1, pP1N1);
-        V2D_RectangleDouble instance = new V2D_RectangleDouble(env, pP0P0, pP0P1, pP1P1, pP1P0);
+        V2D_RectangleDouble instance = new V2D_RectangleDouble(pP0P0, pP0P1, pP1P1, pP1P0);
         double expResult = 1d;
         double result = instance.getDistance(l, epsilon);
         assertTrue(Math_Double.equals(expResult, result, epsilon));
@@ -541,7 +541,7 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
         V2D_LineDouble l = new V2D_LineDouble(pP0N1, pP1N1);
-        V2D_RectangleDouble instance = new V2D_RectangleDouble(env, pP0P0, pP0P1, pP1P1, pP1P0);
+        V2D_RectangleDouble instance = new V2D_RectangleDouble(pP0P0, pP0P1, pP1P1, pP1P0);
         double expResult = 1d;
         double result = instance.getDistanceSquared(l, epsilon);
         assertTrue(Math_Double.equals(expResult, result, epsilon));
@@ -556,7 +556,7 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
         V2D_LineSegmentDouble l = new V2D_LineSegmentDouble(pP0N1, pP1N1);
-        V2D_RectangleDouble instance = new V2D_RectangleDouble(env, pP0P0, pP0P1, pP1P1, pP1P0);
+        V2D_RectangleDouble instance = new V2D_RectangleDouble(pP0P0, pP0P1, pP1P1, pP1P0);
         double expResult = 1d;
         double result = instance.getDistance(l, epsilon);
         assertTrue(Math_Double.equals(expResult, result, epsilon));
@@ -571,7 +571,7 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
         V2D_LineSegmentDouble l = new V2D_LineSegmentDouble(pP0N1, pP1N1);
-        V2D_RectangleDouble instance = new V2D_RectangleDouble(env, pP0P0, pP0P1, pP1P1, pP1P0);
+        V2D_RectangleDouble instance = new V2D_RectangleDouble(pP0P0, pP0P1, pP1P1, pP1P0);
         double expResult = 1d;
         double result = instance.getDistanceSquared(l, epsilon);
         assertTrue(Math_Double.equals(expResult, result, epsilon));
@@ -585,13 +585,13 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
         System.out.println("getDistance");
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
-        V2D_TriangleDouble t = new V2D_TriangleDouble(env, pP0N1, pP1N1, pP0P1);
-        V2D_RectangleDouble instance = new V2D_RectangleDouble(env, pP0P0, pP0P1, pP1P1, pP1P0);
+        V2D_TriangleDouble t = new V2D_TriangleDouble( pP0N1, pP1N1, pP0P1);
+        V2D_RectangleDouble instance = new V2D_RectangleDouble(pP0P0, pP0P1, pP1P1, pP1P0);
         double expResult = 0d;
         double result = instance.getDistance(t, epsilon);
         assertTrue(Math_Double.equals(expResult, result, epsilon));
         // Test 2
-        t = new V2D_TriangleDouble(env, pP0N1, pP1N1, pP1P1);
+        t = new V2D_TriangleDouble(pP0N1, pP1N1, pP1P1);
         expResult = 0d;
         result = instance.getDistance(t, epsilon);
         assertTrue(Math_Double.equals(expResult, result, epsilon));
@@ -605,8 +605,8 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
         System.out.println("getDistanceSquared");
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
-        V2D_TriangleDouble t = new V2D_TriangleDouble(env, pP0P0, pP0P1, pP1P1);
-        V2D_RectangleDouble instance = new V2D_RectangleDouble(env, pP0P0, pP0P1, pP1P1, pP1P0);
+        V2D_TriangleDouble t = new V2D_TriangleDouble(pP0P0, pP0P1, pP1P1);
+        V2D_RectangleDouble instance = new V2D_RectangleDouble(pP0P0, pP0P1, pP1P1, pP1P0);
         double expResult = 0d;
         double result = instance.getDistanceSquared(t, epsilon);
         assertTrue(Math_Double.equals(expResult, result, epsilon));
@@ -620,17 +620,17 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
         System.out.println("equals");
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
-        V2D_RectangleDouble r = new V2D_RectangleDouble(env, pP0P0, pP0P1, pP1P1, pP1P0);
-        V2D_RectangleDouble instance = new V2D_RectangleDouble(env, pP0P0, pP0P1, pP1P1, pP1P0);
+        V2D_RectangleDouble r = new V2D_RectangleDouble(pP0P0, pP0P1, pP1P1, pP1P0);
+        V2D_RectangleDouble instance = new V2D_RectangleDouble(pP0P0, pP0P1, pP1P1, pP1P0);
         assertTrue(instance.equals(r, epsilon));
         // Test 2
-        instance = new V2D_RectangleDouble(env, pP0P1, pP1P1, pP1P0, pP0P0);
+        instance = new V2D_RectangleDouble(pP0P1, pP1P1, pP1P0, pP0P0);
         assertTrue(instance.equals(r, epsilon));
         // Test 3
-        instance = new V2D_RectangleDouble(env, pP1P1, pP1P0, pP0P0, pP0P1);
+        instance = new V2D_RectangleDouble(pP1P1, pP1P0, pP0P0, pP0P1);
         assertTrue(instance.equals(r, epsilon));
         // Test 4
-        instance = new V2D_RectangleDouble(env, pP1P0, pP0P0, pP0P1, pP1P1);
+        instance = new V2D_RectangleDouble(pP1P0, pP0P0, pP0P1, pP1P1);
         assertTrue(instance.equals(r, epsilon));
     }
 

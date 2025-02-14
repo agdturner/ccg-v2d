@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Andy Turner, University of Leeds.
+ * Copyright 2025 Andy Turner, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,17 +19,18 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
 
 /**
  * V2D_FiniteGeometry for representing finite geometries.
  *
  * @author Andy Turner
- * @version 1.0
+ * @version 2.0
  */
 public abstract class V2D_FiniteGeometry extends V2D_Geometry {
 
     private static final long serialVersionUID = 1L;
-
+    
     /**
      * For storing the envelope.
      */
@@ -46,18 +47,21 @@ public abstract class V2D_FiniteGeometry extends V2D_Geometry {
     
     /**
      * Creates a new instance with offset V2D_Vector.ZERO.
+     * 
+     * @param env The environment.
      */
-    public V2D_FiniteGeometry() {
-        this(V2D_Vector.ZERO);
+    public V2D_FiniteGeometry(V2D_Environment env) {
+        this(env, V2D_Vector.ZERO);
     }
     
     /**
      * Creates a new instance.
      *
+     * @param env The environment.
      * @param offset What {@link #offset} is set to.
      */
-    public V2D_FiniteGeometry(V2D_Vector offset) {
-        super(offset);
+    public V2D_FiniteGeometry(V2D_Environment env, V2D_Vector offset) {
+        super(env, offset);
     }
     
     /**
@@ -77,7 +81,7 @@ public abstract class V2D_FiniteGeometry extends V2D_Geometry {
      * @param rm The RoundingMode for any rounding.
      * @return A copy of the points of the geometry.
      */
-    public abstract V2D_Point[] getPoints(int oom, RoundingMode rm);
+    public abstract V2D_Point[] getPointsArray(int oom, RoundingMode rm);
     
     /**
      * @return A copy of the points of the geometries gs.
@@ -88,7 +92,7 @@ public abstract class V2D_FiniteGeometry extends V2D_Geometry {
     public static V2D_Point[] getPoints(int oom, RoundingMode rm, V2D_FiniteGeometry... gs) {
         ArrayList<V2D_Point> list = new ArrayList<>();
         for (var x: gs) {
-            list.addAll(Arrays.asList(x.getPoints(oom, rm)));
+            list.addAll(Arrays.asList(x.getPointsArray(oom, rm)));
         }
         return list.toArray(V2D_Point[]::new);
     }
@@ -104,7 +108,7 @@ public abstract class V2D_FiniteGeometry extends V2D_Geometry {
     public static V2D_Point[] getPoints(V2D_FiniteGeometry[] gs, int oom, RoundingMode rm) {
         List<V2D_Point> s = new ArrayList<>();
         for (var g : gs) {
-            V2D_Point[] gps = g.getPoints(oom, rm);
+            V2D_Point[] gps = g.getPointsArray(oom, rm);
             s.addAll(Arrays.asList(gps));
         }
         ArrayList<V2D_Point> points = V2D_Point.getUnique(s, oom, rm);

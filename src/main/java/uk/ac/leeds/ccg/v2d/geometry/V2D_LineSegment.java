@@ -23,6 +23,7 @@ import java.util.Collection;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
 import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
+import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
 
 /**
  * 2D representation of a finite length line (a line segment). The line begins
@@ -62,36 +63,38 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @param l What {@code this} is cloned from.
      */
     public V2D_LineSegment(V2D_LineSegment l) {
-        super(l.offset);
+        super(l.env, l.offset);
         this.l = new V2D_Line(l.l);
     }
 
     /**
      * Create a new instance. {@link #offset} is set to {@link V2D_Vector#ZERO}.
      *
+     * @param env What {@link #env} is set to.
      * @param p What the point of {@link #l} is cloned from.
      * @param q What {@link #qv} is cloned from.
      * @param oom The Order of Magnitude for the precision of the result.
      * @param rm The RoundingMode if rounding is needed.
      */
-    public V2D_LineSegment(V2D_Vector p, V2D_Vector q,
+    public V2D_LineSegment(V2D_Environment env, V2D_Vector p, V2D_Vector q,
             int oom, RoundingMode rm) {
-        this(V2D_Vector.ZERO, p, q, oom, rm);
+        this(env, V2D_Vector.ZERO, p, q, oom, rm);
     }
 
     /**
      * Create a new instance.
      *
+     * @param env What {@link #env} is set to.
      * @param offset What {@link #offset} is set to.
      * @param p What the point of {@link #l} is cloned from.
      * @param q What {@link #qv} is cloned from.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
      */
-    public V2D_LineSegment(V2D_Vector offset, V2D_Vector p,
+    public V2D_LineSegment(V2D_Environment env, V2D_Vector offset, V2D_Vector p,
             V2D_Vector q, int oom, RoundingMode rm) {
-        super(offset);
-        l = new V2D_Line(offset, p, q, oom, rm);
+        super(env, offset);
+        l = new V2D_Line(env, offset, p, q, oom, rm);
     }
 
     /**
@@ -103,10 +106,10 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @param rm The RoundingMode for any rounding.
      */
     public V2D_LineSegment(V2D_Point p, V2D_Point q, int oom, RoundingMode rm) {
-        super(p.offset);
+        super(p.env, p.offset);
         V2D_Point q2 = new V2D_Point(q);
         q2.setOffset(offset, oom, rm);
-        l = new V2D_Line(offset, p.rel, q2.rel, oom, rm);
+        l = new V2D_Line(env, offset, p.rel, q2.rel, oom, rm);
     }
 
     /**
@@ -117,7 +120,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @param points Any number of collinear points, with two being different.
      */
     public V2D_LineSegment(int oom, RoundingMode rm, V2D_Point... points) {
-        super(points[0].offset);
+        super(points[0].env, points[0].offset);
         ArrayList<V2D_Point> unique = V2D_Point.getUnique(Arrays.asList(points), oom, rm);
         int n = unique.size();
         if (n < 2) {
@@ -177,7 +180,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
     }
 
     @Override
-    public V2D_Point[] getPoints(int oom, RoundingMode rm) {
+    public V2D_Point[] getPointsArray(int oom, RoundingMode rm) {
         V2D_Point[] r = new V2D_Point[2];
         r[0] = getP();
         r[1] = getQ(oom, rm);
@@ -190,7 +193,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @param l What {@code this} is created from.
      */
     public V2D_LineSegment(V2D_Line l) {
-        super();
+        super(l.env);
         this.l = new V2D_Line(l);
     }
 
@@ -887,7 +890,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
         //V2D_Vector pmpq = l.getV(oom, rm).divide(BigRational.valueOf(2), oom, rm);
         V2D_Vector pmpq = l.v.divide(BigRational.valueOf(2), oom, rm);
         //return getP(oom).translate(pmpq, oom);
-        return new V2D_Point(offset, l.pv.add(pmpq, oom, rm));
+        return new V2D_Point(env, offset, l.pv.add(pmpq, oom, rm));
     }
 
     /**

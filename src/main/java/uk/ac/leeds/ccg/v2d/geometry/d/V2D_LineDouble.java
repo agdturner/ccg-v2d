@@ -17,6 +17,7 @@ package uk.ac.leeds.ccg.v2d.geometry.d;
 
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
 import uk.ac.leeds.ccg.math.matrices.Math_Matrix_Double;
+import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
 
 /**
  * 2D representation of an infinite length line. The line passes through the
@@ -32,13 +33,13 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
     /**
      * The x axis.
      */
-    public static final V2D_LineDouble X_AXIS = new V2D_LineDouble(
+    public static final V2D_LineDouble X_AXIS = new V2D_LineDouble(null,
             V2D_VectorDouble.ZERO, V2D_VectorDouble.I);
 
     /**
      * The y axis.
      */
-    public static final V2D_LineDouble Y_AXIS = new V2D_LineDouble(
+    public static final V2D_LineDouble Y_AXIS = new V2D_LineDouble(null,
             V2D_VectorDouble.ZERO, V2D_VectorDouble.J);
 
     /**
@@ -72,17 +73,10 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
     public V2D_VectorDouble v;
 
     /**
-     * Create a new instance.
-     */
-    public V2D_LineDouble() {
-        super();
-    }
-
-    /**
      * @param l Used to initialise this.
      */
     public V2D_LineDouble(V2D_LineDouble l) {
-        super(l.offset);
+        super(l.env, l.offset);
         this.pv = new V2D_VectorDouble(l.pv);
         if (l.p != null) {
             this.p = new V2D_PointDouble(l.p);
@@ -105,24 +99,27 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * {@code pv} should not be equal to {@code qv}. {@link #offset} is set to
      * {@link V2D_VectorDouble#ZERO}.
      *
+     * @param env The environment.
      * @param p What {@link #pv} is set to.
      * @param q Another point on the line from which {@link #v} is derived.
      */
-    public V2D_LineDouble(V2D_VectorDouble p, V2D_VectorDouble q) {
-        this(V2D_VectorDouble.ZERO, p, q);
+    public V2D_LineDouble(V2D_EnvironmentDouble env, V2D_VectorDouble p, 
+            V2D_VectorDouble q) {
+        this(env, V2D_VectorDouble.ZERO, p, q);
     }
 
     /**
      * {@code pv} should not be equal to {@code qv}.
      *
+     * @param env The environment.
      * @param offset What {@link #offset} is set to.
      * @param pv What {@link #pv} is cloned from.
      * @param qv Used to calculate {@link q} and {@link #v} (which is calculated
      * by taking the difference between pv and qv.
      */
-    public V2D_LineDouble(V2D_VectorDouble offset, V2D_VectorDouble pv,
-            V2D_VectorDouble qv) {
-        super(offset);
+    public V2D_LineDouble(V2D_EnvironmentDouble env, V2D_VectorDouble offset,
+            V2D_VectorDouble pv, V2D_VectorDouble qv) {
+        super(env, offset);
         this.pv = new V2D_VectorDouble(pv);
         if (pv.equals(qv)) {
             throw new RuntimeException("" + pv + " and " + qv + " are the same"
@@ -137,14 +134,16 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * {@code v} should not be the zero vector {@code <0,0,0>}. {@link #offset}
      * is set to {@link V2D_VectorDouble#ZERO}.
      *
+     * @param env The environment.
      * @param p What {@link #pv} is cloned from.
      * @param v The vector defining the line from {@link #pv}. What {@link #v}
      * is cloned from.
      * @param flag To distinguish this method from
      * {@link #V2D_LineDouble(uk.ac.leeds.ccg.v3d.geometry.d.V2D_VectorDouble, uk.ac.leeds.ccg.v3d.geometry.d.V2D_VectorDouble)}
      */
-    public V2D_LineDouble(V2D_VectorDouble p, V2D_VectorDouble v, boolean flag) {
-        this(V2D_VectorDouble.ZERO, p, v, flag);
+    public V2D_LineDouble(V2D_EnvironmentDouble env, V2D_VectorDouble p, 
+            V2D_VectorDouble v, boolean flag) {
+        this(env, V2D_VectorDouble.ZERO, p, v, flag);
     }
 
     /**
@@ -154,12 +153,13 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @param v The vector defining the line from {@link #pv}.
      */
     public V2D_LineDouble(V2D_PointDouble p, V2D_VectorDouble v) {
-        this(p.offset, p.rel, v, true);
+        this(p.env, p.offset, p.rel, v, true);
     }
 
     /**
      * Checks to ensure v is not the zero vector {@code <0,0,0>}.
      *
+     * @param env The environment.
      * @param offset What {@link #offset} is set to.
      * @param p What {@link #pv} is set to.
      * @param v The vector defining the line from {@link #pv}.
@@ -167,8 +167,9 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * {@link #V2D_LineDouble(uk.ac.leeds.ccg.v3d.geometry.d.V2D_VectorDouble, uk.ac.leeds.ccg.v3d.geometry.d.V2D_VectorDouble, uk.ac.leeds.ccg.v3d.geometry.d.V2D_VectorDouble)}
      * @throws RuntimeException if {@code v.isZero()}.
      */
-    public V2D_LineDouble(V2D_VectorDouble offset, V2D_VectorDouble p, V2D_VectorDouble v, boolean flag) {
-        super(offset);
+    public V2D_LineDouble(V2D_EnvironmentDouble env, V2D_VectorDouble offset, 
+            V2D_VectorDouble p, V2D_VectorDouble v, boolean flag) {
+        super(env, offset);
         if (v.isZero()) {
             throw new RuntimeException("Vector " + v + " is the zero vector "
                     + "which cannot be used to define a line.");
@@ -185,7 +186,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @param q What {@link #v} is derived from.
      */
     public V2D_LineDouble(V2D_PointDouble p, V2D_PointDouble q) {
-        super(new V2D_VectorDouble(p.offset));
+        super(p.env, new V2D_VectorDouble(p.offset));
         V2D_PointDouble q2 = new V2D_PointDouble(q);
         q2.setOffset(p.offset);
         if (p.rel.equals(q2.rel)) {
@@ -294,7 +295,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      */
     public V2D_PointDouble getP() {
         if (p == null) {
-            p = new V2D_PointDouble(offset, pv);
+            p = new V2D_PointDouble(env, offset, pv);
         }
         return p;
     }
@@ -307,7 +308,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      */
     public V2D_PointDouble getQ() {
         if (q == null) {
-            q = new V2D_PointDouble(offset, pv.add(v));
+            q = new V2D_PointDouble(env, offset, pv.add(v));
         }
         return q;
     }
@@ -509,7 +510,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
             double x3y4sy3x4 = (x3 * y4 - y3 * x4);
             double numx = (x1y2sy1x2 * (x3 - x4)) - ((x1 - x2) * x3y4sy3x4);
             double numy = (x1y2sy1x2 * (y3 - y4)) - ((y1 - y2) * x3y4sy3x4);
-            return new V2D_PointDouble(numx / den, numy / den);            
+            return new V2D_PointDouble(env, numx / den, numy / den);            
         }
         return null;
     }

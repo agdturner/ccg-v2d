@@ -17,7 +17,6 @@ package uk.ac.leeds.ccg.v2d.geometry.test;
 
 import ch.obermuhlner.math.big.BigRational;
 import java.math.RoundingMode;
-import uk.ac.leeds.ccg.v2d.geometry.d.test.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -404,7 +403,7 @@ public class V2D_VectorTest extends V2D_Test {
         RoundingMode rm = RoundingMode.HALF_UP;
         BigRational s = BigRational.TWO;
         V2D_Vector instance = V2D_Vector.I;
-        V2D_Vector expResult = new V2D_Vector(new V2D_Point(0.5d, 0d), oom, rm);
+        V2D_Vector expResult = new V2D_Vector(new V2D_Point(env, 0.5d, 0d), oom, rm);
         V2D_Vector result = instance.divide(s, oom, rm);
         assertTrue(expResult.equals(result));
     }

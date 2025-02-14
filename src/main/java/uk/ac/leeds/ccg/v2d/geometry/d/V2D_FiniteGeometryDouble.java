@@ -17,7 +17,7 @@ package uk.ac.leeds.ccg.v2d.geometry.d;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
 
 /**
  * V2D_FiniteGeometry for representing finite geometries.
@@ -28,11 +28,30 @@ import java.util.List;
 public abstract class V2D_FiniteGeometryDouble extends V2D_GeometryDouble {
 
     private static final long serialVersionUID = 1L;
-
+    
     /**
      * For storing the envelope.
      */
     protected V2D_EnvelopeDouble en;
+    
+    /**
+     * Creates a new instance with offset V2D_Vector.ZERO.
+     * 
+     * @param env The environment.
+     */
+    public V2D_FiniteGeometryDouble(V2D_EnvironmentDouble env) {
+        this(env, V2D_VectorDouble.ZERO);
+    }
+    
+    /**
+     * Creates a new instance.
+     *
+     * @param env The environment.
+     * @param offset What {@link #offset} is set to.
+     */
+    public V2D_FiniteGeometryDouble(V2D_EnvironmentDouble env, V2D_VectorDouble offset) {
+        super(env, offset);
+    }
     
     /**
      * For getting the envelope of the geometry
@@ -40,22 +59,6 @@ public abstract class V2D_FiniteGeometryDouble extends V2D_GeometryDouble {
      * @return The envelope.
      */
     public abstract V2D_EnvelopeDouble getEnvelope();
-    
-    /**
-     * Creates a new instance with offset V2D_Vector.ZERO.
-     */
-    public V2D_FiniteGeometryDouble() {
-        this(V2D_VectorDouble.ZERO);
-    }
-    
-    /**
-     * Creates a new instance.
-     *
-     * @param offset What {@link #offset} is set to.
-     */
-    public V2D_FiniteGeometryDouble(V2D_VectorDouble offset) {
-        super(offset);
-    }
     
     /**
      * For evaluating if the geometry is intersected by the Axis Aligned 

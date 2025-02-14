@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import uk.ac.leeds.ccg.math.arithmetic.Math_Double;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
+import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
 
 /**
  * 2D representation of a finite length line (a line segment). The line begins
@@ -59,31 +60,33 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      * @param l What {@code this} is cloned from.
      */
     public V2D_LineSegmentDouble(V2D_LineSegmentDouble l) {
-        super(l.offset);
+        super(l.env, l.offset);
         this.l = new V2D_LineDouble(l.l);
     }
 
     /**
      * Create a new instance. {@link #offset} is set to {@link V2D_Vector#ZERO}.
      *
+     * @param env The environment.
      * @param p What the point of {@link #l} is cloned from.
      * @param q What {@link #qv} is cloned from.
      */
-    public V2D_LineSegmentDouble(V2D_VectorDouble p, V2D_VectorDouble q) {
-        this(V2D_VectorDouble.ZERO, p, q);
+    public V2D_LineSegmentDouble(V2D_EnvironmentDouble env, V2D_VectorDouble p, V2D_VectorDouble q) {
+        this(env, V2D_VectorDouble.ZERO, p, q);
     }
 
     /**
      * Create a new instance.
      *
+     * @param env The environment.
      * @param offset What {@link #offset} is set to.
      * @param p What the point of {@link #l} is cloned from.
      * @param q What {@link #qv} is cloned from.
      */
-    public V2D_LineSegmentDouble(V2D_VectorDouble offset, V2D_VectorDouble p,
+    public V2D_LineSegmentDouble(V2D_EnvironmentDouble env, V2D_VectorDouble offset, V2D_VectorDouble p,
             V2D_VectorDouble q) {
-        super(offset);
-        l = new V2D_LineDouble(offset, p, q);
+        super(env, offset);
+        l = new V2D_LineDouble(env, offset, p, q);
     }
 
     /**
@@ -93,10 +96,10 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      * @param q What {@link #qv} is cloned from.
      */
     public V2D_LineSegmentDouble(V2D_PointDouble p, V2D_PointDouble q) {
-        super(p.offset);
+        super(p.env, p.offset);
         V2D_PointDouble q2 = new V2D_PointDouble(q);
         q2.setOffset(offset);
-        l = new V2D_LineDouble(offset, p.rel, q2.rel);
+        l = new V2D_LineDouble(p.env, offset, p.rel, q2.rel);
     }
 
     /**
@@ -110,7 +113,6 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
         this(epsilon, points.toArray(V2D_PointDouble[]::new));
     }
     
-    
     /**
      * Create a new instance that intersects all points.
      *
@@ -119,7 +121,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      * @param points Any number of collinear points, with two being different.
      */
     public V2D_LineSegmentDouble(double epsilon, V2D_PointDouble... points) {
-        super(points[0].offset);
+        super(points[0].env, points[0].offset);
         V2D_PointDouble p0 = points[0];
         V2D_PointDouble p1 = points[1];
         V2D_LineSegmentDouble ls = new V2D_LineSegmentDouble(p0, p1);
@@ -173,7 +175,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      * @param l What {@code this} is created from.
      */
     public V2D_LineSegmentDouble(V2D_LineDouble l) {
-        super();
+        super(l.env);
         this.l = new V2D_LineDouble(l);
     }
 
@@ -867,7 +869,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      */
     public V2D_PointDouble getMidpoint() {
         V2D_VectorDouble pmpq = l.v.divide(2.0d);
-        return new V2D_PointDouble(offset, l.pv.add(pmpq));
+        return new V2D_PointDouble(env, offset, l.pv.add(pmpq));
     }
 
     /**

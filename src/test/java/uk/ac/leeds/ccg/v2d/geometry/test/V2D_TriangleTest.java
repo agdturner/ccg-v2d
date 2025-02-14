@@ -191,7 +191,7 @@ public class V2D_TriangleTest extends V2D_Test {
                 (V2D_LineSegment) result, oom, rm));
         System.out.println("getIntersection");
         // Test 2
-        instance = new V2D_Triangle(P0P0, P1P0, P1P2, P2P0, oom, rm);
+        instance = new V2D_Triangle(env, P0P0, P1P0, P1P2, P2P0, oom, rm);
         l = new V2D_Line(pP1P1, pP1N1, oom, rm);
         result = instance.getIntersection(l, oom, rm);
         expResult = new V2D_LineSegment(pP1P0, pP1P2, oom, rm);
@@ -224,7 +224,7 @@ public class V2D_TriangleTest extends V2D_Test {
         V2D_Point result;
         // Test
         instance = new V2D_Triangle(pP0P0, pP1P0, pP1P1, oom, rm);
-        expResult = new V2D_Point(2d / 3d, 1d / 3d);
+        expResult = new V2D_Point(env, 2d / 3d, 1d / 3d);
         result = instance.getCentroid(oom, rm);
         assertTrue(expResult.equals(result, oom, rm));
     }
@@ -235,7 +235,7 @@ public class V2D_TriangleTest extends V2D_Test {
     @Test
     public void testToString() {
         System.out.println("toString");
-        V2D_Triangle instance = new V2D_Triangle(P0P0, P1P0, P0P1, P0P0);
+        V2D_Triangle instance = new V2D_Triangle(env, P0P0, P1P0, P0P1, P0P0);
         String expResult = """
                            V2D_Triangle(
                             offset=(V2D_Vector(dx=0, dy=0)),
@@ -257,17 +257,17 @@ public class V2D_TriangleTest extends V2D_Test {
         RoundingMode rm = RoundingMode.HALF_UP;
         V2D_Point pt;
         V2D_Triangle instance;
-        instance = new V2D_Triangle(P0P0, P1P0, P0P1, P0P0);
+        instance = new V2D_Triangle(env, P0P0, P1P0, P0P1, P0P0);
         assertTrue(instance.isIntersectedBy(pP1P0, oom, rm));
         assertTrue(instance.isIntersectedBy(pP0P1, oom, rm));
         assertTrue(instance.isIntersectedBy(pP0P0, oom, rm));
-        pt = new V2D_Point(P1P0, P0P0);
+        pt = new V2D_Point(env, P1P0, P0P0);
         assertTrue(instance.isIntersectedBy(pt, oom, rm));
         // Test 5
-        pt = new V2D_Point(P0P1, P0P0);
+        pt = new V2D_Point(env, P0P1, P0P0);
         assertTrue(instance.isIntersectedBy(pt, oom, rm));
         // Test 6
-        instance = new V2D_Triangle(P0P0, P1P0, P1P2, P2P0);
+        instance = new V2D_Triangle(env, P0P0, P1P0, P1P2, P2P0);
         assertTrue(instance.isIntersectedBy(pP1P2, oom, rm));
         assertTrue(instance.isIntersectedBy(pP1P1, oom, rm));
         assertFalse(instance.isIntersectedBy(pN1P0, oom, rm));
@@ -306,7 +306,7 @@ public class V2D_TriangleTest extends V2D_Test {
                 (V2D_LineSegment) result, oom, rm));
         // Test 4
         l = new V2D_LineSegment(pP2N2, pP2P1, oom, rm);
-        instance = new V2D_Triangle(P0P0, P2P2,
+        instance = new V2D_Triangle(env, P0P0, P2P2,
                 new V2D_Vector(4, 0), oom, rm);
         expResult = new V2D_LineSegment(pP2P0, pP2P1, oom, rm);
         result = instance.getIntersection(l, oom, rm);
@@ -320,9 +320,9 @@ public class V2D_TriangleTest extends V2D_Test {
         assertTrue(((V2D_LineSegment) expResult).equalsIgnoreDirection(
                 (V2D_LineSegment) result, oom, rm));
         // Test 6
-        l = new V2D_LineSegment(new V2D_Point(4d, -2d), pP2P0, oom, rm);
-        instance = new V2D_Triangle(pP0P0, new V2D_Point(4d, 0d), new V2D_Point(2d, -4d), oom, rm);
-        expResult = new V2D_LineSegment(pP2P0, new V2D_Point(10d/3d, - 4d/3d), oom, rm);
+        l = new V2D_LineSegment(new V2D_Point(env, 4d, -2d), pP2P0, oom, rm);
+        instance = new V2D_Triangle(pP0P0, new V2D_Point(env, 4d, 0d), new V2D_Point(env, 2d, -4d), oom, rm);
+        expResult = new V2D_LineSegment(pP2P0, new V2D_Point(env, 10d/3d, - 4d/3d), oom, rm);
         result = instance.getIntersection(l, oom, rm);
         assertTrue(((V2D_LineSegment) expResult).equalsIgnoreDirection(
                 (V2D_LineSegment) result, oom, rm));
@@ -337,23 +337,23 @@ public class V2D_TriangleTest extends V2D_Test {
         int oom = -6;
         RoundingMode rm = RoundingMode.HALF_UP;
         V2D_Triangle t = new V2D_Triangle(pP1P0, pP1P2, pP2P0, oom, rm);
-        V2D_Triangle instance = new V2D_Triangle(P1P0, P0P0, P0P2, P1P0);
+        V2D_Triangle instance = new V2D_Triangle(env, P1P0, P0P0, P0P2, P1P0);
         boolean result = instance.equals(t, oom, rm);
         assertTrue(result);
         // Test 2
-        instance = new V2D_Triangle(P1P0, P0P2, P0P0, P1P0);
+        instance = new V2D_Triangle(env, P1P0, P0P2, P0P0, P1P0);
         result = instance.equals(t, oom, rm);
         assertTrue(result);
         // Test 3
-        instance = new V2D_Triangle(P1P0, P0P2, P1P0, P0P0);
+        instance = new V2D_Triangle(env, P1P0, P0P2, P1P0, P0P0);
         result = instance.equals(t, oom, rm);
         assertTrue(result);
         // Test 4
-        instance = new V2D_Triangle(P1P0, P1P0, P0P2, P0P0);
+        instance = new V2D_Triangle(env, P1P0, P1P0, P0P2, P0P0);
         result = instance.equals(t, oom, rm);
         assertTrue(result);
         // Test 5
-        instance = new V2D_Triangle(P1P0, P1P0, P0P2, P0P0);
+        instance = new V2D_Triangle(env, P1P0, P1P0, P0P2, P0P0);
         t = new V2D_Triangle(instance);
         result = instance.equals(t, oom, rm);
         assertTrue(result);
@@ -558,21 +558,21 @@ public class V2D_TriangleTest extends V2D_Test {
         assertTrue(((V2D_Triangle) expResult).equals((V2D_Triangle) result, oom, rm));
         // Test 5
         t = new V2D_Triangle(pP0P0, pP2P0, pP2P2, oom, rm);
-        instance = new V2D_Triangle(pP1P0, pP2P0, new V2D_Point(3d, 2d), oom, rm);
+        instance = new V2D_Triangle(pP1P0, pP2P0, new V2D_Point(env, 3d, 2d), oom, rm);
         expResult = new V2D_Triangle(pP1P0, pP2P0, pP2P1, oom, rm);
         result = instance.getIntersection(t, oom, rm);
         assertTrue(((V2D_Triangle) expResult).equals((V2D_Triangle) result, oom, rm));
         // Test 6 - Test 7 Are more complex intersections
-        V2D_Point origin = new V2D_Point(0d, 0d);
+        V2D_Point origin = new V2D_Point(env, 0d, 0d);
         ArrayList<V2D_Triangle> expected;
         V2D_Triangle t0;
         V2D_Triangle t1;
         BigRational theta;
         // Test 6
         t0 = new V2D_Triangle(
-                new V2D_Point(-50d, -50d),
-                new V2D_Point(0d, 50d),
-                new V2D_Point(50d, -50d), oom, rm);
+                new V2D_Point(env, -50d, -50d),
+                new V2D_Point(env, 0d, 50d),
+                new V2D_Point(env, 50d, -50d), oom, rm);
         theta = Math_BigRational.getPi(bd, oom - 2, rm);
         t1 = t0.rotate(origin, theta, bd, oom, rm);
         expected = new ArrayList<>();
@@ -597,13 +597,13 @@ public class V2D_TriangleTest extends V2D_Test {
 //                new V2D_Point(0d, -50d),
 //                new V2D_Point(-25d, 0d)));
         expected.add(new V2D_Triangle(
-                new V2D_Point(0d, -50d),
-                new V2D_Point(25d, 0d),
-                new V2D_Point(0d, 50d), oom, rm));
+                new V2D_Point(env, 0d, -50d),
+                new V2D_Point(env, 25d, 0d),
+                new V2D_Point(env, 0d, 50d), oom, rm));
         expected.add(new V2D_Triangle(
-                new V2D_Point(0d, 50d),
-                new V2D_Point(-25d, 0d),
-                new V2D_Point(0d, -50d), oom, rm));
+                new V2D_Point(env, 0d, 50d),
+                new V2D_Point(env, -25d, 0d),
+                new V2D_Point(env, 0d, -50d), oom, rm));
         // Calculate the intersection
         // We are expecting a convex hull with 4 points that can be tested to 
         // see if they are made up of the two triangles as expected.
@@ -613,28 +613,28 @@ public class V2D_TriangleTest extends V2D_Test {
             assertTrue(expected.get(i).equals(git.get(i), oom, rm));
         }
         // Test 7
-        t0 = new V2D_Triangle(new V2D_Point(-30d, -30d),
-        new V2D_Point(0d, 60d),
-        new V2D_Point(30d, -30d), oom, rm);
+        t0 = new V2D_Triangle(new V2D_Point(env, -30d, -30d),
+        new V2D_Point(env, 0d, 60d),
+        new V2D_Point(env, 30d, -30d), oom, rm);
         theta = Math_BigRational.getPi(bd, oom - 2, rm);
         t1 = t0.rotate(origin, theta, bd, oom, rm);
         expected = new ArrayList<>();
         expected.add(new V2D_Triangle(
-                new V2D_Point(-10d, -30d),
-                new V2D_Point(10d, -30d),
-                new V2D_Point(20d, 0d), oom, rm));
+                new V2D_Point(env, -10d, -30d),
+                new V2D_Point(env, 10d, -30d),
+                new V2D_Point(env, 20d, 0d), oom, rm));
         expected.add(new V2D_Triangle(
-                new V2D_Point(-10d, -30d),
-                new V2D_Point(20d, 0d),
-                new V2D_Point(10d, 30d), oom, rm));
+                new V2D_Point(env, -10d, -30d),
+                new V2D_Point(env, 20d, 0d),
+                new V2D_Point(env, 10d, 30d), oom, rm));
         expected.add(new V2D_Triangle(
-                new V2D_Point(-10d, -30d),
-                new V2D_Point(10d, 30d),
-                new V2D_Point(-10d, 30d), oom, rm));
+                new V2D_Point(env, -10d, -30d),
+                new V2D_Point(env, 10d, 30d),
+                new V2D_Point(env, -10d, 30d), oom, rm));
         expected.add(new V2D_Triangle(
-                new V2D_Point(-10d, -30d),
-                new V2D_Point(-10d, 30d),
-                new V2D_Point(-20d, 0), oom, rm));
+                new V2D_Point(env, -10d, -30d),
+                new V2D_Point(env, -10d, 30d),
+                new V2D_Point(env, -20d, 0), oom, rm));
 //        expected.add(new V2D_Triangle(
 //                new V2D_Point(10d, -30d),
 //                new V2D_Point(20d, 0d),
@@ -669,14 +669,14 @@ public class V2D_TriangleTest extends V2D_Test {
         System.out.println("translate");
         int oom = -6;
         RoundingMode rm = RoundingMode.HALF_UP;
-        V2D_Triangle instance = new V2D_Triangle(P0P0, P1P0, P0P1, P1P1);
+        V2D_Triangle instance = new V2D_Triangle(env, P0P0, P1P0, P0P1, P1P1);
         instance.translate(V2D_Vector.I, oom, rm);
-        V2D_Triangle expResult = new V2D_Triangle(P0P0, P2P0, P1P1, P2P1);
+        V2D_Triangle expResult = new V2D_Triangle(env, P0P0, P2P0, P1P1, P2P1);
         assertTrue(expResult.equals(instance, oom, rm));
         // Test 2
-        instance = new V2D_Triangle(P0P0, P1P0, P0P1, P1P1);
+        instance = new V2D_Triangle(env, P0P0, P1P0, P0P1, P1P1);
         instance.translate(V2D_Vector.IJ, oom, rm);
-        expResult = new V2D_Triangle(P1P1, P1P0, P0P1, P1P1);
+        expResult = new V2D_Triangle(env, P1P1, P1P0, P0P1, P1P1);
         assertTrue(expResult.equals(instance, oom, rm));
     }
 
@@ -771,7 +771,7 @@ public class V2D_TriangleTest extends V2D_Test {
         result = t.getDistanceSquared(p, oom, rm);
         assertTrue(Math_BigRational.equals(expResult, result, oom));
         // Test 3
-        p = new V2D_Point(-1, -10);
+        p = new V2D_Point(env, -1, -10);
         expResult = BigRational.valueOf(64);
         result = t.getDistanceSquared(p, oom, rm);
         assertTrue(Math_BigRational.equals(expResult, result, oom));
@@ -909,19 +909,19 @@ public class V2D_TriangleTest extends V2D_Test {
     public void testGetCircumcentre() {
         int oom = -6;
         RoundingMode rm = RoundingMode.HALF_UP;
-        V2D_Point a = new V2D_Point(3, 2);
-        V2D_Point b = new V2D_Point(1, 4);
-        V2D_Point c = new V2D_Point(5, 4);
+        V2D_Point a = new V2D_Point(env, 3, 2);
+        V2D_Point b = new V2D_Point(env, 1, 4);
+        V2D_Point c = new V2D_Point(env, 5, 4);
         V2D_Triangle t = new V2D_Triangle(a, b, c, oom, rm);
-        V2D_Point expResult = new V2D_Point(3, 4);
+        V2D_Point expResult = new V2D_Point(env, 3, 4);
         V2D_Point result = t.getCircumcenter(oom, rm);
         assertTrue(result.equals(expResult, oom, rm));
         // Test 2
-         a = new V2D_Point(-2, -3);
-         b = new V2D_Point(-1, 0);
-         c = new V2D_Point(7, -6);
+         a = new V2D_Point(env, -2, -3);
+         b = new V2D_Point(env, -1, 0);
+         c = new V2D_Point(env, 7, -6);
          t = new V2D_Triangle(a, b, c, oom, rm);
-         expResult = new V2D_Point(3, -3);
+         expResult = new V2D_Point(env, 3, -3);
          result = t.getCircumcenter(oom, rm);
         assertTrue(result.equals(expResult, oom, rm));
     }
