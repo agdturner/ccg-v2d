@@ -58,11 +58,9 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      * Create a new instance.
      *
      * @param p The polygon to copy.
-     * @param epsilon The tolerance within which two vectors are regarded as
-     * equal.
      */
-    public V2D_PolygonNoInternalHolesDouble(V2D_PolygonNoInternalHolesDouble p, double epsilon) {
-        this(p.getConvexHull(epsilon), p.getExternalEdges(), p.getExternalHoles(epsilon));
+    public V2D_PolygonNoInternalHolesDouble(V2D_PolygonNoInternalHolesDouble p) {
+        this(p.getConvexHull(), p.getExternalEdges(), p.getExternalHoles());
     }
 
     /**
@@ -217,11 +215,9 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
     }
 
     /**
-     * @param epsilon The tolerance within which two vectors are regarded as
-     * equal.
      * @return A copy of {@link exterior#ch} with the given tolerance applied.
      */
-    public V2D_ConvexHullDouble getConvexHull(double epsilon) {
+    public V2D_ConvexHullDouble getConvexHull() {
         return new V2D_ConvexHullDouble(ch);
     }
 
@@ -237,14 +233,12 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
     }
 
     /**
-     * @param epsilon The tolerance within which two vectors are regarded as
-     * equal.
      * @return A copy of {@link externalHoles} with the given tolerance applied.
      */
-    public HashMap<Integer, V2D_PolygonNoInternalHolesDouble> getExternalHoles(double epsilon) {
+    public HashMap<Integer, V2D_PolygonNoInternalHolesDouble> getExternalHoles() {
         HashMap<Integer, V2D_PolygonNoInternalHolesDouble> r = new HashMap<>();
         for (V2D_PolygonNoInternalHolesDouble h : externalHoles.values()) {
-            r.put(r.size(), new V2D_PolygonNoInternalHolesDouble(h, epsilon));
+            r.put(r.size(), new V2D_PolygonNoInternalHolesDouble(h));
         }
         return r;
     }
@@ -600,7 +594,7 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
             double epsilon) {
         theta = Math_AngleDouble.normalise(theta);
         if (theta == 0) {
-            return new V2D_PolygonNoInternalHolesDouble(this, epsilon);
+            return new V2D_PolygonNoInternalHolesDouble(this);
         } else {
             return rotateN(pt, theta, epsilon);
         }
@@ -609,7 +603,7 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
     @Override
     public V2D_PolygonNoInternalHolesDouble rotateN(V2D_PointDouble pt, double theta,
             double epsilon) {
-        V2D_ConvexHullDouble rch = getConvexHull(epsilon).rotate(pt, theta, epsilon);
+        V2D_ConvexHullDouble rch = getConvexHull().rotate(pt, theta, epsilon);
         HashMap<Integer, V2D_LineSegmentDouble> rExternalEdges = new HashMap<>();
         if (externalEdges != null) {
             for (int i = 0; i < externalEdges.size(); i++) {

@@ -42,15 +42,13 @@ public class V2D_PolygonDouble extends V2D_PolygonNoInternalHolesDouble {
      * Create a new instance.
      *
      * @param p The polygon to duplicate.
-     * @param epsilon The tolerance within which two vectors are regarded as
-     * equal.
      */
-    public V2D_PolygonDouble(V2D_PolygonDouble p, double epsilon) {
-        super(p, epsilon);
+    public V2D_PolygonDouble(V2D_PolygonDouble p) {
+        super(p);
         this.internalHoles = new HashMap<>();
         for (var x: p.internalHoles.entrySet()) {
             this.internalHoles.put(x.getKey(), new V2D_PolygonNoInternalHolesDouble(
-                    x.getValue(), epsilon));
+                    x.getValue()));
         }
     }
 
@@ -58,11 +56,9 @@ public class V2D_PolygonDouble extends V2D_PolygonNoInternalHolesDouble {
      * Create a new instance.
      *
      * @param p The polygon with no internal holes to use as a basis for this.
-     * @param epsilon The tolerance within which two vectors are regarded as
-     * equal.
      */
-    public V2D_PolygonDouble(V2D_PolygonNoInternalHolesDouble p, double epsilon) {
-        this(p, new HashMap<>(), epsilon);
+    public V2D_PolygonDouble(V2D_PolygonNoInternalHolesDouble p) {
+        this(p, new HashMap<>());
     }
     
     /**
@@ -70,13 +66,10 @@ public class V2D_PolygonDouble extends V2D_PolygonNoInternalHolesDouble {
      *
      * @param p The polygon with no internal holes to use as a basis for this.
      * @param internalHoles What {@link #internalHoles} is set to.
-     * @param epsilon The tolerance within which two vectors are regarded as
-     * equal.
      */
     public V2D_PolygonDouble(V2D_PolygonNoInternalHolesDouble p,
-            HashMap<Integer, V2D_PolygonNoInternalHolesDouble> internalHoles,
-            double epsilon) {
-        super(p, epsilon);
+            HashMap<Integer, V2D_PolygonNoInternalHolesDouble> internalHoles) {
+        super(p);
         this.internalHoles = internalHoles;
     }
 
@@ -97,10 +90,10 @@ public class V2D_PolygonDouble extends V2D_PolygonNoInternalHolesDouble {
      * equal.
      * @return A copy of {@link internalHoles} with the given tolerance applied.
      */
-    public HashMap<Integer, V2D_PolygonNoInternalHolesDouble> getInternalHoles(double epsilon) {
+    public HashMap<Integer, V2D_PolygonNoInternalHolesDouble> getInternalHoles() {
         HashMap<Integer, V2D_PolygonNoInternalHolesDouble> r = new HashMap<>();
         for (V2D_PolygonNoInternalHolesDouble h : internalHoles.values()) {
-            r.put(r.size(), new V2D_PolygonNoInternalHolesDouble(h, epsilon));
+            r.put(r.size(), new V2D_PolygonNoInternalHolesDouble(h));
         }
         return r;
     }
@@ -237,7 +230,7 @@ public class V2D_PolygonDouble extends V2D_PolygonNoInternalHolesDouble {
             double epsilon) {
         theta = Math_AngleDouble.normalise(theta);
         if (theta == 0d) {
-            return new V2D_PolygonDouble(this, epsilon);
+            return new V2D_PolygonDouble(this);
         } else {
             return rotateN(pt, theta, epsilon);
         }
@@ -252,14 +245,14 @@ public class V2D_PolygonDouble extends V2D_PolygonNoInternalHolesDouble {
                 rInternalHoles.put(rInternalHoles.size(), internalHoles.get(i).rotate(pt, theta, epsilon));
             }
         }
-        return new V2D_PolygonDouble(exterior, rInternalHoles, epsilon);
+        return new V2D_PolygonDouble(exterior, rInternalHoles);
     }
 
     @Override
     public boolean isIntersectedBy(V2D_EnvelopeDouble aabb, double epsilon) {
         en = getEnvelope();
         if (en.isIntersectedBy(aabb, epsilon)) {
-            if (getConvexHull(epsilon).isIntersectedBy(aabb, epsilon)) {
+            if (getConvexHull().isIntersectedBy(aabb, epsilon)) {
                 return true;
             }
         }
