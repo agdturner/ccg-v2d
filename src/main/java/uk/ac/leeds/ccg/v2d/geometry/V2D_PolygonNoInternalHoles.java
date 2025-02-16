@@ -72,9 +72,11 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
      * Create a new instance.
      *
      * @param ch What {@link #ch} is set to.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
      */
-    public V2D_PolygonNoInternalHoles(V2D_ConvexHull ch) {
-        this(ch, new HashMap<>(), new HashMap<>());
+    public V2D_PolygonNoInternalHoles(V2D_ConvexHull ch, int oom, RoundingMode rm) {
+        this(ch.getPointsArray(oom, rm), oom, rm);
     }
 
     /**
@@ -127,11 +129,11 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
             p.p1int = V2D_LineSegment.isIntersectedBy(env.oom, env.rm, p.p1, ch.edges.values());
             if (p.isHole) {
                 if (p.p1int) {
-                    if (p.pts.size() > 2) {
-                        externalHoles.put(externalHoles.size(), 
+                    p.pts.add(p.p0);
+                    p.pts.add(p.p1);
+                    externalHoles.put(externalHoles.size(), 
                                 new V2D_PolygonNoInternalHoles( 
                                         p.pts.toArray(V2D_Point[]::new), oom, rm));
-                    }
                     p.pts = new ArrayList<>();
                     p.isHole = false;
                 } else {

@@ -40,19 +40,19 @@ public class V2D_Triangle extends V2D_Shape {
     private static final long serialVersionUID = 1L;
 
     /**
-     * A vector for a corner of the triangle. This is invariant under 
+     * A vector for a corner of the triangle. This is invariant under
      * translation and is relative to the other vector corners.
      */
     protected final V2D_Vector pv;
 
     /**
-     * A vector for a corner of the triangle. This is invariant under 
+     * A vector for a corner of the triangle. This is invariant under
      * translation and is relative to the other vector corners.
      */
     protected final V2D_Vector qv;
 
     /**
-     * A vector for a corner of the triangle. This is invariant under 
+     * A vector for a corner of the triangle. This is invariant under
      * translation and is relative to the other vector corners.
      */
     protected final V2D_Vector rv;
@@ -426,12 +426,17 @@ public class V2D_Triangle extends V2D_Shape {
         if (pq == null) {
             initPQ(oom, rm);
         } else {
-            if (oom < pqoom) {
+            if (pqrm == null) {
                 initPQ(oom, rm);
             } else {
-                if (oom == pqoom) {
-                    if (!pqrm.equals(rm)) {
-                        initPQ(oom, rm);
+                if (oom < pqoom) {
+                    initPQ(oom, rm);
+                } else {
+                    if (oom == pqoom) {
+
+                        if (!pqrm.equals(rm)) {
+                            initPQ(oom, rm);
+                        }
                     }
                 }
             }
@@ -457,12 +462,16 @@ public class V2D_Triangle extends V2D_Shape {
         if (qr == null) {
             initQR(oom, rm);
         } else {
-            if (oom < qroom) {
+            if (qrrm == null) {
                 initQR(oom, rm);
             } else {
-                if (oom == qroom) {
-                    if (!qrrm.equals(rm)) {
-                        initQR(oom, rm);
+                if (oom < qroom) {
+                    initQR(oom, rm);
+                } else {
+                    if (oom == qroom) {
+                        if (!qrrm.equals(rm)) {
+                            initQR(oom, rm);
+                        }
                     }
                 }
             }
@@ -488,12 +497,16 @@ public class V2D_Triangle extends V2D_Shape {
         if (rp == null) {
             initRP(oom, rm);
         } else {
-            if (oom < rpoom) {
+            if (rprm == null) {
                 initRP(oom, rm);
             } else {
-                if (oom == rpoom) {
-                    if (!rprm.equals(rm)) {
-                        initRP(oom, rm);
+                if (oom < rpoom) {
+                    initRP(oom, rm);
+                } else {
+                    if (oom == rpoom) {
+                        if (!rprm.equals(rm)) {
+                            initRP(oom, rm);
+                        }
                     }
                 }
             }
