@@ -492,7 +492,6 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
                         return 0;
                     }
                 }
-
             }
         }
     }

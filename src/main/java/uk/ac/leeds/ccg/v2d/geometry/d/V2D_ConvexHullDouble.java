@@ -55,11 +55,11 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @param triangles A non-empty list of coplanar triangles.
      */
     public V2D_ConvexHullDouble(double epsilon, V2D_TriangleDouble... triangles) {
-        this(V2D_TriangleDouble.getPoints(triangles, epsilon));
+        this(epsilon, V2D_TriangleDouble.getPoints(triangles));
     }
     
-    public V2D_ConvexHullDouble(V2D_PointDouble... points) {
-        this(Arrays.asList(points));
+    public V2D_ConvexHullDouble(double epsilon, V2D_PointDouble... points) {
+        this(epsilon, Arrays.asList(points));
     }
     
     /**
@@ -99,10 +99,10 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * </ol>
      * @param points A non-empty list of points in a plane given by n.
      */
-    public V2D_ConvexHullDouble(List<V2D_PointDouble> points) {
+    public V2D_ConvexHullDouble(double epsilon, List<V2D_PointDouble> points) {
         super(points.get(0).env, V2D_VectorDouble.ZERO);
         ArrayList<V2D_PointDouble> h = new ArrayList<>();
-        ArrayList<V2D_PointDouble> uniquePoints = V2D_PointDouble.getUnique(points, env.epsilon);
+        ArrayList<V2D_PointDouble> uniquePoints = V2D_PointDouble.getUnique(points, epsilon);
         //uniquePoints.sort(V2D_PointDouble::compareTo);
         uniquePoints.sort((p1, p2) -> p1.compareTo(p2));
         // Compute convex hull
@@ -123,7 +123,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
             }
             h.add(pt);
         }
-        ArrayList<V2D_PointDouble> ups = V2D_PointDouble.getUnique(h, env.epsilon);        
+        ArrayList<V2D_PointDouble> ups = V2D_PointDouble.getUnique(h, epsilon);        
         this.points = new HashMap<>();
         for (var p: ups) {
             this.points.put(this.points.size(), p);
@@ -150,8 +150,8 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      *
      * @param ch The convex hull.
      */
-    public V2D_ConvexHullDouble(V2D_ConvexHullDouble ch) {
-        this(ch.getPointsArray());
+    public V2D_ConvexHullDouble(V2D_ConvexHullDouble ch, double epsilon) {
+        this(epsilon, ch.getPointsArray());
     }
 
     /**
@@ -161,8 +161,9 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @param t The triangle used to set the normal and to add to the convex
      * hull with ch.
      */
-    public V2D_ConvexHullDouble(V2D_ConvexHullDouble ch, V2D_TriangleDouble t) {
-        this(V2D_FiniteGeometryDouble.getPoints(ch, t));
+    public V2D_ConvexHullDouble(V2D_ConvexHullDouble ch, V2D_TriangleDouble t,
+            double epsilon) {
+        this(epsilon, V2D_FiniteGeometryDouble.getPoints(ch, t));
     }
 
     @Override
@@ -501,7 +502,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
             double epsilon) {
         theta = Math_AngleDouble.normalise(theta);
         if (theta == 0d) {
-            return new V2D_ConvexHullDouble(this);
+            return new V2D_ConvexHullDouble(this, epsilon);
         } else {
             return rotateN(pt, theta, epsilon);
         }
@@ -513,7 +514,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
         for (int i = 0; i < points.size(); i++) {
             pts[0] = points.get(i).rotateN(pt, theta, epsilon);
         }
-        return new V2D_ConvexHullDouble(pts);
+        return new V2D_ConvexHullDouble(epsilon, pts);
     }
 
     @Override
@@ -679,7 +680,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
                 if (V2D_LineDouble.isCollinear(epsilon, ip, iq, ir)) {
                     return new V2D_LineSegmentDouble(epsilon, pts);
                 } else {
-                    return new V2D_ConvexHullDouble(pts);
+                    return new V2D_ConvexHullDouble(epsilon, pts);
                 }
             }
         }

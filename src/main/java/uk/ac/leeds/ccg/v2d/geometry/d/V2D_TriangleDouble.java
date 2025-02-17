@@ -869,7 +869,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
                         if (gpql.isIntersectedBy(gqrp, epsilon)) {
                             return gpql;
                         } else {
-                            return new V2D_ConvexHullDouble(gpql.getP(),
+                            return new V2D_ConvexHullDouble(epsilon, gpql.getP(),
                                     gpql.getQ(), gqrp);
                         }
                     } else if (grp instanceof V2D_PointDouble grpp) {
@@ -885,7 +885,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
                             case 3 ->
                                 new V2D_TriangleDouble(pts2.get(0), pts2.get(1), pts2.get(2));
                             default ->
-                                new V2D_ConvexHullDouble(gpql.getP(),
+                                new V2D_ConvexHullDouble(epsilon, gpql.getP(),
                                 gpql.getQ(), gqrp, grpp);
                         };
                     } else {
@@ -1151,7 +1151,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
                     pts[i] = p;
                     i++;
                 }
-                return new V2D_ConvexHullDouble(pts);
+                return new V2D_ConvexHullDouble(epsilon, pts);
             }
         }
     }
@@ -1219,7 +1219,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
             V2D_PointDouble cdp = cd.getP();
             if (pt == null) {
                 //V2D_TriangleDouble t = new V2D_TriangleDouble(cd, abp);
-                return new V2D_ConvexHullDouble(abp, cdp, ab.getQ(), cd.getQ());
+                return new V2D_ConvexHullDouble(epsilon, abp, cdp, ab.getQ(), cd.getQ());
             } else {
                 if (abp.equals(pt, epsilon)) {
                     if (cdp.equals(pt, epsilon)) {
