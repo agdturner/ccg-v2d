@@ -131,11 +131,12 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
         // Add edge
         edges = new HashMap<>();
         V2D_PointDouble p0 = this.points.get(0);
-        V2D_PointDouble p1;
         for (int i = 1; i < this.points.size(); i ++) {
-            p1 = this.points.get(i);
+            V2D_PointDouble p1 = this.points.get(i);
             edges.put(edges.size(), new V2D_LineSegmentDouble(p0, p1));
+            p0 = p1;
         }
+        edges.put(edges.size(), new V2D_LineSegmentDouble(p0, this.points.get(0)));
     }
 
     // ccw returns true if the three points make a counter-clockwise turn

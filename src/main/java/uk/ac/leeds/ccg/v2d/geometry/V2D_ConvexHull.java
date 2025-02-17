@@ -135,11 +135,12 @@ public class V2D_ConvexHull extends V2D_Shape {
         // Add edge
         edges = new HashMap<>();
         V2D_Point p0 = this.points.get(0);
-        V2D_Point p1;
         for (int i = 1; i < this.points.size(); i ++) {
-            p1 = this.points.get(i);
+            V2D_Point p1 = this.points.get(i);
             edges.put(edges.size(), new V2D_LineSegment(p0, p1, oom, rm));
+            p0 = p1;
         }
+        edges.put(edges.size(), new V2D_LineSegment(p0, this.points.get(0), oom, rm));
     }
 
     // ccw returns true if the three points make a counter-clockwise turn

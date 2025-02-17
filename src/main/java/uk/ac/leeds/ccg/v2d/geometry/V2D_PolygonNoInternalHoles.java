@@ -65,7 +65,8 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
      * @param rm The RoundingMode for any rounding.
      */
     public V2D_PolygonNoInternalHoles(V2D_PolygonNoInternalHoles p, int oom, RoundingMode rm) {
-        this(p.getConvexHull(oom, rm), p.getExternalEdges(), p.getExternalHoles(oom, rm));
+        this(p.getPoints(oom, rm), p.getConvexHull(oom, rm), 
+                p.getExternalEdges(), p.getExternalHoles(oom, rm));
     }
 
     /**
@@ -88,6 +89,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
      */
     public V2D_PolygonNoInternalHoles(V2D_Point[] points, int oom, RoundingMode rm) {
         super(points[0].env, V2D_Vector.ZERO);
+        this.points = new HashMap<>();
         ch = new V2D_ConvexHull(oom, rm, points);
         // construct edges and points
         externalEdges = new HashMap<>();
@@ -99,7 +101,6 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
         p.p1 = points[1];
         p.pts = new ArrayList<>();
         p.points = points;
-        this.points = new HashMap<>();
         if (p.p0.equals(p.p1, oom, rm)) {
             p.p1int = p.p0int;
         } else {
@@ -147,6 +148,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
                     }
                 }
             }
+            this.points.put(this.points.size(), p.p0);
             externalEdges.put(externalEdges.size(), new V2D_LineSegment(p.p0, p.p1, oom, rm));
         }
     }
@@ -166,14 +168,17 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
     /**
      * Create a new instance.
      *
+     * 
      * @param ch What {@link #ch} is set to.
      * @param externalEdges What {@link #externalEdges} is set to.
      * @param externalHoles What {@link #externalHoles} is set to.
      */
-    public V2D_PolygonNoInternalHoles(V2D_ConvexHull ch,
+    public V2D_PolygonNoInternalHoles(HashMap<Integer, V2D_Point> points,
+            V2D_ConvexHull ch,
             HashMap<Integer, V2D_LineSegment> externalEdges,
             HashMap<Integer, V2D_PolygonNoInternalHoles> externalHoles) {
         super(ch.env, V2D_Vector.ZERO);
+        this.points = points;
         this.ch = ch;
         this.externalEdges = externalEdges;
         this.externalHoles = externalHoles;
@@ -614,6 +619,10 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
     public V2D_PolygonNoInternalHoles rotateN(V2D_Point pt, BigRational theta,
             Math_BigDecimal bd, int oom, RoundingMode rm) {
         V2D_ConvexHull rch = getConvexHull(oom, rm).rotate(pt, theta, bd, oom, rm);
+        HashMap<Integer, V2D_Point> rPoints = new HashMap<>();
+        for (var x : this.points.entrySet()) {
+            rPoints.put(x.getKey(), x.getValue().rotateN(pt, theta, bd, oom, rm));
+        }
         HashMap<Integer, V2D_LineSegment> rExternalEdges = new HashMap<>();
         if (externalEdges != null) {
             for (int i = 0; i < externalEdges.size(); i++) {
@@ -626,7 +635,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
                 rExternalHoles.put(rExternalHoles.size(), externalHoles.get(i).rotate(pt, theta, bd, oom, rm));
             }
         }
-        return new V2D_PolygonNoInternalHoles(rch, rExternalEdges, rExternalHoles);
+        return new V2D_PolygonNoInternalHoles(rPoints, rch, rExternalEdges, rExternalHoles);
     }
 
     @Override

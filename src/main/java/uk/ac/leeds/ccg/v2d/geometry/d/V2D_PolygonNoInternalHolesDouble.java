@@ -85,14 +85,8 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      */
     public V2D_PolygonNoInternalHolesDouble(V2D_PointDouble[] points, double epsilon) {
         super(points[0].env, V2D_VectorDouble.ZERO);
-        //System.out.println("points.length=" + points.length);
+        this.points = new HashMap<>();
         ch = new V2D_ConvexHullDouble(epsilon, points);
-        
-        if (ch.getPointsArray().length < 3) {
-            int debug = 1;
-        }
-        
-        // construct edges and points
         externalEdges = new HashMap<>();
         externalHoles = new HashMap<>();
         //if (points.length > 4) {
@@ -103,7 +97,6 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
             p.p1 = points[1];
             p.pts = new ArrayList<>();
             p.points = points;
-            this.points = new HashMap<>();
             if (p.p0.equals(p.p1, env.epsilon)) {
                 p.p1int = p.p0int;
             } else {
@@ -117,7 +110,6 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
                     }
                 }
             }
-
             for (int i = 2; i < points.length; i++) {
                 //System.out.println("i=" + i + " points.length=" + points.length);
                 doThing(env.epsilon, i, p);
@@ -180,7 +172,6 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
                     p.pts.add(p.p1);
                     //int externalHoleID = externalHoles.size();
                     //System.out.println("externalHoleID=" + externalHoleID);
-
                     try {
 
                         externalHoles.put(externalHoles.size(),
@@ -204,6 +195,7 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
                     }
                 }
             }
+            this.points.put(this.points.size(), p.p0);
             externalEdges.put(externalEdges.size(), new V2D_LineSegmentDouble(p.p0, p.p1));
         }
     }
