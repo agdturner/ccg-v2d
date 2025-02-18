@@ -122,8 +122,8 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
     @Override
     public boolean isIntersectedBy(V2D_Point pt, int oom, RoundingMode rm) {
         if (super.isIntersectedBy(pt, oom, rm)) {
-            //return !internalHoles.values().parallelStream().anyMatch(x -> x.contains(pt, oom, rm));
-            return !internalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(pt, oom, rm));
+            return !internalHoles.values().parallelStream().anyMatch(x -> x.contains(pt, oom, rm));
+            //return !internalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(pt, oom, rm));
         }
         return false;
     }
@@ -139,8 +139,12 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
     @Override
     public boolean isIntersectedBy(V2D_LineSegment l, int oom, RoundingMode rm) {
         if (super.isIntersectedBy(l, oom, rm)) {
-            //return !internalHoles.values().parallelStream().anyMatch(x -> x.contains(l, oom, rm));
-            return !internalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(l, oom, rm));
+            if (internalHoles.values().parallelStream().anyMatch(
+                    x -> V2D_LineSegment.isIntersectedBy(oom, rm, l, x.externalEdges.values()))) {
+                return true;
+            }
+            return !internalHoles.values().parallelStream().anyMatch(x -> x.contains(l, oom, rm));
+            //return !internalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(l, oom, rm));
         }
         return false;
     }
@@ -158,6 +162,12 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
     @Override
     public boolean isIntersectedBy(V2D_Triangle t, int oom, RoundingMode rm) {
         if (super.isIntersectedBy(t, oom, rm)) {
+            if (t.getEdges(oom, rm).parallelStream().anyMatch(x -> 
+                    internalHoles.values().parallelStream().anyMatch(y -> 
+                            V2D_LineSegment.isIntersectedBy(oom, rm, x, y.externalEdges.values())))) {
+                return true;
+            }
+            // This should probably be contains?
             //return !internalHoles.values().parallelStream().anyMatch(x -> x.contains(t, oom, rm));
             return !internalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(t, oom, rm));
         }
@@ -178,8 +188,13 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
             if (internalHoles.isEmpty()) {
                 return true;
             }
-            //return !internalHoles.values().parallelStream().anyMatch(x -> x.contains(r, oom, rm));
-            return !internalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(r, oom, rm));
+            if (r.getEdges(oom, rm).parallelStream().anyMatch(x -> 
+                    internalHoles.values().parallelStream().anyMatch(y -> 
+                            V2D_LineSegment.isIntersectedBy(oom, rm, x, y.externalEdges.values())))) {
+                return true;
+            }
+            return !internalHoles.values().parallelStream().anyMatch(x -> x.contains(r, oom, rm));
+            //return !internalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(r, oom, rm));
         }
         return false;
     }
@@ -198,8 +213,13 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
             if (internalHoles.isEmpty()) {
                 return true;
             }
-            //return !internalHoles.values().parallelStream().anyMatch(x -> x.contains(ch, oom, rm));
-            return !internalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(ch, oom, rm));
+            if (ch.getEdges(oom, rm).values().parallelStream().anyMatch(x -> 
+                    internalHoles.values().parallelStream().anyMatch(y -> 
+                            V2D_LineSegment.isIntersectedBy(oom, rm, x, y.externalEdges.values())))) {
+                return true;
+            }
+            return !internalHoles.values().parallelStream().anyMatch(x -> x.contains(ch, oom, rm));
+            //return !internalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(ch, oom, rm));
         }
         return false;
     }

@@ -580,7 +580,7 @@ public class V2D_Triangle extends V2D_Shape {
      * @param rm The RoundingMode if rounding is needed.
      * @return A collection of the external edges.
      */
-    public Collection<V2D_LineSegment> getExternalEdges(int oom, RoundingMode rm) {
+    public Collection<V2D_LineSegment> getEdges(int oom, RoundingMode rm) {
         HashSet<V2D_LineSegment> edges = new HashSet<>();
         edges.add(getPQ(oom, rm));
         edges.add(getQR(oom, rm));

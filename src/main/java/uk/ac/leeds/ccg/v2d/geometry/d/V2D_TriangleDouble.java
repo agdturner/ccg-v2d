@@ -339,9 +339,9 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
     }
 
     /**
-     * @return A collection of the external edges.
+     * @return A collection of the edges.
      */
-    public Collection<V2D_LineSegmentDouble> getExternalEdges() {
+    public Collection<V2D_LineSegmentDouble> getEdges() {
         HashSet<V2D_LineSegmentDouble> edges = new HashSet<>();
         edges.add(getPQ());
         edges.add(getQR());

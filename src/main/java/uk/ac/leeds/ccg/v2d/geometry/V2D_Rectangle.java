@@ -20,6 +20,7 @@ import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
 import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
@@ -141,6 +142,21 @@ public class V2D_Rectangle extends V2D_Shape {
         return pts;
     }
 
+    
+    /**
+     * @return A collection of the edges.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     */
+    public Collection<V2D_LineSegment> getEdges(int oom, RoundingMode rm) {
+        HashSet<V2D_LineSegment> edges = new HashSet<>();
+        edges.add(getPQ(oom, rm));
+        edges.add(getQR(oom, rm));
+        edges.add(getRS(oom, rm));
+        edges.add(getSP(oom, rm));
+        return edges;
+    }
+    
     /**
      * @return {@link #pqr}.
      */
@@ -259,6 +275,24 @@ public class V2D_Rectangle extends V2D_Shape {
         } else {
             return rsp.isIntersectedBy(t, oom, rm);
         }
+    }
+
+    /**
+     * @return The line segment from {@link #p} to {@link #q}.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     */
+    protected V2D_LineSegment getPQ(int oom, RoundingMode rm) {
+        return getPQR().getPQ(oom, rm);
+    }
+
+    /**
+     * @return The line segment from {@link #q} to {@link #r}.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     */
+    protected V2D_LineSegment getQR(int oom, RoundingMode rm) {
+        return getPQR().getQR(oom, rm);
     }
 
     /**

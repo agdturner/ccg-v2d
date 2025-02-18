@@ -504,7 +504,7 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
             if (isIntersectedBy(t.getEnvelope(), epsilon)) {                
                 // If any of the edges intersect or if one geometry contains the other, there is an intersection.
                 if (getExternalEdges().values().parallelStream().anyMatch(
-                        x -> V2D_LineSegmentDouble.isIntersectedBy(epsilon, x, t.getExternalEdges()))) {
+                        x -> V2D_LineSegmentDouble.isIntersectedBy(epsilon, x, t.getEdges()))) {
                     return true;
                 }
                 if (ch.isIntersectedBy(t, epsilon)) {
@@ -520,7 +520,7 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
                     if (isIntersectedBy(tr, epsilon)) {
                         return true;
                     }
-                    if (t.getExternalEdges().parallelStream().anyMatch(x
+                    if (t.getEdges().parallelStream().anyMatch(x
                             -> V2D_LineSegmentDouble.isIntersectedBy(
                                     epsilon, x, externalEdges.values()))) {
                         return true;

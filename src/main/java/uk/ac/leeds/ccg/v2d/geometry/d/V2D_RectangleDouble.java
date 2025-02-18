@@ -18,6 +18,7 @@ package uk.ac.leeds.ccg.v2d.geometry.d;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
 import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
 
@@ -143,6 +144,18 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
         r.put(3, getS());
         return r;
     }
+    
+    /**
+     * @return A collection of the edges.
+     */
+    public Collection<V2D_LineSegmentDouble> getEdges() {
+        HashSet<V2D_LineSegmentDouble> edges = new HashSet<>();
+        edges.add(getPQ());
+        edges.add(getQR());
+        edges.add(getRS());
+        edges.add(getSP());
+        return edges;
+    }
 
     /**
      * @return {@link #pqr}.
@@ -256,6 +269,20 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
         }
     }
 
+    /**
+     * @return The line segment from {@link #p} to {@link #q}.
+     */
+    protected V2D_LineSegmentDouble getPQ() {
+        return getPQR().getPQ();
+    }
+
+    /**
+     * @return The line segment from {@link #q} to {@link #r}.
+     */
+    protected V2D_LineSegmentDouble getQR() {
+        return getPQR().getQR();
+    }
+    
     /**
      * @return The line segment from {@link #r} to {@link #s}.
      */

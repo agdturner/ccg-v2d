@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
-import uk.ac.leeds.ccg.v2d.geometry.d.V2D_LineSegmentDouble;
 
 /**
  * For representing a polygon with no internal holes. External holes are similar
@@ -172,6 +171,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
      * Create a new instance.
      *
      *
+     * @param points
      * @param ch What {@link #ch} is set to.
      * @param externalEdges What {@link #externalEdges} is set to.
      * @param externalHoles What {@link #externalHoles} is set to.
@@ -460,7 +460,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
             if (isIntersectedBy(t.getEnvelope(oom, rm), oom, rm)) {
                 // If any of the edges intersect or if one geometry contains the other, there is an intersection.
                 if (getExternalEdges().values().parallelStream().anyMatch(
-                        x -> V2D_LineSegment.isIntersectedBy(oom, rm, x, t.getExternalEdges(oom, rm)))) {
+                        x -> V2D_LineSegment.isIntersectedBy(oom, rm, x, t.getEdges(oom, rm)))) {
                     return true;
                 }
                 if (ch.isIntersectedBy(t, oom, rm)) {
@@ -476,7 +476,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
                     if (isIntersectedBy(tr, oom, rm)) {
                         return true;
                     }
-                    if (t.getExternalEdges(oom, rm).parallelStream().anyMatch(x
+                    if (t.getEdges(oom, rm).parallelStream().anyMatch(x
                             -> V2D_LineSegment.isIntersectedBy(oom, rm, x, externalEdges.values()))) {
                         return true;
                     }
