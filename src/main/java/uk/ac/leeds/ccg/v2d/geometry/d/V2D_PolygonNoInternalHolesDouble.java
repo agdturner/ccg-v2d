@@ -90,31 +90,31 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
         externalEdges = new HashMap<>();
         externalHoles = new HashMap<>();
         //if (points.length > 4) {
-            PTThing p = new PTThing();
-            p.p0 = points[0];
-            p.isHole = false;
-            p.p0int = V2D_LineSegmentDouble.isIntersectedBy(env.epsilon, p.p0, ch.edges.values());
-            p.p1 = points[1];
-            p.pts = new ArrayList<>();
-            p.points = points;
-            if (p.p0.equals(p.p1, env.epsilon)) {
-                p.p1int = p.p0int;
-            } else {
-                this.points.put(this.points.size(), p.p0);
-                externalEdges.put(externalEdges.size(), new V2D_LineSegmentDouble(p.p0, p.p1));
-                p.p1int = V2D_LineSegmentDouble.isIntersectedBy(env.epsilon, p.p1, ch.edges.values());
-                if (p.p0int) {
-                    if (!p.p1int) {
-                        p.pts.add(p.p0);
-                        p.isHole = true;
-                    }
+        PTThing p = new PTThing();
+        p.p0 = points[0];
+        p.isHole = false;
+        p.p0int = V2D_LineSegmentDouble.isIntersectedBy(env.epsilon, p.p0, ch.edges.values());
+        p.p1 = points[1];
+        p.pts = new ArrayList<>();
+        p.points = points;
+        if (p.p0.equals(p.p1, env.epsilon)) {
+            p.p1int = p.p0int;
+        } else {
+            this.points.put(this.points.size(), p.p0);
+            externalEdges.put(externalEdges.size(), new V2D_LineSegmentDouble(p.p0, p.p1));
+            p.p1int = V2D_LineSegmentDouble.isIntersectedBy(env.epsilon, p.p1, ch.edges.values());
+            if (p.p0int) {
+                if (!p.p1int) {
+                    p.pts.add(p.p0);
+                    p.isHole = true;
                 }
             }
-            for (int i = 2; i < points.length; i++) {
-                //System.out.println("i=" + i + " points.length=" + points.length);
-                doThing(env.epsilon, i, p);
-            }
-            doThing(env.epsilon, 0, p);
+        }
+        for (int i = 2; i < points.length; i++) {
+            //System.out.println("i=" + i + " points.length=" + points.length);
+            doThing(env.epsilon, i, p);
+        }
+        doThing(env.epsilon, 0, p);
 //        } else {
 //            if (p.isHole) {
 //                if (p.p0.equals(points[2], env.epsilon)) {
@@ -501,7 +501,12 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      */
     public boolean isIntersectedBy(V2D_TriangleDouble t, double epsilon) {
         if (t.isIntersectedBy(getEnvelope(), epsilon)) {
-            if (isIntersectedBy(t.getEnvelope(), epsilon)) {
+            if (isIntersectedBy(t.getEnvelope(), epsilon)) {                
+                // If any of the edges intersect or if one geometry contains the other, there is an intersection.
+                if (getExternalEdges().values().parallelStream().anyMatch(
+                        x -> V2D_LineSegmentDouble.isIntersectedBy(epsilon, x, t.getExternalEdges()))) {
+                    return true;
+                }
                 if (ch.isIntersectedBy(t, epsilon)) {
                     V2D_PointDouble tp = t.getP();
                     if (isIntersectedBy(tp, epsilon)) {
@@ -565,6 +570,10 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
     public boolean isIntersectedBy(V2D_ConvexHullDouble ch, double epsilon) {
         if (ch.isIntersectedBy(getEnvelope(), epsilon)) {
             if (isIntersectedBy(ch.getEnvelope(), epsilon)) {
+                // If any of the edges intersect or if one geometry contains the other, there is an intersection.
+                if (getExternalEdges().values().parallelStream().anyMatch(x -> V2D_LineSegmentDouble.isIntersectedBy(epsilon, x, ch.getEdges().values()))) {
+                    return true;
+                }
                 //if (Arrays.asList(ch.getPoints()).parallelStream().anyMatch(x -> isIntersectedBy(x, epsilon))) {
                 if (ch.getPoints().values().parallelStream().anyMatch(x -> isIntersectedBy(x, epsilon))) {
                     return true;
@@ -589,13 +598,21 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
     public boolean isIntersectedBy(V2D_PolygonNoInternalHolesDouble p, double epsilon) {
         if (p.isIntersectedBy(getEnvelope(), epsilon)) {
             if (isIntersectedBy(p.getEnvelope(), epsilon)) {
-                //if (Arrays.asList(getPoints()).parallelStream().anyMatch(x -> p.isIntersectedBy(x, epsilon))) {
-                if (getPoints().values().parallelStream().anyMatch(x -> p.isIntersectedBy(x, epsilon))) {
-                    return true;
-                }
-                //if (Arrays.asList(p.getPoints()).parallelStream().anyMatch(x -> isIntersectedBy(x, epsilon))) {
-                if (p.getPoints().values().parallelStream().anyMatch(x -> isIntersectedBy(x, epsilon))) {
-                    return true;
+                if (p.isIntersectedBy(ch, epsilon)) {
+                    if (isIntersectedBy(p.ch, epsilon)) {
+                        // If any of the edges intersect or if one polygon contains the other, there is an intersection.
+                        if (getExternalEdges().values().parallelStream().anyMatch(x -> V2D_LineSegmentDouble.isIntersectedBy(epsilon, x, p.getExternalEdges().values()))) {
+                            return true;
+                        }
+                        //if (Arrays.asList(getPoints()).parallelStream().anyMatch(x -> p.isIntersectedBy(x, epsilon))) {
+                        if (getPoints().values().parallelStream().anyMatch(x -> p.isIntersectedBy(x, epsilon))) {
+                            return true;
+                        }
+                        //if (Arrays.asList(p.getPoints()).parallelStream().anyMatch(x -> isIntersectedBy(x, epsilon))) {
+                        if (p.getPoints().values().parallelStream().anyMatch(x -> isIntersectedBy(x, epsilon))) {
+                            return true;
+                        }
+                    }
                 }
             }
         }
