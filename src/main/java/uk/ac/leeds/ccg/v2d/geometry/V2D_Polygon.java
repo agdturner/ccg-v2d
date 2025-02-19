@@ -162,7 +162,7 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
     @Override
     public boolean isIntersectedBy(V2D_Triangle t, int oom, RoundingMode rm) {
         if (super.isIntersectedBy(t, oom, rm)) {
-            if (t.getEdges(oom, rm).parallelStream().anyMatch(x -> 
+            if (t.getEdges(oom, rm).values().parallelStream().anyMatch(x -> 
                     internalHoles.values().parallelStream().anyMatch(y -> 
                             V2D_LineSegment.isIntersectedBy(oom, rm, x, y.externalEdges.values())))) {
                 return true;
@@ -188,7 +188,7 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
             if (internalHoles.isEmpty()) {
                 return true;
             }
-            if (r.getEdges(oom, rm).parallelStream().anyMatch(x -> 
+            if (r.getEdges(oom, rm).values().parallelStream().anyMatch(x -> 
                     internalHoles.values().parallelStream().anyMatch(y -> 
                             V2D_LineSegment.isIntersectedBy(oom, rm, x, y.externalEdges.values())))) {
                 return true;

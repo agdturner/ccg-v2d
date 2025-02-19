@@ -20,7 +20,6 @@ import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
 import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
@@ -148,12 +147,13 @@ public class V2D_Rectangle extends V2D_Shape {
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
      */
-    public Collection<V2D_LineSegment> getEdges(int oom, RoundingMode rm) {
-        HashSet<V2D_LineSegment> edges = new HashSet<>();
-        edges.add(getPQ(oom, rm));
-        edges.add(getQR(oom, rm));
-        edges.add(getRS(oom, rm));
-        edges.add(getSP(oom, rm));
+    @Override
+    public HashMap<Integer, V2D_LineSegment> getEdges(int oom, RoundingMode rm) {
+        HashMap<Integer, V2D_LineSegment> edges = new HashMap<>();
+        edges.put(0, getPQ(oom, rm));
+        edges.put(0, getQR(oom, rm));
+        edges.put(0, getRS(oom, rm));
+        edges.put(0, getSP(oom, rm));
         return edges;
     }
     

@@ -66,7 +66,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
      */
     public V2D_PolygonNoInternalHoles(V2D_PolygonNoInternalHoles p, int oom, RoundingMode rm) {
         this(p.getPoints(oom, rm), p.getConvexHull(oom, rm),
-                p.getExternalEdges(), p.getExternalHoles(oom, rm));
+                p.getEdges(), p.getExternalHoles());
     }
 
     /**
@@ -236,11 +236,13 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
     public V2D_ConvexHull getConvexHull(int oom, RoundingMode rm) {
         return new V2D_ConvexHull(ch, oom, rm);
     }
+    
+    
 
     /**
      * @return A copy of {@link externalEdges}.
      */
-    public HashMap<Integer, V2D_LineSegment> getExternalEdges() {
+    public HashMap<Integer, V2D_LineSegment> getEdges() {
         HashMap<Integer, V2D_LineSegment> r = new HashMap<>();
         for (V2D_LineSegment l : externalEdges.values()) {
             r.put(r.size(), new V2D_LineSegment(l));
@@ -248,6 +250,14 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
         return r;
     }
 
+    /**
+     * @return {@link externalEdges}.
+     */
+    @Override
+    public HashMap<Integer, V2D_LineSegment> getEdges(int oom, RoundingMode rm) {
+        return externalEdges;
+    }
+    
     /**
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
@@ -259,6 +269,13 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
             r.put(r.size(), new V2D_PolygonNoInternalHoles(h, oom, rm));
         }
         return r;
+    }
+    
+    /**
+     * @return {@link externalHoles}.
+     */
+    public HashMap<Integer, V2D_PolygonNoInternalHoles> getExternalHoles() {
+        return externalHoles;
     }
 
     @Override
@@ -289,7 +306,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
      * @return {@code true} iff there is an intersection.
      */
     public boolean isIntersectedBy(V2D_Point pt, int oom, RoundingMode rm) {
-        if (getEnvelope(oom, rm).isIntersectedBy(pt, oom, rm)) {
+        if (getEnvelope(oom, rm).contains(pt, oom)) {
             if (ch.isIntersectedBy(pt, oom, rm)) {
                 if (V2D_LineSegment.isIntersectedBy(oom, rm, pt, externalEdges.values())) {
                     return true;
@@ -458,11 +475,6 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
     public boolean isIntersectedBy(V2D_Triangle t, int oom, RoundingMode rm) {
         if (t.isIntersectedBy(getEnvelope(oom, rm), oom, rm)) {
             if (isIntersectedBy(t.getEnvelope(oom, rm), oom, rm)) {
-                // If any of the edges intersect or if one geometry contains the other, there is an intersection.
-                if (getExternalEdges().values().parallelStream().anyMatch(
-                        x -> V2D_LineSegment.isIntersectedBy(oom, rm, x, t.getEdges(oom, rm)))) {
-                    return true;
-                }
                 if (ch.isIntersectedBy(t, oom, rm)) {
                     V2D_Point tp = t.getP(oom, rm);
                     if (isIntersectedBy(tp, oom, rm)) {
@@ -476,8 +488,8 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
                     if (isIntersectedBy(tr, oom, rm)) {
                         return true;
                     }
-                    if (t.getEdges(oom, rm).parallelStream().anyMatch(x
-                            -> V2D_LineSegment.isIntersectedBy(oom, rm, x, externalEdges.values()))) {
+                    if (t.getEdges(oom, rm).values().parallelStream().anyMatch(x -> 
+                            V2D_LineSegment.isIntersectedBy(oom, rm, x, externalEdges.values()))) {
                         return true;
                     }
                     return !(externalHoles.values().parallelStream().anyMatch(x
@@ -527,7 +539,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
         if (ch.isIntersectedBy(getEnvelope(oom, rm), oom, rm)) {
             if (isIntersectedBy(ch.getEnvelope(oom, rm), oom, rm)) {
                 // If any of the edges intersect or if one geometry contains the other, there is an intersection.
-                if (getExternalEdges().values().parallelStream().anyMatch(x -> V2D_LineSegment.isIntersectedBy(oom, rm, x, ch.getEdges(oom, rm).values()))) {
+                if (getEdges().values().parallelStream().anyMatch(x -> V2D_LineSegment.isIntersectedBy(oom, rm, x, ch.getEdges(oom, rm).values()))) {
                     return true;
                 }
                 //if (Arrays.asList(ch.getPointsArray(oom, rm)).parallelStream().anyMatch(x -> isIntersectedBy(x, oom, rm))) {
@@ -557,7 +569,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
                 if (p.isIntersectedBy(ch, oom, rm))  {
                     if (isIntersectedBy(p.ch, oom, rm)) {
                         // If any of the edges intersect or if one polygon contains the other, there is an intersection.
-                        if (getExternalEdges().values().parallelStream().anyMatch(x -> V2D_LineSegment.isIntersectedBy(oom, rm, x, p.getExternalEdges().values()))) {
+                        if (getEdges().values().parallelStream().anyMatch(x -> V2D_LineSegment.isIntersectedBy(oom, rm, x, p.getEdges().values()))) {
                             return true;
                         }
                         //if (Arrays.asList(getPointsArray(oom, rm)).parallelStream().anyMatch(x -> p.isIntersectedBy(x, oom, rm))) {

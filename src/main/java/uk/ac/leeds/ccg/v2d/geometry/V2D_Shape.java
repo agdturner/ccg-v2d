@@ -57,13 +57,23 @@ public abstract class V2D_Shape extends V2D_FiniteGeometry {
             RoundingMode rm);
     
     /**
+     * For getting the edges of a shape.
+     * 
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return A HashMap of the points with integer identifier keys.
+     */
+    public abstract HashMap<Integer, V2D_LineSegment> getEdges(int oom, 
+            RoundingMode rm);
+    
+    /**
      * @return A copy of the points of the geometries gs.
      * 
      * @param ss The geometries.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
      */
-    public ArrayList<V2D_Point> getPoints(HashMap<Integer, V2D_Shape> ss, 
+    public static ArrayList<V2D_Point> getPoints(HashMap<Integer, V2D_Shape> ss, 
             int oom, RoundingMode rm) {
         ArrayList<V2D_Point> list = new ArrayList<>();
         ss.values().forEach(x -> list.addAll(x.getPoints(oom, rm).values()));

@@ -90,6 +90,7 @@ public class V2D_EnvelopeDouble implements Serializable {
     /**
      * Create a new instance.
      *
+     * @param env The environment.
      * @param x The x-coordinate of a point.
      * @param y The y-coordinate of a point.
      */
@@ -100,6 +101,7 @@ public class V2D_EnvelopeDouble implements Serializable {
     /**
      * Create a new instance.
      *
+     * @param env The environment.
      * @param xMin What {@link xMin} is set to.
      * @param xMax What {@link xMax} is set to.
      * @param yMin What {@link yMin} is set to.
@@ -300,6 +302,18 @@ public class V2D_EnvelopeDouble implements Serializable {
                 && getXMin() >= e.getXMin()
                 && getYMax() <= e.getYMax()
                 && getYMin() >= e.getYMin();
+    }
+    
+    /**
+     * @param e V3D_Envelope The envelope to test if it is contained.
+     * @param oom The Order of Magnitude for the precision.
+     * @return {@code true} iff {@code e} is contained by {@code this}
+     */
+    public boolean contains(V2D_EnvelopeDouble e, int oom) {
+        return getXMax() >= e.getXMax()
+               && getXMin() <= e.getXMin()
+               && getYMax() >= e.getYMax()
+               && getYMin() <= e.getYMin();
     }
 
     /**

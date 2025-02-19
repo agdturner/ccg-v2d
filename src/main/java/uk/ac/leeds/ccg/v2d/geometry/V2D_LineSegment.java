@@ -313,7 +313,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @return {@code true} if {@code this} is intersected by {@code pv}.
      */
     public boolean isIntersectedBy(V2D_Point pt, int oom, RoundingMode rm) {
-        if (getEnvelope(oom, rm).isIntersectedBy(pt.getEnvelope(oom, rm), oom)) {
+        if (getEnvelope(oom, rm).contains(pt, oom)) {
             if (l.isIntersectedBy(pt, oom, rm)) {
                 V2D_Point tp = getP();
                 Math_BigRationalSqrt a = pt.getDistance(oom, rm, tp);
@@ -355,7 +355,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
         }
         return false;
     }
-    
+
     /**
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
@@ -372,7 +372,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
 //        }
 //        return false;
     }
-    
+
     /**
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
@@ -380,11 +380,11 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @param ls The other lines to test for intersection with l.
      * @return {@code true} if {@code this} is intersected by {@code pv}.
      */
-    public static boolean isIntersectedBy(int oom, RoundingMode rm, 
+    public static boolean isIntersectedBy(int oom, RoundingMode rm,
             V2D_LineSegment l, Collection<V2D_LineSegment> ls) {
         return ls.parallelStream().anyMatch(x -> x.isIntersectedBy(l, oom, rm));
     }
-    
+
     /**
      * @param p A point to test for intersection.
      * @param ls The lines to test for intersection with p.
@@ -392,7 +392,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @param rm The RoundingMode for any rounding.
      * @return {@code true} if {@code this} is intersected by {@code pv}.
      */
-    public static boolean isIntersectedBy(int oom, RoundingMode rm, V2D_Point p, 
+    public static boolean isIntersectedBy(int oom, RoundingMode rm, V2D_Point p,
             V2D_LineSegment... ls) {
         return isIntersectedBy(oom, rm, p, Arrays.asList(ls));
     }
@@ -407,7 +407,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
     public static boolean isIntersectedBy(int oom, RoundingMode rm, V2D_Point p, Collection<V2D_LineSegment> ls) {
         return ls.parallelStream().anyMatch(x -> x.isIntersectedBy(p, oom, rm));
     }
-    
+
     /**
      * @param l A line segment to test for intersection.
      * @param oom The Order of Magnitude for the precision.
@@ -415,12 +415,24 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @return {@code true} if {@code this} is intersected by {@code pv}.
      */
     public boolean isIntersectedBy(V2D_LineSegment l, int oom, RoundingMode rm) {
-        //if (l.isIntersectedBy(getEnvelope(oom, rm), epsilon)) {
-        //    if (isIntersectedBy(l.getEnvelope(oom, rm), epsilon)) {
+        en = getEnvelope(oom, rm);
+        if (en.contains(l.getP(), oom) || en.contains(l.getQ(oom, rm), oom)) {
+            l.en = l.getEnvelope(oom, rm);
+            if (l.en.contains(getP(), oom) || l.en.contains(getQ(oom, rm), oom)) {
+                return getIntersection(l, oom, rm) != null;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param l A line segment to test for intersection.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     */
+    public boolean isIntersectedBy0(V2D_LineSegment l, int oom, RoundingMode rm) {
         return getIntersection(l, oom, rm) != null;
-        //    }
-        //}
-        //return false;
     }
 
     /**
@@ -1488,11 +1500,11 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
     public boolean isIntersectedBy(V2D_Envelope aabb, int oom, RoundingMode rm) {
         if (getEnvelope(oom, rm).isIntersectedBy(aabb, oom)) {
             V2D_Point p = getP();
-            if (aabb.isIntersectedBy(p, oom, rm)) {
+            if (aabb.contains(p, oom)) {
                 return true;
             }
             V2D_Point q = getQ(oom, rm);
-            if (aabb.isIntersectedBy(q, oom, rm)) {
+            if (aabb.contains(q, oom)) {
                 return true;
             }
             V2D_FiniteGeometry left = aabb.getLeft(oom, rm);

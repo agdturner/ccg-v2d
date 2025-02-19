@@ -314,13 +314,25 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      */
     public boolean isIntersectedBy(V2D_PointDouble pt, double epsilon) {
         if (getEnvelope().isIntersectedBy(pt)) {
-            return getTriangles().parallelStream().anyMatch(x -> x.isIntersectedBy(pt, epsilon));
+            return isIntersectedBy0(pt, epsilon);
         }
         return false;
     }
     
     /**
-     * Identify if this contains point.
+     * Identify if this is intersected by point. This does not check the envelope.
+     *
+     * @param pt The point to test for intersection with.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff the geometry is intersected by {@code p}.
+     */
+    public boolean isIntersectedBy0(V2D_PointDouble pt, double epsilon) {
+        return getTriangles().parallelStream().anyMatch(x -> x.isIntersectedBy(pt, epsilon));
+    }
+    
+    /**
+     * Identify if this contains point. 
      *
      * @param pt The point to test for intersection with.
      * @param epsilon The tolerance within which two vectors are regarded as
@@ -328,6 +340,21 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @return {@code true} iff the geometry is intersected by {@code p}.
      */
     public boolean contains(V2D_PointDouble pt, double epsilon) {
+        //if (getEnvelope().contains(pt)) {
+            return contains0(pt, epsilon);
+        //}
+        //return false;
+    }
+    
+    /**
+     * Identify if this contains point. This does not check the envelope.
+     *
+     * @param pt The point to test for intersection with.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff the geometry is intersected by {@code p}.
+     */
+    public boolean contains0(V2D_PointDouble pt, double epsilon) {
         if (isIntersectedBy(pt, epsilon)) {
             return !V2D_LineSegmentDouble.isIntersectedBy(epsilon, pt, edges.values());
         }

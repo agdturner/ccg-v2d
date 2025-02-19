@@ -18,6 +18,7 @@ package uk.ac.leeds.ccg.v2d.geometry;
 import ch.obermuhlner.math.big.BigRational;
 import java.io.Serializable;
 import java.math.RoundingMode;
+import java.util.HashSet;
 import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
 
 /**
@@ -63,6 +64,26 @@ public class V2D_Envelope implements Serializable {
     private BigRational yMax;
 
     /**
+     * For storing the lower left point.
+     */
+    protected V2D_Point ll;
+
+    /**
+     * For storing the upper left point.
+     */
+    protected V2D_Point ul;
+
+    /**
+     * For storing the upper right point.
+     */
+    protected V2D_Point ur;
+
+    /**
+     * For storing the lower right point.
+     */
+    protected V2D_Point lr;
+    
+    /**
      * The top edge.
      */
     protected V2D_FiniteGeometry t;
@@ -81,11 +102,6 @@ public class V2D_Envelope implements Serializable {
      * The left edge.
      */
     protected V2D_FiniteGeometry l;
-    
-    /**
-     * For storing all the corner points. These are in order: lb, lt, rt, rb.
-     */
-    protected V2D_Point[] pts;
     
     /**
      * @param e An envelop.
@@ -115,7 +131,6 @@ public class V2D_Envelope implements Serializable {
             e = e.union(new V2D_Envelope(g, oom, rm), oom);
         }
         this.offset = e.offset;
-        this.pts = e.pts;
         this.xMax = e.xMax;
         this.xMin = e.xMin;
         this.yMax = e.yMax;
@@ -224,6 +239,15 @@ public class V2D_Envelope implements Serializable {
                 + ", yMin=" + getYMin(oom, rm) + ", yMax=" + getYMax(oom, rm) + ")";
     }
 
+    public HashSet<V2D_Point> getPoints() {
+        HashSet<V2D_Point> points = new HashSet<>(4);
+        points.add(getLL());
+        points.add(getUL());
+        points.add(getUR());
+        points.add(getLR());
+        return points;
+    }
+    
     /**
      * Translates this using {@code v}.
      *
@@ -233,6 +257,34 @@ public class V2D_Envelope implements Serializable {
      */
     public void translate(V2D_Vector v, int oom, RoundingMode rm) {
         offset = offset.add(v, oom, rm);
+        if (ll != null) {
+            ll.translate(v, oom, rm);
+        }
+        if (ul != null) {
+            ul.translate(v, oom, rm);
+        }
+        if (ur != null) {
+            ur.translate(v, oom, rm);
+        }
+        if (lr != null) {
+            lr.translate(v, oom, rm);
+        }
+        if (l != null) {
+            l.translate(v, oom, rm);
+        }
+        if (t != null) {
+            l.translate(v, oom, rm);
+        }
+        if (r != null) {
+            l.translate(v, oom, rm);
+        }
+        if (b != null) {
+            l.translate(v, oom, rm);
+        }
+        xMax = xMax.add(v.getDX(oom, rm));
+        xMin = xMin.add(v.getDX(oom, rm));
+        yMax = yMax.add(v.getDY(oom, rm));
+        yMin = yMin.add(v.getDY(oom, rm));
     }
 
     /**
@@ -241,7 +293,7 @@ public class V2D_Envelope implements Serializable {
      * @return an Envelope which is {@code this} union {@code e}.
      */
     public V2D_Envelope union(V2D_Envelope e, int oom) {
-        if (e.isContainedBy(this, oom)) {
+        if (this.contains(e, oom)) {
             return this;
         } else {
             return new V2D_Envelope(env, oom,
@@ -290,58 +342,84 @@ public class V2D_Envelope implements Serializable {
     }
 
     /**
-     * Containment includes the boundary. So anything in or on the boundary is
-     * contained.
-     *
-     * @param e V3D_Envelope
+     * @param e V3D_Envelope The envelope to test if it is contained.
      * @param oom The Order of Magnitude for the precision.
-     * @return if this is contained by {@code e}
+     * @return {@code true} iff {@code e} is contained by {@code this}
      */
-    public boolean isContainedBy(V2D_Envelope e, int oom) {
-        return getXMax(oom).compareTo(e.getXMax(oom)) != 1
-                && getXMin(oom).compareTo(e.getXMin(oom)) != -1
-                && getYMax(oom).compareTo(e.getYMax(oom)) != 1
-                && getYMin(oom).compareTo(e.getYMin(oom)) != -1;
+    public boolean contains(V2D_Envelope e, int oom) {
+        return getXMax(oom).compareTo(e.getXMax(oom))!= -1
+                && getXMin(oom).compareTo(e.getXMin(oom)) != 1
+                && getYMax(oom).compareTo(e.getYMax(oom)) != -1
+                && getYMin(oom).compareTo(e.getYMin(oom)) != 1;
     }
-
+    
     /**
-     * @param p The point to test for intersection.
-     * @param oom The Order of Magnitude for the precision.
-     * @param rm The RoundingMode for any rounding.
-     * @return {@code true} if this intersects with {@code pl}
-     */
-    public boolean isIntersectedBy(V2D_Point p, int oom, RoundingMode rm) {
-        return isIntersectedBy(p.getX(oom, rm), p.getY(oom, rm), oom);
-    }
-
-    /**
-     * This biases intersection.
+     * The location of p may get rounded.
      *
+     * @param p The point to test if it is contained.
+     * @param oom The Order of Magnitude for the precision.
+     * @return {@code} true iff {@code this} contains {@code p}
+     */
+    public boolean contains(V2D_Point p, int oom) {
+        BigRational xu = p.getX(oom, RoundingMode.CEILING);
+        BigRational xl = p.getX(oom, RoundingMode.FLOOR);
+        BigRational yu = p.getY(oom, RoundingMode.CEILING);
+        BigRational yl = p.getY(oom, RoundingMode.FLOOR);
+        return getXMax(oom).compareTo(xl) != -1
+                && getXMin(oom).compareTo(xu) != 1
+                && getYMax(oom).compareTo(yl) != -1
+                && getYMin(oom).compareTo(yu) != 1;
+    }
+    
+    /**
      * @param x The x-coordinate of the point to test for intersection.
      * @param y The y-coordinate of the point to test for intersection.
      * @param oom The Order of Magnitude for the precision.
      * @return {@code true} if this intersects with {@code pl}
      */
-    public boolean isIntersectedBy(BigRational x, BigRational y,
-            int oom) {
-        return x.compareTo(getXMin(oom)) != -1 && x.compareTo(getXMax(oom)) != 1
-                && y.compareTo(getYMin(oom)) != -1 && y.compareTo(getYMax(oom)) != 1;
+    public boolean contains(BigRational x, BigRational y, int oom) {
+        return getXMax(oom).compareTo(x) != -1
+                && getXMin(oom).compareTo(x) != 1
+                && getYMax(oom).compareTo(y) != -1
+                && getYMin(oom).compareTo(y) != 1;
     }
 
-    /**
-     * @param l The line to test for intersection.
-     * @param oom The Order of Magnitude for the precision.
-     * @param rm The RoundingMode for any rounding.
-     * @return {@code true} if this intersects with {@code pl}
-     */
-    public boolean isIntersectedBy(V2D_Line l, int oom, RoundingMode rm) {
-        if (isIntersectedBy(l.getP(), oom, rm)) {
-            return true;
-        } else {
-            if (isIntersectedBy(l.getQ(oom, rm), oom, rm)) {
-                return true;
-            }
-        }
+//    /**
+//     * @param p The point to test for intersection.
+//     * @param oom The Order of Magnitude for the precision.
+//     * @param rm The RoundingMode for any rounding.
+//     * @return {@code true} if this intersects with {@code pl}
+//     */
+//    public boolean isIntersectedBy(V2D_Point p, int oom, RoundingMode rm) {
+//        return isIntersectedBy(p.getX(oom, rm), p.getY(oom, rm), oom);
+//    }
+//
+//    /**
+//     * This biases intersection.
+//     *
+//     * @param x The x-coordinate of the point to test for intersection.
+//     * @param y The y-coordinate of the point to test for intersection.
+//     * @param oom The Order of Magnitude for the precision.
+//     * @return {@code true} if this intersects with {@code pl}
+//     */
+//    public boolean isIntersectedBy(BigRational x, BigRational y, int oom) {
+//        return x.compareTo(getXMin(oom)) != -1 && x.compareTo(getXMax(oom)) != 1
+//                && y.compareTo(getYMin(oom)) != -1 && y.compareTo(getYMax(oom)) != 1;
+//    }
+//    /**
+//     * @param l The line to test for intersection.
+//     * @param oom The Order of Magnitude for the precision.
+//     * @param rm The RoundingMode for any rounding.
+//     * @return {@code true} if this intersects with {@code pl}
+//     */
+//    public boolean isIntersectedBy(V2D_Line l, int oom, RoundingMode rm) {
+//        if (isIntersectedBy(l.getP(), oom, rm)) {
+//            return true;
+//        } else {
+//            if (isIntersectedBy(l.getQ(oom, rm), oom, rm)) {
+//                return true;
+//            }
+//        }
 //        if (t instanceof V2D_LineSegment tl) {
 //            if (tl.isIntersectedBy(l, oom)) {
 //                return true;
@@ -385,23 +463,23 @@ public class V2D_Envelope implements Serializable {
 //                return l.isIntersectedBy(((V2D_Point) r), oom, rm);
 //            }
 //        }
-        return false;
-    }
+//        return false;
+//    }
     
-    /**
-     * @param l The line to test for intersection.
-     * @param oom The Order of Magnitude for the precision.
-     * @param rm The RoundingMode for any rounding.
-     * @return {@code true} if this intersects with {@code pl}
-     */
-    public boolean isIntersectedBy(V2D_LineSegment l, int oom, RoundingMode rm) {
-        if (isIntersectedBy(l.getP(), oom, rm)) {
-            return true;
-        } else {
-            if (isIntersectedBy(l.getQ(oom, rm), oom, rm)) {
-                return true;
-            }
-        }
+//    /**
+//     * @param l The line to test for intersection.
+//     * @param oom The Order of Magnitude for the precision.
+//     * @param rm The RoundingMode for any rounding.
+//     * @return {@code true} if this intersects with {@code pl}
+//     */
+//    public boolean isIntersectedBy(V2D_LineSegment l, int oom, RoundingMode rm) {
+//        if (isIntersectedBy(l.getP(), oom, rm)) {
+//            return true;
+//        } else {
+//            if (isIntersectedBy(l.getQ(oom, rm), oom, rm)) {
+//                return true;
+//            }
+//        }
 //        if (t instanceof V2D_LineSegment tl) {
 //            if (tl.isIntersectedBy(this, oom)) {
 //                return true;
@@ -445,9 +523,33 @@ public class V2D_Envelope implements Serializable {
 //                return isIntersectedBy(((V2D_Point) r), oom, rm);
 //            }
 //        }
+//        return false;
+//    }
+
+    /**
+     * @param l The line to test for containment.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} if this intersects with {@code pl}
+     */
+    public boolean contains(V2D_LineSegment l, int oom, RoundingMode rm) {
+        return contains(l.getP(), oom) && contains(l.getQ(oom, rm), oom);
+    }
+    
+    /**
+     * @param s The shape to test for containment.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} if this intersects with {@code pl}
+     */
+    public boolean contains(V2D_Shape s, int oom, RoundingMode rm) {
+        if (contains(s.getEnvelope(oom, rm), oom)) {
+            return s.getEdges(oom, rm).values().parallelStream().allMatch(x ->
+                    contains(x, oom, rm));
+        }
         return false;
     }
-
+    
     /**
      * @param en The envelope to intersect.
      * @param oom The Order of Magnitude for the precision.
@@ -564,6 +666,46 @@ public class V2D_Envelope implements Serializable {
      */
     public BigRational getYMax(int oom, RoundingMode rm) {
         return yMax.add(offset.getDY(oom - 2, rm));
+    }
+    
+    /**
+     * @return The LL corner point {@link #ll} setting it first if it is null.
+     */
+    public V2D_Point getLL() {
+        if (ll == null) {
+            ll = new V2D_Point(env, xMin, yMin);
+        }
+        return ll;
+    }
+    
+    /**
+     * @return The UL corner point {@link #ul} setting it first if it is null.
+     */
+    public V2D_Point getUL() {
+        if (ul == null) {
+            ul = new V2D_Point(env, xMin, yMax);
+        }
+        return ul;
+    }
+    
+    /**
+     * @return The UR corner point {@link #ur} setting it first if it is null.
+     */
+    public V2D_Point getUR() {
+        if (ur == null) {
+            ur = new V2D_Point(env, xMax, yMax);
+        }
+        return ur;
+    }
+    
+    /**
+     * @return The LR corner point {@link #lr} setting it first if it is null.
+     */
+    public V2D_Point getLR() {
+        if (lr == null) {
+            lr = new V2D_Point(env, xMax, yMin);
+        }
+        return lr;
     }
     
     /**

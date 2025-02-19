@@ -321,7 +321,7 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @return {@code true} iff the geometry is intersected by {@code p}.
      */
     public boolean isIntersectedBy(V2D_Point pt, int oom, RoundingMode rm) {
-        if (getEnvelope(oom, rm).isIntersectedBy(pt, oom, rm)) {
+        if (getEnvelope(oom, rm).contains(pt, oom)) {
             return getTriangles(oom, rm).parallelStream().anyMatch(x -> x.isIntersectedBy(pt, oom, rm));
         }
         return false;
@@ -770,6 +770,7 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @param rm The RoundingMode for any rounding.
      * @return A list of triangles that make up the convex hull.
      */
+    @Override
     public HashMap<Integer, V2D_LineSegment> getEdges(int oom, RoundingMode rm) {
         if (edges == null) {
             edges = new HashMap<>();

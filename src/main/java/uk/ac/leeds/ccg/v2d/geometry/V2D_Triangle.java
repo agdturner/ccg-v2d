@@ -18,9 +18,7 @@ package uk.ac.leeds.ccg.v2d.geometry;
 import ch.obermuhlner.math.big.BigRational;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
@@ -56,6 +54,11 @@ public class V2D_Triangle extends V2D_Shape {
      * translation and is relative to the other vector corners.
      */
     protected final V2D_Vector rv;
+
+    /**
+     * For storing the points
+     */
+    protected HashMap<Integer, V2D_Point> points;
 
     /**
      * A point for a corner of the triangle.
@@ -433,7 +436,6 @@ public class V2D_Triangle extends V2D_Shape {
                     initPQ(oom, rm);
                 } else {
                     if (oom == pqoom) {
-
                         if (!pqrm.equals(rm)) {
                             initPQ(oom, rm);
                         }
@@ -568,11 +570,13 @@ public class V2D_Triangle extends V2D_Shape {
 
     @Override
     public HashMap<Integer, V2D_Point> getPoints(int oom, RoundingMode rm) {
-        HashMap<Integer, V2D_Point> pts = new HashMap<>(3);
-        pts.put(0, getP(oom, rm));
-        pts.put(1, getQ(oom, rm));
-        pts.put(2, getR(oom, rm));
-        return pts;
+        if (points == null) {
+            points = new HashMap<>(3);
+            points.put(0, getP(oom, rm));
+            points.put(1, getQ(oom, rm));
+            points.put(2, getR(oom, rm));
+        }
+        return points;
     }
 
     /**
@@ -580,11 +584,12 @@ public class V2D_Triangle extends V2D_Shape {
      * @param rm The RoundingMode if rounding is needed.
      * @return A collection of the external edges.
      */
-    public Collection<V2D_LineSegment> getEdges(int oom, RoundingMode rm) {
-        HashSet<V2D_LineSegment> edges = new HashSet<>();
-        edges.add(getPQ(oom, rm));
-        edges.add(getQR(oom, rm));
-        edges.add(getRP(oom, rm));
+    @Override
+    public HashMap<Integer, V2D_LineSegment> getEdges(int oom, RoundingMode rm) {
+        HashMap<Integer, V2D_LineSegment> edges = new HashMap<>();
+        edges.put(0, getPQ(oom, rm));
+        edges.put(1, getQR(oom, rm));
+        edges.put(2, getRP(oom, rm));
         return edges;
     }
 
@@ -595,8 +600,7 @@ public class V2D_Triangle extends V2D_Shape {
      * @return True iff there is an intersection.
      */
     public boolean isIntersectedBy(V2D_Point pt, int oom, RoundingMode rm) {
-        if (getEnvelope(oom, rm).isIntersectedBy(pt, oom, rm)) {
-            //if (getPl(oom, rm).isIntersectedBy(pt, oom, rm)) {
+        if (getEnvelope(oom, rm).contains(pt, oom)) {
             return isAligned(pt, oom, rm);
             //return isIntersectedBy0(pt, oom, rm);
             //}
@@ -631,10 +635,7 @@ public class V2D_Triangle extends V2D_Shape {
      */
     public boolean isIntersectedBy(V2D_LineSegment ls, int oom, RoundingMode rm) {
         if (getEnvelope(oom, rm).isIntersectedBy(ls.getEnvelope(oom, rm), oom)) {
-            if (en.isIntersectedBy(ls.getP(), oom, rm)) {
-                return isIntersectedBy0(ls, oom, rm);
-            }
-            if (en.isIntersectedBy(ls.getQ(oom, rm), oom, rm)) {
+            if (en.contains(ls, oom, rm)) {
                 return isIntersectedBy0(ls, oom, rm);
             }
             if (getPQ(oom, rm).isIntersectedBy(ls, oom, rm)) {
@@ -2024,14 +2025,19 @@ public class V2D_Triangle extends V2D_Shape {
 //    }
     @Override
     public boolean isIntersectedBy(V2D_Envelope aabb, int oom, RoundingMode rm) {
+        if (getPoints(oom, rm).values().parallelStream().anyMatch(x ->
+                aabb.contains(x, oom))) {
+            return true;
+        }
+        
         if (getEnvelope(oom, rm).isIntersectedBy(aabb, oom)) {
-            if (aabb.isIntersectedBy(getP(oom, rm), oom, rm)) {
+            if (aabb.contains(getP(oom, rm), oom)) {
                 return true;
             }
-            if (aabb.isIntersectedBy(getQ(oom, rm), oom, rm)) {
+            if (aabb.contains(getQ(oom, rm), oom)) {
                 return true;
             }
-            if (aabb.isIntersectedBy(getR(oom, rm), oom, rm)) {
+            if (aabb.contains(getR(oom, rm), oom)) {
                 return true;
             }
             V2D_FiniteGeometry l = aabb.getLeft(oom, rm);
