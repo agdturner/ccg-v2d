@@ -106,19 +106,30 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
         edges = new HashMap<>();
         externalHoles = new HashMap<>();
         PTThing p = new PTThing();
-        p.p0 = points[0];
-        p.isHole = false;
-        p.p0int = V2D_LineSegmentDouble.intersects(env.epsilon, p.p0,
-                ch.edges.values());
-        p.p1 = points[1];
         p.pts = new ArrayList<>();
         p.points = points;
-        if (p.p0.equals(p.p1, env.epsilon)) {
+        p.isHole = false;
+        // Find a start on the edge.
+        int i0 = 0;
+        boolean foundStart = false;
+        while (!foundStart) {
+            p.p0 = points[i0];
+            p.p0int = V2D_LineSegmentDouble.intersects(epsilon, p.p0,
+                    ch.edges.values());
+            if (p.p0int) {
+                foundStart = true;
+            }
+            i0 ++;
+        }
+        int i1 = i0;
+        p.p1 = points[i1];
+        i1++;
+        if (p.p0.equals(p.p1, epsilon)) {
             p.p1int = p.p0int;
         } else {
             this.points.put(this.points.size(), p.p0);
             edges.put(edges.size(), new V2D_LineSegmentDouble(p.p0, p.p1));
-            p.p1int = V2D_LineSegmentDouble.intersects(env.epsilon, p.p1,
+            p.p1int = V2D_LineSegmentDouble.intersects(epsilon, p.p1,
                     ch.edges.values());
             if (p.p0int) {
                 if (!p.p1int) {
@@ -127,10 +138,12 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
                 }
             }
         }
-        for (int i = 2; i < points.length; i++) {
-            doThing(env.epsilon, i, p);
+        for (int i = i1; i < points.length; i++) {
+            doThing(epsilon, i, p);
         }
-        doThing(env.epsilon, 0, p);
+        for (int i = 0; i < i0; i++) {
+            doThing(epsilon, i, p);
+        }
     }
 
     private void doThing(double epsilon, int index, PTThing p) {

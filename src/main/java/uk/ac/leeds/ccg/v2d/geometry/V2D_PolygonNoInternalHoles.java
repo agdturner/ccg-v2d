@@ -110,13 +110,24 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
         edges = new HashMap<>();
         externalHoles = new HashMap<>();
         PTThing p = new PTThing();
-        p.p0 = points[0];
-        p.isHole = false;
-        p.p0int = V2D_LineSegment.intersects(oom, rm, p.p0,
-                ch.edges.values());
-        p.p1 = points[1];
         p.pts = new ArrayList<>();
         p.points = points;
+        p.isHole = false;
+        // Find a start on the edge.
+        int i0 = 0;
+        boolean foundStart = false;
+        while (!foundStart) {
+            p.p0 = points[i0];
+            p.p0int = V2D_LineSegment.intersects(oom, rm, p.p0,
+                ch.edges.values());
+            if (p.p0int) {
+                foundStart = true;
+            }
+            i0 ++;
+        }
+        int i1 = i0;
+        p.p1 = points[i1];
+        i1++;
         if (p.p0.equals(p.p1, oom, rm)) {
             p.p1int = p.p0int;
         } else {
@@ -131,20 +142,22 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
                 }
             }
         }
-        for (int i = 2; i < points.length; i++) {
+        for (int i = i1; i < points.length; i++) {
             doThing(oom, rm, i, p);
         }
-        doThing(oom, rm, 0, p);
+        for (int i = 0; i < i0; i++) {
+            doThing(oom, rm, i, p);
+        }
     }
 
     private void doThing(int oom, RoundingMode rm, int index, PTThing p) {
         p.p0 = p.p1;
         p.p0int = p.p1int;
         p.p1 = p.points[index];
-        if (p.p0.equals(p.p1, env.oom, env.rm)) {
+        if (p.p0.equals(p.p1, oom, rm)) {
             p.p1int = p.p0int;
         } else {
-            p.p1int = V2D_LineSegment.intersects(env.oom, env.rm, p.p1,
+            p.p1int = V2D_LineSegment.intersects(oom, rm, p.p1,
                     ch.edges.values());
             if (p.isHole) {
                 if (p.p1int) {
