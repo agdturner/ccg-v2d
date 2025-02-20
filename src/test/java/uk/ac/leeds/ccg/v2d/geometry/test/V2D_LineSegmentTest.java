@@ -105,20 +105,20 @@ public class V2D_LineSegmentTest extends V2D_Test {
     }
 
     /**
-     * Test of isIntersectedBy method, of class V2D_LineSegment.
+     * Test of intersects method, of class V2D_LineSegment.
      */
     @Test
     public void testIsIntersectedBy_V2D_Point() {
-        System.out.println("isIntersectedBy");
+        System.out.println("intersects");
         int oom = -6;
         RoundingMode rm = RoundingMode.HALF_UP;
         V2D_Point p = pP0P0;
         V2D_LineSegment instance = new V2D_LineSegment(pN1N1, pP1P1, oom, rm);
-        assertTrue(instance.isIntersectedBy(p, oom, rm));
+        assertTrue(instance.intersects(p, oom, rm));
         // Test2
         p = pP1P1;
         instance = new V2D_LineSegment(pN1N1, pP1P1, oom, rm);
-        assertTrue(instance.isIntersectedBy(p, oom, rm));
+        assertTrue(instance.intersects(p, oom, rm));
     }
 
     /**

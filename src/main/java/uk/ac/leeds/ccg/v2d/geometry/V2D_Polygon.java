@@ -42,21 +42,30 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
     public HashMap<Integer, V2D_PolygonNoInternalHoles> internalHoles;
 
     /**
-     * Create a new instance.
+     * Create a new shallow copy.
      *
      * @param p The polygon to duplicate.
-     * @param oom The Order of Magnitude for the precision.
-     * @param rm The RoundingMode.
      */
-    public V2D_Polygon(V2D_Polygon p, int oom, RoundingMode rm) {
-        super(p, oom, rm);
-        this.internalHoles = new HashMap<>();
-        for (var x: p.internalHoles.entrySet()) {
-            this.internalHoles.put(x.getKey(), new V2D_PolygonNoInternalHoles(
-                    x.getValue(), oom, rm));
-        }
+    public V2D_Polygon(V2D_Polygon p) {
+        super(p);
+        this.internalHoles = p.internalHoles;
     }
-    
+
+//    /**
+//     * Create a new deep copy.
+//     *
+//     * @param p The polygon to duplicate.
+//     * @param oom The Order of Magnitude for the precision.
+//     * @param rm The RoundingMode.
+//     */
+//    public V2D_Polygon(V2D_Polygon p, int oom, RoundingMode rm) {
+//        super(p, oom, rm);
+//        this.internalHoles = new HashMap<>();
+//        for (var x: p.internalHoles.entrySet()) {
+//            this.internalHoles.put(x.getKey(), new V2D_PolygonNoInternalHoles(
+//                    x.getValue(), oom, rm));
+//        }
+//    }
     /**
      * Create a new instance.
      *
@@ -67,7 +76,7 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
     public V2D_Polygon(V2D_PolygonNoInternalHoles p, int oom, RoundingMode rm) {
         this(p, new HashMap<>(), oom, rm);
     }
-    
+
     /**
      * Create a new instance.
      *
@@ -76,13 +85,13 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode.
      */
-    public V2D_Polygon(V2D_PolygonNoInternalHoles p, 
-            HashMap<Integer, V2D_PolygonNoInternalHoles> internalHoles, 
+    public V2D_Polygon(V2D_PolygonNoInternalHoles p,
+            HashMap<Integer, V2D_PolygonNoInternalHoles> internalHoles,
             int oom, RoundingMode rm) {
-        super(p, oom, rm);
+        super(p);
         this.internalHoles = internalHoles;
     }
-    
+
     /**
      * Create a new instance.
      *
@@ -91,136 +100,300 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode.
      */
-    public V2D_Polygon(V2D_Point[] pts, HashMap<Integer, 
-            V2D_PolygonNoInternalHoles> internalHoles, 
+    public V2D_Polygon(V2D_Point[] pts, HashMap<Integer, V2D_PolygonNoInternalHoles> internalHoles,
             int oom, RoundingMode rm) {
         super(pts, oom, rm);
         this.internalHoles = internalHoles;
     }
 
+//    /**
+//     * @param oom The Order of Magnitude for the precision.
+//     * @param rm The RoundingMode for any rounding.
+//     * @return A copy of {@link internalHoles} with the given tolerance applied.
+//     */
+//    public HashMap<Integer, V2D_PolygonNoInternalHoles> getInternalHoles(
+//            int oom, RoundingMode rm) {
+//        HashMap<Integer, V2D_PolygonNoInternalHoles> r = new HashMap<>();
+//        for (V2D_PolygonNoInternalHoles h : internalHoles.values()) {
+//            r.put(r.size(), new V2D_PolygonNoInternalHoles(h, oom, rm));
+//        }
+//        return r;
+//    }
     /**
+     * Identify if {@code this} intersects {@code pt}.
+     *
+     * @param pt The point to test for intersection.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
-     * @return A copy of {@link internalHoles} with the given tolerance applied.
+     * @return {@code true} iff {@code this} intersects {@code pt}.
      */
-    public HashMap<Integer, V2D_PolygonNoInternalHoles> getInternalHoles(
-            int oom, RoundingMode rm) {
-        HashMap<Integer, V2D_PolygonNoInternalHoles> r = new HashMap<>();
-        for (V2D_PolygonNoInternalHoles h : internalHoles.values()) {
-            r.put(r.size(), new V2D_PolygonNoInternalHoles(h, oom, rm));
-        }
-        return r;
+    @Override
+    public boolean intersects(V2D_Point pt, int oom, RoundingMode rm) {
+        return super.intersects(pt, oom, rm)
+                && !internalHoles.values().parallelStream().anyMatch(x
+                        -> x.contains(pt, oom, rm));
     }
 
     /**
-     * Identify if this is intersected by pt.
+     * Identify if {@code this} contains {@code pt}.
      *
-     * @param pt The point to test for intersection with.
+     * @param pt The point to test for containment.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
-     * @return {@code true} iff there is an intersection.
+     * @return {@code true} iff {@code this} contains {@code pt}.
      */
     @Override
-    public boolean isIntersectedBy(V2D_Point pt, int oom, RoundingMode rm) {
-        return super.isIntersectedBy(pt, oom, rm)
-            && !internalHoles.values().parallelStream().anyMatch(x
-                    -> x.contains(pt, oom, rm));
+    public boolean contains(V2D_Point pt, int oom, RoundingMode rm) {
+        return super.contains(pt, oom, rm)
+                && !internalHolesContains(pt, oom, rm);
+    }
+    
+    /**
+     * Identify if {@link #internalHoles} contains {@code pt}.
+     *
+     * @param pt The point to test for containment.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} iff {@link #internalHoles} contains {@code pt}.
+     */
+    public boolean internalHolesContains(V2D_Point pt, int oom, RoundingMode rm) {
+        return internalHoles.values().parallelStream().anyMatch(x
+                        -> x.contains(pt, oom, rm));
+    }
+    
+    /**
+     * Identify if {@link #internalHoles} intersects {@code pt}.
+     *
+     * @param pt The point to test for intersection.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} iff {@link #internalHoles} intersects {@code pt}.
+     */
+    public boolean internalHolesIntersects(V2D_Point pt, int oom, RoundingMode rm) {
+        return internalHoles.values().parallelStream().anyMatch(x
+                        -> x.intersects(pt, oom, rm));
+    }
+    
+    /**
+     * Identify if {@code this} intersects {@code l}.
+     *
+     * @param l The line segment to test for intersection.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} iff {@code this} intersects {@code l}.
+     */
+    @Override
+    public boolean intersects(V2D_LineSegment l, int oom, RoundingMode rm) {
+        return super.intersects(l, oom, rm)
+                && !internalHolesContains(l, oom, rm);
+    }
+    
+    /**
+     * Identify if {@link #internalHoles} contains {@code l}.
+     *
+     * @param l The line segment to test for containment.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} iff {@link #internalHoles} contains {@code l}.
+     */
+    public boolean internalHolesContains(V2D_LineSegment l, int oom, RoundingMode rm) {
+        return internalHoles.values().parallelStream().anyMatch(x
+                        -> x.contains(l, oom, rm));
     }
 
     /**
-     * Identify if this is intersected by l.
+     * Identify if {@link #internalHoles} intersects {@code l}.
      *
-     * @param l The line segment to test for intersection with.
+     * @param l The line segment to test for intersection.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
-     * @return {@code true} iff there is an intersection.
+     * @return {@code true} iff {@link #internalHoles} intersects {@code l}.
      */
-    @Override
-    public boolean isIntersectedBy(V2D_LineSegment l, int oom, RoundingMode rm) {
-        if (super.isIntersectedBy(l, oom, rm)) {
-            if (internalHoles.values().parallelStream().anyMatch(
-                    x -> V2D_LineSegment.isIntersectedBy(oom, rm, l, x.edges.values()))) {
-                return true;
-            }
-            return !internalHoles.values().parallelStream().anyMatch(x -> x.contains(l, oom, rm));
-            //return !internalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(l, oom, rm));
-        }
-        return false;
+    public boolean internalHolesIntersects(V2D_LineSegment l, int oom, RoundingMode rm) {
+        return internalHoles.values().parallelStream().anyMatch(x
+                        -> x.intersects(l, oom, rm));
     }
 
     /**
-     * Identify if this is intersected by t. There is a boundary issue with
-     * this: The edge of the holes are regarded as non-intersecting and this
-     * might not bee desirable!
+     * Identify if {@code this} contains {@code l}.
      *
-     * @param t The triangle to test for intersection with.
+     * @param l The line segment to test for containment.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
-     * @return {@code true} iff there is an intersection.
+     * @return {@code true} iff {@code this} contains {@code l}.
      */
     @Override
-    public boolean isIntersectedBy(V2D_Triangle t, int oom, RoundingMode rm) {
-        if (super.isIntersectedBy(t, oom, rm)) {
-            if (t.getEdges(oom, rm).values().parallelStream().anyMatch(x -> 
-                    internalHoles.values().parallelStream().anyMatch(y -> 
-                            V2D_LineSegment.isIntersectedBy(oom, rm, x, y.edges.values())))) {
-                return true;
-            }
-            // This should probably be contains?
-            //return !internalHoles.values().parallelStream().anyMatch(x -> x.contains(t, oom, rm));
-            return !internalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(t, oom, rm));
-        }
-        return false;
+    public boolean contains(V2D_LineSegment l, int oom, RoundingMode rm) {
+        return super.contains(l, oom, rm)
+                && !internalHolesContains(l, oom, rm);
     }
 
     /**
-     * Identify if this is intersected by point {@code p}.
+     * Identify if {@code this} intersects {@code t}.
      *
-     * @param r The convex hull to test for intersection with.
+     * @param t The triangle to test for intersection.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
-     * @return {@code true} iff the geometry is intersected by {@code ch.
+     * @return {@code true} iff {@code this} intersects {@code t}.
      */
     @Override
-    public boolean isIntersectedBy(V2D_Rectangle r, int oom, RoundingMode rm) {
-        if (super.isIntersectedBy(r, oom, rm)) {
-            if (internalHoles.isEmpty()) {
-                return true;
-            }
-            if (r.getEdges(oom, rm).values().parallelStream().anyMatch(x -> 
-                    internalHoles.values().parallelStream().anyMatch(y -> 
-                            V2D_LineSegment.isIntersectedBy(oom, rm, x, y.edges.values())))) {
-                return true;
-            }
-            return !internalHoles.values().parallelStream().anyMatch(x -> x.contains(r, oom, rm));
-            //return !internalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(r, oom, rm));
-        }
-        return false;
+    public boolean intersects(V2D_Triangle t, int oom, RoundingMode rm) {
+        return super.intersects(t, oom, rm)
+            && !internalHolesContains(t, oom, rm);
+    }
+    
+    /**
+     * Identify if {@link #internalHoles} contains {@code t}.
+     *
+     * @param t The triangle to test for containment.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} iff {@link #internalHoles} contains {@code t}.
+     */
+    public boolean internalHolesContains(V2D_Triangle t, int oom, 
+            RoundingMode rm) {
+        return internalHoles.values().parallelStream().anyMatch(x
+                        -> x.contains(t, oom, rm));
     }
 
     /**
-     * Identify if this is intersected by point {@code p}.
+     * Identify if {@link #internalHoles} intersects {@code t}.
      *
-     * @param ch The convex hull to test for intersection with.
+     * @param t The triangle to test for intersection.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
-     * @return {@code true} iff the geometry is intersected by {@code ch.
+     * @return {@code true} iff {@link #internalHoles} intersects {@code t}.
+     */
+    public boolean internalHolesIntersects(V2D_Triangle t, int oom, 
+            RoundingMode rm) {
+        return internalHoles.values().parallelStream().anyMatch(x
+                        -> x.intersects(t, oom, rm));
+    }
+
+    /**
+     * Identify if {@code this} contains {@code t}.
+     *
+     * @param t The triangle to test for containment.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} iff {@code this} contains {@code t}.
      */
     @Override
-    public boolean isIntersectedBy(V2D_ConvexHull ch, int oom, RoundingMode rm) {
-        if (super.isIntersectedBy(ch, oom, rm)) {
-            if (internalHoles.isEmpty()) {
-                return true;
-            }
-            if (ch.getEdges(oom, rm).values().parallelStream().anyMatch(x -> 
-                    internalHoles.values().parallelStream().anyMatch(y -> 
-                            V2D_LineSegment.isIntersectedBy(oom, rm, x, y.edges.values())))) {
-                return true;
-            }
-            return !internalHoles.values().parallelStream().anyMatch(x -> x.contains(ch, oom, rm));
-            //return !internalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(ch, oom, rm));
-        }
-        return false;
+    public boolean contains(V2D_Triangle t, int oom, RoundingMode rm) {
+        return super.contains(t, oom, rm)
+            && !internalHolesContains(t, oom, rm);
+    }
+    
+    /**
+     * Identify if {@code this} intersects {@code r}.
+     *
+     * @param r The rectangle to test for intersection.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} iff {@code this} intersects {@code r}.
+     */
+    @Override
+    public boolean intersects(V2D_Rectangle r, int oom, RoundingMode rm) {
+        return super.intersects(r, oom, rm)
+                && !internalHolesContains(r, oom, rm);
+    }
+    
+    /**
+     * Identify if {@link #internalHoles} contains {@code t}.
+     *
+     * @param r The rectangle to test for containment.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} iff {@link #internalHoles} contains {@code t}.
+     */
+    public boolean internalHolesContains(V2D_Rectangle r, int oom, 
+            RoundingMode rm) {
+        return internalHoles.values().parallelStream().anyMatch(x
+                        -> x.contains(r, oom, rm));
+    }
+
+    /**
+     * Identify if {@link #internalHoles} intersects {@code t}.
+     *
+     * @param r The rectangle to test for intersection.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} iff {@link #internalHoles} intersects {@code t}.
+     */
+    public boolean internalHolesIntersects(V2D_Rectangle r, int oom, 
+            RoundingMode rm) {
+        return internalHoles.values().parallelStream().anyMatch(x
+                        -> x.intersects(r, oom, rm));
+    }
+
+    /**
+     * Identify if {@code this} contains {@code r}.
+     *
+     * @param r The rectangle to test for containment.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} iff {@code this} contains {@code r}.
+     */
+    @Override
+    public boolean contains(V2D_Rectangle r, int oom, RoundingMode rm) {
+        return super.contains(r, oom, rm)
+                && internalHolesContains(r, oom, rm);
+    }
+
+    /**
+     * Identify if {@code this} intersects {@code ch}.
+     *
+     * @param ch The convex hull to test for intersection.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} iff {@code this} intersects {@code ch}.
+     */
+    @Override
+    public boolean intersects(V2D_ConvexHull ch, int oom, RoundingMode rm) {
+        return super.intersects(ch, oom, rm)
+            && !internalHolesContains(ch, oom, rm);
+    }
+    
+    /**
+     * Identify if {@link #internalHoles} contains {@code ch}.
+     *
+     * @param ch The convex hull to test for containment.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} iff {@link #internalHoles} contains {@code ch}.
+     */
+    public boolean internalHolesContains(V2D_ConvexHull ch, int oom, 
+            RoundingMode rm) {
+        return internalHoles.values().parallelStream().anyMatch(x
+                        -> x.contains(ch, oom, rm));
+    }
+
+    /**
+     * Identify if {@link #internalHoles} intersects {@code ch}.
+     *
+     * @param ch The convex hull to test for intersection.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} iff {@link #internalHoles} intersects {@code ch}.
+     */
+    public boolean internalHolesIntersects(V2D_ConvexHull ch, int oom, 
+            RoundingMode rm) {
+        return internalHoles.values().parallelStream().anyMatch(x
+                        -> x.intersects(ch, oom, rm));
+    }
+
+    /**
+     * Identify if {@code this} contains {@code ch}.
+     *
+     * @param ch The convex hull to test for containment.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} iff {@code this} contains {@code ch}.
+     */
+    @Override
+    public boolean contains(V2D_ConvexHull ch, int oom, RoundingMode rm) {
+        return super.contains(ch, oom, rm)
+            && !internalHolesContains(ch, oom, rm);
     }
 
     /**
@@ -286,17 +459,16 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
         return new V2D_Polygon(exterior, rInternalHoles, oom, rm);
     }
 
-    @Override
-    public boolean isIntersectedBy(V2D_Envelope aabb, int oom, RoundingMode rm) {
-        en = getEnvelope(oom, rm);
-        if (en.isIntersectedBy(aabb, oom)) {
-            if (getConvexHull(oom, rm).isIntersectedBy(aabb, oom, rm)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
+//    @Override
+//    public boolean intersects(V2D_Envelope aabb, int oom, RoundingMode rm) {
+//        if (getEnvelope(oom, rm).intersects(aabb, oom)) {
+//            if (getConvexHull(oom, rm).intersects(aabb, oom, rm)) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+
     /**
      * Adds an internal hole and return its assigned id.
      *

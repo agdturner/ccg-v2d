@@ -81,33 +81,33 @@ public class V2D_RayDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of isIntersectedBy method, of class V2D_RayDouble.
+     * Test of intersects method, of class V2D_RayDouble.
      */
     @Test
     public void testIsIntersectedBy_double_V2D_PointDouble() {
-        System.out.println("isIntersectedBy");
+        System.out.println("intersects");
         double epsilon = 1d / 10000000d;
         V2D_PointDouble pt = pP0P0;
         V2D_RayDouble instance = new V2D_RayDouble(pN1N1, pP1P1);
-        assertTrue(instance.isIntersectedBy(pt, epsilon));
+        assertTrue(instance.intersects(pt, epsilon));
         // Test 2
         pt = pP1P1;
         instance = new V2D_RayDouble(pN1N1, pP1P1);
-        assertTrue(instance.isIntersectedBy(pt, epsilon));
+        assertTrue(instance.intersects(pt, epsilon));
         // Test 3
         pt = pN2N2;
         instance = new V2D_RayDouble(pN1N1, pP1P1);
-        assertFalse(instance.isIntersectedBy(pt, epsilon));
+        assertFalse(instance.intersects(pt, epsilon));
         // Test 4
         pt = pP1P0;
         instance = new V2D_RayDouble(pP0P0, pP1P0);
-        assertTrue(instance.isIntersectedBy(pt, epsilon));
+        assertTrue(instance.intersects(pt, epsilon));
         // Test 5
         pt = pP2P0;
-        assertTrue(instance.isIntersectedBy(pt, epsilon));
+        assertTrue(instance.intersects(pt, epsilon));
         // Test 6
         pt = pN2P0;
-        assertFalse(instance.isIntersectedBy(pt, epsilon));
+        assertFalse(instance.intersects(pt, epsilon));
     }
 
     /**

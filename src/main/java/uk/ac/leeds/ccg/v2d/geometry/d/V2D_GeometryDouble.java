@@ -117,12 +117,9 @@ public abstract class V2D_GeometryDouble implements Serializable {
      * 
      * @param pt The point about which the geometry is rotated.
      * @param theta The angle of rotation about pt in radians.
-     * @param epsilon The tolerance within which two vectors are regarded as 
-     * equal.
      * @return The rotated geometry.
      */
-    public abstract V2D_GeometryDouble rotate(V2D_PointDouble pt, double theta, 
-            double epsilon);
+    public abstract V2D_GeometryDouble rotate(V2D_PointDouble pt, double theta);
     
     /**
      * Returns the geometry rotated by a normalised angle theta about pt. 
@@ -130,11 +127,8 @@ public abstract class V2D_GeometryDouble implements Serializable {
      * 
      * @param pt The point about which the geometry is rotated.
      * @param theta The angle of rotation around pt in radians.
-     * @param epsilon The tolerance within which two vectors are regarded as 
-     * equal.
      * @return The rotated geometry.
      */
-    public abstract V2D_GeometryDouble rotateN(V2D_PointDouble pt, double theta,
-            double epsilon);
+    public abstract V2D_GeometryDouble rotateN(V2D_PointDouble pt, double theta);
     
 }

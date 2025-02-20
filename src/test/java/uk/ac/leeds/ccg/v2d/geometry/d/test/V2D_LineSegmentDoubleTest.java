@@ -94,19 +94,19 @@ public class V2D_LineSegmentDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of isIntersectedBy method, of class V2D_LineSegmentDouble.
+     * Test of intersects method, of class V2D_LineSegmentDouble.
      */
     @Test
     public void testIsIntersectedBy_V2D_PointDouble() {
-        System.out.println("isIntersectedBy");
+        System.out.println("intersects");
         double epsilon = 1d / 1000000d;
         V2D_PointDouble p = pP0P0;
         V2D_LineSegmentDouble instance = new V2D_LineSegmentDouble(pN1N1, pP1P1);
-        assertTrue(instance.isIntersectedBy(p, epsilon));
+        assertTrue(instance.intersects(p, epsilon));
         // Test2
         p = pP1P1;
         instance = new V2D_LineSegmentDouble(pN1N1, pP1P1);
-        assertTrue(instance.isIntersectedBy(p, epsilon));
+        assertTrue(instance.intersects(p, epsilon));
     }
 
     /**
@@ -173,17 +173,17 @@ public class V2D_LineSegmentDoubleTest extends V2D_TestDouble {
         double theta = Pi;
         V2D_LineSegmentDouble instance = new V2D_LineSegmentDouble(pP0P0, pP1P0);
         V2D_LineSegmentDouble expResult = new V2D_LineSegmentDouble(pP0P0, pN1P0);
-        V2D_LineSegmentDouble result = instance.rotate(pP0P0, theta, epsilon);
+        V2D_LineSegmentDouble result = instance.rotate(pP0P0, theta);
         assertTrue(expResult.equalsIgnoreDirection(epsilon, result));
         // Test 2
         theta = Pi / 2.0d;
         expResult = new V2D_LineSegmentDouble(pP0P0, pP0N1);
-        result = instance.rotate(pP0P0, theta, epsilon);
+        result = instance.rotate(pP0P0, theta);
         assertTrue(expResult.equalsIgnoreDirection(epsilon, result));
         // Test 2
         theta = 3.0d * Pi / 2.0d;
         expResult = new V2D_LineSegmentDouble(pP0P0, pP0P1);
-        result = instance.rotate(pP0P0, theta, epsilon);
+        result = instance.rotate(pP0P0, theta);
         assertTrue(expResult.equalsIgnoreDirection(epsilon, result));
         
         

@@ -39,21 +39,30 @@ public class V2D_PolygonDouble extends V2D_PolygonNoInternalHolesDouble {
     public HashMap<Integer, V2D_PolygonNoInternalHolesDouble> internalHoles;
 
     /**
-     * Create a new instance.
+     * Create a new shallow copy.
      *
      * @param p The polygon to duplicate.
-     * @param epsilon The tolerance within which two vectors are regarded as
-     * equal.
      */
-    public V2D_PolygonDouble(V2D_PolygonDouble p, double epsilon) {
-        super(p, epsilon);
-        this.internalHoles = new HashMap<>();
-        for (var x: p.internalHoles.entrySet()) {
-            this.internalHoles.put(x.getKey(), new V2D_PolygonNoInternalHolesDouble(
-                    x.getValue(), epsilon));
-        }
+    public V2D_PolygonDouble(V2D_PolygonDouble p) {
+        super(p);
+        this.internalHoles = p.internalHoles;
     }
 
+//    /**
+//     * Create a new deep copy.
+//     *
+//     * @param p The polygon to duplicate.
+//     * @param epsilon The tolerance within which two vectors are regarded as
+//     * equal.
+//     */
+//    public V2D_PolygonDouble(V2D_PolygonDouble p, double epsilon) {
+//        super(p, epsilon);        
+//        this.internalHoles = new HashMap<>();
+//        for (var x: p.internalHoles.entrySet()) {
+//            this.internalHoles.put(x.getKey(), new V2D_PolygonNoInternalHolesDouble(
+//                    x.getValue(), epsilon));
+//        }
+//    }
     /**
      * Create a new instance.
      *
@@ -64,7 +73,7 @@ public class V2D_PolygonDouble extends V2D_PolygonNoInternalHolesDouble {
     public V2D_PolygonDouble(V2D_PolygonNoInternalHolesDouble p, double epsilon) {
         this(p, new HashMap<>(), epsilon);
     }
-    
+
     /**
      * Create a new instance.
      *
@@ -74,9 +83,9 @@ public class V2D_PolygonDouble extends V2D_PolygonNoInternalHolesDouble {
      * equal.
      */
     public V2D_PolygonDouble(V2D_PolygonNoInternalHolesDouble p,
-            HashMap<Integer, V2D_PolygonNoInternalHolesDouble> internalHoles, 
+            HashMap<Integer, V2D_PolygonNoInternalHolesDouble> internalHoles,
             double epsilon) {
-        super(p, epsilon);
+        super(p);
         this.internalHoles = internalHoles;
     }
 
@@ -88,136 +97,293 @@ public class V2D_PolygonDouble extends V2D_PolygonNoInternalHolesDouble {
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
      */
-    public V2D_PolygonDouble(V2D_PointDouble[] pts, HashMap<Integer, 
-            V2D_PolygonNoInternalHolesDouble> internalHoles, double epsilon) {
+    public V2D_PolygonDouble(V2D_PointDouble[] pts, HashMap<Integer, V2D_PolygonNoInternalHolesDouble> internalHoles, double epsilon) {
         super(pts, epsilon);
         this.internalHoles = internalHoles;
     }
-    
-    /**
-     * @param epsilon The tolerance within which two vectors are regarded as
-     * equal.
-     * @return A copy of {@link internalHoles} with the given tolerance applied.
-     */
-    public HashMap<Integer, V2D_PolygonNoInternalHolesDouble> getInternalHoles(
-    double epsilon) {
-        HashMap<Integer, V2D_PolygonNoInternalHolesDouble> r = new HashMap<>();
-        for (V2D_PolygonNoInternalHolesDouble h : internalHoles.values()) {
-            r.put(r.size(), new V2D_PolygonNoInternalHolesDouble(h, epsilon));
-        }
-        return r;
-    }
 
+//    /**
+//     * @param epsilon The tolerance within which two vectors are regarded as
+//     * equal.
+//     * @return A copy of {@link internalHoles} with the given tolerance applied.
+//     */
+//    public HashMap<Integer, V2D_PolygonNoInternalHolesDouble> getInternalHoles(
+//    double epsilon) {
+//        HashMap<Integer, V2D_PolygonNoInternalHolesDouble> r = new HashMap<>();
+//        for (V2D_PolygonNoInternalHolesDouble h : internalHoles.values()) {
+//            r.put(r.size(), new V2D_PolygonNoInternalHolesDouble(h, epsilon));
+//        }
+//        return r;
+//    }
     /**
-     * Identify if this is intersected by pt.
+     * Identify if {@code this} intersects {@code pt}.
      *
      * @param pt The point to test for intersection with.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
-     * @return {@code true} iff there is an intersection.
+     * @return {@code true} iff {@code this} intersects {@code pt}.
      */
     @Override
-    public boolean isIntersectedBy(V2D_PointDouble pt, double epsilon) {
-        return super.isIntersectedBy(pt, epsilon)
-            && !internalHoles.values().parallelStream().anyMatch(x
-                    -> x.contains(pt, epsilon));
+    public boolean intersects(V2D_PointDouble pt, double epsilon) {
+        return super.intersects(pt, epsilon)
+                && !internalHoles.values().parallelStream().anyMatch(x
+                        -> x.contains(pt, epsilon));
     }
 
     /**
-     * Identify if this is intersected by l.
+     * Identify if {@code this} contains {@code pt}.
+     *
+     * @param pt The point to test for intersection with.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff {@code this} contains {@code pt}.
+     */
+    @Override
+    public boolean contains(V2D_PointDouble pt, double epsilon) {
+        return super.contains(pt, epsilon)
+                && !internalHolesContains(pt, epsilon);
+    }
+
+    /**
+     * Identify if {@link #internalHoles} contains {@code pt}.
+     *
+     * @param pt The point to test for containment.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff {@link #internalHoles} contains {@code pt}.
+     */
+    public boolean internalHolesContains(V2D_PointDouble pt, double epsilon) {
+        return internalHoles.values().parallelStream().anyMatch(x
+                        -> x.contains(pt, epsilon));
+    }
+    
+    /**
+     * Identify if {@link #internalHoles} intersects {@code pt}.
+     *
+     * @param pt The point to test for intersection.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff {@link #internalHoles} intersects {@code pt}.
+     */
+    public boolean internalHolesIntersects(V2D_PointDouble pt, double epsilon) {
+        return internalHoles.values().parallelStream().anyMatch(x
+                        -> x.intersects(pt, epsilon));
+    }
+    
+    /**
+     * Identify if {@code this} intersects {@code l}.
      *
      * @param l The line segment to test for intersection with.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
-     * @return {@code true} iff there is an intersection.
+     * @return {@code true} iff {@code this} intersects {@code l}.
      */
     @Override
-    public boolean isIntersectedBy(V2D_LineSegmentDouble l, double epsilon) {
-        if (super.isIntersectedBy(l, epsilon)) {
-            if (internalHoles.values().parallelStream().anyMatch(
-                    x -> V2D_LineSegmentDouble.isIntersectedBy(epsilon, l, x.edges.values()))) {
-                return true;
-            }
-            return !internalHoles.values().parallelStream().anyMatch(x -> x.contains(l, epsilon));
-            //return !internalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(l, epsilon));
-        }
-        return false;
+    public boolean intersects(V2D_LineSegmentDouble l, double epsilon) {
+        return super.intersects(l, epsilon)
+                && !internalHolesContains(l, epsilon);
+    }
+    
+    /**
+     * Identify if {@link #internalHoles} contains {@code l}.
+     *
+     * @param l The line segment to test for containment.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff {@link #internalHoles} contains {@code l}.
+     */
+    public boolean internalHolesContains(V2D_LineSegmentDouble l, double epsilon) {
+        return internalHoles.values().parallelStream().anyMatch(x
+                        -> x.contains(l, epsilon));
     }
 
     /**
-     * Identify if this is intersected by t. There is a boundary issue with
-     * this: The edge of the holes are regarded as non-intersecting and this
-     * might not bee desirable!
+     * Identify if {@link #internalHoles} intersects {@code l}.
+     *
+     * @param l The line segment to test for intersection.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff {@link #internalHoles} intersects {@code l}.
+     */
+    public boolean internalHolesIntersects(V2D_LineSegmentDouble l, double epsilon) {
+        return internalHoles.values().parallelStream().anyMatch(x
+                        -> x.intersects(l, epsilon));
+    }
+
+    /**
+     * Identify if {@code this} contains {@code l}.
+     *
+     * @param l The line segment to test for intersection with.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff {@code this} contains {@code l}.
+     */
+    @Override
+    public boolean contains(V2D_LineSegmentDouble l, double epsilon) {
+        return super.contains(l, epsilon)
+                && !internalHolesContains(l, epsilon);
+    }
+
+    /**
+     * Identify if {@code this} intersects {@code t}.
      *
      * @param t The triangle to test for intersection with.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
-     * @return {@code true} iff there is an intersection.
+     * @return {@code true} iff {@code this} intersects {@code t}.
      */
     @Override
-    public boolean isIntersectedBy(V2D_TriangleDouble t, double epsilon) {
-        if (super.isIntersectedBy(t, epsilon)) {
-            if (t.getEdges().values().parallelStream().anyMatch(x -> 
-                    internalHoles.values().parallelStream().anyMatch(y -> 
-                            V2D_LineSegmentDouble.isIntersectedBy(epsilon, x, y.edges.values())))) {
-                return true;
-            }
-            return !internalHoles.values().parallelStream().anyMatch(x -> x.contains(t, epsilon));
-            //return !internalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(t, epsilon));
-        }
-        return false;
+    public boolean intersects(V2D_TriangleDouble t, double epsilon) {
+        return super.intersects(t, epsilon)
+            && !internalHolesContains(t, epsilon);
     }
 
     /**
-     * Identify if this is intersected by point {@code p}.
+     * Identify if {@link #internalHoles} contains {@code t}.
+     *
+     * @param t The triangle to test for containment.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff {@link #internalHoles} contains {@code t}.
+     */
+    public boolean internalHolesContains(V2D_TriangleDouble t, double epsilon) {
+        return internalHoles.values().parallelStream().anyMatch(x
+                        -> x.contains(t, epsilon));
+    }
+    
+    /**
+     * Identify if {@link #internalHoles} intersects {@code t}.
+     *
+     * @param t The triangle to test for intersection.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff {@link #internalHoles} intersects {@code t}.
+     */
+    public boolean internalHolesIntersects(V2D_TriangleDouble t, double epsilon) {
+        return internalHoles.values().parallelStream().anyMatch(x
+                        -> x.intersects(t, epsilon));
+    }
+    
+    /**
+     * Identify if {@code this} contains {@code t}.
+     *
+     * @param t The triangle to test for intersection with.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff {@code this} contains {@code t}.
+     */
+    @Override
+    public boolean contains(V2D_TriangleDouble t, double epsilon) {
+        return super.contains(t, epsilon)
+            && !internalHolesContains(t, epsilon);
+    }
+
+    /**
+     * Identify if {@code this} intersects {@code r}.
      *
      * @param r The convex hull to test for intersection with.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
-     * @return {@code true} iff the geometry is intersected by {@code ch.
+     * @return {@code true} iff {@code this} intersects {@code r}.
      */
     @Override
-    public boolean isIntersectedBy(V2D_RectangleDouble r, double epsilon) {
-        if (super.isIntersectedBy(r, epsilon)) {
-            if (internalHoles.isEmpty()) {
-                return true;
-            }
-            if (r.getEdges().values().parallelStream().anyMatch(x -> 
-                    internalHoles.values().parallelStream().anyMatch(y -> 
-                            V2D_LineSegmentDouble.isIntersectedBy(epsilon, x, 
-                                    y.edges.values())))) {
-                return true;
-            }
-            return !internalHoles.values().parallelStream().allMatch(x -> x.contains(r, epsilon));
-            //return !internalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(r, epsilon));
-        }
-        return false;
+    public boolean intersects(V2D_RectangleDouble r, double epsilon) {
+        return super.intersects(r, epsilon)
+                && !internalHolesContains(r, epsilon);
+    }
+    
+    /**
+     * Identify if {@link #internalHoles} contains {@code t}.
+     *
+     * @param r The rectangle to test for containment.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff {@link #internalHoles} contains {@code t}.
+     */
+    public boolean internalHolesContains(V2D_RectangleDouble r, double epsilon) {
+        return internalHoles.values().parallelStream().anyMatch(x
+                        -> x.contains(r, epsilon));
+    }
+    
+    /**
+     * Identify if {@link #internalHoles} intersects {@code t}.
+     *
+     * @param r The rectangle to test for intersection.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff {@link #internalHoles} intersects {@code t}.
+     */
+    public boolean internalHolesIntersects(V2D_RectangleDouble r, double epsilon) {
+        return internalHoles.values().parallelStream().anyMatch(x
+                        -> x.intersects(r, epsilon));
+    }
+    
+    /**
+     * Identify if {@code this} contains {@code r}.
+     *
+     * @param r The convex hull to test for intersection with.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff {@code this} contains {@code r}.
+     */
+    @Override
+    public boolean contains(V2D_RectangleDouble r, double epsilon) {
+        return super.contains(r, epsilon)
+                && !internalHolesContains(r, epsilon);
     }
 
     /**
-     * Identify if this is intersected by point {@code p}.
+     * Identify if {@code this} intersects {@code ch}.
      *
      * @param ch The convex hull to test for intersection with.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
-     * @return {@code true} iff the geometry is intersected by {@code ch.
+     * @return {@code true} iff {@code this} intersects {@code ch}.
      */
     @Override
-    public boolean isIntersectedBy(V2D_ConvexHullDouble ch, double epsilon) {
-        if (super.isIntersectedBy(ch, epsilon)) {
-            if (internalHoles.isEmpty()) {
-                return true;
-            }
-            if (ch.getEdges().values().parallelStream().anyMatch(x -> 
-                    internalHoles.values().parallelStream().anyMatch(y -> 
-                            V2D_LineSegmentDouble.isIntersectedBy(epsilon, x, 
-                                    y.edges.values())))) {
-                return true;
-            }
-            return !internalHoles.values().parallelStream().allMatch(x -> 
-                    x.contains(ch, epsilon));
-        }
-        return false;
+    public boolean intersects(V2D_ConvexHullDouble ch, double epsilon) {
+        return super.intersects(ch, epsilon)
+            && !internalHolesContains(ch, epsilon);
+    }
+    
+    /**
+     * Identify if {@link #internalHoles} contains {@code ch}.
+     *
+     * @param ch The convex hull to test for containment.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff {@link #internalHoles} contains {@code ch}.
+     */
+    public boolean internalHolesContains(V2D_ConvexHullDouble ch, double epsilon) {
+        return internalHoles.values().parallelStream().anyMatch(x
+                        -> x.contains(ch, epsilon));
+    }
+
+    /**
+     * Identify if {@link #internalHoles} intersects {@code ch}.
+     *
+     * @param ch The convex hull to test for intersection.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff {@link #internalHoles} intersects {@code ch}.
+     */
+    public boolean internalHolesIntersects(V2D_ConvexHullDouble ch, double epsilon) {
+        return internalHoles.values().parallelStream().anyMatch(x
+                        -> x.intersects(ch, epsilon));
+    }
+
+    /**
+     * Identify if {@code this} contains {@code ch}.
+     *
+     * @param ch The convex hull to test for intersection with.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff {@code this}contains {@code ch}.
+     */
+    @Override
+    public boolean contains(V2D_ConvexHullDouble ch, double epsilon) {
+        return super.contains(ch, epsilon)
+            && !internalHolesContains(ch, epsilon);
     }
 
     /**
@@ -260,38 +426,38 @@ public class V2D_PolygonDouble extends V2D_PolygonNoInternalHolesDouble {
     }
 
     @Override
-    public V2D_PolygonDouble rotate(V2D_PointDouble pt, double theta,
-            double epsilon) {
+    public V2D_PolygonDouble rotate(V2D_PointDouble pt, double theta) {
         theta = Math_AngleDouble.normalise(theta);
         if (theta == 0d) {
-            return new V2D_PolygonDouble(this, epsilon);
+            return new V2D_PolygonDouble(this, 0d);
         } else {
-            return rotateN(pt, theta, epsilon);
+            return rotateN(pt, theta);
         }
     }
 
     @Override
-    public V2D_PolygonDouble rotateN(V2D_PointDouble pt, double theta, double epsilon) {
-        V2D_PolygonNoInternalHolesDouble exterior = super.rotateN(pt, theta, epsilon);
-        HashMap<Integer, V2D_PolygonNoInternalHolesDouble> rInternalHoles = new HashMap<>();
+    public V2D_PolygonDouble rotateN(V2D_PointDouble pt, double theta) {
+        V2D_PolygonNoInternalHolesDouble exterior = super.rotateN(pt, theta);
+        HashMap<Integer, V2D_PolygonNoInternalHolesDouble> 
+                rInternalHoles = new HashMap<>();
         if (internalHoles != null) {
             for (int i = 0; i < internalHoles.size(); i++) {
-                rInternalHoles.put(rInternalHoles.size(), internalHoles.get(i).rotate(pt, theta, epsilon));
+                rInternalHoles.put(rInternalHoles.size(), 
+                        internalHoles.get(i).rotate(pt, theta));
             }
         }
-        return new V2D_PolygonDouble(exterior, rInternalHoles, epsilon);
+        return new V2D_PolygonDouble(exterior, rInternalHoles, 0d);
     }
 
-    @Override
-    public boolean isIntersectedBy(V2D_EnvelopeDouble aabb, double epsilon) {
-        en = getEnvelope();
-        if (en.isIntersectedBy(aabb, epsilon)) {
-            if (getConvexHull(epsilon).isIntersectedBy(aabb, epsilon)) {
-                return true;
-            }
-        }
-        return false;
-    }
+//    @Override
+//    public boolean intersects(V2D_EnvelopeDouble aabb, double epsilon) {
+//        if (getEnvelope().intersects(aabb, epsilon)) {
+//            if (getConvexHull(epsilon).intersects(aabb, epsilon)) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
     /**
      * Adds an internal hole and return its assigned id.

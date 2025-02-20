@@ -399,17 +399,17 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
     }
 
     @Override
-    public V2D_PointDouble rotate(V2D_PointDouble pt, double theta, double epsilon) {
+    public V2D_PointDouble rotate(V2D_PointDouble pt, double theta) {
         theta = Math_AngleDouble.normalise(theta);
         if (theta == 0d) {
             return new V2D_PointDouble(this);
         } else {
-            return rotateN(pt, theta, epsilon);
+            return rotateN(pt, theta);
         }
     }
 
     @Override
-    public V2D_PointDouble rotateN(V2D_PointDouble pt, double theta, double epsilon) {
+    public V2D_PointDouble rotateN(V2D_PointDouble pt, double theta) {
         V2D_VectorDouble tv = new V2D_VectorDouble(pt.getX(), pt.getY());
         V2D_PointDouble tp = new V2D_PointDouble(this);
         tp.translate(tv.reverse());
@@ -470,9 +470,8 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
 //            V2D_PointDouble... pts) {
 //        return getUnique(Arrays.asList(pts), epsilon);
 //    }
-    @Override
-    public boolean isIntersectedBy(V2D_EnvelopeDouble aabb, double epsilon) {
-        return aabb.isIntersectedBy(this);
+    public boolean intersects(V2D_EnvelopeDouble aabb, double epsilon) {
+        return aabb.intersects(this);
     }
 
     @Override

@@ -312,16 +312,16 @@ public class V2D_Line extends V2D_Geometry {
      * @return {@code true} iff {@code l} is the same as {@code this}.
      */
     public boolean equals(V2D_Line l, int oom, RoundingMode rm) {
-//        boolean t1 = isIntersectedBy(l.getP(oom), oom);
-//        boolean t2 = isIntersectedBy(l.getQ(oom), oom);
-//        boolean t3 = l.isIntersectedBy(getP(oom), oom);
-//        boolean t4 = l.isIntersectedBy(getQ(oom),oom);
+//        boolean t1 = intersects(l.getP(oom), oom);
+//        boolean t2 = intersects(l.getQ(oom), oom);
+//        boolean t3 = l.intersects(getP(oom), oom);
+//        boolean t4 = l.intersects(getQ(oom),oom);
 //        boolean t5 = getV(oom).isScalarMultiple(l.getV(oom), oom);
-//        return isIntersectedBy(l.getP(), oom, rm)
-//                && isIntersectedBy(l.getQ(oom, rm), oom, rm);
+//        return intersects(l.getP(), oom, rm)
+//                && intersects(l.getQ(oom, rm), oom, rm);
         //if (v.isScalarMultiple(l.v, oom, rm)) {
-            if (l.isIntersectedBy(getP(), oom, rm)) {
-                if (l.isIntersectedBy(getQ(oom, rm), oom, rm)) {
+            if (l.intersects(getP(), oom, rm)) {
+                if (l.intersects(getQ(oom, rm), oom, rm)) {
                     return true;
                 }
             }
@@ -391,7 +391,7 @@ public class V2D_Line extends V2D_Geometry {
      * @param rm The RoundingMode for any rounding.
      * @return {@code true} if lines intersect.
      */
-    public boolean isIntersectedBy(V2D_Line l, BigRational den, int oom, 
+    public boolean intersects(V2D_Line l, BigRational den, int oom, 
             RoundingMode rm) {
         if (den.compareTo(BigRational.ZERO) == 0) {
             // Lines are parallel or coincident.
@@ -406,7 +406,7 @@ public class V2D_Line extends V2D_Geometry {
      * @param rm The RoundingMode for any rounding.
      * @return {@code true} if pv is on the line.
      */
-    public boolean isIntersectedBy(V2D_Point pt, int oom, RoundingMode rm) {
+    public boolean intersects(V2D_Point pt, int oom, RoundingMode rm) {
         p = getP();
         q = getQ(oom, rm);
         if (p.equals(pt, oom, rm) || q.equals(pt, oom, rm)) {
@@ -452,8 +452,8 @@ public class V2D_Line extends V2D_Geometry {
      * @param rm The RoundingMode for any rounding.
      * @return {@code true} if lines intersect.
      */
-    public boolean isIntersectedBy(V2D_Line l, int oom, RoundingMode rm) {
-        return isIntersectedBy(l, getIntersectionDenominator(p.getX(oom, rm),
+    public boolean intersects(V2D_Line l, int oom, RoundingMode rm) {
+        return intersects(l, getIntersectionDenominator(p.getX(oom, rm),
                         getQ(oom, rm).getX(oom, rm), l.p.getX(oom, rm),
                         l.getQ(oom, rm).getX(oom, rm), p.getY(oom, rm), 
                         q.getY(oom, rm), l.p.getY(oom, rm), l.q.getY(oom, rm)),
@@ -476,11 +476,11 @@ public class V2D_Line extends V2D_Geometry {
      * @param rm The RoundingMode for any rounding.
      * @return {@code true} if lines intersect.
      */
-    public boolean isIntersectedBy(V2D_Line l, BigRational x1,
+    public boolean intersects(V2D_Line l, BigRational x1,
             BigRational x2, BigRational x3, BigRational x4, BigRational y1,
             BigRational y2, BigRational y3, BigRational y4,
             int oom, RoundingMode rm) {
-        return isIntersectedBy(l, V2D_Line.getIntersectionDenominator(x1, x2, 
+        return intersects(l, V2D_Line.getIntersectionDenominator(x1, x2, 
                 x3, x4, y1, y2, y3, y4), oom, rm);
     }
 
@@ -538,7 +538,7 @@ public class V2D_Line extends V2D_Geometry {
             BigRational x1, BigRational x2, BigRational x3, BigRational x4, 
             BigRational y1, BigRational y2, BigRational y3, BigRational y4, 
             int oom, RoundingMode rm) {
-        if (isIntersectedBy(l, den, oom, rm)) {
+        if (intersects(l, den, oom, rm)) {
             // Check for coincident lines
             if (equals(l, oom -1, rm)) {
                 return l;
@@ -582,7 +582,7 @@ public class V2D_Line extends V2D_Geometry {
      */
     public V2D_FiniteGeometry getLineOfIntersection(V2D_Point pt, int oom,
             RoundingMode rm) {
-        if (isIntersectedBy(pt, oom, rm)) {
+        if (intersects(pt, oom, rm)) {
             return pt;
         }
         return new V2D_LineSegment(pt, getPointOfIntersection(pt, true, oom, rm), oom, rm);
@@ -597,7 +597,7 @@ public class V2D_Line extends V2D_Geometry {
      */
     public V2D_Point getPointOfIntersection(V2D_Point pt, int oom,
             RoundingMode rm) {
-        if (isIntersectedBy(pt, oom, rm)) {
+        if (intersects(pt, oom, rm)) {
             return pt;
         }
         return getPointOfIntersection(pt, true, oom, rm);
@@ -756,7 +756,7 @@ public class V2D_Line extends V2D_Geometry {
      * @return The minimum distance between this and {@code pv}.
      */
     public BigRational getDistance(V2D_Point pt, int oom, RoundingMode rm) {
-        if (isIntersectedBy(pt, oom, rm)) {
+        if (intersects(pt, oom, rm)) {
             return BigRational.ZERO;
         }
         return new Math_BigRationalSqrt(
@@ -781,7 +781,7 @@ public class V2D_Line extends V2D_Geometry {
      * @return The minimum distance between this and {@code pv}.
      */
     public BigRational getDistanceSquared(V2D_Point pt, int oom, RoundingMode rm) {
-        if (isIntersectedBy(pt, oom, rm)) {
+        if (intersects(pt, oom, rm)) {
             return BigRational.ZERO;
         } else {
             return getDistanceSquared(pt, true, oom, rm);
@@ -942,7 +942,7 @@ public class V2D_Line extends V2D_Geometry {
     public static boolean isCollinear(int oom, RoundingMode rm, V2D_Line l, 
             V2D_Point... ps) {
         for (var p : ps) {
-            if (!l.isIntersectedBy(p, oom, rm)) {
+            if (!l.intersects(p, oom, rm)) {
                 return false;
             }
         }
@@ -995,7 +995,7 @@ public class V2D_Line extends V2D_Geometry {
      * line, then so must b for them to be on the same side.
      */
     public boolean isOnSameSide(V2D_Point a, V2D_Point b, int oom, RoundingMode rm) {
-        if (isIntersectedBy(a, oom, rm) && isIntersectedBy(b, oom, rm)) {
+        if (intersects(a, oom, rm) && intersects(b, oom, rm)) {
             return true;
         }
         p = getP();

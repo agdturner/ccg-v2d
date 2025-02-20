@@ -501,11 +501,6 @@ public class V2D_Point extends V2D_FiniteGeometry {
         return r;
     }
 
-    @Override
-    public boolean isIntersectedBy(V2D_Envelope aabb, int oom, RoundingMode rm) {
-        return aabb.contains(this, oom);
-    }
-
     /**
      * @param p The point to compare this with
      * @param oom The Order of Magnitude for the precision.

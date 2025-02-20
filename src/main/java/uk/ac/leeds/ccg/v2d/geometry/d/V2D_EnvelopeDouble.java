@@ -484,8 +484,8 @@ public class V2D_EnvelopeDouble implements Serializable {
      * @param e The Vector_Envelope2D to test for intersection.
      * @return {@code true} if this intersects with {@code e}.
      */
-    public boolean isIntersectedBy(V2D_EnvelopeDouble e) {
-        return isIntersectedBy(e, 0d);
+    public boolean intersects(V2D_EnvelopeDouble e) {
+        return intersects(e, 0d);
     }
 
     /**
@@ -496,7 +496,7 @@ public class V2D_EnvelopeDouble implements Serializable {
      * equal.
      * @return {@code true} if this intersects with {@code e}.
      */
-    public boolean isIntersectedBy(V2D_EnvelopeDouble e, double epsilon) {
+    public boolean intersects(V2D_EnvelopeDouble e, double epsilon) {
         if (isBeyond(e, epsilon)) {
             return !e.isBeyond(this, epsilon);
         } else {
@@ -567,19 +567,25 @@ public class V2D_EnvelopeDouble implements Serializable {
      * @return {@code true} if this intersects with {@code pl}
      */
     public boolean contains(V2D_ShapeDouble s) {
-        if (contains(s.getEnvelope())) {
-            return s.getPoints().values().parallelStream().allMatch(x
-                    -> contains(x));
-        }
-        return false;
+        return contains(s.getEnvelope())
+                && contains0(s);
+    }
+
+    /**
+     * @param s The shape to test for containment.
+     * @return {@code true} if this intersects with {@code pl}
+     */
+    public boolean contains0(V2D_ShapeDouble s) {
+        return s.getPoints().values().parallelStream().allMatch(x
+                -> contains(x));
     }
 
     /**
      * @param p The point to test for intersection.
      * @return {@code true} if this intersects with {@code pl}
      */
-    public boolean isIntersectedBy(V2D_PointDouble p) {
-        return isIntersectedBy(p.getX(), p.getY());
+    public boolean intersects(V2D_PointDouble p) {
+        return intersects(p.getX(), p.getY());
     }
 
     /**
@@ -587,7 +593,7 @@ public class V2D_EnvelopeDouble implements Serializable {
      * @param y The y-coordinate of the point to test for intersection.
      * @return {@code true} if this intersects with {@code pl}
      */
-    public boolean isIntersectedBy(double x, double y) {
+    public boolean intersects(double x, double y) {
         return x >= getXMin()
                 && x <= getXMax()
                 && y >= getYMin()
@@ -600,7 +606,7 @@ public class V2D_EnvelopeDouble implements Serializable {
      * {@code this.equals(en)}; otherwise returns the intersection.
      */
     public V2D_EnvelopeDouble getIntersection(V2D_EnvelopeDouble en) {
-        if (!this.isIntersectedBy(en)) {
+        if (!this.intersects(en)) {
             return null;
         }
         return new V2D_EnvelopeDouble(en.env,

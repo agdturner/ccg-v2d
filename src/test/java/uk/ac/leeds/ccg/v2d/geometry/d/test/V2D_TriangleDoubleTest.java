@@ -63,7 +63,7 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of isIntersectedBy method, of class V2D_TriangleDouble.
+     * Test of intersects method, of class V2D_TriangleDouble.
      */
     @Test
     public void testIsAligned_V2D_PointDouble_double() {
@@ -72,17 +72,17 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
         V2D_PointDouble pt = pP0N1;
         V2D_TriangleDouble instance = new V2D_TriangleDouble(pP0P2, pP0N2, pP2P0);
-        assertTrue(instance.isIntersectedBy0(pt, epsilon));
+        assertTrue(instance.intersects0(pt, epsilon));
         pt = pN1P0;
-        assertFalse(instance.isIntersectedBy0(pt, epsilon));
+        assertFalse(instance.intersects0(pt, epsilon));
         instance = new V2D_TriangleDouble(pP0P0, pP0P1, pP1P1);
         pt = pP2P2;
-        assertFalse(instance.isIntersectedBy0(pt, epsilon));
+        assertFalse(instance.intersects0(pt, epsilon));
         
     }
 
     /**
-     * Test of isIntersectedBy method, of class V2D_TriangleDouble.
+     * Test of intersects method, of class V2D_TriangleDouble.
      */
     @Test
     public void testIsAligned_V2D_LineSegmentDouble_double() {
@@ -98,25 +98,25 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of isIntersectedBy method, of class V2D_TriangleDouble.
+     * Test of intersects method, of class V2D_TriangleDouble.
      */
     @Test
     public void testIsIntersectedBy() {
-        System.out.println("isIntersectedBy");
+        System.out.println("intersects");
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
         V2D_PointDouble pt = pP0P0;
         V2D_TriangleDouble instance = new V2D_TriangleDouble(pN1N1, pP0P2, pP1N1);
-        assertTrue(instance.isIntersectedBy(pt, epsilon));
+        assertTrue(instance.intersects(pt, epsilon));
         // Test 2
         pt = pP0P1;
-        assertTrue(instance.isIntersectedBy(pt, epsilon));
+        assertTrue(instance.intersects(pt, epsilon));
         // Test 3
         pt = pP1P2;
-        assertFalse(instance.isIntersectedBy(pt, epsilon));
+        assertFalse(instance.intersects(pt, epsilon));
         // Test 4
         pt = pN1P2;
-        assertFalse(instance.isIntersectedBy(pt, epsilon));
+        assertFalse(instance.intersects(pt, epsilon));
     }
 
     /**
@@ -247,29 +247,29 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of isIntersectedBy method, of class V2D_TriangleDouble.
+     * Test of intersects method, of class V2D_TriangleDouble.
      */
     @Test
     public void testIsIntersectedBy_V2D_PointDouble() {
-        System.out.println("isIntersectedBy");
+        System.out.println("intersects");
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
         V2D_PointDouble pt;
         V2D_TriangleDouble instance;
         instance = new V2D_TriangleDouble(env, P0P0, P1P0, P0P1, P0P0);
-        assertTrue(instance.isIntersectedBy(pP1P0, epsilon));
-        assertTrue(instance.isIntersectedBy(pP0P1, epsilon));
-        assertTrue(instance.isIntersectedBy(pP0P0, epsilon));
+        assertTrue(instance.intersects(pP1P0, epsilon));
+        assertTrue(instance.intersects(pP0P1, epsilon));
+        assertTrue(instance.intersects(pP0P0, epsilon));
         pt = new V2D_PointDouble(env, P1P0, P0P0);
-        assertTrue(instance.isIntersectedBy(pt, epsilon));
+        assertTrue(instance.intersects(pt, epsilon));
         // Test 5
         pt = new V2D_PointDouble(env, P0P1, P0P0);
-        assertTrue(instance.isIntersectedBy(pt, epsilon));
+        assertTrue(instance.intersects(pt, epsilon));
         // Test 6
         instance = new V2D_TriangleDouble(env, P0P0, P1P0, P1P2, P2P0);
-        assertTrue(instance.isIntersectedBy(pP1P2, epsilon));
-        assertTrue(instance.isIntersectedBy(pP1P1, epsilon));
-        assertFalse(instance.isIntersectedBy(pN1P0, epsilon));
+        assertTrue(instance.intersects(pP1P2, epsilon));
+        assertTrue(instance.intersects(pP1P1, epsilon));
+        assertFalse(instance.intersects(pN1P0, epsilon));
     }
 
     /**
@@ -377,57 +377,57 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
         instance = new V2D_TriangleDouble(pP1P0, pP0P1, pP1P1);
         V2D_PointDouble pt = pP0P0;
         theta = Pi;
-        result = instance.rotate(pt, theta, epsilon);
+        result = instance.rotate(pt, theta);
         expResult = new V2D_TriangleDouble(pN1P0, pN1N1, pP0N1);
         assertTrue(expResult.equals(result, epsilon));
         // Test 2
         instance = new V2D_TriangleDouble(pP1P0, pP0P1, pP1P1);
         theta = Pi / 2d;
-        result = instance.rotate(pt, theta, epsilon);
+        result = instance.rotate(pt, theta);
         expResult = new V2D_TriangleDouble(pP0N1, pP1P0, pP1N1);
         //expResult = new V2D_TriangleDouble(pN1P0, pN1P1, pP0P1);
         assertTrue(expResult.equals(result, epsilon));
         // Test 3
         instance = new V2D_TriangleDouble(pP2P0, pP0P2, pP2P2);
         theta = Pi;
-        result = instance.rotate(pt,  theta, epsilon);
+        result = instance.rotate(pt,  theta);
         expResult = new V2D_TriangleDouble(pN2P0, pN2N2, pP0N2);
         assertTrue(expResult.equals(result, epsilon));
         // Test 4
         instance = new V2D_TriangleDouble(pP2P0, pP0P2, pP2P2);
         theta = Pi / 2d;
-        result = instance.rotate(pt, theta, epsilon);
+        result = instance.rotate(pt, theta);
         expResult = new V2D_TriangleDouble(pP0N2, pP2P0, pP2N2);
         assertTrue(expResult.equals(result, epsilon));
         // Test 5
         instance = new V2D_TriangleDouble(pP2P0, pP0P2, pP2P2);
         theta = 3d * Pi / 2d;
-        result = instance.rotate(pt, theta, epsilon);
+        result = instance.rotate(pt, theta);
         expResult = new V2D_TriangleDouble(pN2P0, pN2P2, pP0P2);
         assertTrue(expResult.equals(result, epsilon));
         // Test 5
         instance = new V2D_TriangleDouble(pP1P0, pP0P1, pP1P1);
         instance.translate(P1P0);
         theta = Pi;
-        result = instance.rotate(pt, theta, epsilon);
+        result = instance.rotate(pt, theta);
         expResult = new V2D_TriangleDouble(pN2P0, pN2N1, pN1N1);
         assertTrue(expResult.equals(result, epsilon));
         // Test 6
         instance = new V2D_TriangleDouble(pP1P0, pP0P1, pP1P1);
         theta = Pi;
-        result = instance.rotate(pP0P1, theta, epsilon);
+        result = instance.rotate(pP0P1, theta);
         expResult = new V2D_TriangleDouble(pN1P1, pN1P2, pP0P1);
         assertTrue(expResult.equals(result, epsilon));
         // Test 7
         instance = new V2D_TriangleDouble(pP1P0, pP0P1, pP1P1);
         theta = Pi / 2d;
-        result = instance.rotate(pP0P1, theta, epsilon);
+        result = instance.rotate(pP0P1, theta);
         expResult = new V2D_TriangleDouble(pP0P0, pN1P0, pP0P1);
         assertTrue(expResult.equals(result, epsilon));
         // Test 8
         instance = new V2D_TriangleDouble(pP2P0, pP0P2, pP2P2);
         theta = Pi;
-        result = instance.rotate(pP0P1, theta, epsilon);
+        result = instance.rotate(pP0P1, theta);
         expResult = new V2D_TriangleDouble(pN2P0, pP0P0, pN2P2);
         assertTrue(expResult.equals(result, epsilon));
     }
@@ -573,7 +573,7 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
                 new V2D_PointDouble(env, 0d, 50d),
                 new V2D_PointDouble(env, 50d, -50d));
         theta = Math.PI;
-        t1 = t0.rotate(origin, theta, epsilon);
+        t1 = t0.rotate(origin, theta);
         expected = new ArrayList<>();
         /** 
          * Using an additional centroid point and connecting each edge with this 
@@ -624,7 +624,7 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
         new V2D_PointDouble(env, 0d, 60d),
         new V2D_PointDouble(env, 30d, -30d));
         theta = Math.PI;
-        t1 = t0.rotate(origin, theta, epsilon);
+        t1 = t0.rotate(origin, theta);
         expected = new ArrayList<>();
         expected.add(new V2D_TriangleDouble(
                 new V2D_PointDouble(env, -10d, -30d),

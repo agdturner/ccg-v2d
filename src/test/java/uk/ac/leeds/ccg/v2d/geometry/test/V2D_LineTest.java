@@ -83,52 +83,52 @@ public class V2D_LineTest extends V2D_Test {
     }
 
     /**
-     * Test of isIntersectedBy method, of class V2D_Line.
+     * Test of intersects method, of class V2D_Line.
      */
     @Test
     public void testIsIntersectedBy_3args() {
-        System.out.println("isIntersectedBy");
+        System.out.println("intersects");
         int oom = -6;
         RoundingMode rm = RoundingMode.HALF_UP;
         V2D_Point pt = pP0P0;
         V2D_Line instance = new V2D_Line(pN1N1, pP1P1, oom, rm);
-        assertTrue(instance.isIntersectedBy(pt, oom, rm));
+        assertTrue(instance.intersects(pt, oom, rm));
         // Test 2
         pt = new V2D_Point(env, P0_1E2, P0_1E2);
-        assertTrue(instance.isIntersectedBy(pt, oom, rm));
+        assertTrue(instance.intersects(pt, oom, rm));
         // Test 3 works as the rounding puts pt on the line.
         pt = new V2D_Point(env, P0_1E12, P0_1E12);
-        assertTrue(instance.isIntersectedBy(pt, oom, rm));
+        assertTrue(instance.intersects(pt, oom, rm));
         // Test 4 works as the rounding puts pt on the line.
         pt = new V2D_Point(env, N0_1E12, N0_1E12);
-        assertTrue(instance.isIntersectedBy(pt, oom, rm));
+        assertTrue(instance.intersects(pt, oom, rm));
         // Test 5 works as the rounding puts pt on the line.
         double a = P0_1E2 + P1E12;
         pt = new V2D_Point(env, a, a);
-        assertTrue(instance.isIntersectedBy(pt, oom, rm));
+        assertTrue(instance.intersects(pt, oom, rm));
         // Test 6 works as the rounding puts pt on the line.
         a = N0_1E2 + N1E12;
         pt = new V2D_Point(env, a, a);
-        assertTrue(instance.isIntersectedBy(pt, -12, rm));
-        //assertTrue(instance.isIntersectedBy(pt, oom, rm));
+        assertTrue(instance.intersects(pt, -12, rm));
+        //assertTrue(instance.intersects(pt, oom, rm));
         // Test 7
         instance = new V2D_Line(pP0N1, pP2P1, oom, rm);
         pt = new V2D_Point(env, -1d, -2d);
-        assertTrue(instance.isIntersectedBy(pt, oom, rm));
+        assertTrue(instance.intersects(pt, oom, rm));
         // Test 8
         //epsilon = 0.00000000001d; // Too big!
         //epsilon = 0.000000000001d;
         a = N0_1E2 + N1E12;
         pt = new V2D_Point(env, a, a);
-        assertFalse(instance.isIntersectedBy(pt, -12, rm));
+        assertFalse(instance.intersects(pt, -12, rm));
         pt = new V2D_Point(env, a + 1d, a);
-        assertTrue(instance.isIntersectedBy(pt, -12, rm));
+        assertTrue(instance.intersects(pt, -12, rm));
         // Test 9
         a = N0_1E12 + N1E12;
         pt = new V2D_Point(env, a, a);
-        assertFalse(instance.isIntersectedBy(pt, -12, rm));
+        assertFalse(instance.intersects(pt, -12, rm));
         pt = new V2D_Point(env, a + 1d, a);
-        assertTrue(instance.isIntersectedBy(pt, -12, rm));
+        assertTrue(instance.intersects(pt, -12, rm));
     }
 
     /**

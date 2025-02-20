@@ -18,7 +18,6 @@ package uk.ac.leeds.ccg.v2d.geometry.d;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
 import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
 
@@ -216,11 +215,11 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
      * equal.
      * @return A point or line segment.
      */
-    public boolean isIntersectedBy(V2D_PointDouble pt, double epsilon) {
-        if (getPQR().isIntersectedBy(pt, epsilon)) {
+    public boolean intersects(V2D_PointDouble pt, double epsilon) {
+        if (getPQR().intersects(pt, epsilon)) {
             return true;
         } else {
-            return getRSP().isIntersectedBy(pt, epsilon);
+            return getRSP().intersects(pt, epsilon);
         }
     }
 
@@ -230,11 +229,11 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
      * equal.
      * @return A point or line segment.
      */
-    public boolean isIntersectedBy(V2D_LineSegmentDouble l, double epsilon) {
-        if (getPQR().isIntersectedBy(l, epsilon)) {
+    public boolean intersects(V2D_LineSegmentDouble l, double epsilon) {
+        if (getPQR().intersects(l, epsilon)) {
             return true;
         } else {
-            return getRSP().isIntersectedBy(l, epsilon);
+            return getRSP().intersects(l, epsilon);
         }
     }
 
@@ -244,8 +243,8 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
      * equal.
      * @return True iff there is an intersection.
      */
-    public boolean isIntersectedBy(double epsilon, V2D_LineSegmentDouble... ls) {
-        return isIntersectedBy(epsilon, Arrays.asList(ls));
+    public boolean intersects(double epsilon, V2D_LineSegmentDouble... ls) {
+        return intersects(epsilon, Arrays.asList(ls));
     }
 
     /**
@@ -254,8 +253,8 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
      * equal.
      * @return True iff there is an intersection.
      */
-    public boolean isIntersectedBy(double epsilon, Collection<V2D_LineSegmentDouble> ls) {
-        return ls.parallelStream().anyMatch(x -> isIntersectedBy(x, epsilon));
+    public boolean intersects(double epsilon, Collection<V2D_LineSegmentDouble> ls) {
+        return ls.parallelStream().anyMatch(x -> intersects(x, epsilon));
     }
 
     /**
@@ -264,11 +263,11 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
      * equal.
      * @return A point or line segment.
      */
-    public boolean isIntersectedBy(V2D_TriangleDouble t, double epsilon) {
-        if (pqr.isIntersectedBy(t, epsilon)) {
+    public boolean intersects(V2D_TriangleDouble t, double epsilon) {
+        if (pqr.intersects(t, epsilon)) {
             return true;
         } else {
-            return rsp.isIntersectedBy(t, epsilon);
+            return rsp.intersects(t, epsilon);
         }
     }
 
@@ -403,24 +402,22 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
     }
 
     @Override
-    public V2D_RectangleDouble rotate(V2D_PointDouble pt, double theta,
-            double epsilon) {
+    public V2D_RectangleDouble rotate(V2D_PointDouble pt, double theta) {
         theta = Math_AngleDouble.normalise(theta);
         if (theta == 0d) {
             return new V2D_RectangleDouble(this);
         } else {
-            return rotateN(pt, theta, epsilon);
+            return rotateN(pt, theta);
         }
     }
 
     @Override
-    public V2D_RectangleDouble rotateN(V2D_PointDouble pt,
-            double theta, double epsilon) {
+    public V2D_RectangleDouble rotateN(V2D_PointDouble pt, double theta) {
         return new V2D_RectangleDouble(
-                getP().rotateN(pt, theta, epsilon),
-                getQ().rotateN(pt, theta, epsilon),
-                getR().rotateN(pt, theta, epsilon),
-                getS().rotateN(pt, theta, epsilon));
+                getP().rotateN(pt, theta),
+                getQ().rotateN(pt, theta),
+                getR().rotateN(pt, theta),
+                getS().rotateN(pt, theta));
     }
 
     /**
@@ -642,11 +639,18 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
         return false;
     }
 
-    @Override
-    public boolean isIntersectedBy(V2D_EnvelopeDouble aabb, double epsilon) {
-        if (pqr.isIntersectedBy(aabb, epsilon)) {
+    /**
+     * Identify if {@code this} is intersected by {@code aabb}.
+     * 
+     * @param aabb The envelope to test for intersection.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff {@code this} is intersected by {@code aabb}.
+     */
+    public boolean intersects(V2D_EnvelopeDouble aabb, double epsilon) {
+        if (pqr.intersects(aabb, epsilon)) {
             return true;
         }
-        return rsp.isIntersectedBy(aabb, epsilon);
+        return rsp.intersects(aabb, epsilon);
     }
 }

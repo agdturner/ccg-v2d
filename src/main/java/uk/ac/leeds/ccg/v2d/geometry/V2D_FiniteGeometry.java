@@ -65,18 +65,6 @@ public abstract class V2D_FiniteGeometry extends V2D_Geometry {
     }
     
     /**
-     * For evaluating if the geometry is intersected by the Axis Aligned 
-     * Bounding Box aabb.
-     *
-     * @param aabb The Axis Aligned Bounding Box to test for intersection.
-     * @param oom The Order of Magnitude for the precision.
-     * @param rm The RoundingMode for any rounding.
-     * @return {@code true} iff the geometry intersects aabb at the given precision.
-     */
-    public abstract boolean isIntersectedBy(V2D_Envelope aabb, int oom, 
-            RoundingMode rm);
-    
-    /**
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
      * @return A copy of the points of the geometry.

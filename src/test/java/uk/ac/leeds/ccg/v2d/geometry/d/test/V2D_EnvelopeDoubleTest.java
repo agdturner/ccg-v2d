@@ -81,48 +81,48 @@ public class V2D_EnvelopeDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of isIntersectedBy method, of class V2D_EnvelopeDouble.
+     * Test of intersects method, of class V2D_EnvelopeDouble.
      */
     @Test
     public void testIsIntersectedBy_V2D_EnvelopeDouble() {
-        System.out.println("isIntersectedBy");
+        System.out.println("intersects");
         V2D_EnvelopeDouble instance = new V2D_EnvelopeDouble(pP0P0);
         V2D_EnvelopeDouble en = new V2D_EnvelopeDouble(pP0P0, pP1P1);
-        assertTrue(instance.isIntersectedBy(en));
+        assertTrue(instance.intersects(en));
         // Test 2
         instance = new V2D_EnvelopeDouble(pN1N1, pP0P0);
-        assertTrue(instance.isIntersectedBy(en));
+        assertTrue(instance.intersects(en));
         // Test 3
         en = new V2D_EnvelopeDouble(pN2N2, pP2P2);
-        assertTrue(instance.isIntersectedBy(en));
+        assertTrue(instance.intersects(en));
         // Test 4
         en = new V2D_EnvelopeDouble(pP0P0, pP1P1);
         instance = new V2D_EnvelopeDouble(pN1N1, pN1P0);
-        assertFalse(instance.isIntersectedBy(en));
+        assertFalse(instance.intersects(en));
         // Test 5
         en = new V2D_EnvelopeDouble(pP0P0, pP1P1);
         instance = new V2D_EnvelopeDouble(pN1P0, pP0P1);
-        assertTrue(instance.isIntersectedBy(en));
+        assertTrue(instance.intersects(en));
     }
 
     /**
-     * Test of isIntersectedBy method, of class V2D_EnvelopeDouble.
+     * Test of intersects method, of class V2D_EnvelopeDouble.
      */
     @Test
     public void testIsIntersectedBy_V2D_PointDouble() {
-        System.out.println("isIntersectedBy");
+        System.out.println("intersects");
         V2D_EnvelopeDouble instance = new V2D_EnvelopeDouble(pN1N1, pP1P1);
         // Test 1 the centre
-        assertTrue(instance.isIntersectedBy(pP0P0));
+        assertTrue(instance.intersects(pP0P0));
         // Test 2 to 6 the corners
         // Test 2
-        assertTrue(instance.isIntersectedBy(pP1P1));
+        assertTrue(instance.intersects(pP1P1));
         // Test 3
-        assertTrue(instance.isIntersectedBy(pN1N1));
+        assertTrue(instance.intersects(pN1N1));
         // Test 4
-        assertTrue(instance.isIntersectedBy(pN1P1));
+        assertTrue(instance.intersects(pN1P1));
         // Test 6
-        assertTrue(instance.isIntersectedBy(pP1N1));
+        assertTrue(instance.intersects(pP1N1));
     }
 
     /**
@@ -143,17 +143,17 @@ public class V2D_EnvelopeDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of isIntersectedBy method, of class V2D_EnvelopeDouble. No need for a full
+     * Test of intersects method, of class V2D_EnvelopeDouble. No need for a full
      * set of test here as this is covered by
      * {@link #testIsIntersectedBy_V2D_PointDouble()}
      */
     @Test
     public void testIsIntersectedBy_2args() {
-        System.out.println("isIntersectedBy");
+        System.out.println("intersects");
         V2D_EnvelopeDouble instance = new V2D_EnvelopeDouble(pN1N1, pP1P1);
-        assertTrue(instance.isIntersectedBy(0d, 0d));
+        assertTrue(instance.intersects(0d, 0d));
         instance = new V2D_EnvelopeDouble(pP1P0);
-        assertFalse(instance.isIntersectedBy(0d, 0d));
+        assertFalse(instance.intersects(0d, 0d));
     }
 
     /**

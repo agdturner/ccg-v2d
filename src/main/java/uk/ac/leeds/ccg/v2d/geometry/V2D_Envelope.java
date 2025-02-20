@@ -575,7 +575,7 @@ public class V2D_Envelope implements Serializable {
      * @return {@code true} if this intersects with {@code e} it the {@code oom}
      * level of precision.
      */
-    public boolean isIntersectedBy(V2D_Envelope e, int oom) {
+    public boolean intersects(V2D_Envelope e, int oom) {
         if (isBeyond(e, oom)) {
             return !e.isBeyond(this, oom);
         } else {
@@ -656,11 +656,19 @@ public class V2D_Envelope implements Serializable {
      * @return {@code true} if this intersects with {@code pl}
      */
     public boolean contains(V2D_Shape s, int oom, RoundingMode rm) {
-        if (contains(s.getEnvelope(oom, rm), oom)) {
-            return s.getPoints(oom, rm).values().parallelStream().allMatch(x
-                    -> contains(x, oom));
-        }
-        return false;
+        return contains(s.getEnvelope(oom, rm), oom)
+                && contains0(s, oom, rm);
+    }
+
+    /**
+     * @param s The shape to test for containment.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} if this intersects with {@code pl}
+     */
+    public boolean contains0(V2D_Shape s, int oom, RoundingMode rm) {
+        return s.getPoints(oom, rm).values().parallelStream().allMatch(x
+                -> contains(x, oom));
     }
 
     /**
@@ -669,8 +677,8 @@ public class V2D_Envelope implements Serializable {
      * @param rm The RoundingMode for any rounding.
      * @return {@code true} if this intersects with {@code pl}
      */
-    public boolean isIntersectedBy(V2D_Point p, int oom, RoundingMode rm) {
-        return isIntersectedBy(p.getX(oom, rm), p.getY(oom, rm), oom);
+    public boolean intersects(V2D_Point p, int oom, RoundingMode rm) {
+        return intersects(p.getX(oom, rm), p.getY(oom, rm), oom);
     }
 
     /**
@@ -681,7 +689,7 @@ public class V2D_Envelope implements Serializable {
      * @param oom The Order of Magnitude for the precision.
      * @return {@code true} if this intersects with {@code pl}
      */
-    public boolean isIntersectedBy(BigRational x, BigRational y, int oom) {
+    public boolean intersects(BigRational x, BigRational y, int oom) {
         return x.compareTo(getXMin(oom)) != -1
                 && x.compareTo(getXMax(oom)) != 1
                 && y.compareTo(getYMin(oom)) != -1
@@ -694,28 +702,28 @@ public class V2D_Envelope implements Serializable {
 //     * @param rm The RoundingMode for any rounding.
 //     * @return {@code true} if this intersects with {@code pl}
 //     */
-//    public boolean isIntersectedBy(V2D_Line l, int oom, RoundingMode rm) {
-//        if (isIntersectedBy(l.getP(), oom, rm)) {
+//    public boolean intersects(V2D_Line l, int oom, RoundingMode rm) {
+//        if (intersects(l.getP(), oom, rm)) {
 //            return true;
 //        } else {
-//            if (isIntersectedBy(l.getQ(oom, rm), oom, rm)) {
+//            if (intersects(l.getQ(oom, rm), oom, rm)) {
 //                return true;
 //            }
 //        }
 //        if (t instanceof V2D_LineSegment tl) {
-//            if (tl.isIntersectedBy(l, oom)) {
+//            if (tl.intersects(l, oom)) {
 //                return true;
 //            } else {
 //                if (r instanceof V2D_LineSegment rl) {
-//                    if (rl.isIntersectedBy(l, oom)) {
+//                    if (rl.intersects(l, oom)) {
 //                        return true;
 //                    } else {
 //                        if (b instanceof V2D_LineSegment bl) {
-//                            if (bl.isIntersectedBy(l, oom)) {
+//                            if (bl.intersects(l, oom)) {
 //                                return true;
 //                            } else {
 //                                if (this.l instanceof V2D_LineSegment ll) {
-//                                    if (ll.isIntersectedBy(l, oom)) {
+//                                    if (ll.intersects(l, oom)) {
 //                                        return true;
 //                                    } else {
 //                                        return false;
@@ -736,13 +744,13 @@ public class V2D_Envelope implements Serializable {
 //            }
 //        } else {
 //            if (r instanceof V2D_LineSegment rl) {
-//                if (rl.isIntersectedBy(l, oom)) {
+//                if (rl.intersects(l, oom)) {
 //                    return true;
 //                } else {
-//                    return l.isIntersectedBy(((V2D_Point) r), oom, rm);
+//                    return l.intersects(((V2D_Point) r), oom, rm);
 //                }
 //            } else {
-//                return l.isIntersectedBy(((V2D_Point) r), oom, rm);
+//                return l.intersects(((V2D_Point) r), oom, rm);
 //            }
 //        }
 //        return false;
@@ -753,28 +761,28 @@ public class V2D_Envelope implements Serializable {
 //     * @param rm The RoundingMode for any rounding.
 //     * @return {@code true} if this intersects with {@code pl}
 //     */
-//    public boolean isIntersectedBy(V2D_LineSegment l, int oom, RoundingMode rm) {
-//        if (isIntersectedBy(l.getP(), oom, rm)) {
+//    public boolean intersects(V2D_LineSegment l, int oom, RoundingMode rm) {
+//        if (intersects(l.getP(), oom, rm)) {
 //            return true;
 //        } else {
-//            if (isIntersectedBy(l.getQ(oom, rm), oom, rm)) {
+//            if (intersects(l.getQ(oom, rm), oom, rm)) {
 //                return true;
 //            }
 //        }
 //        if (t instanceof V2D_LineSegment tl) {
-//            if (tl.isIntersectedBy(this, oom)) {
+//            if (tl.intersects(this, oom)) {
 //                return true;
 //            } else {
 //                if (r instanceof V2D_LineSegment rl) {
-//                    if (rl.isIntersectedBy(this, oom)) {
+//                    if (rl.intersects(this, oom)) {
 //                        return true;
 //                    } else {
 //                        if (b instanceof V2D_LineSegment bl) {
-//                            if (bl.isIntersectedBy(this, oom)) {
+//                            if (bl.intersects(this, oom)) {
 //                                return true;
 //                            } else {
 //                                if (this.l instanceof V2D_LineSegment ll) {
-//                                    if (ll.isIntersectedBy(this, oom)) {
+//                                    if (ll.intersects(this, oom)) {
 //                                        return true;
 //                                    } else {
 //                                        return false;
@@ -795,13 +803,13 @@ public class V2D_Envelope implements Serializable {
 //            }
 //        } else {
 //            if (r instanceof V2D_LineSegment rl) {
-//                if (rl.isIntersectedBy(this, oom)) {
+//                if (rl.intersects(this, oom)) {
 //                    return true;
 //                } else {
-//                    return isIntersectedBy(((V2D_Point) r), oom, rm);
+//                    return intersects(((V2D_Point) r), oom, rm);
 //                }
 //            } else {
-//                return isIntersectedBy(((V2D_Point) r), oom, rm);
+//                return intersects(((V2D_Point) r), oom, rm);
 //            }
 //        }
 //        return false;
@@ -813,7 +821,7 @@ public class V2D_Envelope implements Serializable {
      * {@code this.equals(en)}; otherwise returns the intersection.
      */
     public V2D_Envelope getIntersection(V2D_Envelope en, int oom) {
-        if (!isIntersectedBy(en, oom)) {
+        if (!intersects(en, oom)) {
             return null;
         }
 // Probably quicker without: 

@@ -61,17 +61,6 @@ public abstract class V2D_FiniteGeometryDouble extends V2D_GeometryDouble {
     public abstract V2D_EnvelopeDouble getEnvelope();
     
     /**
-     * For evaluating if the geometry is intersected by the Axis Aligned 
-     * Bounding Box aabb.
-     *
-     * @param aabb The Axis Aligned Bounding Box to test for intersection.
-     * @param epsilon The tolerance within which two vector components are
-     * considered equal.
-     * @return {@code true} iff the geometry intersects aabb at the given precision.
-     */
-    public abstract boolean isIntersectedBy(V2D_EnvelopeDouble aabb, double epsilon);
-    
-    /**
      * Translate (move relative to the origin).
      *
      * @param v The vector to translate.

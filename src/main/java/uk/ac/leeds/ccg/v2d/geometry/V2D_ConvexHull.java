@@ -325,12 +325,9 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @param rm The RoundingMode if rounding is needed.
      * @return {@code true} iff {@code this} is intersected by {@code p}.
      */
-    public boolean isIntersectedBy(V2D_Point pt, int oom, RoundingMode rm) {
-        if (getEnvelope(oom, rm).contains(pt, oom)) {
-            return isIntersectedBy0(pt, oom, rm);
-        } else {
-            return false;
-        }
+    public boolean intersects(V2D_Point pt, int oom, RoundingMode rm) {
+        return getEnvelope(oom, rm).contains(pt, oom)
+                && intersects0(pt, oom, rm);
     }
 
     /**
@@ -341,13 +338,13 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @param rm The RoundingMode if rounding is needed.
      * @return {@code true} iff {@code this} is intersected by {@code p}.
      */
-    public boolean isIntersectedBy0(V2D_Point pt, int oom, RoundingMode rm) {
+    public boolean intersects0(V2D_Point pt, int oom, RoundingMode rm) {
         return getTriangles(oom, rm).parallelStream().anyMatch(x
-                -> x.isIntersectedBy(pt, oom, rm));
+                -> x.intersects(pt, oom, rm));
     }
 
     /**
-     * Identify if this contains point.
+     * Identify if {@code this} contains {@code p}.
      *
      * @param pt The point to test for containment.
      * @param oom The Order of Magnitude for the precision.
@@ -355,12 +352,12 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @return {@code true} iff {@code this} contains {@code p}.
      */
     public boolean contains(V2D_Point pt, int oom, RoundingMode rm) {
-        return isIntersectedBy(pt, oom, rm)
-                && !V2D_LineSegment.isIntersectedBy(oom, rm, pt, edges.values());
+        return intersects(pt, oom, rm)
+                && !V2D_LineSegment.intersects(oom, rm, pt, edges.values());
     }
 
     /**
-     * Identify if this contains line segment.
+     * Identify if {@code this} contains {@code l}.
      *
      * @param l The line segment to test for containment.
      * @param oom The Order of Magnitude for the precision.
@@ -368,12 +365,12 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @return {@code true} iff {@code this} contains {@code l}.
      */
     public boolean contains(V2D_LineSegment l, int oom, RoundingMode rm) {
-        return isIntersectedBy(l, oom, rm)
-                && !V2D_LineSegment.isIntersectedBy(oom, rm, l, edges.values());
+        return intersects(l, oom, rm)
+                && !V2D_LineSegment.intersects(oom, rm, l, edges.values());
     }
 
     /**
-     * Identify if this contains line segment.
+     * Identify if {@code this} contains {@code t}.
      *
      * @param t The triangle to test for containment.
      * @param oom The Order of Magnitude for the precision.
@@ -381,15 +378,29 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @return {@code true} iff {@code this} contains {@code t}.
      */
     public boolean contains(V2D_Triangle t, int oom, RoundingMode rm) {
-        return isIntersectedBy(t, oom, rm)
+        return intersects(t, oom, rm)
                 && t.getPoints(oom, rm).values().parallelStream().allMatch(x
                         -> contains(x, oom, rm));
-//        return isIntersectedBy(t, oom, rm)
+//        return intersects(t, oom, rm)
 //                && !t.getEdges(oom, rm).values().parallelStream().anyMatch(x
-//                        -> V2D_LineSegment.isIntersectedBy(oom, rm, x,
+//                        -> V2D_LineSegment.intersects(oom, rm, x,
 //                        edges.values()));
     }
 
+    /**
+     * Identify if {@code this} contains {@code t}.
+     *
+     * @param r The triangle to test for containment.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return {@code true} iff {@code this} contains {@code t}.
+     */
+    public boolean contains(V2D_Rectangle r, int oom, RoundingMode rm) {
+        return intersects(r, oom, rm)
+                && r.getPoints(oom, rm).values().parallelStream().allMatch(x
+                        -> contains(x, oom, rm));
+    }
+    
     /**
      * Identify if this contains the convex hull.
      *
@@ -399,131 +410,120 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @return {@code true} iff {@code this} contains {@code ch}.
      */
     public boolean contains(V2D_ConvexHull ch, int oom, RoundingMode rm) {
-        return isIntersectedBy(ch, oom, rm)
+        return intersects(ch, oom, rm)
                 && ch.getPoints(oom, rm).values().parallelStream().allMatch(x
                         -> contains(x, oom, rm));
-//        return isIntersectedBy(ch, oom, rm)
+//        return intersects(ch, oom, rm)
 //                && !ch.edges.values().parallelStream().anyMatch(x
-//                        -> V2D_LineSegment.isIntersectedBy(oom, rm, x,
+//                        -> V2D_LineSegment.intersects(oom, rm, x,
 //                        edges.values()));
     }
 
     /**
-     * Identify if this is intersected by point {@code p}.
+     * Identify if this is intersected by line segment {@code l}.
+     *
+     * @param l The line segment to test for intersection with.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return {@code true} iff {@code this} is intersected by {@code l}.
+     */
+    public boolean intersects(V2D_LineSegment l, int oom, RoundingMode rm) {
+        return l.intersects(getEnvelope(oom, rm), oom, rm)
+                && intersects0(l, oom, rm);
+    }
+
+    /**
+     * Identify if this is intersected by line segment {@code l}.
      *
      * @param l The line segment to test for intersection with.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
      * @return {@code true} iff {@code this} is intersected by {@code p}.
      */
-    public boolean isIntersectedBy(V2D_LineSegment l, int oom, RoundingMode rm) {
-        if (getEnvelope(oom, rm).isIntersectedBy(l.getEnvelope(oom, rm), oom)) {
-            return isIntersectedBy0(l, oom, rm);
-        }
-        return false;
-    }
-
-    /**
-     * Identify if this is intersected by point {@code p}.
-     *
-     * @param l The line segment to test for intersection with.
-     * @param oom The Order of Magnitude for the precision.
-     * @param rm The RoundingMode if rounding is needed.
-     * @return {@code true} iff {@code this} is intersected by {@code p}.
-     */
-    public boolean isIntersectedBy0(V2D_LineSegment l, int oom, RoundingMode rm) {
+    public boolean intersects0(V2D_LineSegment l, int oom, RoundingMode rm) {
         return getTriangles(oom, rm).parallelStream().anyMatch(x
-                -> x.isIntersectedBy(l, oom, rm));
+                -> x.intersects(l, oom, rm));
     }
 
     /**
-     * Identify if this is intersected by point {@code p}.
+     * Identify if this is intersected by triangle {@code t}.
      *
      * @param t The triangle to test for intersection with.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
-     * @return {@code true} iff {@code this} is intersected by {@code p}.
+     * @return {@code true} iff {@code this} is intersected by {@code t}.
      */
-    public boolean isIntersectedBy(V2D_Triangle t, int oom, RoundingMode rm) {
-        if (t.isIntersectedBy(getEnvelope(oom, rm), oom, rm)) {
-            if (isIntersectedBy(t.getEnvelope(oom, rm), oom, rm)) {
-                return isIntersectedBy0(t, oom, rm);
-            }
-        }
-        return false;
+    public boolean intersects(V2D_Triangle t, int oom, RoundingMode rm) {
+        return t.intersects(getEnvelope(oom, rm), oom, rm)
+                && intersects0(t, oom, rm);
     }
 
     /**
-     * Identify if this is intersected by point {@code p}.
+     * Identify if this is intersected by triangle {@code t}.
      *
      * @param t The triangle to test for intersection with.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
-     * @return {@code true} iff {@code this} is intersected by {@code p}.
+     * @return {@code true} iff {@code this} is intersected by {@code t}.
      */
-    public boolean isIntersectedBy0(V2D_Triangle t, int oom, RoundingMode rm) {
+    public boolean intersects0(V2D_Triangle t, int oom, RoundingMode rm) {
         return getTriangles(oom, rm).parallelStream().anyMatch(x
-                -> x.isIntersectedBy(t, oom, rm));
+                -> x.intersects(t, oom, rm));
     }
 
     /**
-     * Identify if this is intersected by point {@code p}.
+     * Identify if this is intersected by rectangle {@code r}.
      *
      * @param r The rectangle to test for intersection with.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
-     * @return {@code true} iff {@code this} is intersected by {@code p}.
+     * @return {@code true} iff {@code this} is intersected by {@code r}.
      */
-    public boolean isIntersectedBy(V2D_Rectangle r, int oom, RoundingMode rm) {
-        if (r.isIntersectedBy(getEnvelope(oom, rm), oom, rm)) {
-            if (isIntersectedBy(r.getEnvelope(oom, rm), oom, rm)) {
-                return isIntersectedBy0(r, oom, rm);
-            }
-        }
-        return false;
+    public boolean intersects(V2D_Rectangle r, int oom, RoundingMode rm) {
+        return r.intersects(getEnvelope(oom, rm), oom, rm)
+                && intersects0(r, oom, rm);
     }
 
     /**
-     * Identify if this is intersected by point {@code p}.
+     * Identify if this is intersected by rectangle {@code r}.
      *
      * @param r The rectangle to test for intersection with.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
-     * @return {@code true} iff {@code this} is intersected by {@code p}.
+     * @return {@code true} iff {@code this} is intersected by {@code r}.
      */
-    public boolean isIntersectedBy0(V2D_Rectangle r, int oom, RoundingMode rm) {
+    public boolean intersects0(V2D_Rectangle r, int oom, RoundingMode rm) {
         return getTriangles(oom, rm).parallelStream().anyMatch(x
-                -> r.isIntersectedBy(x, oom, rm));
+                -> r.intersects(x, oom, rm));
     }
 
     /**
-     * Identify if this is intersected by point {@code p}.
+     * Identify if this is intersected by convex hull {@code ch}.
+     *
+     * @param ch The convex hull to test for intersection with.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return {@code true} iff {@code this} is intersected by {@code ch}.
+     */
+    public boolean intersects(V2D_ConvexHull ch, int oom, RoundingMode rm) {
+        return ch.intersects(getEnvelope(oom, rm), oom, rm)
+                && intersects(ch.getEnvelope(oom, rm), oom, rm)
+                && intersects0(ch, oom, rm);
+    }
+
+    /**
+     * Identify if this is intersected by convex hull {@code ch}.
      *
      * @param ch The convex hull to test for intersection with.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
      * @return {@code true} iff {@code this} is intersected by {@code ch.
      */
-    public boolean isIntersectedBy(V2D_ConvexHull ch, int oom, RoundingMode rm) {
-        if (ch.isIntersectedBy(getEnvelope(oom, rm), oom, rm)) {
-            if (isIntersectedBy(ch.getEnvelope(oom, rm), oom, rm)) {
-                return isIntersectedBy0(ch, oom, rm);
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Identify if this is intersected by point {@code p}.
-     *
-     * @param ch The convex hull to test for intersection with.
-     * @param oom The Order of Magnitude for the precision.
-     * @param rm The RoundingMode if rounding is needed.
-     * @return {@code true} iff {@code this} is intersected by {@code ch.
-     */
-    public boolean isIntersectedBy0(V2D_ConvexHull ch, int oom, RoundingMode rm) {
+    public boolean intersects0(V2D_ConvexHull ch, int oom, RoundingMode rm) {
         return getTriangles(oom, rm).parallelStream().anyMatch(x
-                -> ch.isIntersectedBy(x, oom, rm));
+                -> ch.intersects(x, oom, rm))
+                || ch.getTriangles(oom, rm).parallelStream().anyMatch(x
+                        -> intersects(x, oom, rm));
     }
 
     /**
@@ -610,13 +610,32 @@ public class V2D_ConvexHull extends V2D_Shape {
         return new V2D_ConvexHull(oom, rm, V2D_Triangle.getPoints(pts, oom, rm));
     }
 
-    @Override
-    public boolean isIntersectedBy(V2D_Envelope aabb, int oom, RoundingMode rm) {
-        if (getEnvelope(oom, rm).isIntersectedBy(aabb, oom)) {
-            return getTriangles(oom, rm).parallelStream().anyMatch(x
-                    -> x.isIntersectedBy(aabb, oom, rm));
-        }
-        return false;
+    /**
+     * Identify if {@code this} is intersected by {@code aabb}.
+     * 
+     * @param aabb The envelope to test for intersection.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return {@code true} iff {@code this} is intersected by {@code aabb}.
+     */
+    public boolean intersects(V2D_Envelope aabb, int oom, RoundingMode rm) {
+        return getEnvelope(oom, rm).intersects(aabb, oom)
+                && intersects0(aabb, oom, rm);
+    }
+
+    /**
+     * For evaluating if {@code this} is intersected by the Axis Aligned 
+     * Bounding Box aabb.
+     *
+     * @param aabb The Axis Aligned Bounding Box to test for intersection.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} iff the geometry intersects aabb at the given 
+     * precision.
+     */
+    public boolean intersects0(V2D_Envelope aabb, int oom, RoundingMode rm) {
+        return getTriangles(oom, rm).parallelStream().anyMatch(x
+                -> x.intersects(aabb, oom, rm));
     }
 
     /**

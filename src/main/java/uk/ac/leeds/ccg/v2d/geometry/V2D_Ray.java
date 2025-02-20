@@ -197,11 +197,11 @@ public class V2D_Ray extends V2D_Geometry {
      * @param rm The RoundingMode if rounding is needed.
      * @return {@code true} if {@code this} is intersected by {@code pl}.
      */
-    public boolean isIntersectedBy(V2D_Point pt, int oom, RoundingMode rm) {
+    public boolean intersects(V2D_Point pt, int oom, RoundingMode rm) {
         if (pt.equals(l.getP(), oom, rm)) {
             return true;
         }
-        if (l.isIntersectedBy(pt, oom, rm)) {
+        if (l.intersects(pt, oom, rm)) {
             pl = getPl();
             return pl.isOnSameSide(pt, this.l.getQ(oom, rm), oom, rm);
         }
@@ -355,10 +355,10 @@ public class V2D_Ray extends V2D_Geometry {
                 if (isAligned(lsq, oom, rm)) {
                     return V2D_LineSegment.getGeometry(rp, lsq, oom, rm);
                 } else {
-                    if (isIntersectedBy(lsp, oom, rm)) {
+                    if (intersects(lsp, oom, rm)) {
                         return lsp;
                     }
-                    if (isIntersectedBy(lsq, oom, rm)) {
+                    if (intersects(lsq, oom, rm)) {
                         return lsq;
                     }
                     return null;

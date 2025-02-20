@@ -221,11 +221,11 @@ public class V2D_Rectangle extends V2D_Shape {
      * @param rm The RoundingMode for any rounding.
      * @return A point or line segment.
      */
-    public boolean isIntersectedBy(V2D_Point pt, int oom, RoundingMode rm) {
-        if (pqr.isIntersectedBy(pt, oom, rm)) {
+    public boolean intersects(V2D_Point pt, int oom, RoundingMode rm) {
+        if (pqr.intersects(pt, oom, rm)) {
             return true;
         } else {
-            return rsp.isIntersectedBy(pt, oom, rm);
+            return rsp.intersects(pt, oom, rm);
         }
     }
     
@@ -235,11 +235,11 @@ public class V2D_Rectangle extends V2D_Shape {
      * @param rm The RoundingMode for any rounding.
      * @return A point or line segment.
      */
-    public boolean isIntersectedBy(V2D_LineSegment l, int oom, RoundingMode rm) {
-        if (getPQR().isIntersectedBy(l, oom, rm)) {
+    public boolean intersects(V2D_LineSegment l, int oom, RoundingMode rm) {
+        if (getPQR().intersects(l, oom, rm)) {
             return true;
         } else {
-            return getRSP().isIntersectedBy(l, oom, rm);
+            return getRSP().intersects(l, oom, rm);
         }
     }
     
@@ -249,8 +249,8 @@ public class V2D_Rectangle extends V2D_Shape {
      * @param rm The RoundingMode for any rounding.
      * @return True iff there is an intersection.
      */
-    public boolean isIntersectedBy(int oom, RoundingMode rm, V2D_LineSegment... ls) {
-        return isIntersectedBy(oom, rm, Arrays.asList(ls));
+    public boolean intersects(int oom, RoundingMode rm, V2D_LineSegment... ls) {
+        return intersects(oom, rm, Arrays.asList(ls));
     }
     
     /**
@@ -259,8 +259,8 @@ public class V2D_Rectangle extends V2D_Shape {
      * @param rm The RoundingMode for any rounding.
      * @return True iff there is an intersection.
      */
-    public boolean isIntersectedBy(int oom, RoundingMode rm, Collection<V2D_LineSegment> ls) {
-        return ls.parallelStream().anyMatch(x -> isIntersectedBy(x, oom, rm));
+    public boolean intersects(int oom, RoundingMode rm, Collection<V2D_LineSegment> ls) {
+        return ls.parallelStream().anyMatch(x -> intersects(x, oom, rm));
     }
     
     /**
@@ -269,11 +269,11 @@ public class V2D_Rectangle extends V2D_Shape {
      * @param rm The RoundingMode for any rounding.
      * @return A point or line segment.
      */
-    public boolean isIntersectedBy(V2D_Triangle t, int oom, RoundingMode rm) {
-        if (pqr.isIntersectedBy(t, oom, rm)) {
+    public boolean intersects(V2D_Triangle t, int oom, RoundingMode rm) {
+        if (pqr.intersects(t, oom, rm)) {
             return true;
         } else {
-            return rsp.isIntersectedBy(t, oom, rm);
+            return rsp.intersects(t, oom, rm);
         }
     }
 
@@ -643,11 +643,18 @@ public class V2D_Rectangle extends V2D_Shape {
         return false;
     }
     
-    @Override
-    public boolean isIntersectedBy(V2D_Envelope aabb, int oom, RoundingMode rm) {
-        if (pqr.isIntersectedBy(aabb, oom, rm)) {
+    /**
+     * Identify if {@code this} is intersected by {@code aabb}.
+     * 
+     * @param aabb The envelope to test for intersection.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return {@code true} iff {@code this} is intersected by {@code aabb}.
+     */
+    public boolean intersects(V2D_Envelope aabb, int oom, RoundingMode rm) {
+        if (pqr.intersects(aabb, oom, rm)) {
             return true;
         }
-        return rsp.isIntersectedBy(aabb, oom, rm);
+        return rsp.intersects(aabb, oom, rm);
     }
 }

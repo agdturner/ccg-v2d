@@ -96,11 +96,11 @@ public class V2D_EnvelopeTest {
     }
 
     /**
-     * Test of isIntersectedBy method, of class V2D_Envelope.
+     * Test of intersects method, of class V2D_Envelope.
      */
     @Test
     public void testIsIntersectedBy_V2D_Envelope() {
-        System.out.println("isIntersectedBy");
+        System.out.println("intersects");
         int oom = -6;
         RoundingMode rm = RoundingMode.HALF_UP;
         BigRational x0 = BigRational.ZERO;
@@ -113,16 +113,16 @@ public class V2D_EnvelopeTest {
         BigRational y3 = BigRational.valueOf(3);
         V2D_Envelope e = new V2D_Envelope(env, oom, x1, x2, y1, y2);
         V2D_Envelope instance = new V2D_Envelope(env, oom, x1, x2, y1, y2);
-        Assertions.assertTrue(instance.isIntersectedBy(e, oom));
+        Assertions.assertTrue(instance.intersects(e, oom));
         // Test 2
         e = new V2D_Envelope(env, oom, x0, x1, y0, y1);
         instance = new V2D_Envelope(env, oom, x1, x2, y1, y2);
-        Assertions.assertTrue(instance.isIntersectedBy(e, oom));
+        Assertions.assertTrue(instance.intersects(e, oom));
         // Test 3
         e = new V2D_Envelope(env, oom, x0, x1, y0, y1);
         instance = new V2D_Envelope(env, oom, x2, x3, y2, y3);
-        Assertions.assertFalse(instance.isIntersectedBy(e, oom));
-        System.out.println("isIntersectedBy");
+        Assertions.assertFalse(instance.intersects(e, oom));
+        System.out.println("intersects");
         // Test 4
         BigRational ONE = BigRational.ONE;
         BigRational TEN = BigRational.TEN;
@@ -140,8 +140,8 @@ public class V2D_EnvelopeTest {
             //System.out.println("a " + a.toString());
             abe = new V2D_Envelope(oom, a, b);
             //System.out.println("abe " + abe.toString());
-            Assertions.assertTrue(abe.isIntersectedBy(a.getEnvelope(oom, rm), oom));
-            Assertions.assertTrue(abe.isIntersectedBy(be, oom));
+            Assertions.assertTrue(abe.intersects(a.getEnvelope(oom, rm), oom));
+            Assertions.assertTrue(abe.intersects(be, oom));
         }
     }
 
@@ -177,11 +177,11 @@ public class V2D_EnvelopeTest {
     }
 
     /**
-     * Test of isIntersectedBy method, of class V2D_Envelope.
+     * Test of intersects method, of class V2D_Envelope.
      */
     @Test
     public void testContains_V2D_Point() {
-        System.out.println("isIntersectedBy");
+        System.out.println("intersects");
         int oom = -6;
         RoundingMode rm = RoundingMode.HALF_UP;
         BigRational x0 = BigRational.ZERO;
@@ -210,11 +210,11 @@ public class V2D_EnvelopeTest {
     }
 
     /**
-     * Test of isIntersectedBy method, of class V2D_Envelope.
+     * Test of intersects method, of class V2D_Envelope.
      */
     @Test
     public void testContains_BigRational_BigRational() {
-        System.out.println("isIntersectedBy");
+        System.out.println("intersects");
         int oom = -6;
         //RoundingMode rm = RoundingMode.HALF_UP;
         BigRational x0 = BigRational.ZERO;
@@ -238,11 +238,11 @@ public class V2D_EnvelopeTest {
     }
 
 //    /**
-//     * Test of isIntersectedBy method, of class V2D_Envelope.
+//     * Test of intersects method, of class V2D_Envelope.
 //     */
 //    @Test
 //    public void testIsIntersectedBy_V2D_LineSegment() {
-//        System.out.println("isIntersectedBy");
+//        System.out.println("intersects");
 //        int oom = -6;
 //        RoundingMode rm = RoundingMode.HALF_UP;
 //        BigRational x0 = BigRational.ZERO;
@@ -257,35 +257,35 @@ public class V2D_EnvelopeTest {
 //        V2D_Point p0 = new V2D_Point(env, x0, y0);
 //        V2D_Point p1 = new V2D_Point(env, x0, y1);
 //        V2D_LineSegment l = new V2D_LineSegment(oom, rm, p0, p1);
-//        Assertions.assertTrue(instance.isIntersectedBy(l, oom, rm));
+//        Assertions.assertTrue(instance.intersects(l, oom, rm));
 //        // Test 2
 //        p0 = new V2D_Point(env, x3, y3);
 //        p1 = new V2D_Point(env, x3, y2);
 //        l = new V2D_LineSegment(p0, p1, oom, rm);
-//        Assertions.assertFalse(instance.isIntersectedBy(l, oom, rm));
+//        Assertions.assertFalse(instance.intersects(l, oom, rm));
 //        // Test 3
 //        p0 = new V2D_Point(env, x3, y3);
 //        p1 = new V2D_Point(env, x2, y2);
 //        l = new V2D_LineSegment(p0, p1, oom, rm);
-//        Assertions.assertTrue(instance.isIntersectedBy(l, oom, rm));
+//        Assertions.assertTrue(instance.intersects(l, oom, rm));
 //        // Test 3
 //        p0 = new V2D_Point(env, x3, y3);
 //        p1 = new V2D_Point(env, x0, y3);
 //        l = new V2D_LineSegment(p0, p1, oom, rm);
-//        Assertions.assertFalse(instance.isIntersectedBy(l, oom, rm));
+//        Assertions.assertFalse(instance.intersects(l, oom, rm));
 //        // Test 4
 //        p0 = new V2D_Point(env, x3, y3);
 //        p1 = new V2D_Point(env, x0, y2);
 //        l = new V2D_LineSegment(p0, p1, oom, rm);
-//        Assertions.assertTrue(instance.isIntersectedBy(l, oom, rm));
+//        Assertions.assertTrue(instance.intersects(l, oom, rm));
 //    }
 
     /**
-     * Test of isIntersectedBy method, of class V2D_Envelope.
+     * Test of intersects method, of class V2D_Envelope.
      */
     @Test
     public void testContains_V2D_LineSegment() {
-        System.out.println("isIntersectedBy");
+        System.out.println("intersects");
         int oom = -6;
         RoundingMode rm = RoundingMode.HALF_UP;
         BigRational x0 = BigRational.ZERO;

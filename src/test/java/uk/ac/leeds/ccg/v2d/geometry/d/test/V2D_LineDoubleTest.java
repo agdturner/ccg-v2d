@@ -21,9 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import uk.ac.leeds.ccg.math.arithmetic.Math_Double;
 import uk.ac.leeds.ccg.math.matrices.Math_Matrix_Double;
-import uk.ac.leeds.ccg.v2d.geometry.d.V2D_FiniteGeometryDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_GeometryDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_LineDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_LineSegmentDouble;
@@ -80,50 +78,50 @@ public class V2D_LineDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of isIntersectedBy method, of class V2D_LineDouble.
+     * Test of intersects method, of class V2D_LineDouble.
      */
     @Test
     public void testIsIntersectedBy_double_V2D_PointDouble() {
-        System.out.println("isIntersectedBy");
+        System.out.println("intersects");
         double epsilon = 0.0000000001d;
         V2D_PointDouble pt = pP0P0;
         V2D_LineDouble instance = new V2D_LineDouble(pN1N1, pP1P1);
-        assertTrue(instance.isIntersectedBy(epsilon, pt));
+        assertTrue(instance.intersects(epsilon, pt));
         // Test 2
         pt = new V2D_PointDouble(env, P0_1E2, P0_1E2);
-        assertTrue(instance.isIntersectedBy(epsilon, pt));
+        assertTrue(instance.intersects(epsilon, pt));
         // Test 3 works as the rounding puts pt on the line.
         pt = new V2D_PointDouble(env, P0_1E12, P0_1E12);
-        assertTrue(instance.isIntersectedBy(epsilon, pt));
+        assertTrue(instance.intersects(epsilon, pt));
         // Test 4 works as the rounding puts pt on the line.
         pt = new V2D_PointDouble(env, N0_1E12, N0_1E12);
-        assertTrue(instance.isIntersectedBy(epsilon, pt));
+        assertTrue(instance.intersects(epsilon, pt));
         // Test 5 works as the rounding puts pt on the line.
         double a = P0_1E2 + P1E12;
         pt = new V2D_PointDouble(env, a, a);
-        assertTrue(instance.isIntersectedBy(epsilon, pt));
+        assertTrue(instance.intersects(epsilon, pt));
         // Test 6 works as the rounding puts pt on the line.
         a = N0_1E2 + N1E12;
         pt = new V2D_PointDouble(env, a, a);
-        assertTrue(instance.isIntersectedBy(epsilon, pt));
+        assertTrue(instance.intersects(epsilon, pt));
         // Test 7
         instance = new V2D_LineDouble(pP0N1, pP2P1);
         pt = new V2D_PointDouble(env, -1d, -2d);
-        assertTrue(instance.isIntersectedBy(epsilon, pt));
+        assertTrue(instance.intersects(epsilon, pt));
         // Test 8
         //epsilon = 0.00000000001d; // Too big!
         epsilon = 0.000000000001d;
         a = N0_1E2 + N1E12;
         pt = new V2D_PointDouble(env, a, a);
-        assertFalse(instance.isIntersectedBy(epsilon, pt));
+        assertFalse(instance.intersects(epsilon, pt));
         pt = new V2D_PointDouble(env, a + 1d, a);
-        assertTrue(instance.isIntersectedBy(epsilon, pt));
+        assertTrue(instance.intersects(epsilon, pt));
         // Test 9
         a = N0_1E12 + N1E12;
         pt = new V2D_PointDouble(env, a, a);
-        assertFalse(instance.isIntersectedBy(epsilon, pt));
+        assertFalse(instance.intersects(epsilon, pt));
         pt = new V2D_PointDouble(env, a + 1d, a);
-        assertTrue(instance.isIntersectedBy(epsilon, pt));
+        assertTrue(instance.intersects(epsilon, pt));
     }
 
     /**
@@ -673,16 +671,16 @@ public class V2D_LineDoubleTest extends V2D_TestDouble {
         double theta = Pi / 2d;
         V2D_LineDouble instance = new V2D_LineDouble(pP0P0, pP1P0);
         V2D_LineDouble expResult = new V2D_LineDouble(pP0P0, pP0P1);
-        V2D_LineDouble result = instance.rotate(pP0P0, -theta, epsilon);
+        V2D_LineDouble result = instance.rotate(pP0P0, -theta);
         assertTrue(expResult.equals(result, epsilon));
         // Test 2
         expResult = new V2D_LineDouble(pP0P0, pP0N1);
-        result = instance.rotate(pP0P0, theta, epsilon);
+        result = instance.rotate(pP0P0, theta);
         assertTrue(expResult.equals(result, epsilon));
         // Test 3
         instance = new V2D_LineDouble(pP0P0, pP0P1);
         expResult = new V2D_LineDouble(pP0P0, pP1P0);
-        result = instance.rotate(pP0P0, theta, epsilon);
+        result = instance.rotate(pP0P0, theta);
         assertTrue(expResult.equals(result, epsilon));
     }
     

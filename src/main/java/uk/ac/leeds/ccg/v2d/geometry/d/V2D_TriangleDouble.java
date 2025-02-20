@@ -364,9 +364,9 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff {@code this} is intersected by {@code pt}
      */
-    public boolean isIntersectedBy(V2D_PointDouble pt, double epsilon) {
-        if (getEnvelope().isIntersectedBy(pt.getEnvelope())) {
-            return isIntersectedBy0(pt, epsilon);
+    public boolean intersects(V2D_PointDouble pt, double epsilon) {
+        if (getEnvelope().intersects(pt.getEnvelope())) {
+            return intersects0(pt, epsilon);
         }
         return false;
     }
@@ -378,10 +378,10 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      * @return {@code true} iff {@code this} contains {@code pt}.
      */
     public boolean contains(V2D_PointDouble pt, double epsilon) {
-        if (isIntersectedBy(pt, epsilon)) {
-            return !(getPQ().isIntersectedBy(pt)
-                    || getQR().isIntersectedBy(pt)
-                    || getRP().isIntersectedBy(pt));
+        if (intersects(pt, epsilon)) {
+            return !(getPQ().intersects(pt)
+                    || getQR().intersects(pt)
+                    || getRP().intersects(pt));
         }
         return false;
     }
@@ -392,9 +392,9 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      * equal.
      * @return True iff there is an intersection.
      */
-    public boolean isIntersectedBy(V2D_LineSegmentDouble ls, double epsilon) {
-        if (ls.isIntersectedBy(getEnvelope(), epsilon)) {
-            return isIntersectedBy0(ls, epsilon);
+    public boolean intersects(V2D_LineSegmentDouble ls, double epsilon) {
+        if (ls.intersects(getEnvelope(), epsilon)) {
+            return intersects0(ls, epsilon);
         } else {
             return false;
         }
@@ -406,7 +406,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      * equal.
      * @return True iff there is an intersection.
      */
-    protected boolean isIntersectedBy0(V2D_LineSegmentDouble ls, double epsilon) {
+    protected boolean intersects0(V2D_LineSegmentDouble ls, double epsilon) {
         // Ensure use of p, q and r. 
         getP();
         getQ();
@@ -428,8 +428,8 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      * equal.
      * @return True iff there is an intersection.
      */
-    public boolean isIntersectedBy(double epsilon, ArrayList<V2D_LineSegmentDouble> ls) {
-        return ls.parallelStream().anyMatch(x -> isIntersectedBy(x, epsilon));
+    public boolean intersects(double epsilon, ArrayList<V2D_LineSegmentDouble> ls) {
+        return ls.parallelStream().anyMatch(x -> intersects(x, epsilon));
     }
 
     /**
@@ -468,7 +468,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      * @param epsilon The tolerance.
      * @return {@code true} iff pl is aligned with this.
      */
-    public boolean isIntersectedBy0(V2D_PointDouble pt, double epsilon) {
+    public boolean intersects0(V2D_PointDouble pt, double epsilon) {
         return (getPQ().l.isOnSameSide(pt, getR(), epsilon)
                 && getQR().l.isOnSameSide(pt, getP(), epsilon)
                 && getRP().l.isOnSameSide(pt, getQ(), epsilon));
@@ -477,18 +477,18 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
     /**
      * A line segment aligns with this if both end points are aligned according
      * to
-     * {@link #isIntersectedBy0(uk.ac.leeds.ccg.v2d.geometry.d.V2D_PointDouble, double)}
+     * {@link #intersects0(uk.ac.leeds.ccg.v2d.geometry.d.V2D_PointDouble, double)}
      *
      * @param l The line segment to check if it is in alignment.
      * @param epsilon The tolerance.
      * @return {@code true} iff l is aligned with this.
      */
     public boolean isInteresctedBy0(V2D_LineSegmentDouble l, double epsilon) {
-        if (isIntersectedBy0(l.getP(), epsilon)) {
-            return isIntersectedBy0(l.getQ(), epsilon);
+        if (intersects0(l.getP(), epsilon)) {
+            return intersects0(l.getQ(), epsilon);
         }
         return getEdges().values().parallelStream().anyMatch(x
-                -> x.isIntersectedBy(l, epsilon));
+                -> x.intersects(l, epsilon));
     }
 
     /**
@@ -497,10 +497,10 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      * equal.
      * @return True iff there is an intersection.
      */
-    public boolean isIntersectedBy(V2D_TriangleDouble t, double epsilon) {
-        //if (t.getEnvelope().isIntersectedBy(getEnvelope())) {
-        if (t.isIntersectedBy(getEnvelope(), epsilon)) {
-            return V2D_TriangleDouble.this.isIntersectedBy0(t, epsilon);
+    public boolean intersects(V2D_TriangleDouble t, double epsilon) {
+        //if (t.getEnvelope().intersects(getEnvelope())) {
+        if (t.intersects(getEnvelope(), epsilon)) {
+            return V2D_TriangleDouble.this.intersects0(t, epsilon);
         } else {
             return false;
         }
@@ -512,17 +512,17 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      * equal.
      * @return True iff there is an intersection.
      */
-    public boolean isIntersectedBy0(V2D_TriangleDouble t, double epsilon) {
+    public boolean intersects0(V2D_TriangleDouble t, double epsilon) {
 //        return (getPoints().values().parallelStream().anyMatch(x
-//                -> t.isIntersectedBy0(x, epsilon))
+//                -> t.intersects0(x, epsilon))
 //                || t.getPoints().values().parallelStream().anyMatch(x
-//                        -> isIntersectedBy0(x, epsilon)));
-        return isIntersectedBy0(t.getP(), epsilon)
-                || isIntersectedBy0(t.getQ(), epsilon)
-                || isIntersectedBy0(t.getR(), epsilon)
-                || t.isIntersectedBy0(getP(), epsilon)
-                || t.isIntersectedBy0(getQ(), epsilon)
-                || t.isIntersectedBy0(getR(), epsilon);
+//                        -> intersects0(x, epsilon)));
+        return intersects0(t.getP(), epsilon)
+                || intersects0(t.getQ(), epsilon)
+                || intersects0(t.getR(), epsilon)
+                || t.intersects0(getP(), epsilon)
+                || t.intersects0(getQ(), epsilon)
+                || t.intersects0(getR(), epsilon);
     }
 
     /**
@@ -650,14 +650,14 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
                 throw new RuntimeException();
             }
         }
-//            if (rv.isIntersectedBy0(lsp, epsilon)) {
-//                if (rv.isIntersectedBy0(lsq, epsilon)) {
+//            if (rv.intersects0(lsp, epsilon)) {
+//                if (rv.intersects0(lsq, epsilon)) {
 //                    return ls;
 //                } else {
 //                    return V2D_LineSegmentDouble.getGeometry(rv.l.getP(), lsp, epsilon);
 //                }
 //            } else {
-//                if (rv.isIntersectedBy0(lsq, epsilon)) {
+//                if (rv.intersects0(lsq, epsilon)) {
 //                    return V2D_LineSegmentDouble.getGeometry(rv.l.getP(), lsq, epsilon);
 //                } else {
 //                    throw new RuntimeException();
@@ -680,7 +680,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
             return null;
         }
         if (g instanceof V2D_PointDouble gp) {
-            if (isIntersectedBy(gp, epsilon)) {
+            if (intersects(gp, epsilon)) {
                 if (l.isBetween(gp, epsilon)) {
                     return gp;
                 }
@@ -692,14 +692,14 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
         if (lils == null) {
             return null;
         } else if (lils instanceof V2D_PointDouble lilsp) {
-            if (isIntersectedBy(lilsp, epsilon)) {
+            if (intersects(lilsp, epsilon)) {
                 return lilsp;
             } else {
                 return null;
             }
         } else {
             V2D_LineSegmentDouble lilsl = (V2D_LineSegmentDouble) lils;
-            if (isIntersectedBy(lilsl, epsilon)) {
+            if (intersects(lilsl, epsilon)) {
                 return l.getIntersectionLS(epsilon, ls);
             } else {
                 return null;
@@ -720,7 +720,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      */
     public V2D_FiniteGeometryDouble getIntersection(V2D_TriangleDouble t,
             double epsilon) {
-        if (getEnvelope().isIntersectedBy(t.getEnvelope(), epsilon)) {
+        if (getEnvelope().intersects(t.getEnvelope(), epsilon)) {
             /**
              * Get intersections between the triangle edges. If there are none,
              * then either this returns t or vice versa. If there are some, then
@@ -731,24 +731,24 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
             V2D_PointDouble ptp = getP();
             V2D_PointDouble ptq = getQ();
             V2D_PointDouble ptr = getR();
-            if (t.isIntersectedBy0(ptp, epsilon)
-                    && t.isIntersectedBy0(ptq, epsilon)
-                    && t.isIntersectedBy0(ptr, epsilon)) {
+            if (t.intersects0(ptp, epsilon)
+                    && t.intersects0(ptq, epsilon)
+                    && t.intersects0(ptr, epsilon)) {
                 return this;
             }
             V2D_PointDouble pttp = t.getP();
             V2D_PointDouble pttq = t.getQ();
             V2D_PointDouble pttr = t.getR();
-            boolean pi = isIntersectedBy(pttp, epsilon);
-            boolean qi = isIntersectedBy(pttq, epsilon);
-            boolean ri = isIntersectedBy(pttr, epsilon);
+            boolean pi = intersects(pttp, epsilon);
+            boolean qi = intersects(pttq, epsilon);
+            boolean ri = intersects(pttr, epsilon);
             if (pi && qi && ri) {
                 return t;
             }
-//            if (isIntersectedBy0(t, epsilon)) {
+//            if (intersects0(t, epsilon)) {
 //                return t;
 //            }
-//            if (t.isIntersectedBy0(this, epsilon)) {
+//            if (t.intersects0(this, epsilon)) {
 //                return this;
 //            }
             V2D_FiniteGeometryDouble gpq = t.getIntersection(getPQ(), epsilon);
@@ -845,7 +845,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
                     }
                 } else if (gqr instanceof V2D_PointDouble gqrp) {
                     if (grp == null) {
-                        if (gpql.isIntersectedBy(gqrp, epsilon)) {
+                        if (gpql.intersects(gqrp, epsilon)) {
                             return gpql;
                         } else {
                             return new V2D_ConvexHullDouble(epsilon, gpql.getP(),
@@ -990,21 +990,21 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
     }
 
     @Override
-    public V2D_TriangleDouble rotate(V2D_PointDouble pt, double theta, double epsilon) {
+    public V2D_TriangleDouble rotate(V2D_PointDouble pt, double theta) {
         theta = Math_AngleDouble.normalise(theta);
         if (theta == 0d) {
             return new V2D_TriangleDouble(this);
         } else {
-            return rotateN(pt, theta, epsilon);
+            return rotateN(pt, theta);
         }
     }
 
     @Override
-    public V2D_TriangleDouble rotateN(V2D_PointDouble pt, double theta, double epsilon) {
+    public V2D_TriangleDouble rotateN(V2D_PointDouble pt, double theta) {
         return new V2D_TriangleDouble(
-                getP().rotateN(pt, theta, epsilon),
-                getQ().rotateN(pt, theta, epsilon),
-                getR().rotateN(pt, theta, epsilon));
+                getP().rotateN(pt, theta),
+                getQ().rotateN(pt, theta),
+                getR().rotateN(pt, theta));
     }
 
     /**
@@ -1065,11 +1065,11 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
                 } else {
                     if (V2D_LineDouble.isCollinear(epsilon, p, q, r)) {
                         V2D_LineSegmentDouble pq = new V2D_LineSegmentDouble(p, q);
-                        if (pq.isIntersectedBy(r, epsilon)) {
+                        if (pq.intersects(r, epsilon)) {
                             return pq;
                         } else {
                             V2D_LineSegmentDouble qr = new V2D_LineSegmentDouble(q, r);
-                            if (qr.isIntersectedBy(p, epsilon)) {
+                            if (qr.intersects(p, epsilon)) {
                                 return qr;
                             } else {
                                 return new V2D_LineSegmentDouble(p, r);
@@ -1240,7 +1240,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
     protected static V2D_FiniteGeometryDouble getGeometry(
             V2D_LineSegmentDouble l, V2D_PointDouble a, V2D_PointDouble b,
             double epsilon) {
-        if (l.isIntersectedBy(a, epsilon)) {
+        if (l.intersects(a, epsilon)) {
             return getGeometry(l, b, epsilon);
         } else {
             return new V2D_TriangleDouble(a, l.getP(), l.getQ());
@@ -1258,7 +1258,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      */
     protected static V2D_FiniteGeometryDouble getGeometry(
             V2D_LineSegmentDouble l, V2D_PointDouble p, double epsilon) {
-        if (l.isIntersectedBy(p, epsilon)) {
+        if (l.intersects(p, epsilon)) {
             return l;
         }
         return new V2D_TriangleDouble(p, l.getP(), l.getQ());
@@ -1305,7 +1305,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      * @return The distance squared to {@code pt}.
      */
     public double getDistanceSquared(V2D_PointDouble pt, double epsilon) {
-        if (isIntersectedBy(pt, epsilon)) {
+        if (intersects(pt, epsilon)) {
             return 0d;
         }
         return getDistanceSquaredEdge(pt, epsilon);
@@ -1387,10 +1387,10 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
          */
         V2D_PointDouble lp = l.getP();
         V2D_PointDouble lq = l.getQ();
-        if (isIntersectedBy0(lp, epsilon)) {
+        if (intersects0(lp, epsilon)) {
             d2 = Math.min(d2, getDistanceSquared(lp, epsilon));
         }
-        if (isIntersectedBy0(lq, epsilon)) {
+        if (intersects0(lq, epsilon)) {
             d2 = Math.min(d2, getDistanceSquared(lq, epsilon));
         }
         return d2;
@@ -1477,60 +1477,63 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
         return new V2D_PointDouble(env, ux, uy);
     }
 
-    @Override
-    public boolean isIntersectedBy(V2D_EnvelopeDouble aabb, double epsilon) {
-// This results in java.util.ConcurrentModificationException!
+    /**
+     * Identify if {@code this} is intersected by {@code aabb}.
+     * 
+     * @param aabb The envelope to test for intersection.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff {@code this} is intersected by {@code aabb}.
+     */
+    public boolean intersects(V2D_EnvelopeDouble aabb, double epsilon) {
+// Was resulting in java.util.ConcurrentModificationException!
 //        return (getPoints().values().parallelStream().anyMatch(x
 //                -> aabb.contains(x))
 //                || aabb.getPoints().parallelStream().anyMatch(x
-//                -> isIntersectedBy(x, epsilon)));
-        if (getEnvelope().isIntersectedBy(aabb, epsilon)) {
-            if (aabb.isIntersectedBy(getP())) {
-                return true;
-            }
-            if (aabb.isIntersectedBy(getQ())) {
-                return true;
-            }
-            if (aabb.isIntersectedBy(getR())) {
+//                -> intersects(x, epsilon)));
+        if (getEnvelope().intersects(aabb, epsilon)) {
+            if (aabb.intersects(getP())
+                    || aabb.intersects(getQ())
+                    || aabb.intersects(getR())) {
                 return true;
             }
             V2D_FiniteGeometryDouble l = aabb.getLeft();
             if (l instanceof V2D_LineSegmentDouble ll) {
-                if (isIntersectedBy(ll, epsilon)) {
+                if (intersects(ll, epsilon)) {
                     return true;
                 }
             } else {
-                if (isIntersectedBy((V2D_PointDouble) l, epsilon)) {
+                if (intersects((V2D_PointDouble) l, epsilon)) {
                     return true;
                 }
             }
             V2D_FiniteGeometryDouble right = aabb.getRight();
             if (right instanceof V2D_LineSegmentDouble rl) {
-                if (isIntersectedBy(rl, epsilon)) {
+                if (intersects(rl, epsilon)) {
                     return true;
                 }
             } else {
-                if (isIntersectedBy((V2D_PointDouble) right, epsilon)) {
+                if (intersects((V2D_PointDouble) right, epsilon)) {
                     return true;
                 }
             }
             V2D_FiniteGeometryDouble t = aabb.getTop();
             if (t instanceof V2D_LineSegmentDouble tl) {
-                if (isIntersectedBy(tl, epsilon)) {
+                if (intersects(tl, epsilon)) {
                     return true;
                 }
             } else {
-                if (isIntersectedBy((V2D_PointDouble) t, epsilon)) {
+                if (intersects((V2D_PointDouble) t, epsilon)) {
                     return true;
                 }
             }
             V2D_FiniteGeometryDouble b = aabb.getBottom();
             if (b instanceof V2D_LineSegmentDouble bl) {
-                if (isIntersectedBy(bl, epsilon)) {
+                if (intersects(bl, epsilon)) {
                     return true;
                 }
             } else {
-                if (isIntersectedBy((V2D_PointDouble) b, epsilon)) {
+                if (intersects((V2D_PointDouble) b, epsilon)) {
                     return true;
                 }
             }

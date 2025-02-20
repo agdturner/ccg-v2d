@@ -217,11 +217,11 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
      * @param epsilon The tolerance within which two vectors are regarded as equal.
      * @return {@code true} if {@code this} is intersected by {@code pl}.
      */
-    public boolean isIntersectedBy(V2D_PointDouble pt, double epsilon) {
+    public boolean intersects(V2D_PointDouble pt, double epsilon) {
         if (pt.equals(l.getP())) {
             return true;
         }
-        if (l.isIntersectedBy(epsilon, pt)) {
+        if (l.intersects(epsilon, pt)) {
 //            V2D_Point poi = l.getPointOfIntersection(pt);
 //            V2D_Ray r = new V2D_Ray(e, getP(), poi.getVector());
             pl = getPl();
@@ -271,7 +271,7 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
 //            } else {
 //                V2D_Geometry g2 = t.getIntersection(l);
 //                if (g2 instanceof V2D_Point g2p) {
-//                    //if (isIntersectedBy(g2p)) {
+//                    //if (intersects(g2p)) {
 //                    if (t.isAligned(g2p)) {
 //                        return g2p;
 //                    } else {
@@ -414,10 +414,10 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
                 if (isAligned(lsq, epsilon)) {
                     return V2D_LineSegmentDouble.getGeometry(rp, lsq, epsilon);
                 } else {
-                    if (isIntersectedBy(lsp, epsilon)) {
+                    if (intersects(lsp, epsilon)) {
                         return lsp;
                     }
-                    if (isIntersectedBy(lsq, epsilon)) {
+                    if (intersects(lsq, epsilon)) {
                         return lsq;
                     }
                     return null;
@@ -452,19 +452,17 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
     }
     
     @Override
-    public V2D_RayDouble rotate(V2D_PointDouble pt, double theta,
-            double epsilon) {
+    public V2D_RayDouble rotate(V2D_PointDouble pt, double theta) {
         theta = Math_AngleDouble.normalise(theta);
         if (theta == 0d) {
             return new V2D_RayDouble(this);
         } else {
-            return rotateN(pt, theta, epsilon);
+            return rotateN(pt, theta);
         }
     }
     
     @Override
-    public V2D_RayDouble rotateN(V2D_PointDouble pt, double theta, 
-            double epsilon) {
-        return new V2D_RayDouble(l.rotateN(pt, theta, epsilon));
+    public V2D_RayDouble rotateN(V2D_PointDouble pt, double theta) {
+        return new V2D_RayDouble(l.rotateN(pt, theta));
     }
 }

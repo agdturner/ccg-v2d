@@ -616,9 +616,9 @@ public class V2D_Triangle extends V2D_Shape {
      * @param rm The RoundingMode if rounding is needed.
      * @return True iff there is an intersection.
      */
-    public boolean isIntersectedBy(V2D_Point pt, int oom, RoundingMode rm) {
+    public boolean intersects(V2D_Point pt, int oom, RoundingMode rm) {
         if (getEnvelope(oom, rm).contains(pt, oom)) {
-            return isIntersectedBy0(pt, oom, rm);
+            return intersects0(pt, oom, rm);
         }
         return false;
     }
@@ -632,10 +632,10 @@ public class V2D_Triangle extends V2D_Shape {
      * @return True iff pt is in the triangle and not on the edge.
      */
     public boolean contains(V2D_Point pt, int oom, RoundingMode rm) {
-        if (isIntersectedBy(pt, oom, rm)) {
-            return !(getPQ(oom, rm).isIntersectedBy(pt, oom, rm)
-                    || getQR(oom, rm).isIntersectedBy(pt, oom, rm)
-                    || getRP(oom, rm).isIntersectedBy(pt, oom, rm));
+        if (intersects(pt, oom, rm)) {
+            return !(getPQ(oom, rm).intersects(pt, oom, rm)
+                    || getQR(oom, rm).intersects(pt, oom, rm)
+                    || getRP(oom, rm).intersects(pt, oom, rm));
         }
         return false;
     }
@@ -647,9 +647,9 @@ public class V2D_Triangle extends V2D_Shape {
      * @param rm The RoundingMode if rounding is needed.
      * @return True iff there is an intersection.
      */
-    public boolean isIntersectedBy(V2D_LineSegment ls, int oom, RoundingMode rm) {
-        if (ls.isIntersectedBy(getEnvelope(oom, rm), oom, rm)) {
-            return isIntersectedBy0(ls, oom, rm);
+    public boolean intersects(V2D_LineSegment ls, int oom, RoundingMode rm) {
+        if (ls.intersects(getEnvelope(oom, rm), oom, rm)) {
+            return intersects0(ls, oom, rm);
         } else {
             return false;
         }
@@ -661,7 +661,7 @@ public class V2D_Triangle extends V2D_Shape {
      * @param rm The RoundingMode if rounding is needed.
      * @return True iff there is an intersection.
      */
-    protected boolean isIntersectedBy0(V2D_LineSegment ls, int oom, RoundingMode rm) {
+    protected boolean intersects0(V2D_LineSegment ls, int oom, RoundingMode rm) {
         // Ensure use of p, q and r. 
         getP(oom, rm);
         getQ(oom, rm);
@@ -710,7 +710,7 @@ public class V2D_Triangle extends V2D_Shape {
      * @param rm The RoundingMode if rounding is needed.
      * @return {@code true} iff pl is aligned with this.
      */
-    public boolean isIntersectedBy0(V2D_Point pt, int oom, RoundingMode rm) {
+    public boolean intersects0(V2D_Point pt, int oom, RoundingMode rm) {
         return (getPQ(oom, rm).l.isOnSameSide(pt, getR(oom, rm), oom, rm)
                 && getQR(oom, rm).l.isOnSameSide(pt, getP(oom, rm), oom, rm)
                 && getRP(oom, rm).l.isOnSameSide(pt, getQ(oom, rm), oom, rm));
@@ -719,7 +719,7 @@ public class V2D_Triangle extends V2D_Shape {
     /**
      * A line segment aligns with this if both end points are aligned according
      * to
-     * {@link #isIntersectedBy0(uk.ac.leeds.ccg.v3d.geometry.V2D_Point, int, java.math.RoundingMode)}.
+     * {@link #intersects0(uk.ac.leeds.ccg.v3d.geometry.V2D_Point, int, java.math.RoundingMode)}.
      *
      * @param l The line segment to check if it is in alignment.
      * @param oom The Order of Magnitude for the precision.
@@ -727,12 +727,12 @@ public class V2D_Triangle extends V2D_Shape {
      * @return {@code true} iff l is aligned with this.
      */
     public boolean isInteresctedBy0(V2D_LineSegment l, int oom, RoundingMode rm) {
-        if (isIntersectedBy0(l.getP(), oom, rm)
-                || isIntersectedBy0(l.getQ(oom, rm), oom, rm)) {
+        if (intersects0(l.getP(), oom, rm)
+                || intersects0(l.getQ(oom, rm), oom, rm)) {
             return true;
         }
         return getEdges(oom, rm).values().parallelStream().anyMatch(x
-                -> x.isIntersectedBy(l, oom, rm));
+                -> x.intersects(l, oom, rm));
     }
 
     /**
@@ -741,10 +741,10 @@ public class V2D_Triangle extends V2D_Shape {
      * @param rm The RoundingMode if rounding is needed.
      * @return True iff there is an intersection.
      */
-    public boolean isIntersectedBy(V2D_Triangle t, int oom, RoundingMode rm) {
-        //if (t.getEnvelope(oom, rm).isIntersectedBy(getEnvelope(oom, rm), oom)) {
-        if (t.isIntersectedBy(getEnvelope(oom, rm), oom, rm)) {
-            return isIntersectedBy0(t, oom, rm);
+    public boolean intersects(V2D_Triangle t, int oom, RoundingMode rm) {
+        //if (t.getEnvelope(oom, rm).intersects(getEnvelope(oom, rm), oom)) {
+        if (t.intersects(getEnvelope(oom, rm), oom, rm)) {
+            return intersects0(t, oom, rm);
         } else {
             return false;
         }
@@ -759,17 +759,17 @@ public class V2D_Triangle extends V2D_Shape {
      * @param rm The RoundingMode if rounding is needed.
      * @return {@code true} iff l is aligned with this.
      */
-    public boolean isIntersectedBy0(V2D_Triangle t, int oom, RoundingMode rm) {
+    public boolean intersects0(V2D_Triangle t, int oom, RoundingMode rm) {
 //        return (getPoints(oom, rm).values().parallelStream().anyMatch(x
-//                -> t.isIntersectedBy0(x, oom, rm))
+//                -> t.intersects0(x, oom, rm))
 //                || t.getPoints(oom, rm).values().parallelStream().anyMatch(x
-//                        -> isIntersectedBy0(x, oom, rm)));
-        return isIntersectedBy0(t.getP(oom, rm), oom, rm)
-                || isIntersectedBy0(t.getQ(oom, rm), oom, rm)
-                || isIntersectedBy0(t.getR(oom, rm), oom, rm)
-                || t.isIntersectedBy0(getP(oom, rm), oom, rm)
-                || t.isIntersectedBy0(getQ(oom, rm), oom, rm)
-                || t.isIntersectedBy0(getR(oom, rm), oom, rm);
+//                        -> intersects0(x, oom, rm)));
+        return intersects0(t.getP(oom, rm), oom, rm)
+                || intersects0(t.getQ(oom, rm), oom, rm)
+                || intersects0(t.getR(oom, rm), oom, rm)
+                || t.intersects0(getP(oom, rm), oom, rm)
+                || t.intersects0(getQ(oom, rm), oom, rm)
+                || t.intersects0(getR(oom, rm), oom, rm);
     }
     
     /**
@@ -927,14 +927,14 @@ public class V2D_Triangle extends V2D_Shape {
                 throw new RuntimeException();
             }
         }
-//        if (rv.isIntersectedBy0(lsp, oom, rm)) {
-//            if (rv.isIntersectedBy0(lsq, oom, rm)) {
+//        if (rv.intersects0(lsp, oom, rm)) {
+//            if (rv.intersects0(lsq, oom, rm)) {
 //                return ls;
 //            } else {
 //                return V2D_LineSegment.getGeometry(rv.l.getP(), lsp, oom, rm);
 //            }
 //        } else {
-//            if (rv.isIntersectedBy0(lsq, oom, rm)) {
+//            if (rv.intersects0(lsq, oom, rm)) {
 //                return V2D_LineSegment.getGeometry(rv.l.getP(), lsq, oom, rm);
 //            } else {
 //                throw new RuntimeException("Exception in triangle-linesegment intersection.");
@@ -957,7 +957,7 @@ public class V2D_Triangle extends V2D_Shape {
             return null;
         }
         if (g instanceof V2D_Point gp) {
-            if (isIntersectedBy(gp, oom, rm)) {
+            if (intersects(gp, oom, rm)) {
                 if (l.isBetween(gp, oom, rm)) {
                     return gp;
                 }
@@ -969,14 +969,14 @@ public class V2D_Triangle extends V2D_Shape {
         if (lils == null) {
             return null;
         } else if (lils instanceof V2D_Point lilsp) {
-            if (isIntersectedBy(lilsp, oom, rm)) {
+            if (intersects(lilsp, oom, rm)) {
                 return lilsp;
             } else {
                 return null;
             }
         } else {
             V2D_LineSegment lilsl = (V2D_LineSegment) lils;
-            if (isIntersectedBy(lilsl, oom, rm)) {
+            if (intersects(lilsl, oom, rm)) {
                 return l.getIntersectionLS(ls, oom, rm);
             } else {
                 return null;
@@ -987,7 +987,7 @@ public class V2D_Triangle extends V2D_Shape {
 //            return null;
 //        }
 //        if (g instanceof V2D_Point gp) {
-//            if (l.isIntersectedBy0(gp, oom, rm)) {
+//            if (l.intersects0(gp, oom, rm)) {
 //                if (l.isBetween(gp, oom, rm)) {
 //                    return gp;
 //                }
@@ -1019,7 +1019,7 @@ public class V2D_Triangle extends V2D_Shape {
     public V2D_FiniteGeometry getIntersection(V2D_Triangle t, int oom,
             RoundingMode rm) {
         int oomn2 = oom - 2;
-        if (getEnvelope(oom, rm).isIntersectedBy(t.getEnvelope(oomn2, rm), oomn2)) {
+        if (getEnvelope(oom, rm).intersects(t.getEnvelope(oomn2, rm), oomn2)) {
             /**
              * Get intersections between the triangle edges. If there are none,
              * then either this returns t or vice versa. If there are some, then
@@ -1030,24 +1030,24 @@ public class V2D_Triangle extends V2D_Shape {
             V2D_Point ptp = getP(oom, rm);
             V2D_Point ptq = getQ(oom, rm);
             V2D_Point ptr = getR(oom, rm);
-            if (t.isIntersectedBy0(ptp, oomn2, rm)
-                    && t.isIntersectedBy0(ptq, oomn2, rm)
-                    && t.isIntersectedBy0(ptr, oomn2, rm)) {
+            if (t.intersects0(ptp, oomn2, rm)
+                    && t.intersects0(ptq, oomn2, rm)
+                    && t.intersects0(ptr, oomn2, rm)) {
                 return this;
             }
             V2D_Point pttp = t.getP(oom, rm);
             V2D_Point pttq = t.getQ(oom, rm);
             V2D_Point pttr = t.getR(oom, rm);
-            boolean pi = isIntersectedBy0(pttp, oomn2, rm);
-            boolean qi = isIntersectedBy0(pttq, oomn2, rm);
-            boolean ri = isIntersectedBy0(pttr, oomn2, rm);
+            boolean pi = intersects0(pttp, oomn2, rm);
+            boolean qi = intersects0(pttq, oomn2, rm);
+            boolean ri = intersects0(pttr, oomn2, rm);
             if (pi && qi && ri) {
                 return t;
             }
-//            if (isIntersectedBy0(t, oomn2, rm)) {
+//            if (intersects0(t, oomn2, rm)) {
 //                return t;
 //             }
-//            if (t.isIntersectedBy0(this, oomn2, rm)) {
+//            if (t.intersects0(this, oomn2, rm)) {
 //                return this;
 //             }
             V2D_FiniteGeometry gpq = t.getIntersection(getPQ(oomn2, rm), oomn2, rm);
@@ -1142,7 +1142,7 @@ public class V2D_Triangle extends V2D_Shape {
                     }
                 } else if (gqr instanceof V2D_Point gqrp) {
                     if (grp == null) {
-                        if (gpql.isIntersectedBy(gqrp, oom, rm)) {
+                        if (gpql.intersects(gqrp, oom, rm)) {
                             return gpql;
                         } else {
                             return new V2D_ConvexHull(oom, rm, gpql.getP(),
@@ -1369,11 +1369,11 @@ public class V2D_Triangle extends V2D_Shape {
                 } else {
                     if (V2D_Line.isCollinear(oom, rm, p, q, r)) {
                         V2D_LineSegment pq = new V2D_LineSegment(p, q, oom, rm);
-                        if (pq.isIntersectedBy(r, oom, rm)) {
+                        if (pq.intersects(r, oom, rm)) {
                             return pq;
                         } else {
                             V2D_LineSegment qr = new V2D_LineSegment(q, r, oom, rm);
-                            if (qr.isIntersectedBy(p, oom, rm)) {
+                            if (qr.intersects(p, oom, rm)) {
                                 return qr;
                             } else {
                                 return new V2D_LineSegment(p, r, oom, rm);
@@ -1537,7 +1537,7 @@ public class V2D_Triangle extends V2D_Shape {
      */
     protected static V2D_FiniteGeometry getGeometry(V2D_LineSegment l,
             V2D_Point p1, V2D_Point p2, int oom, RoundingMode rm) {
-        if (l.isIntersectedBy(p1, oom, rm)) {
+        if (l.intersects(p1, oom, rm)) {
             return getGeometry(l, p2, oom, rm);
         } else {
             return new V2D_Triangle(p1, l.getP(), l.getQ(oom, rm), oom, rm);
@@ -1556,7 +1556,7 @@ public class V2D_Triangle extends V2D_Shape {
      */
     protected static V2D_FiniteGeometry getGeometry(V2D_LineSegment l,
             V2D_Point p, int oom, RoundingMode rm) {
-        if (l.isIntersectedBy(p, oom, rm)) {
+        if (l.intersects(p, oom, rm)) {
             return l;
         }
         return new V2D_Triangle(p, l.getP(), l.getQ(oom, rm), oom, rm);
@@ -1604,7 +1604,7 @@ public class V2D_Triangle extends V2D_Shape {
      * @return The distance squared to {@code pv}.
      */
     public BigRational getDistanceSquared(V2D_Point pt, int oom, RoundingMode rm) {
-        if (isIntersectedBy(pt, oom, rm)) {
+        if (intersects(pt, oom, rm)) {
             return BigRational.ZERO;
         }
         return getDistanceSquaredEdge(pt, oom, rm);
@@ -1691,10 +1691,10 @@ public class V2D_Triangle extends V2D_Shape {
          */
         V2D_Point lp = l.getP();
         V2D_Point lq = l.getQ(oom, rm);
-        if (isIntersectedBy0(lp, oom, rm)) {
+        if (intersects0(lp, oom, rm)) {
             d2 = BigRational.min(d2, getDistanceSquared(lp, oom, rm));
         }
-        if (isIntersectedBy0(lq, oom, rm)) {
+        if (intersects0(lq, oom, rm)) {
             d2 = BigRational.min(d2, getDistanceSquared(lq, oom, rm));
         }
         return d2;
@@ -1790,60 +1790,63 @@ public class V2D_Triangle extends V2D_Shape {
         return new V2D_Point(env, ux, uy);
     }
 
-    @Override
-    public boolean isIntersectedBy(V2D_Envelope aabb, int oom, RoundingMode rm) {
-// This results in java.util.ConcurrentModificationException!
+    /**
+     * Identify if {@code this} is intersected by {@code aabb}.
+     * 
+     * @param aabb The envelope to test for intersection.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return {@code true} iff {@code this} is intersected by {@code aabb}.
+     */
+    public boolean intersects(V2D_Envelope aabb, int oom, RoundingMode rm) {
+// Was resulting in java.util.ConcurrentModificationException!
 //        return (getPoints(oom, rm).values().parallelStream().anyMatch(x
 //                -> aabb.contains(x, oom))
 //                || aabb.getPoints().parallelStream().anyMatch(x
-//                        -> isIntersectedBy(x, oom, rm)));
-        if (getEnvelope(oom, rm).isIntersectedBy(aabb, oom)) {
-            if (aabb.contains(getP(oom, rm), oom)) {
-                return true;
-            }
-            if (aabb.contains(getQ(oom, rm), oom)) {
-                return true;
-            }
-            if (aabb.contains(getR(oom, rm), oom)) {
+//                        -> intersects(x, oom, rm)));
+        if (getEnvelope(oom, rm).intersects(aabb, oom)) {
+            if (aabb.contains(getP(oom, rm), oom)
+                    || aabb.contains(getQ(oom, rm), oom)
+                    || aabb.contains(getR(oom, rm), oom)) {
                 return true;
             }
             V2D_FiniteGeometry l = aabb.getLeft(oom, rm);
             if (l instanceof V2D_LineSegment ll) {
-                if (isIntersectedBy(ll, oom, rm)) {
+                if (intersects(ll, oom, rm)) {
                     return true;
                 }
             } else {
-                if (isIntersectedBy((V2D_Point) l, oom, rm)) {
+                if(intersects((V2D_Point) l, oom, rm)) {
                     return true;
                 }
             }
             V2D_FiniteGeometry right = aabb.getRight(oom, rm);
             if (right instanceof V2D_LineSegment rl) {
-                if (isIntersectedBy(rl, oom, rm)) {
+                if (intersects(rl, oom, rm)) {
                     return true;
                 }
             } else {
-                if (isIntersectedBy((V2D_Point) right, oom, rm)) {
+                if (intersects((V2D_Point) right, oom, rm)) {
                     return true;
                 }
             }
             V2D_FiniteGeometry t = aabb.getTop(oom, rm);
             if (t instanceof V2D_LineSegment tl) {
-                if (isIntersectedBy(tl, oom, rm)) {
+                if (intersects(tl, oom, rm)) {
                     return true;
                 }
             } else {
-                if (isIntersectedBy((V2D_Point) t, oom, rm)) {
+                if (intersects((V2D_Point) t, oom, rm)) {
                     return true;
                 }
             }
             V2D_FiniteGeometry b = aabb.getBottom(oom, rm);
             if (b instanceof V2D_LineSegment bl) {
-                if (isIntersectedBy(bl, oom, rm)) {
+                if (intersects(bl, oom, rm)) {
                     return true;
                 }
             } else {
-                if (isIntersectedBy((V2D_Point) b, oom, rm)) {
+                if (intersects((V2D_Point) b, oom, rm)) {
                     return true;
                 }
             }

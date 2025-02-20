@@ -102,58 +102,58 @@ public class V2D_RectangleTest extends V2D_Test {
     }
 
     /**
-     * Test of isIntersectedBy method, of class V2D_Rectangle.
+     * Test of intersects method, of class V2D_Rectangle.
      */
     @Test
     public void testIsIntersectedBy_V2D_Point_int() {
-        System.out.println("isIntersectedBy");
+        System.out.println("intersects");
         int oom = -6;
         RoundingMode rm = RoundingMode.HALF_UP;
         V2D_Point pt = pP0P0;
         V2D_Rectangle instance = new V2D_Rectangle(pN1P1, pP1P1, pP1N1, pN1N1, oom, rm);
-        assertTrue(instance.isIntersectedBy(pt, oom, rm));
+        assertTrue(instance.intersects(pt, oom, rm));
         // Test 2
         instance = new V2D_Rectangle(pN1P0, pP0P1, pP1P0, pP0N1, oom, rm);
-        assertTrue(instance.isIntersectedBy(pt, oom, rm));
+        assertTrue(instance.intersects(pt, oom, rm));
         // Test 3
         double half = 1d / 2d;
         pt = new V2D_Point(env, half, half);
-        assertTrue(instance.isIntersectedBy(pt, oom, rm));
+        assertTrue(instance.intersects(pt, oom, rm));
 //        // Test 4
 //        double epsilon = 0.00000001d;
 //        double halfpe = half + epsilon;
 //        double halfne = half - epsilon;
 //        pt = new V2D_Point(halfpe, half);
-//        assertTrue(instance.isIntersectedBy(pt, oom, rm));
+//        assertTrue(instance.intersects(pt, oom, rm));
 //        // Test 5
 //        pt = new V2D_Point(-halfpe, half);
-//        assertFalse(instance.isIntersectedBy(pt, oom, rm));
+//        assertFalse(instance.intersects(pt, oom, rm));
 //        // Test 6
 //        pt = new V2D_Point(half, halfpe);
-//        assertFalse(instance.isIntersectedBy(pt, oom, rm));
+//        assertFalse(instance.intersects(pt, oom, rm));
 //        // Test 7
 //        pt = new V2D_Point(half, -halfpe);
-//        assertFalse(instance.isIntersectedBy(pt, oom, rm));
+//        assertFalse(instance.intersects(pt, oom, rm));
 //        // Test 8
 //        pt = new V2D_Point(halfne, half);
-//        assertTrue(instance.isIntersectedBy(pt, oom, rm));
+//        assertTrue(instance.intersects(pt, oom, rm));
 //        // Test 9
 //        pt = new V2D_Point(-halfne, half);
-//        assertTrue(instance.isIntersectedBy(pt, oom, rm));
+//        assertTrue(instance.intersects(pt, oom, rm));
 //        // Test 10
 //        pt = new V2D_Point(half, halfne);
-//        assertTrue(instance.isIntersectedBy(pt, oom, rm));
+//        assertTrue(instance.intersects(pt, oom, rm));
 //        // Test 11
 //        pt = new V2D_Point(half, -halfne);
-//        assertTrue(instance.isIntersectedBy(pt, oom, rm));
+//        assertTrue(instance.intersects(pt, oom, rm));
     }
 
     /**
-     * Test of isIntersectedBy method, of class V2D_RectangleDouble.
+     * Test of intersects method, of class V2D_RectangleDouble.
      */
     @Test
     public void testIsIntersectedBy_V2D_LineSegmentDouble_double() {
-        System.out.println("isIntersectedBy");
+        System.out.println("intersects");
         int oom = -6;
         RoundingMode rm = RoundingMode.HALF_UP;
         V2D_Rectangle r = new V2D_Rectangle(
@@ -164,7 +164,7 @@ public class V2D_RectangleTest extends V2D_Test {
         V2D_LineSegment l = new V2D_LineSegment(
                 new V2D_Point(env, -30, -30),
                 new V2D_Point(env, -20, 0), oom, rm);
-        assertTrue(!r.isIntersectedBy(l, oom, rm));
+        assertTrue(!r.intersects(l, oom, rm));
     }
 
     /**

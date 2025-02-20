@@ -66,7 +66,7 @@ public class V2D_TriangleTest extends V2D_Test {
     }
 
     /**
-     * Test of isIntersectedBy method, of class V2D_Triangle.
+     * Test of intersects method, of class V2D_Triangle.
      */
     @Test
     public void testIsAligned_3args() {
@@ -75,17 +75,17 @@ public class V2D_TriangleTest extends V2D_Test {
         RoundingMode rm = RoundingMode.HALF_UP;
         V2D_Point pt = pP0N1;
         V2D_Triangle instance = new V2D_Triangle(pP0P2, pP0N2, pP2P0, oom, rm);
-        assertTrue(instance.isIntersectedBy0(pt, oom, rm));
+        assertTrue(instance.intersects0(pt, oom, rm));
         pt = pN1P0;
-        assertFalse(instance.isIntersectedBy0(pt, oom, rm));
+        assertFalse(instance.intersects0(pt, oom, rm));
         instance = new V2D_Triangle(pP0P0, pP0P1, pP1P1, oom, rm);
         pt = pP2P2;
-        assertFalse(instance.isIntersectedBy0(pt, oom, rm));
+        assertFalse(instance.intersects0(pt, oom, rm));
         
     }
 
     /**
-     * Test of isIntersectedBy method, of class V2D_Triangle.
+     * Test of intersects method, of class V2D_Triangle.
      */
     @Test
     public void testIsAligned_V2D_LineSegment_double() {
@@ -101,25 +101,25 @@ public class V2D_TriangleTest extends V2D_Test {
     }
 
     /**
-     * Test of isIntersectedBy method, of class V2D_Triangle.
+     * Test of intersects method, of class V2D_Triangle.
      */
     @Test
     public void testIsIntersectedBy() {
-        System.out.println("isIntersectedBy");
+        System.out.println("intersects");
         int oom = -6;
         RoundingMode rm = RoundingMode.HALF_UP;
         V2D_Point pt = pP0P0;
         V2D_Triangle instance = new V2D_Triangle(pN1N1, pP0P2, pP1N1, oom, rm);
-        assertTrue(instance.isIntersectedBy(pt, oom, rm));
+        assertTrue(instance.intersects(pt, oom, rm));
         // Test 2
         pt = pP0P1;
-        assertTrue(instance.isIntersectedBy(pt, oom, rm));
+        assertTrue(instance.intersects(pt, oom, rm));
         // Test 3
         pt = pP1P2;
-        assertFalse(instance.isIntersectedBy(pt, oom, rm));
+        assertFalse(instance.intersects(pt, oom, rm));
         // Test 4
         pt = pN1P2;
-        assertFalse(instance.isIntersectedBy(pt, oom, rm));
+        assertFalse(instance.intersects(pt, oom, rm));
     }
 
     /**
@@ -248,29 +248,29 @@ public class V2D_TriangleTest extends V2D_Test {
     }
 
     /**
-     * Test of isIntersectedBy method, of class V2D_Triangle.
+     * Test of intersects method, of class V2D_Triangle.
      */
     @Test
     public void testIsIntersectedBy_V2D_Point() {
-        System.out.println("isIntersectedBy");
+        System.out.println("intersects");
         int oom = -6;
         RoundingMode rm = RoundingMode.HALF_UP;
         V2D_Point pt;
         V2D_Triangle instance;
         instance = new V2D_Triangle(env, P0P0, P1P0, P0P1, P0P0);
-        assertTrue(instance.isIntersectedBy(pP1P0, oom, rm));
-        assertTrue(instance.isIntersectedBy(pP0P1, oom, rm));
-        assertTrue(instance.isIntersectedBy(pP0P0, oom, rm));
+        assertTrue(instance.intersects(pP1P0, oom, rm));
+        assertTrue(instance.intersects(pP0P1, oom, rm));
+        assertTrue(instance.intersects(pP0P0, oom, rm));
         pt = new V2D_Point(env, P1P0, P0P0);
-        assertTrue(instance.isIntersectedBy(pt, oom, rm));
+        assertTrue(instance.intersects(pt, oom, rm));
         // Test 5
         pt = new V2D_Point(env, P0P1, P0P0);
-        assertTrue(instance.isIntersectedBy(pt, oom, rm));
+        assertTrue(instance.intersects(pt, oom, rm));
         // Test 6
         instance = new V2D_Triangle(env, P0P0, P1P0, P1P2, P2P0);
-        assertTrue(instance.isIntersectedBy(pP1P2, oom, rm));
-        assertTrue(instance.isIntersectedBy(pP1P1, oom, rm));
-        assertFalse(instance.isIntersectedBy(pN1P0, oom, rm));
+        assertTrue(instance.intersects(pP1P2, oom, rm));
+        assertTrue(instance.intersects(pP1P1, oom, rm));
+        assertFalse(instance.intersects(pN1P0, oom, rm));
     }
 
     /**
