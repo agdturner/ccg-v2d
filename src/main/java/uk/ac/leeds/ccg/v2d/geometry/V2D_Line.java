@@ -407,17 +407,14 @@ public class V2D_Line extends V2D_Geometry {
      * @return {@code true} if pv is on the line.
      */
     public boolean isIntersectedBy(V2D_Point pt, int oom, RoundingMode rm) {
-        V2D_Point tp = getP();
-        V2D_Point tq = getQ(oom, rm);
-        if (tp.equals(pt, oom, rm)) {
-            return true;
-        }
-        if (tq.equals(pt, oom, rm)) {
+        p = getP();
+        q = getQ(oom, rm);
+        if (p.equals(pt, oom, rm) || q.equals(pt, oom, rm)) {
             return true;
         }
         V2D_Vector dpt = new V2D_Vector(
-                    pt.getX(oom, rm).subtract(tp.getX(oom, rm)),
-                    pt.getY(oom, rm).subtract(tp.getY(oom, rm)));
+                    pt.getX(oom, rm).subtract(p.getX(oom, rm)),
+                    pt.getY(oom, rm).subtract(p.getY(oom, rm)));
         return dpt.isScalarMultiple(v, oom, rm);
 //        int oomN2 = oom - 2;
 //        V2D_Point tp = getP();

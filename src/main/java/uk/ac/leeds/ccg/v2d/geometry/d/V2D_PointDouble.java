@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Andy Turner, University of Leeds.
+ * Copyright 2025 Andy Turner, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
  * same position.
  *
  * @author Andy Turner
- * @version 1.0
+ * @version 2.0
  */
 public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Comparable<V2D_PointDouble> {
 

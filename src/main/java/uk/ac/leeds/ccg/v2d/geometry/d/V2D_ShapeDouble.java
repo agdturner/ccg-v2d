@@ -45,16 +45,34 @@ public abstract class V2D_ShapeDouble extends V2D_FiniteGeometryDouble {
     }
     
     /**
+     * For storing the points
+     */
+    protected HashMap<Integer, V2D_PointDouble> points;
+    
+    /**
+    * For storing the edges.
+     */
+    protected HashMap<Integer, V2D_LineSegmentDouble> edges;
+    
+    /**
      * For getting the points of a shape.
-     * @return 
+     * @return A HashMap of the points with integer identifier keys.
      */
     public abstract HashMap<Integer, V2D_PointDouble> getPoints();
+    
+    /**
+     * For getting the edges of a shape.
+     * 
+     * @return A HashMap of the edges with integer identifier keys.
+     */
+    public abstract HashMap<Integer, V2D_LineSegmentDouble> getEdges();
     
     /**
      * @return A copy of the points of the geometries gs.
      * @param ss The geometries.
      */
-    public ArrayList<V2D_PointDouble> getPoints(HashMap<Integer, V2D_ShapeDouble> ss) {
+    public ArrayList<V2D_PointDouble> getPoints(
+            HashMap<Integer, V2D_ShapeDouble> ss) {
         ArrayList<V2D_PointDouble> list = new ArrayList<>();
         ss.values().forEach(x -> list.addAll(x.getPoints().values()));
         return list;

@@ -16,7 +16,7 @@
 package uk.ac.leeds.ccg.v2d.geometry.d;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.HashSet;
 import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
 
 /**
@@ -36,34 +36,54 @@ public class V2D_EnvelopeDouble implements Serializable {
      * The environment.
      */
     protected final V2D_EnvironmentDouble env;
-    
+
     /**
      * For storing the offset of this.
      */
-    protected V2D_VectorDouble offset;
+    private V2D_VectorDouble offset;
 
     /**
      * The minimum x-coordinate.
      */
-    protected final double xMin;
+    private final double xMin;
 
     /**
      * The maximum x-coordinate.
      */
-    protected final double xMax;
+    private final double xMax;
 
     /**
      * The minimum y-coordinate.
      */
-    protected final double yMin;
+    private final double yMin;
 
     /**
      * The maximum y-coordinate.
      */
-    protected final double yMax;
+    private final double yMax;
 
     /**
-     * The top edge.
+     * For storing the left point.
+     */
+    protected V2D_PointDouble ll;
+
+    /**
+     * For storing the upper left point.
+     */
+    protected V2D_PointDouble ul;
+
+    /**
+     * For storing the upper right point.
+     */
+    protected V2D_PointDouble ur;
+
+    /**
+     * For storing the lower right point.
+     */
+    protected V2D_PointDouble lr;
+
+    /**
+     * The top/upper edge.
      */
     protected V2D_FiniteGeometryDouble t;
 
@@ -73,7 +93,7 @@ public class V2D_EnvelopeDouble implements Serializable {
     protected V2D_FiniteGeometryDouble r;
 
     /**
-     * The bottom edge.
+     * The bottom/lower edge.
      */
     protected V2D_FiniteGeometryDouble b;
 
@@ -81,16 +101,38 @@ public class V2D_EnvelopeDouble implements Serializable {
      * The left edge.
      */
     protected V2D_FiniteGeometryDouble l;
-    
+
     /**
-     * For storing all the corner points. These are in order: lb, lt, rt, rb.
+     * For storing all the points. N.B {@link #ll}, {@link #ul}, {@link #ur},
+     * {@link #ul} may all be the same.
      */
-    protected V2D_PointDouble[] pts;
+    protected HashSet<V2D_PointDouble> pts;
+
+    /**
+     * @param e An envelop.
+     */
+    public V2D_EnvelopeDouble(V2D_EnvelopeDouble e) {
+        env = e.env;
+        offset = e.offset;
+        yMin = e.yMin;
+        yMax = e.yMax;
+        xMin = e.xMin;
+        xMax = e.xMax;
+        t = e.t;
+        r = e.r;
+        b = e.b;
+        l = e.l;
+        ll = e.ll;
+        ul = e.ul;
+        ur = e.ur;
+        lr = e.lr;
+        pts = e.pts;
+    }
 
     /**
      * Create a new instance.
      *
-     * @param env The environment.
+     * @param env What {@link #env} is set to.
      * @param x The x-coordinate of a point.
      * @param y The y-coordinate of a point.
      */
@@ -101,19 +143,54 @@ public class V2D_EnvelopeDouble implements Serializable {
     /**
      * Create a new instance.
      *
-     * @param env The environment.
+     * @param env What {@link #env} is set to.
      * @param xMin What {@link xMin} is set to.
      * @param xMax What {@link xMax} is set to.
      * @param yMin What {@link yMin} is set to.
      * @param yMax What {@link yMax} is set to.
      */
-    public V2D_EnvelopeDouble(V2D_EnvironmentDouble env, 
+    public V2D_EnvelopeDouble(V2D_EnvironmentDouble env,
             double xMin, double xMax,
             double yMin, double yMax) {
         this(new V2D_PointDouble(env, xMin, yMin),
                 new V2D_PointDouble(env, xMax, yMax));
     }
-    
+
+    /**
+     * Create a new instance.
+     *
+     * @param gs The geometries used to form the envelope.
+     */
+    public V2D_EnvelopeDouble(V2D_FiniteGeometryDouble... gs) {
+        V2D_EnvelopeDouble e = new V2D_EnvelopeDouble(gs[0]);
+        for (V2D_FiniteGeometryDouble g : gs) {
+            e = e.union(new V2D_EnvelopeDouble(g));
+        }
+        env = e.env;
+        yMin = e.yMin;
+        yMax = e.yMax;
+        xMin = e.xMin;
+        xMax = e.xMax;
+        t = e.t;
+        r = e.r;
+        b = e.b;
+        l = e.l;
+        ll = e.ll;
+        ul = e.ul;
+        ur = e.ur;
+        lr = e.lr;
+        pts = e.pts;
+    }
+
+    /**
+     * Create a new instance.
+     *
+     * @param g The geometry used to form the envelope.
+     */
+    public V2D_EnvelopeDouble(V2D_FiniteGeometryDouble g) {
+        this(g.getPointsArray());
+    }
+
     /**
      * Create a new instance.
      *
@@ -134,6 +211,10 @@ public class V2D_EnvelopeDouble implements Serializable {
                 xMax = xMin;
                 yMin = points[0].getY();
                 yMax = yMin;
+                t = points[0];
+                l = t;
+                r = t;
+                b = t;
             }
             default -> {
                 //offset = points[0].offset;
@@ -160,43 +241,6 @@ public class V2D_EnvelopeDouble implements Serializable {
     }
 
     /**
-     * Create a new instance.
-     *
-     * @param gs The geometries used to form the envelope.
-     */
-    public V2D_EnvelopeDouble(V2D_FiniteGeometryDouble... gs) {
-        V2D_EnvelopeDouble e = new V2D_EnvelopeDouble(gs[0]);
-        for (V2D_FiniteGeometryDouble g : gs) {
-            e = e.union(new V2D_EnvelopeDouble(g));
-        }
-        this.offset = e.offset;
-        this.pts = e.pts;
-        this.xMax = e.xMax;
-        this.xMin = e.xMin;
-        this.yMax = e.yMax;
-        this.yMin = e.yMin;
-        env = gs[0].env;
-    }
-
-    /**
-     * Create a new instance.
-     *
-     * @param g The geometry used to form the envelope.
-     */
-    public V2D_EnvelopeDouble(V2D_FiniteGeometryDouble g) {
-        this(g.getPointsArray());
-    }
-
-    /**
-     * Create a new instance.
-     *
-     * @param ls The line segment used to form the envelope.
-     */
-    public V2D_EnvelopeDouble(V2D_LineSegmentDouble ls) {
-        this(ls.getP(), ls.getQ());
-    }
-
-    /**
      * @return This represented as a string.
      */
     @Override
@@ -207,157 +251,24 @@ public class V2D_EnvelopeDouble implements Serializable {
     }
 
     /**
-     * Translates this using {@code v}.
-     *
-     * @param v The vector of translation.
+     * @return {@link #pts} initialising first if it is null.
      */
-    public void translate(V2D_VectorDouble v) {
-        offset = offset.add(v);
-        pts = null;
-    }
-
-    /**
-     * @param e The V2D_Envelope to union with this.
-     * @return an Envelope which is {@code this} union {@code e}.
-     */
-    public V2D_EnvelopeDouble union(V2D_EnvelopeDouble e) {
-        if (e.isContainedBy(this)) {
-            return this;
-        } else {
-            return new V2D_EnvelopeDouble(e.env, 
-                    Math.min(e.getXMin(), getXMin()),
-                    Math.max(e.getXMax(), getXMax()),
-                    Math.min(e.getYMin(), getYMin()),
-                    Math.max(e.getYMax(), getYMax()));
+    public HashSet<V2D_PointDouble> getPoints() {
+        if (pts == null) {
+            pts = new HashSet<>(4);
+            pts.add(getLL());
+            pts.add(getUL());
+            pts.add(getUR());
+            pts.add(getLR());
         }
-    }
-
-    /**
-     * If {@code e} touches, or overlaps then it intersects.
-     *
-     * @param e The Vector_Envelope2D to test for intersection.
-     * @return {@code true} if this intersects with {@code e}.
-     */
-    public boolean isIntersectedBy(V2D_EnvelopeDouble e) {
-        return isIntersectedBy(e, 0d);
-    }
-
-    /**
-     * If {@code e} touches, or overlaps then it intersects.
-     *
-     * @param e The Vector_Envelope2D to test for intersection.
-     * @param epsilon The tolerance within which two vectors are regarded as
-     * equal.
-     * @return {@code true} if this intersects with {@code e}.
-     */
-    public boolean isIntersectedBy(V2D_EnvelopeDouble e, double epsilon) {
-        if (isBeyond(this, e, epsilon)) {
-            return !isBeyond(e, this, epsilon);
-        } else {
-            return true;
-        }
-    }
-
-    /**
-     * @param e1 The envelope to test.
-     * @param e2 The envelope to test against.
-     * @return {@code true} iff e1 is beyond e2 (i.e. they do not touch or
-     * intersect).
-     */
-    public static boolean isBeyond(V2D_EnvelopeDouble e1,
-            V2D_EnvelopeDouble e2) {
-        return isBeyond(e1, e2, 0d);
-    }
-
-    /**
-     * @param e1 The envelope to test.
-     * @param e2 The envelope to test against.
-     * @param epsilon The tolerance within which two vectors are regarded as
-     * equal.
-     * @return {@code true} iff e1 is beyond e2 (i.e. they do not touch or
-     * intersect).
-     */
-    public static boolean isBeyond(V2D_EnvelopeDouble e1, V2D_EnvelopeDouble e2,
-            double epsilon) {
-        if (e1.getXMax() + epsilon < e2.getXMin()) {
-            return true;
-        } else if (e1.getXMin() - epsilon > e2.getXMax()) {
-            return true;
-        } else if (e1.getYMax() + epsilon < e2.getYMin()) {
-            return true;
-        } else {
-            return e1.getYMin() - epsilon > e2.getYMax();
-        }
-    }
-
-    /**
-     * Containment includes the boundary. So anything in or on the boundary is
-     * contained.
-     *
-     * @param e V2D_Envelope
-     * @return if this is contained by {@code e}
-     */
-    public boolean isContainedBy(V2D_EnvelopeDouble e) {
-        return getXMax() <= e.getXMax()
-                && getXMin() >= e.getXMin()
-                && getYMax() <= e.getYMax()
-                && getYMin() >= e.getYMin();
-    }
-    
-    /**
-     * @param e V3D_Envelope The envelope to test if it is contained.
-     * @param oom The Order of Magnitude for the precision.
-     * @return {@code true} iff {@code e} is contained by {@code this}
-     */
-    public boolean contains(V2D_EnvelopeDouble e, int oom) {
-        return getXMax() >= e.getXMax()
-               && getXMin() <= e.getXMin()
-               && getYMax() >= e.getYMax()
-               && getYMin() <= e.getYMin();
-    }
-
-    /**
-     * @param p The point to test for intersection.
-     * @return {@code true} if this intersects with {@code pl}
-     */
-    public boolean isIntersectedBy(V2D_PointDouble p) {
-        return isIntersectedBy(p.getX(), p.getY());
-    }
-
-    /**
-     * @param x The x-coordinate of the point to test for intersection.
-     * @param y The y-coordinate of the point to test for intersection.
-     * @return {@code true} if this intersects with {@code pl}
-     */
-    public boolean isIntersectedBy(double x, double y) {
-        return x >= getXMin() && x <= getXMax()
-                && y >= getYMin() && y <= getYMax();
-    }
-
-    /**
-     * @param en The envelop to intersect.
-     * @return {@code null} if there is no intersection; {@code en} if
-     * {@code this.equals(en)}; otherwise returns the intersection.
-     */
-    public V2D_EnvelopeDouble getIntersection(V2D_EnvelopeDouble en) {
-        if (this.equals(en)) {
-            return en;
-        }
-        if (!this.isIntersectedBy(en)) {
-            return null;
-        }
-        return new V2D_EnvelopeDouble(en.env,
-                Math.max(getXMin(), en.getXMin()),
-                Math.min(getXMax(), en.getXMax()),
-                Math.max(getYMin(), en.getYMin()),
-                Math.min(getYMax(), en.getYMax()));
+        return pts;
     }
 
     /**
      * Test for equality.
      *
      * @param e The V2D_Envelope to test for equality with this.
-     * @return {@code true} iff this and e are equal.
+     * @return {@code true} iff {@code this} and {@code e} are equal.
      */
     public boolean equals(V2D_EnvelopeDouble e) {
         return this.getXMin() == e.getXMin()
@@ -403,46 +314,59 @@ public class V2D_EnvelopeDouble implements Serializable {
     }
 
     /**
-     * Calculate and return the approximate (or exact) centroid of the envelope.
-     *
-     * @return The approximate or exact centre of this.
+     * @return The LL corner point {@link #ll} setting it first if it is null.
      */
-    public V2D_PointDouble getCentroid() {
-        return new V2D_PointDouble(env, 
-                (this.getXMax() + this.getXMin()) / 2d,
-                (this.getYMax() + this.getYMin()) / 2d);
+    public V2D_PointDouble getLL() {
+        if (ll == null) {
+            ll = new V2D_PointDouble(env, xMin, yMin);
+        }
+        return ll;
     }
 
     /**
-     * Return all the points of this with at least oom precision.
-     *
-     * @return The corners of this as points.
+     * @return The UL corner point {@link #ul} setting it first if it is null.
      */
-    public V2D_PointDouble[] getPoints() {
-        if (pts == null) {
-            pts = new V2D_PointDouble[4];
-            pts[0] = new V2D_PointDouble(env, getXMin(), getYMin());
-            pts[1] = new V2D_PointDouble(env, getXMin(), getYMax());
-            pts[2] = new V2D_PointDouble(env, getXMax(), getYMax());
-            pts[3] = new V2D_PointDouble(env, getXMax(), getYMin());
+    public V2D_PointDouble getUL() {
+        if (ul == null) {
+            ul = new V2D_PointDouble(env, xMin, yMax);
         }
-        return pts;
+        return ul;
     }
-    
+
+    /**
+     * @return The UR corner point {@link #ur} setting it first if it is null.
+     */
+    public V2D_PointDouble getUR() {
+        if (ur == null) {
+            ur = new V2D_PointDouble(env, xMax, yMax);
+        }
+        return ur;
+    }
+
+    /**
+     * @return The LR corner point {@link #lr} setting it first if it is null.
+     */
+    public V2D_PointDouble getLR() {
+        if (lr == null) {
+            lr = new V2D_PointDouble(env, xMax, yMin);
+        }
+        return lr;
+    }
+
     /**
      * @return the left of the envelope.
      */
     public V2D_FiniteGeometryDouble getLeft() {
         if (l == null) {
             double xmin = getXMin();
-            double ymin = getYMax();
+            double ymin = getYMin();
             double ymax = getYMax();
             if (ymin == ymax) {
                 l = new V2D_PointDouble(env, xmin, ymax);
             } else {
                 l = new V2D_LineSegmentDouble(
-                    new V2D_PointDouble(env, xmin, ymin),
-                    new V2D_PointDouble(env, xmin, ymax));
+                        new V2D_PointDouble(env, xmin, ymin),
+                        new V2D_PointDouble(env, xmin, ymax));
             }
         }
         return l;
@@ -454,14 +378,14 @@ public class V2D_EnvelopeDouble implements Serializable {
     public V2D_FiniteGeometryDouble getRight() {
         if (r == null) {
             double xmax = getXMax();
-            double ymin = getYMax();
+            double ymin = getYMin();
             double ymax = getYMax();
             if (ymin == ymax) {
                 r = new V2D_PointDouble(env, xmax, ymax);
             } else {
                 r = new V2D_LineSegmentDouble(
-                    new V2D_PointDouble(env, xmax, ymin),
-                    new V2D_PointDouble(env, xmax, ymax));
+                        new V2D_PointDouble(env, xmax, ymin),
+                        new V2D_PointDouble(env, xmax, ymax));
             }
         }
         return r;
@@ -479,8 +403,8 @@ public class V2D_EnvelopeDouble implements Serializable {
                 t = new V2D_PointDouble(env, xmin, ymax);
             } else {
                 t = new V2D_LineSegmentDouble(
-                    new V2D_PointDouble(env, xmin, ymax),
-                    new V2D_PointDouble(env, xmax, ymax));
+                        new V2D_PointDouble(env, xmin, ymax),
+                        new V2D_PointDouble(env, xmax, ymax));
             }
         }
         return t;
@@ -498,54 +422,191 @@ public class V2D_EnvelopeDouble implements Serializable {
                 b = new V2D_PointDouble(env, xmin, ymin);
             } else {
                 b = new V2D_LineSegmentDouble(
-                    new V2D_PointDouble(env, xmin, ymin),
-                    new V2D_PointDouble(env, xmax, ymin));
+                        new V2D_PointDouble(env, xmin, ymin),
+                        new V2D_PointDouble(env, xmax, ymin));
             }
         }
         return b;
     }
 
     /**
-     * A collection method to add l to ls iff there is not already an l in ls.
+     * Translates this using {@code v}.
      *
-     * @param ls The collection.
-     * @param l The line segment to add.
-     * @return {@code true} iff l is unique and is added to ls.
+     * @param v The vector of translation.
      */
-    protected boolean addUnique(ArrayList<V2D_LineDouble> ls, V2D_LineDouble l) {
-        boolean unique = true;
-        for (var x : ls) {
-            if (x.equals(l)) {
-                unique = false;
-                break;
-            }
-        }
-        if (unique) {
-            ls.add(l);
-        }
-        return unique;
+    public void translate(V2D_VectorDouble v) {
+        offset = offset.add(v);
+        pts = null;
+        ll = null;
+        ul = null;
+        ur = null;
+        lr = null;
+        l = null;
+        t = null;
+        r = null;
+        b = null;
+//        xMax += v.dx;
+//        xMin += v.dx;
+//        yMax += v.dy;
+//        yMin += v.dy;
     }
 
     /**
-     * A collection method to add pt to pts iff there is not already a pt in
-     * pts.
+     * Calculate and return the approximate (or exact) centroid of the envelope.
      *
-     * @param pts The collection.
-     * @param pt The point to add.
-     * @return {@code true} iff l is unique and is added to ls.
+     * @return The approximate or exact centre of this.
      */
-    protected boolean addUnique(ArrayList<V2D_PointDouble> pts,
-            V2D_PointDouble pt) {
-        boolean unique = true;
-        for (var x : pts) {
-            if (x.equals(pt)) {
-                unique = false;
-                break;
-            }
+    public V2D_PointDouble getCentroid() {
+        return new V2D_PointDouble(env,
+                (this.getXMax() + this.getXMin()) / 2d,
+                (this.getYMax() + this.getYMin()) / 2d);
+    }
+
+    /**
+     * @param e The V2D_Envelope to union with this.
+     * @return an Envelope which is {@code this} union {@code e}.
+     */
+    public V2D_EnvelopeDouble union(V2D_EnvelopeDouble e) {
+        if (contains(e)) {
+            return this;
+        } else {
+            return new V2D_EnvelopeDouble(e.env,
+                    Math.min(e.getXMin(), getXMin()),
+                    Math.max(e.getXMax(), getXMax()),
+                    Math.min(e.getYMin(), getYMin()),
+                    Math.max(e.getYMax(), getYMax()));
         }
-        if (unique) {
-            pts.add(pt);
+    }
+
+    /**
+     * If {@code e} touches, or overlaps then it intersects.
+     *
+     * @param e The Vector_Envelope2D to test for intersection.
+     * @return {@code true} if this intersects with {@code e}.
+     */
+    public boolean isIntersectedBy(V2D_EnvelopeDouble e) {
+        return isIntersectedBy(e, 0d);
+    }
+
+    /**
+     * If {@code e} touches, or overlaps then it intersects.
+     *
+     * @param e The Vector_Envelope2D to test for intersection.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} if this intersects with {@code e}.
+     */
+    public boolean isIntersectedBy(V2D_EnvelopeDouble e, double epsilon) {
+        if (isBeyond(e, epsilon)) {
+            return !e.isBeyond(this, epsilon);
+        } else {
+            return true;
         }
-        return unique;
+    }
+
+    /**
+     * @param e The envelope to test if {@code this} is beyond.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff {@code this} is beyond {@code e} (i.e. they do
+     * not touch or intersect).
+     */
+    public boolean isBeyond(V2D_EnvelopeDouble e, double epsilon) {
+        return getXMax() + epsilon < e.getXMin()
+                || getXMin() - epsilon > e.getXMax()
+                || getYMax() + epsilon < e.getYMin()
+                || getYMin() - epsilon > e.getYMax();
+    }
+
+    /**
+     * Containment includes the boundary. So anything in or on the boundary is
+     * contained.
+     *
+     * @param e V2D_Envelope
+     * @return if this is contained by {@code e}
+     */
+    public boolean contains(V2D_EnvelopeDouble e) {
+        return getXMax() <= e.getXMax()
+                && getXMin() >= e.getXMin()
+                && getYMax() <= e.getYMax()
+                && getYMin() >= e.getYMin();
+    }
+
+    /**
+     * The location of p may get rounded.
+     *
+     * @param p The point to test if it is contained.
+     * @return {@code} true iff {@code this} contains {@code p}
+     */
+    public boolean contains(V2D_PointDouble p) {
+        return contains(p.getX(), p.getY());
+    }
+
+    /**
+     * @param x The x-coordinate of the point to test for intersection.
+     * @param y The y-coordinate of the point to test for intersection.
+     * @return {@code true} if this intersects with {@code pl}
+     */
+    public boolean contains(double x, double y) {
+        return getXMax() <= x
+                && getXMin() >= x
+                && getYMax() <= y
+                && getYMin() >= y;
+    }
+
+    /**
+     * @param l The line to test for containment.
+     * @return {@code true} if this intersects with {@code pl}
+     */
+    public boolean contains(V2D_LineSegmentDouble l) {
+        return contains(l.getP()) && contains(l.getQ());
+    }
+
+    /**
+     * @param s The shape to test for containment.
+     * @return {@code true} if this intersects with {@code pl}
+     */
+    public boolean contains(V2D_ShapeDouble s) {
+        if (contains(s.getEnvelope())) {
+            return s.getPoints().values().parallelStream().allMatch(x
+                    -> contains(x));
+        }
+        return false;
+    }
+
+    /**
+     * @param p The point to test for intersection.
+     * @return {@code true} if this intersects with {@code pl}
+     */
+    public boolean isIntersectedBy(V2D_PointDouble p) {
+        return isIntersectedBy(p.getX(), p.getY());
+    }
+
+    /**
+     * @param x The x-coordinate of the point to test for intersection.
+     * @param y The y-coordinate of the point to test for intersection.
+     * @return {@code true} if this intersects with {@code pl}
+     */
+    public boolean isIntersectedBy(double x, double y) {
+        return x >= getXMin()
+                && x <= getXMax()
+                && y >= getYMin()
+                && y <= getYMax();
+    }
+
+    /**
+     * @param en The envelop to intersect.
+     * @return {@code null} if there is no intersection; {@code en} if
+     * {@code this.equals(en)}; otherwise returns the intersection.
+     */
+    public V2D_EnvelopeDouble getIntersection(V2D_EnvelopeDouble en) {
+        if (!this.isIntersectedBy(en)) {
+            return null;
+        }
+        return new V2D_EnvelopeDouble(en.env,
+                Math.max(getXMin(), en.getXMin()),
+                Math.min(getXMax(), en.getXMax()),
+                Math.max(getYMin(), en.getYMin()),
+                Math.min(getYMax(), en.getYMax()));
     }
 }

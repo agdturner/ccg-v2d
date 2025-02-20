@@ -36,17 +36,6 @@ public class V2D_ConvexHull extends V2D_Shape {
     private static final long serialVersionUID = 1L;
 
     /**
-     * The collection of points in a clockwise order.
-     */
-    public HashMap<Integer, V2D_Point> points;
-
-    /**
-     * The collection of edges. These are the points in clockwise order as a
-     * linear ring. Keys are IDs
-     */
-    public HashMap<Integer, V2D_LineSegment> edges;
-
-    /**
      * For storing the contiguous triangles.
      */
     public ArrayList<V2D_Triangle> triangles;
@@ -61,7 +50,18 @@ public class V2D_ConvexHull extends V2D_Shape {
     public V2D_ConvexHull(int oom, RoundingMode rm, V2D_Triangle... triangles) {
         this(oom, rm, V2D_Triangle.getPoints(triangles, oom, rm));
     }
-    
+
+    /**
+     * Create a new instance.
+     *
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @param points A list of points with at least 3 that are non-coplanar.
+     */
+    public V2D_ConvexHull(int oom, RoundingMode rm, V2D_Point... points) {
+        this(oom, rm, Arrays.asList(points));
+    }
+
     /**
      * Create a new instance. An algorithm for generating a convex hull from a
      * set of coplanar points known as the "quick hull" algorithm (see
@@ -103,17 +103,19 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @param points The points from which to construct the convex hull. There
      * must be at least three non-linear points.
      */
-    public V2D_ConvexHull(int oom, RoundingMode rm, V2D_Point... points) {
-        super(points[0].env, V2D_Vector.ZERO);
+    public V2D_ConvexHull(int oom, RoundingMode rm, List<V2D_Point> points) {
+        super(points.get(0).env, V2D_Vector.ZERO);
         ArrayList<V2D_Point> h = new ArrayList<>();
-        ArrayList<V2D_Point> uniquePoints = V2D_Point.getUnique(Arrays.asList(points), oom, rm);
+        ArrayList<V2D_Point> uniquePoints = V2D_Point.getUnique(
+                points, oom, rm);
         //uniquePoints.sort(V2D_Point::compareTo);
         uniquePoints.sort((p1, p2) -> p1.compareTo(p2, oom, rm));
         // Compute convex hull
         // https://rosettacode.org/wiki/Convex_hull#Java
         // lower hull
         for (V2D_Point pt : uniquePoints) {
-            while (h.size() >= 2 && !ccw(h.get(h.size() - 2), h.get(h.size() - 1), pt, oom, rm)) {
+            while (h.size() >= 2 && !ccw(h.get(h.size() - 2),
+                    h.get(h.size() - 1), pt, oom, rm)) {
                 h.remove(h.size() - 1);
             }
             h.add(pt);
@@ -127,15 +129,15 @@ public class V2D_ConvexHull extends V2D_Shape {
             }
             h.add(pt);
         }
-        ArrayList<V2D_Point> ups = V2D_Point.getUnique(h, oom, rm);        
+        ArrayList<V2D_Point> ups = V2D_Point.getUnique(h, oom, rm);
         this.points = new HashMap<>();
-        for (var p: ups) {
+        for (var p : ups) {
             this.points.put(this.points.size(), p);
         }
         // Add edge
         edges = new HashMap<>();
         V2D_Point p0 = this.points.get(0);
-        for (int i = 1; i < this.points.size(); i ++) {
+        for (int i = 1; i < this.points.size(); i++) {
             V2D_Point p1 = this.points.get(i);
             edges.put(edges.size(), new V2D_LineSegment(p0, p1, oom, rm));
             p0 = p1;
@@ -144,11 +146,14 @@ public class V2D_ConvexHull extends V2D_Shape {
     }
 
     // ccw returns true if the three points make a counter-clockwise turn
-    private static boolean ccw(V2D_Point a, V2D_Point b, V2D_Point c, int oom, RoundingMode rm) {
+    private static boolean ccw(V2D_Point a, V2D_Point b, V2D_Point c, int oom,
+            RoundingMode rm) {
         BigRational ax = a.getX(oom, rm);
         BigRational ay = a.getY(oom, rm);
-        return ((b.getX(oom, rm).subtract(ax)).multiply(c.getY(oom, rm).subtract(ay)))
-                .compareTo((b.getY(oom, rm).subtract(ay)).multiply(c.getX(oom, rm).subtract(ax))) == 1;
+        return ((b.getX(oom, rm).subtract(ax))
+                .multiply(c.getY(oom, rm).subtract(ay)))
+                .compareTo((b.getY(oom, rm).subtract(ay))
+                        .multiply(c.getX(oom, rm).subtract(ax))) == 1;
     }
 
     /**
@@ -170,7 +175,7 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
      */
-    public V2D_ConvexHull(V2D_ConvexHull ch, V2D_Triangle t, 
+    public V2D_ConvexHull(V2D_ConvexHull ch, V2D_Triangle t,
             int oom, RoundingMode rm) {
         this(oom, rm, V2D_FiniteGeometry.getPoints(oom, rm, ch, t));
     }
@@ -184,7 +189,7 @@ public class V2D_ConvexHull extends V2D_Shape {
         }
         return pts;
     }
-    
+
     @Override
     public HashMap<Integer, V2D_Point> getPoints(int oom, RoundingMode rm) {
         return points;
@@ -196,13 +201,13 @@ public class V2D_ConvexHull extends V2D_Shape {
         s.append(this.getClass().getName()).append("(");
         {
             s.append("\npoints (\n");
-                for(var entry : points.entrySet()) {
-                    s.append("(");
-                    s.append(entry.getKey());
-                    s.append(",");
-                    s.append(entry.getValue().toString());
-                    s.append("), ");
-                }
+            for (var entry : points.entrySet()) {
+                s.append("(");
+                s.append(entry.getKey());
+                s.append(",");
+                s.append(entry.getValue().toString());
+                s.append("), ");
+            }
             int l = s.length();
             s = s.delete(l - 2, l);
             s.append("\n)\n");
@@ -219,13 +224,13 @@ public class V2D_ConvexHull extends V2D_Shape {
         s.append(this.getClass().getName()).append("(");
         {
             s.append("points (");
-                for(var entry : points.entrySet()) {
-                    s.append("(");
-                    s.append(entry.getKey());
-                    s.append(",");
-                    s.append(entry.getValue().toString());
-                    s.append("), ");
-                }
+            for (var entry : points.entrySet()) {
+                s.append("(");
+                s.append(entry.getKey());
+                s.append(",");
+                s.append(entry.getValue().toString());
+                s.append("), ");
+            }
             int l = s.length();
             s = s.delete(l - 2, l);
             s.append(")");
@@ -243,10 +248,10 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @return {@code true} iff all the triangles are the same.
      */
     public boolean equals(V2D_ConvexHull c, int oom, RoundingMode rm) {
-        if (points.values().parallelStream().allMatch(x -> 
-                x.equalsAny(c.points.values(), oom, rm))) {
-            return c.points.values().parallelStream().allMatch(x -> 
-                x.equalsAny(points.values(), oom, rm));
+        if (points.values().parallelStream().allMatch(x
+                -> x.equalsAny(c.points.values(), oom, rm))) {
+            return c.points.values().parallelStream().allMatch(x
+                    -> x.equalsAny(points.values(), oom, rm));
         }
         return false;
 //        HashSet<Integer> indexes = new HashSet<>();
@@ -318,41 +323,102 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @param pt The point to test for intersection with.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
-     * @return {@code true} iff the geometry is intersected by {@code p}.
+     * @return {@code true} iff {@code this} is intersected by {@code p}.
      */
     public boolean isIntersectedBy(V2D_Point pt, int oom, RoundingMode rm) {
         if (getEnvelope(oom, rm).contains(pt, oom)) {
-            return getTriangles(oom, rm).parallelStream().anyMatch(x -> x.isIntersectedBy(pt, oom, rm));
+            return isIntersectedBy0(pt, oom, rm);
+        } else {
+            return false;
         }
-        return false;
     }
-    
+
     /**
-     * Identify if this contains point.
+     * Identify if this is intersected by point {@code p}.
      *
      * @param pt The point to test for intersection with.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
-     * @return {@code true} iff the geometry is intersected by {@code p}.
+     * @return {@code true} iff {@code this} is intersected by {@code p}.
+     */
+    public boolean isIntersectedBy0(V2D_Point pt, int oom, RoundingMode rm) {
+        return getTriangles(oom, rm).parallelStream().anyMatch(x
+                -> x.isIntersectedBy(pt, oom, rm));
+    }
+
+    /**
+     * Identify if this contains point.
+     *
+     * @param pt The point to test for containment.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return {@code true} iff {@code this} contains {@code p}.
      */
     public boolean contains(V2D_Point pt, int oom, RoundingMode rm) {
-        if (isIntersectedBy(pt, oom, rm)) {
-            return !V2D_LineSegment.isIntersectedBy(oom, rm, pt, edges.values());
-        }
-        return false;
+        return isIntersectedBy(pt, oom, rm)
+                && !V2D_LineSegment.isIntersectedBy(oom, rm, pt, edges.values());
     }
-    
+
     /**
      * Identify if this contains line segment.
      *
-     * @param l The line segment to test for containment with.
+     * @param l The line segment to test for containment.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
-     * @return {@code true} iff the geometry is intersected by {@code p}.
+     * @return {@code true} iff {@code this} contains {@code l}.
      */
     public boolean contains(V2D_LineSegment l, int oom, RoundingMode rm) {
-        if (isIntersectedBy(l, oom, rm)) {
-            return !V2D_LineSegment.isIntersectedBy(oom, rm, l, edges.values());
+        return isIntersectedBy(l, oom, rm)
+                && !V2D_LineSegment.isIntersectedBy(oom, rm, l, edges.values());
+    }
+
+    /**
+     * Identify if this contains line segment.
+     *
+     * @param t The triangle to test for containment.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return {@code true} iff {@code this} contains {@code t}.
+     */
+    public boolean contains(V2D_Triangle t, int oom, RoundingMode rm) {
+        return isIntersectedBy(t, oom, rm)
+                && t.getPoints(oom, rm).values().parallelStream().allMatch(x
+                        -> contains(x, oom, rm));
+//        return isIntersectedBy(t, oom, rm)
+//                && !t.getEdges(oom, rm).values().parallelStream().anyMatch(x
+//                        -> V2D_LineSegment.isIntersectedBy(oom, rm, x,
+//                        edges.values()));
+    }
+
+    /**
+     * Identify if this contains the convex hull.
+     *
+     * @param ch The convex hull to test for containment.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return {@code true} iff {@code this} contains {@code ch}.
+     */
+    public boolean contains(V2D_ConvexHull ch, int oom, RoundingMode rm) {
+        return isIntersectedBy(ch, oom, rm)
+                && ch.getPoints(oom, rm).values().parallelStream().allMatch(x
+                        -> contains(x, oom, rm));
+//        return isIntersectedBy(ch, oom, rm)
+//                && !ch.edges.values().parallelStream().anyMatch(x
+//                        -> V2D_LineSegment.isIntersectedBy(oom, rm, x,
+//                        edges.values()));
+    }
+
+    /**
+     * Identify if this is intersected by point {@code p}.
+     *
+     * @param l The line segment to test for intersection with.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return {@code true} iff {@code this} is intersected by {@code p}.
+     */
+    public boolean isIntersectedBy(V2D_LineSegment l, int oom, RoundingMode rm) {
+        if (getEnvelope(oom, rm).isIntersectedBy(l.getEnvelope(oom, rm), oom)) {
+            return isIntersectedBy0(l, oom, rm);
         }
         return false;
     }
@@ -363,11 +429,26 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @param l The line segment to test for intersection with.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
-     * @return {@code true} iff the geometry is intersected by {@code p}.
+     * @return {@code true} iff {@code this} is intersected by {@code p}.
      */
-    public boolean isIntersectedBy(V2D_LineSegment l, int oom, RoundingMode rm) {
-        if (getEnvelope(oom, rm).isIntersectedBy(l.getEnvelope(oom, rm), oom)) {
-            return getTriangles(oom, rm).parallelStream().anyMatch(x -> x.isIntersectedBy(l, oom, rm));
+    public boolean isIntersectedBy0(V2D_LineSegment l, int oom, RoundingMode rm) {
+        return getTriangles(oom, rm).parallelStream().anyMatch(x
+                -> x.isIntersectedBy(l, oom, rm));
+    }
+
+    /**
+     * Identify if this is intersected by point {@code p}.
+     *
+     * @param t The triangle to test for intersection with.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return {@code true} iff {@code this} is intersected by {@code p}.
+     */
+    public boolean isIntersectedBy(V2D_Triangle t, int oom, RoundingMode rm) {
+        if (t.isIntersectedBy(getEnvelope(oom, rm), oom, rm)) {
+            if (isIntersectedBy(t.getEnvelope(oom, rm), oom, rm)) {
+                return isIntersectedBy0(t, oom, rm);
+            }
         }
         return false;
     }
@@ -378,29 +459,55 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @param t The triangle to test for intersection with.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
-     * @return {@code true} iff the geometry is intersected by {@code p}.
+     * @return {@code true} iff {@code this} is intersected by {@code p}.
      */
-    public boolean isIntersectedBy(V2D_Triangle t, int oom, RoundingMode rm) {
-        if (t.isIntersectedBy(getEnvelope(oom, rm), oom, rm)) {
-            if (isIntersectedBy(t.getEnvelope(oom, rm), oom, rm)) {
-                return getTriangles(oom, rm).parallelStream().anyMatch(x -> x.isIntersectedBy(t, oom, rm));
-            }
-        }
-        return false;
+    public boolean isIntersectedBy0(V2D_Triangle t, int oom, RoundingMode rm) {
+        return getTriangles(oom, rm).parallelStream().anyMatch(x
+                -> x.isIntersectedBy(t, oom, rm));
     }
-    
+
     /**
      * Identify if this is intersected by point {@code p}.
      *
      * @param r The rectangle to test for intersection with.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
-     * @return {@code true} iff the geometry is intersected by {@code p}.
+     * @return {@code true} iff {@code this} is intersected by {@code p}.
      */
     public boolean isIntersectedBy(V2D_Rectangle r, int oom, RoundingMode rm) {
         if (r.isIntersectedBy(getEnvelope(oom, rm), oom, rm)) {
             if (isIntersectedBy(r.getEnvelope(oom, rm), oom, rm)) {
-                return getTriangles(oom, rm).parallelStream().anyMatch(x -> r.isIntersectedBy(x, oom, rm));
+                return isIntersectedBy0(r, oom, rm);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Identify if this is intersected by point {@code p}.
+     *
+     * @param r The rectangle to test for intersection with.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return {@code true} iff {@code this} is intersected by {@code p}.
+     */
+    public boolean isIntersectedBy0(V2D_Rectangle r, int oom, RoundingMode rm) {
+        return getTriangles(oom, rm).parallelStream().anyMatch(x
+                -> r.isIntersectedBy(x, oom, rm));
+    }
+
+    /**
+     * Identify if this is intersected by point {@code p}.
+     *
+     * @param ch The convex hull to test for intersection with.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode if rounding is needed.
+     * @return {@code true} iff {@code this} is intersected by {@code ch.
+     */
+    public boolean isIntersectedBy(V2D_ConvexHull ch, int oom, RoundingMode rm) {
+        if (ch.isIntersectedBy(getEnvelope(oom, rm), oom, rm)) {
+            if (isIntersectedBy(ch.getEnvelope(oom, rm), oom, rm)) {
+                return isIntersectedBy0(ch, oom, rm);
             }
         }
         return false;
@@ -412,31 +519,11 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @param ch The convex hull to test for intersection with.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
-     * @return {@code true} iff the geometry is intersected by {@code ch.
+     * @return {@code true} iff {@code this} is intersected by {@code ch.
      */
-    public boolean isIntersectedBy(V2D_ConvexHull ch, int oom, RoundingMode rm) {
-        if (ch.isIntersectedBy(getEnvelope(oom, rm), oom, rm)) {
-            if (isIntersectedBy(ch.en, oom, rm)) {
-                return getTriangles(oom, rm).parallelStream().anyMatch(x -> ch.isIntersectedBy(x, oom, rm));
-            }
-        }
-        return false;
-    }
-
-    /**
-     * @param pt The point.
-     * @param oom The Order of Magnitude for the precision.
-     * @param rm The RoundingMode for any rounding.
-     * @return {@code true} if the point is aligned with any of the parts.
-     */
-    protected boolean isAligned(V2D_Point pt, int oom, RoundingMode rm) {
-        for (V2D_Triangle t : getTriangles(oom, rm)) {
-            if (t.isAligned(pt, oom, rm)) {
-                return true;
-            }
-        }
-        return false;
-        //return triangles.parallelStream().anyMatch(t -> (t.isIntersectedBy0(pt, oom)));
+    public boolean isIntersectedBy0(V2D_ConvexHull ch, int oom, RoundingMode rm) {
+        return getTriangles(oom, rm).parallelStream().anyMatch(x
+                -> ch.isIntersectedBy(x, oom, rm));
     }
 
     /**
@@ -468,14 +555,15 @@ public class V2D_ConvexHull extends V2D_Shape {
 //        return sum;
 //    }
     /**
-     * Get the intersection between the geometry and the triangle {@code t}.
+     * Get the intersection between {@code this} and the triangle {@code t}.
      *
      * @param t The triangle to intersect with.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
      * @return The V2D_Geometry.
      */
-    public V2D_FiniteGeometry getIntersection(V2D_Triangle t, int oom, RoundingMode rm) {
+    public V2D_FiniteGeometry getIntersection(V2D_Triangle t, int oom,
+            RoundingMode rm) {
         // Create a set all the intersecting triangles from this.
         List<V2D_Point> ts = new ArrayList<>();
         for (V2D_Triangle t2 : triangles) {
@@ -501,14 +589,10 @@ public class V2D_ConvexHull extends V2D_Shape {
 //                return getGeometry(oom, t2s.toArray(V2D_Triangle[]::new));
     }
 
-//    @Override
-//    public boolean isEnvelopeIntersectedBy(V2D_Line l, int oom) {
-//        return getEnvelope().isIntersectedBy(l, oom);
-//    }
     @Override
     public V2D_ConvexHull rotate(V2D_Point pt, BigRational theta,
             Math_BigDecimal bd, int oom, RoundingMode rm) {
-        theta = Math_AngleBigRational.normalise(theta, bd, oom, rm);
+        theta = Math_AngleBigRational.normalise(theta, bd, oom - 2, rm);
         if (theta.compareTo(BigRational.ZERO) == 0d) {
             return new V2D_ConvexHull(this, oom, rm);
         } else {
@@ -525,11 +609,12 @@ public class V2D_ConvexHull extends V2D_Shape {
         }
         return new V2D_ConvexHull(oom, rm, V2D_Triangle.getPoints(pts, oom, rm));
     }
-    
+
     @Override
     public boolean isIntersectedBy(V2D_Envelope aabb, int oom, RoundingMode rm) {
         if (getEnvelope(oom, rm).isIntersectedBy(aabb, oom)) {
-            return getTriangles(oom, rm).parallelStream().anyMatch(x -> x.isIntersectedBy(aabb, oom, rm));
+            return getTriangles(oom, rm).parallelStream().anyMatch(x
+                    -> x.isIntersectedBy(aabb, oom, rm));
         }
         return false;
     }
@@ -692,11 +777,11 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @return Either a V2D_Point, V2D_LineSegment, V2D_Triangle, or
      * V2D_ConvexHullCoplanar.
      */
-    public static V2D_FiniteGeometry getGeometry(int oom, RoundingMode rm, 
+    public static V2D_FiniteGeometry getGeometry(int oom, RoundingMode rm,
             ArrayList<V2D_Point> pts) {
         return getGeometry(oom, rm, pts.toArray(V2D_Point[]::new));
     }
-    
+
     /**
      * If pts are all equal then a V2D_Point is returned.If two are different,
      * then a V2D_LineSegment is returned. Three different, then a V2D_Triangle
@@ -709,8 +794,10 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @return Either a V2D_Point, V2D_LineSegment, V2D_Triangle, or
      * V2D_ConvexHull.
      */
-    public static V2D_FiniteGeometry getGeometry(int oom, RoundingMode rm, V2D_Point... pts) {
-        ArrayList<V2D_Point> upts = V2D_Point.getUnique(Arrays.asList(pts), oom, rm);
+    public static V2D_FiniteGeometry getGeometry(int oom, RoundingMode rm,
+            V2D_Point... pts) {
+        ArrayList<V2D_Point> upts = V2D_Point.getUnique(
+                Arrays.asList(pts), oom, rm);
         Iterator<V2D_Point> i = upts.iterator();
         switch (upts.size()) {
             case 1 -> {
@@ -740,7 +827,7 @@ public class V2D_ConvexHull extends V2D_Shape {
 
     /**
      * Returns the contiguous triangles constructing them first if necessary.
-     * 
+     *
      * This implementation does not compute a centroid and alternates between
      * clockwise and anticlockwise to fill the space with triangles.
      *
@@ -776,13 +863,16 @@ public class V2D_ConvexHull extends V2D_Shape {
             edges = new HashMap<>();
             V2D_Point p0 = this.points.get(0);
             V2D_Point p1 = this.points.get(1);
-            this.edges.put(this.edges.size(), new V2D_LineSegment(p0, p1, oom, rm));
+            this.edges.put(this.edges.size(), new V2D_LineSegment(p0, p1,
+                    oom, rm));
             for (int i = 2; i < this.points.size(); i++) {
                 p0 = p1;
                 p1 = this.points.get(i);
-                this.edges.put(this.edges.size(), new V2D_LineSegment(p0, p1, oom, rm));
+                this.edges.put(this.edges.size(), new V2D_LineSegment(p0, p1,
+                        oom, rm));
             }
-            edges.put(this.edges.size(),new V2D_LineSegment(p1, this.points.get(0), oom, rm));
+            edges.put(this.edges.size(), new V2D_LineSegment(p1,
+                    this.points.get(0), oom, rm));
         }
         return edges;
     }

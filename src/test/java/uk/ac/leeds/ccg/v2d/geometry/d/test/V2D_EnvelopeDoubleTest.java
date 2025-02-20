@@ -206,20 +206,20 @@ public class V2D_EnvelopeDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of isContainedBy method, of class V2D_EnvelopeDouble.
+     * Test of contains method, of class V2D_EnvelopeDouble.
      */
     @Test
     public void testIsContainedBy() {
         System.out.println("isContainedBy");
         V2D_EnvelopeDouble en = new V2D_EnvelopeDouble(pN2N2, pP2P2);
         V2D_EnvelopeDouble instance = new V2D_EnvelopeDouble(pN1N1, pP1P1);
-        assertTrue(instance.isContainedBy(en));
+        assertTrue(instance.contains(en));
         // Test 2
         instance = new V2D_EnvelopeDouble(pN2N2, pP2P2);
-        assertTrue(instance.isContainedBy(en));
+        assertTrue(instance.contains(en));
         // Test 3
         en = new V2D_EnvelopeDouble(pN1N1, pP2P2);
-        assertFalse(instance.isContainedBy(en));
+        assertFalse(instance.contains(en));
     }
 
     /**

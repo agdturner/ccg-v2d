@@ -64,7 +64,7 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
      * @throws java.lang.RuntimeException iff the points do not define a
      * rectangle.
      */
-    public V2D_RectangleDouble(V2D_EnvironmentDouble env, 
+    public V2D_RectangleDouble(V2D_EnvironmentDouble env,
             V2D_VectorDouble offset, V2D_VectorDouble p,
             V2D_VectorDouble q, V2D_VectorDouble r, V2D_VectorDouble s) {
         super(env, offset);
@@ -124,7 +124,7 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
                 + pad + "pqr=" + getPQR().toStringSimple(pad) + ",\n"
                 + pad + "rsp=" + getRSP().toStringSimple(pad);
     }
-    
+
     @Override
     public V2D_PointDouble[] getPointsArray() {
         V2D_PointDouble[] r = new V2D_PointDouble[4];
@@ -144,16 +144,19 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
         r.put(3, getS());
         return r;
     }
-    
+
     /**
      * @return A collection of the edges.
      */
-    public Collection<V2D_LineSegmentDouble> getEdges() {
-        HashSet<V2D_LineSegmentDouble> edges = new HashSet<>();
-        edges.add(getPQ());
-        edges.add(getQR());
-        edges.add(getRS());
-        edges.add(getSP());
+    @Override
+    public HashMap<Integer, V2D_LineSegmentDouble> getEdges() {
+        if (edges == null) {
+            edges = new HashMap<>(4);
+            edges.put(0, getPQ());
+            edges.put(0, getQR());
+            edges.put(0, getRS());
+            edges.put(0, getSP());
+        }
         return edges;
     }
 
@@ -220,7 +223,7 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
             return getRSP().isIntersectedBy(pt, epsilon);
         }
     }
-    
+
     /**
      * @param l The line segment to test for intersect with.
      * @param epsilon The tolerance within which two vectors are regarded as
@@ -234,7 +237,7 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
             return getRSP().isIntersectedBy(l, epsilon);
         }
     }
-    
+
     /**
      * @param ls The line segments to test for intersection.
      * @param epsilon The tolerance within which two vectors are regarded as
@@ -244,7 +247,7 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
     public boolean isIntersectedBy(double epsilon, V2D_LineSegmentDouble... ls) {
         return isIntersectedBy(epsilon, Arrays.asList(ls));
     }
-    
+
     /**
      * @param ls The line segments to test for intersection.
      * @param epsilon The tolerance within which two vectors are regarded as
@@ -282,7 +285,7 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
     protected V2D_LineSegmentDouble getQR() {
         return getPQR().getQR();
     }
-    
+
     /**
      * @return The line segment from {@link #r} to {@link #s}.
      */
@@ -413,7 +416,7 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
     @Override
     public V2D_RectangleDouble rotateN(V2D_PointDouble pt,
             double theta, double epsilon) {
-        return new V2D_RectangleDouble( 
+        return new V2D_RectangleDouble(
                 getP().rotateN(pt, theta, epsilon),
                 getQ().rotateN(pt, theta, epsilon),
                 getR().rotateN(pt, theta, epsilon),
@@ -460,7 +463,7 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
             return V2D_ConvexHullDouble.getGeometry(epsilon, pts);
         }
     }
-    
+
     /**
      * Computes and returns the intersection between {@code this} and {@code t}.
      * The intersection could be: null, a point, a line segment, a triangle, or

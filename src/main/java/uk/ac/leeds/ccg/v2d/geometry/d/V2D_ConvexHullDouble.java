@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Andy Turner, University of Leeds.
+ * Copyright 2025 Andy Turner, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
 
 /**
  * For representing convex hulls - convex shapes with no holes.
- * 
+ *
  * @author Andy Turner
  * @version 2.0
  */
@@ -33,35 +33,32 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
     private static final long serialVersionUID = 1L;
 
     /**
-     * The collection of points in a clockwise order.
-     */
-    public HashMap<Integer, V2D_PointDouble> points;
-
-    /**
-     * The collection of edges. These are the points in clockwise order as a
-     * linear ring. Keys are IDs
-     */
-    public HashMap<Integer, V2D_LineSegmentDouble> edges;
-
-    /**
      * For storing the contiguous triangles.
      */
     public ArrayList<V2D_TriangleDouble> triangles;
-    
+
     /**
      * Create a new instance.
      *
-     * @param epsilon
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
      * @param triangles A non-empty list of coplanar triangles.
      */
     public V2D_ConvexHullDouble(double epsilon, V2D_TriangleDouble... triangles) {
         this(epsilon, V2D_TriangleDouble.getPoints(triangles));
     }
-    
+
+    /**
+     * Create a new instance.
+     *
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @param points A list of points with at least 3 that are non-coplanar.
+     */
     public V2D_ConvexHullDouble(double epsilon, V2D_PointDouble... points) {
         this(epsilon, Arrays.asList(points));
     }
-    
+
     /**
      * Create a new instance. An algorithm for generating a convex hull from a
      * set of coplanar points known as the "quick hull" algorithm (see
@@ -97,19 +94,24 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * <li>Repeat the process dealing with each group in turn (Steps 3 to 9) in
      * a depth first manner.</li>
      * </ol>
+     *
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
      * @param points A non-empty list of points in a plane given by n.
      */
     public V2D_ConvexHullDouble(double epsilon, List<V2D_PointDouble> points) {
         super(points.get(0).env, V2D_VectorDouble.ZERO);
         ArrayList<V2D_PointDouble> h = new ArrayList<>();
-        ArrayList<V2D_PointDouble> uniquePoints = V2D_PointDouble.getUnique(points, epsilon);
+        ArrayList<V2D_PointDouble> uniquePoints = V2D_PointDouble.getUnique(
+                points, epsilon);
         //uniquePoints.sort(V2D_PointDouble::compareTo);
         uniquePoints.sort((p1, p2) -> p1.compareTo(p2));
         // Compute convex hull
         // https://rosettacode.org/wiki/Convex_hull#Java
         // lower hull
         for (V2D_PointDouble pt : uniquePoints) {
-            while (h.size() >= 2 && !ccw(h.get(h.size() - 2), h.get(h.size() - 1), pt)) {
+            while (h.size() >= 2 && !ccw(h.get(h.size() - 2),
+                    h.get(h.size() - 1), pt)) {
                 h.remove(h.size() - 1);
             }
             h.add(pt);
@@ -123,15 +125,15 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
             }
             h.add(pt);
         }
-        ArrayList<V2D_PointDouble> ups = V2D_PointDouble.getUnique(h, epsilon);        
+        ArrayList<V2D_PointDouble> ups = V2D_PointDouble.getUnique(h, epsilon);
         this.points = new HashMap<>();
-        for (var p: ups) {
+        for (var p : ups) {
             this.points.put(this.points.size(), p);
         }
         // Add edge
         edges = new HashMap<>();
         V2D_PointDouble p0 = this.points.get(0);
-        for (int i = 1; i < this.points.size(); i ++) {
+        for (int i = 1; i < this.points.size(); i++) {
             V2D_PointDouble p1 = this.points.get(i);
             edges.put(edges.size(), new V2D_LineSegmentDouble(p0, p1));
             p0 = p1;
@@ -140,16 +142,20 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
     }
 
     // ccw returns true if the three points make a counter-clockwise turn
-    private static boolean ccw(V2D_PointDouble a, V2D_PointDouble b, V2D_PointDouble c) {
+    private static boolean ccw(V2D_PointDouble a, V2D_PointDouble b,
+            V2D_PointDouble c) {
         double ax = a.getX();
         double ay = a.getY();
-        return ((b.getX() - ax) * (c.getY() - ay)) > ((b.getY() - ay) * (c.getX() - ax));
+        return ((b.getX() - ax) * (c.getY() - ay))
+                > ((b.getY() - ay) * (c.getX() - ax));
     }
 
     /**
      * Create a new instance.
      *
      * @param ch The convex hull.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
      */
     public V2D_ConvexHullDouble(V2D_ConvexHullDouble ch, double epsilon) {
         this(epsilon, ch.getPointsArray());
@@ -188,13 +194,13 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
         s.append(this.getClass().getName()).append("(");
         {
             s.append("\npoints (\n");
-                for(var entry : points.entrySet()) {
-                    s.append("(");
-                    s.append(entry.getKey());
-                    s.append(",");
-                    s.append(entry.getValue().toString());
-                    s.append("), ");
-                }
+            for (var entry : points.entrySet()) {
+                s.append("(");
+                s.append(entry.getKey());
+                s.append(",");
+                s.append(entry.getValue().toString());
+                s.append("), ");
+            }
             int l = s.length();
             s = s.delete(l - 2, l);
             s.append("\n)\n");
@@ -211,13 +217,13 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
         s.append(this.getClass().getName()).append("(");
         {
             s.append("points (");
-                for(var entry : points.entrySet()) {
-                    s.append("(");
-                    s.append(entry.getKey());
-                    s.append(",");
-                    s.append(entry.getValue().toString());
-                    s.append("), ");
-                }
+            for (var entry : points.entrySet()) {
+                s.append("(");
+                s.append(entry.getKey());
+                s.append(",");
+                s.append(entry.getValue().toString());
+                s.append("), ");
+            }
             int l = s.length();
             s = s.delete(l - 2, l);
             s.append(")");
@@ -235,10 +241,10 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @return {@code true} iff all the triangles are the same.
      */
     public boolean equals(V2D_ConvexHullDouble c, double epsilon) {
-        if (points.values().parallelStream().allMatch(x -> 
-                x.equalsAny(c.points.values(), epsilon))) {
-            return c.points.values().parallelStream().allMatch(x -> 
-                x.equalsAny(points.values(), epsilon));
+        if (points.values().parallelStream().allMatch(x
+                -> x.equalsAny(c.points.values(), epsilon))) {
+            return c.points.values().parallelStream().allMatch(x
+                    -> x.equalsAny(points.values(), epsilon));
         }
         return false;
 //        HashSet<Integer> indexes = new HashSet<>();
@@ -310,68 +316,105 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @param pt The point to test for intersection with.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
-     * @return {@code true} iff the geometry is intersected by {@code p}.
+     * @return {@code true} iff {@code this} is intersected by {@code p}.
      */
     public boolean isIntersectedBy(V2D_PointDouble pt, double epsilon) {
         if (getEnvelope().isIntersectedBy(pt)) {
             return isIntersectedBy0(pt, epsilon);
+        } else {
+            return false;
         }
-        return false;
     }
-    
+
     /**
-     * Identify if this is intersected by point. This does not check the envelope.
+     * Identify if this is intersected by point. This does not check the
+     * envelope.
      *
      * @param pt The point to test for intersection with.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
-     * @return {@code true} iff the geometry is intersected by {@code p}.
+     * @return {@code true} iff {@code this} is intersected by {@code p}.
      */
     public boolean isIntersectedBy0(V2D_PointDouble pt, double epsilon) {
-        return getTriangles().parallelStream().anyMatch(x -> x.isIntersectedBy(pt, epsilon));
+        return getTriangles().parallelStream().anyMatch(x
+                -> x.isIntersectedBy(pt, epsilon));
     }
-    
+
     /**
-     * Identify if this contains point. 
+     * Identify if this contains point.
      *
-     * @param pt The point to test for intersection with.
+     * @param pt The point to test for containment.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
-     * @return {@code true} iff the geometry is intersected by {@code p}.
+     * @return {@code true} iff {@code this} contains {@code p}.
      */
     public boolean contains(V2D_PointDouble pt, double epsilon) {
-        //if (getEnvelope().contains(pt)) {
-            return contains0(pt, epsilon);
-        //}
-        //return false;
+        return isIntersectedBy(pt, epsilon)
+                && !V2D_LineSegmentDouble.isIntersectedBy(epsilon, pt,
+                        edges.values());
     }
-    
-    /**
-     * Identify if this contains point. This does not check the envelope.
-     *
-     * @param pt The point to test for intersection with.
-     * @param epsilon The tolerance within which two vectors are regarded as
-     * equal.
-     * @return {@code true} iff the geometry is intersected by {@code p}.
-     */
-    public boolean contains0(V2D_PointDouble pt, double epsilon) {
-        if (isIntersectedBy(pt, epsilon)) {
-            return !V2D_LineSegmentDouble.isIntersectedBy(epsilon, pt, edges.values());
-        }
-        return false;
-    }
-    
+
     /**
      * Identify if this contains line segment.
      *
      * @param l The line segment to test for containment with.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
-     * @return {@code true} iff the geometry is intersected by {@code p}.
+     * @return {@code true} iff {@code this} contains {@code l}.
      */
     public boolean contains(V2D_LineSegmentDouble l, double epsilon) {
-        if (isIntersectedBy(l, epsilon)) {
-            return !V2D_LineSegmentDouble.isIntersectedBy(epsilon, l, edges.values());
+        return isIntersectedBy(l, epsilon)
+                && !V2D_LineSegmentDouble.isIntersectedBy(epsilon, l,
+                        edges.values());
+    }
+
+    /**
+     * Identify if this contains line segment.
+     *
+     * @param t The triangle to test for containment.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff {@code this} contains {@code t}.
+     */
+    public boolean contains(V2D_TriangleDouble t, double epsilon) {
+        return isIntersectedBy(t, epsilon)
+                && t.getPoints().values().parallelStream().allMatch(x
+                        -> contains(x, epsilon));
+//        return isIntersectedBy(t, epsilon)
+//                && !t.getEdges().values().parallelStream().anyMatch(x
+//                        -> V2D_LineSegmentDouble.isIntersectedBy(epsilon, x,
+//                        edges.values()));
+    }
+
+    /**
+     * Identify if this contains line segment.
+     *
+     * @param ch The convex hull to test for containment.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff {@code this} is intersected by {@code p}.
+     */
+    public boolean contains(V2D_ConvexHullDouble ch, double epsilon) {
+        return isIntersectedBy(ch, epsilon)
+                && ch.getPoints().values().parallelStream().allMatch(x
+                        -> contains(x, epsilon));
+//        return isIntersectedBy(ch, epsilon)
+//                && !ch.getEdges().values().parallelStream().anyMatch(x
+//                -> V2D_LineSegmentDouble.isIntersectedBy(epsilon, x,
+//                        edges.values()));
+    }
+
+    /**
+     * Identify if this is intersected by point {@code p}.
+     *
+     * @param l The line segment to test for intersection with.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff {@code this} is intersected by {@code p}.
+     */
+    public boolean isIntersectedBy(V2D_LineSegmentDouble l, double epsilon) {
+        if (getEnvelope().isIntersectedBy(l.getEnvelope())) {
+            return isIntersectedBy0(l, epsilon);
         }
         return false;
     }
@@ -382,11 +425,26 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @param l The line segment to test for intersection with.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
-     * @return {@code true} iff the geometry is intersected by {@code p}.
+     * @return {@code true} iff {@code this} is intersected by {@code p}.
      */
-    public boolean isIntersectedBy(V2D_LineSegmentDouble l, double epsilon) {
-        if(getEnvelope().isIntersectedBy(l.getEnvelope())) {
-            return getTriangles().parallelStream().anyMatch(x -> x.isIntersectedBy(l, epsilon));
+    public boolean isIntersectedBy0(V2D_LineSegmentDouble l, double epsilon) {
+        return getTriangles().parallelStream().anyMatch(x
+                -> x.isIntersectedBy(l, epsilon));
+    }
+
+    /**
+     * Identify if this is intersected by point {@code p}.
+     *
+     * @param t The triangle to test for intersection with.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff {@code this} is intersected by {@code p}.
+     */
+    public boolean isIntersectedBy(V2D_TriangleDouble t, double epsilon) {
+        if (t.isIntersectedBy(getEnvelope(), epsilon)) {
+            if (isIntersectedBy(t.getEnvelope(), epsilon)) {
+                return isIntersectedBy0(t, epsilon);
+            }
         }
         return false;
     }
@@ -397,12 +455,25 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @param t The triangle to test for intersection with.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
-     * @return {@code true} iff the geometry is intersected by {@code p}.
+     * @return {@code true} iff {@code this} is intersected by {@code p}.
      */
-    public boolean isIntersectedBy(V2D_TriangleDouble t, double epsilon) {
-        if (t.isIntersectedBy(getEnvelope(), epsilon)) {
-            if (isIntersectedBy(t.getEnvelope(), epsilon)) {
-                return getTriangles().parallelStream().anyMatch(x -> x.isIntersectedBy(t, epsilon));
+    public boolean isIntersectedBy0(V2D_TriangleDouble t, double epsilon) {
+        return getTriangles().parallelStream().anyMatch(x
+                -> x.isIntersectedBy(t, epsilon));
+    }
+
+    /**
+     * Identify if this is intersected by point {@code p}.
+     *
+     * @param r The rectangle to test for intersection with.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} iff {@code this} is intersected by {@code p}.
+     */
+    public boolean isIntersectedBy(V2D_RectangleDouble r, double epsilon) {
+        if (r.isIntersectedBy(getEnvelope(), epsilon)) {
+            if (isIntersectedBy(r.getEnvelope(), epsilon)) {
+                return isIntersectedBy0(r, epsilon);
             }
         }
         return false;
@@ -414,16 +485,11 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @param r The rectangle to test for intersection with.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
-     * @return {@code true} iff the geometry is intersected by {@code p}.
+     * @return {@code true} iff {@code this} is intersected by {@code p}.
      */
-    public boolean isIntersectedBy(V2D_RectangleDouble r, double epsilon) {
-        // Check envelopes intersect.
-        if (r.isIntersectedBy(getEnvelope(), epsilon)) {
-            if (isIntersectedBy(r.getEnvelope(), epsilon)) {
-                return getTriangles().parallelStream().anyMatch(x -> r.isIntersectedBy(x, epsilon));
-            }
-        }
-        return false;
+    public boolean isIntersectedBy0(V2D_RectangleDouble r, double epsilon) {
+        return getTriangles().parallelStream().anyMatch(x
+                -> r.isIntersectedBy(x, epsilon));
     }
 
     /**
@@ -432,31 +498,16 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @param ch The convex hull to test for intersection with.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
-     * @return {@code true} iff the geometry is intersected by {@code ch.
+     * @return {@code true} iff {@code this} is intersected by {@code ch.
      */
     public boolean isIntersectedBy(V2D_ConvexHullDouble ch, double epsilon) {
         if (ch.isIntersectedBy(getEnvelope(), epsilon)) {
-            if (isIntersectedBy(ch.en, epsilon)) {
-                return getTriangles().parallelStream().anyMatch(x -> ch.isIntersectedBy(x, epsilon));
+            if (isIntersectedBy(ch.getEnvelope(), epsilon)) {
+                return getTriangles().parallelStream().anyMatch(x
+                        -> ch.isIntersectedBy(x, epsilon));
             }
         }
         return false;
-    }
-
-    /**
-     * @param pt The point.
-     * @param epsilon The tolerance within which two vectors are regarded as
-     * equal.
-     * @return {@code true} if the point is aligned with any of the parts.
-     */
-    protected boolean isAligned(V2D_PointDouble pt, double epsilon) {
-        for (V2D_TriangleDouble triangle : getTriangles()) {
-            if (triangle.isAligned(pt, epsilon)) {
-                return true;
-            }
-        }
-        return false;
-        //return triangles.parallelStream().anyMatch(t -> (t.isIntersectedBy0(pt, oom)));
     }
 
     /**
@@ -485,7 +536,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
 //    }
 //
 //    /**
-//     * Get the intersection between the geometry and the triangle {@code t}.
+//     * Get the intersection between {@code this} and the triangle {@code t}.
 //     *
 //     * @param t The triangle to intersect with.
 //     * @param epsilon The tolerance within which two vectors are regarded as
@@ -507,7 +558,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
 //            return new V2D_ConvexHullDouble(t.pl.n, epsilon,
 //                    tsu.toArray(V2D_PointDouble[]::new)).simplify(epsilon);
 //        }
-////        switch (size) {
+    ////        switch (size) {
 ////            case 0:
 ////                return null;
 ////            case 1:
@@ -518,11 +569,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
 ////            default:
 ////                return getGeometry(oom, t2s.toArray(V2D_Triangle[]::new));
 //    }
-//
-////    @Override
-////    public boolean isEnvelopeIntersectedBy(V2D_Line l, int oom) {
-////        return getEnvelope().isIntersectedBy(l, oom);
-    ////    }
+    
     
     
     @Override
@@ -537,7 +584,8 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
     }
 
     @Override
-    public V2D_ConvexHullDouble rotateN(V2D_PointDouble pt, double theta, double epsilon) {
+    public V2D_ConvexHullDouble rotateN(V2D_PointDouble pt, double theta,
+            double epsilon) {
         V2D_PointDouble[] pts = new V2D_PointDouble[points.size()];
         for (int i = 0; i < points.size(); i++) {
             pts[0] = points.get(i).rotateN(pt, theta, epsilon);
@@ -548,7 +596,8 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
     @Override
     public boolean isIntersectedBy(V2D_EnvelopeDouble aabb, double epsilon) {
         if (getEnvelope().isIntersectedBy(aabb, epsilon)) {
-            return getTriangles().parallelStream().anyMatch(x -> x.isIntersectedBy(aabb, epsilon));
+            return getTriangles().parallelStream().anyMatch(x
+                    -> x.isIntersectedBy(aabb, epsilon));
         }
         return false;
     }
@@ -576,7 +625,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
         }
         return false;
     }
-    
+
 //    /**
 //     * Clips this using t.
 //     *
@@ -664,11 +713,11 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @return Either a V2D_Point, V2D_LineSegment, V2D_Triangle, or
      * V2D_ConvexHullCoplanar.
      */
-    public static V2D_FiniteGeometryDouble getGeometry(double epsilon, 
+    public static V2D_FiniteGeometryDouble getGeometry(double epsilon,
             ArrayList<V2D_PointDouble> pts) {
         return getGeometry(epsilon, pts.toArray(V2D_PointDouble[]::new));
     }
-    
+
     /**
      * If pts are all equal then a V2D_Point is returned. If two are different,
      * then a V2D_LineSegment is returned. Three different, then a V2D_Triangle
@@ -681,8 +730,10 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @return Either a V2D_Point, V2D_LineSegment, V2D_Triangle, or
      * V2D_ConvexHullCoplanar.
      */
-    public static V2D_FiniteGeometryDouble getGeometry(double epsilon, V2D_PointDouble... pts) {
-        ArrayList<V2D_PointDouble> upts = V2D_PointDouble.getUnique(Arrays.asList(pts), epsilon);
+    public static V2D_FiniteGeometryDouble getGeometry(double epsilon,
+            V2D_PointDouble... pts) {
+        ArrayList<V2D_PointDouble> upts = V2D_PointDouble.getUnique(
+                Arrays.asList(pts), epsilon);
         Iterator<V2D_PointDouble> i = upts.iterator();
         switch (upts.size()) {
             case 1 -> {
@@ -736,7 +787,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
         }
         return triangles;
     }
-    
+
     /**
      * Returns the edges constructing them first if necessary.
      *
@@ -751,9 +802,11 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
             for (int i = 2; i < this.points.size(); i++) {
                 p0 = p1;
                 p1 = this.points.get(i);
-                this.edges.put(this.edges.size(), new V2D_LineSegmentDouble(p0, p1));
+                this.edges.put(this.edges.size(), new V2D_LineSegmentDouble(
+                        p0, p1));
             }
-            edges.put(this.edges.size(),new V2D_LineSegmentDouble(p1, this.points.get(0)));
+            edges.put(this.edges.size(), new V2D_LineSegmentDouble(p1,
+                    this.points.get(0)));
         }
         return edges;
     }

@@ -72,12 +72,12 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
         V2D_PointDouble pt = pP0N1;
         V2D_TriangleDouble instance = new V2D_TriangleDouble(pP0P2, pP0N2, pP2P0);
-        assertTrue(instance.isAligned(pt, epsilon));
+        assertTrue(instance.isIntersectedBy0(pt, epsilon));
         pt = pN1P0;
-        assertFalse(instance.isAligned(pt, epsilon));
+        assertFalse(instance.isIntersectedBy0(pt, epsilon));
         instance = new V2D_TriangleDouble(pP0P0, pP0P1, pP1P1);
         pt = pP2P2;
-        assertFalse(instance.isAligned(pt, epsilon));
+        assertFalse(instance.isIntersectedBy0(pt, epsilon));
         
     }
 
@@ -93,7 +93,7 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
         V2D_TriangleDouble instance;
         instance = new V2D_TriangleDouble(pP0P0, pP0P1, pP1P1);
         ls = new V2D_LineSegmentDouble(pP2P2, pP2P1);
-        assertFalse(instance.isAligned(ls, epsilon));
+        assertFalse(instance.isInteresctedBy0(ls, epsilon));
         
     }
 

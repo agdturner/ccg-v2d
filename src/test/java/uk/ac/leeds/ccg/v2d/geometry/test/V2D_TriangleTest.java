@@ -75,12 +75,12 @@ public class V2D_TriangleTest extends V2D_Test {
         RoundingMode rm = RoundingMode.HALF_UP;
         V2D_Point pt = pP0N1;
         V2D_Triangle instance = new V2D_Triangle(pP0P2, pP0N2, pP2P0, oom, rm);
-        assertTrue(instance.isAligned(pt, oom, rm));
+        assertTrue(instance.isIntersectedBy0(pt, oom, rm));
         pt = pN1P0;
-        assertFalse(instance.isAligned(pt, oom, rm));
+        assertFalse(instance.isIntersectedBy0(pt, oom, rm));
         instance = new V2D_Triangle(pP0P0, pP0P1, pP1P1, oom, rm);
         pt = pP2P2;
-        assertFalse(instance.isAligned(pt, oom, rm));
+        assertFalse(instance.isIntersectedBy0(pt, oom, rm));
         
     }
 
@@ -96,7 +96,7 @@ public class V2D_TriangleTest extends V2D_Test {
         V2D_Triangle instance;
         instance = new V2D_Triangle(pP0P0, pP0P1, pP1P1, oom, rm);
         ls = new V2D_LineSegment(pP2P2, pP2P1, oom, rm);
-        assertFalse(instance.isAligned(ls, oom, rm));
+        assertFalse(instance.isInteresctedBy0(ls, oom, rm));
         
     }
 

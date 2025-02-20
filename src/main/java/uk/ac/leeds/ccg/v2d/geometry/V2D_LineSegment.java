@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Andy Turner, University of Leeds.
+ * Copyright 2025 Andy Turner, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
  * at the point of {@link #l} and ends at the point {@link #qv}.
  *
  * @author Andy Turner
- * @version 1.0
+ * @version 2.0
  */
 public class V2D_LineSegment extends V2D_FiniteGeometry {
 
@@ -43,14 +43,14 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
     public final V2D_Line l;
 
     /**
-     * For storing the line at l.getP() at 90 degrees to the line vector.
+     * For storing the line at l.getP() orthogonal to l.v.
      */
-    protected V2D_Line ppl;
+    protected V2D_Line pl;
 
     /**
-     * For storing the line at getQ() at 90 degrees to the line vector.
+     * For storing the line at getQ() orthogonal to l.v.
      */
-    protected V2D_Line qpl;
+    protected V2D_Line ql;
 
     /**
      * For storing the length of the line squared.
@@ -111,6 +111,18 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
         q2.setOffset(offset, oom, rm);
         l = new V2D_Line(env, offset, p.rel, q2.rel, oom, rm);
     }
+    
+    /**
+     * Create a new instance that intersects all points.
+     *
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @param points Any number of collinear points, with two being different.
+     */
+    public V2D_LineSegment(int oom, RoundingMode rm, 
+            ArrayList<V2D_Point> points) {
+        this(oom, rm, points.toArray(V2D_Point[]::new));
+    }
 
     /**
      * Create a new instance that intersects all points.
@@ -121,10 +133,11 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      */
     public V2D_LineSegment(int oom, RoundingMode rm, V2D_Point... points) {
         super(points[0].env, points[0].offset);
-        ArrayList<V2D_Point> unique = V2D_Point.getUnique(Arrays.asList(points), oom, rm);
+        ArrayList<V2D_Point> unique = V2D_Point.getUnique(Arrays.asList(points),
+                oom, rm);
         int n = unique.size();
         if (n < 2) {
-            throw new RuntimeException("Can't define line segment - all points the same.");
+            throw new RuntimeException("Line segment points the same.");
         }
         V2D_Point p0 = unique.get(0);
         V2D_Point p1 = unique.get(1);
@@ -142,6 +155,16 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
             }
         }
         this.l = ls.l;
+    }
+
+    /**
+     * Create a new instance.
+     *
+     * @param l What {@code this} is created from.
+     */
+    public V2D_LineSegment(V2D_Line l) {
+        super(l.env);
+        this.l = new V2D_Line(l);
     }
 
     /**
@@ -171,30 +194,12 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
     public void translate(V2D_Vector v, int oom, RoundingMode rm) {
         super.translate(v, oom, rm);
         l.translate(v, oom, rm);
-        if (ppl != null) {
-            ppl.translate(v, oom, rm);
+        if (pl != null) {
+            pl.translate(v, oom, rm);
         }
-        if (qpl != null) {
-            qpl.translate(v, oom, rm);
+        if (ql != null) {
+            ql.translate(v, oom, rm);
         }
-    }
-
-    @Override
-    public V2D_Point[] getPointsArray(int oom, RoundingMode rm) {
-        V2D_Point[] r = new V2D_Point[2];
-        r[0] = getP();
-        r[1] = getQ(oom, rm);
-        return r;
-    }
-
-    /**
-     * Create a new instance.
-     *
-     * @param l What {@code this} is created from.
-     */
-    public V2D_LineSegment(V2D_Line l) {
-        super(l.env);
-        this.l = new V2D_Line(l);
     }
 
     @Override
@@ -306,7 +311,17 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
         return en;
     }
 
+    @Override
+    public V2D_Point[] getPointsArray(int oom, RoundingMode rm) {
+        V2D_Point[] r = new V2D_Point[2];
+        r[0] = getP();
+        r[1] = getQ(oom, rm);
+        return r;
+    }
+    
     /**
+     * Checks the envelope.
+     * 
      * @param pt A point to test for intersection.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
@@ -314,33 +329,47 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      */
     public boolean isIntersectedBy(V2D_Point pt, int oom, RoundingMode rm) {
         if (getEnvelope(oom, rm).contains(pt, oom)) {
-            if (l.isIntersectedBy(pt, oom, rm)) {
-                V2D_Point tp = getP();
-                Math_BigRationalSqrt a = pt.getDistance(oom, rm, tp);
-                if (a.getX().isZero()) {
-                    return true;
-                }
-                V2D_Point tq = getQ(oom, rm);
-                Math_BigRationalSqrt b = pt.getDistance(oom, rm, tq);
-                if (b.getX().isZero()) {
-                    return true;
-                }
-                Math_BigRationalSqrt d = tp.getDistance(oom, rm, tq);
-                Math_BigRationalSqrt apb = a.add(b, oom, rm);
-                if (apb == null) {
-                    int oomt = oom - 2;
-                    if (a.getSqrt(oomt, rm).add(b.getSqrt(oomt, rm)).compareTo(d.getSqrt(oomt, rm)) != 1) {
-                        return true;
-                    }
-                } else {
-                    return apb.equals(d, oom);
-//                    if (apb.compareTo(d) != 1) {
-//                        return true;
-//                    }
-                }
-            }
+            return isIntersectedBy0(pt, oom, rm);
+        } else {
+            return false;
         }
-        return false;
+    }
+
+    /**
+     * Does not check the envelope.
+     * 
+     * @param pt A point to test for intersection.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     */
+    public boolean isIntersectedBy0(V2D_Point pt, int oom, RoundingMode rm) {
+        if (l.isIntersectedBy(pt, oom, rm)) {
+            V2D_Point tp = getP();
+            Math_BigRationalSqrt a = pt.getDistance(oom, rm, tp);
+            if (a.getX().isZero()) {
+                return true;
+            }
+            V2D_Point tq = getQ(oom, rm);
+            Math_BigRationalSqrt b = pt.getDistance(oom, rm, tq);
+            if (b.getX().isZero()) {
+                return true;
+            }
+            Math_BigRationalSqrt d = tp.getDistance(oom, rm, tq);
+            Math_BigRationalSqrt apb = a.add(b, oom, rm);
+            if (apb == null) {
+                int oomt = oom - 2;
+                return a.getSqrt(oomt, rm).add(b.getSqrt(oomt, rm)).compareTo(
+                        d.getSqrt(oomt, rm)) != 1;
+            } else {
+                return apb.equals(d, oom);
+//                if (apb.compareTo(d) != 1) {
+//                    return true;
+//                }
+            }
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -363,14 +392,9 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @param ls The other lines to test for intersection with l.
      * @return {@code true} if {@code this} is intersected by {@code pv}.
      */
-    public static boolean isIntersectedBy(int oom, RoundingMode rm, V2D_LineSegment l, V2D_LineSegment... ls) {
+    public static boolean isIntersectedBy(int oom, RoundingMode rm, 
+            V2D_LineSegment l, V2D_LineSegment... ls) {
         return isIntersectedBy(oom, rm, l, Arrays.asList(ls));
-//        for (var l2: ls) {
-//            if (l2.isIntersectedBy(l, oom, rm)) {
-//                return true;
-//            }
-//        }
-//        return false;
     }
 
     /**
@@ -404,7 +428,8 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @param rm The RoundingMode for any rounding.
      * @return {@code true} if {@code this} is intersected by {@code pv}.
      */
-    public static boolean isIntersectedBy(int oom, RoundingMode rm, V2D_Point p, Collection<V2D_LineSegment> ls) {
+    public static boolean isIntersectedBy(int oom, RoundingMode rm, V2D_Point p,
+            Collection<V2D_LineSegment> ls) {
         return ls.parallelStream().anyMatch(x -> x.isIntersectedBy(p, oom, rm));
     }
 
@@ -415,23 +440,6 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @return {@code true} if {@code this} is intersected by {@code pv}.
      */
     public boolean isIntersectedBy(V2D_LineSegment l, int oom, RoundingMode rm) {
-        en = getEnvelope(oom, rm);
-        if (en.contains(l.getP(), oom) || en.contains(l.getQ(oom, rm), oom)) {
-            l.en = l.getEnvelope(oom, rm);
-            if (l.en.contains(getP(), oom) || l.en.contains(getQ(oom, rm), oom)) {
-                return getIntersection(l, oom, rm) != null;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * @param l A line segment to test for intersection.
-     * @param oom The Order of Magnitude for the precision.
-     * @param rm The RoundingMode for any rounding.
-     * @return {@code true} if {@code this} is intersected by {@code pv}.
-     */
-    public boolean isIntersectedBy0(V2D_LineSegment l, int oom, RoundingMode rm) {
         return getIntersection(l, oom, rm) != null;
     }
 
@@ -830,8 +838,8 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @return {@code true} If pt is in line with this.
      */
     public boolean isAligned(V2D_Point pt, int oom, RoundingMode rm) {
-        if (getPPL().isOnSameSide(pt, getQ(oom, rm), oom, rm)) {
-            return getQPL(oom, rm).isOnSameSide(pt, getP(), oom, rm);
+        if (getPL().isOnSameSide(pt, getQ(oom, rm), oom, rm)) {
+            return getQL(oom, rm).isOnSameSide(pt, getP(), oom, rm);
         }
         return false;
     }
@@ -897,11 +905,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @return the midpoint between pv and qv to the OOM precision.
      */
     public V2D_Point getMidpoint(int oom, RoundingMode rm) {
-        //BigDecimal l = getLength().toBigDecimal(oom);
-        //V2D_Vector pmpq = v.divide(BigRational.valueOf(l));
-        //V2D_Vector pmpq = l.getV(oom, rm).divide(BigRational.valueOf(2), oom, rm);
         V2D_Vector pmpq = l.v.divide(BigRational.valueOf(2), oom, rm);
-        //return getP(oom).translate(pmpq, oom);
         return new V2D_Point(env, offset, l.pv.add(pmpq, oom, rm));
     }
 
@@ -1080,7 +1084,8 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @param rm The RoundingMode if rounding is needed.
      * @return The line of intersection between {@code this} and {@code l}.
      */
-    public V2D_LineSegment getLineOfIntersection(V2D_Line l, int oom, RoundingMode rm) {
+    public V2D_LineSegment getLineOfIntersection(V2D_Line l, int oom, 
+            RoundingMode rm) {
         if (getIntersection(l, oom, rm) != null) {
             return null;
         }
@@ -1091,9 +1096,11 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
             BigRational pd = l.getDistanceSquared(tp, oom, rm);
             BigRational qd = l.getDistanceSquared(tq, oom, rm);
             if (pd.compareTo(qd) == 1) {
-                return new V2D_LineSegment(tq, l.getPointOfIntersection(tq, oom, rm), oom, rm);
+                return new V2D_LineSegment(tq, 
+                        l.getPointOfIntersection(tq, oom, rm), oom, rm);
             } else {
-                return new V2D_LineSegment(tp, l.getPointOfIntersection(tp, oom, rm), oom, rm);
+                return new V2D_LineSegment(tp, 
+                        l.getPointOfIntersection(tp, oom, rm), oom, rm);
             }
         } else {
             V2D_Point lsp = loi.getP();
@@ -1160,7 +1167,8 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @param rm The RoundingMode if rounding is needed.
      * @return The line of intersection between {@code this} and {@code l}.
      */
-    public V2D_LineSegment getLineOfIntersection(V2D_LineSegment ls, int oom, RoundingMode rm) {
+    public V2D_LineSegment getLineOfIntersection(V2D_LineSegment ls, int oom, 
+            RoundingMode rm) {
         V2D_FiniteGeometry ilsl = getIntersection(ls, oom, rm);
         if (ilsl == null) {
             V2D_Point lsp = ls.getP();
@@ -1356,11 +1364,11 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @return The line with a point at l.getP() and vector at 90 degrees to the
      * line vector.
      */
-    public V2D_Line getPPL() {
-        if (ppl == null) {
-            ppl = new V2D_Line(l.getP(), l.v.rotate90());
+    public V2D_Line getPL() {
+        if (pl == null) {
+            pl = new V2D_Line(l.getP(), l.v.rotate90());
         }
-        return ppl;
+        return pl;
     }
 
     /**
@@ -1371,11 +1379,11 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @return The line with a point at l.getQ() and vector at 90 degrees to the
      * line vector.
      */
-    public V2D_Line getQPL(int oom, RoundingMode rm) {
-        if (qpl == null) {
-            qpl = new V2D_Line(getQ(oom, rm), l.v.rotate90());
+    public V2D_Line getQL(int oom, RoundingMode rm) {
+        if (ql == null) {
+            ql = new V2D_Line(getQ(oom, rm), l.v.rotate90());
         }
-        return qpl;
+        return ql;
     }
 
     /**
@@ -1389,8 +1397,8 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * line segment.
      */
     public boolean isBetween(V2D_Point pt, int oom, RoundingMode rm) {
-        if (getPPL().isOnSameSide(pt, getQ(oom, rm), oom, rm)) {
-            if (getQPL(oom, rm).isOnSameSide(pt, getP(), oom, rm)) {
+        if (getPL().isOnSameSide(pt, getQ(oom, rm), oom, rm)) {
+            if (getQL(oom, rm).isOnSameSide(pt, getP(), oom, rm)) {
                 return true;
             }
         }
@@ -1465,46 +1473,45 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
                 getQ(oom, rm).rotateN(pt, theta, bd, oom, rm), oom, rm);
     }
 
-    /**
-     * Clips this using pl and returns the part that is on the same side as pt.
-     *
-     * @param pl The plane that clips.
-     * @param pt A point that is used to return the side of the clipped line
-     * segment.
-     * @param oom The Order of Magnitude for the precision.
-     * @param rm The RoundingMode for any rounding.
-     * @return null, the whole or a part of this.
-     */
-    public V2D_FiniteGeometry clip(V2D_Line pl, V2D_Point pt, int oom, RoundingMode rm) {
-        V2D_FiniteGeometry i = getIntersection(pl, oom, rm);
-        V2D_Point tp = getP();
-        if (i == null) {
-            if (pl.isOnSameSide(tp, pt, oom, rm)) {
-                return this;
-            } else {
-                return null;
-            }
-        } else if (i instanceof V2D_Point ip) {
-            if (pl.isOnSameSide(tp, pt, oom, rm)) {
-                return V2D_LineSegment.getGeometry(ip, tp, oom, rm);
-            } else {
-                V2D_Point tq = this.getQ(oom, rm);
-                return V2D_LineSegment.getGeometry(ip, tq, oom, rm);
-            }
-        } else {
-            return this;
-        }
-    }
-
+//    /**
+//     * Clips this using pl and returns the part that is on the same side as pt.
+//     *
+//     * @param pl The plane that clips.
+//     * @param pt A point that is used to return the side of the clipped line
+//     * segment.
+//     * @param oom The Order of Magnitude for the precision.
+//     * @param rm The RoundingMode for any rounding.
+//     * @return null, the whole or a part of this.
+//     */
+//    public V2D_FiniteGeometry clip(V2D_Line pl, V2D_Point pt, int oom, RoundingMode rm) {
+//        V2D_FiniteGeometry i = getIntersection(pl, oom, rm);
+//        V2D_Point tp = getP();
+//        if (i == null) {
+//            if (pl.isOnSameSide(tp, pt, oom, rm)) {
+//                return this;
+//            } else {
+//                return null;
+//            }
+//        } else if (i instanceof V2D_Point ip) {
+//            if (pl.isOnSameSide(tp, pt, oom, rm)) {
+//                return V2D_LineSegment.getGeometry(ip, tp, oom, rm);
+//            } else {
+//                V2D_Point tq = this.getQ(oom, rm);
+//                return V2D_LineSegment.getGeometry(ip, tq, oom, rm);
+//            }
+//        } else {
+//            return this;
+//        }
+//    }
     @Override
     public boolean isIntersectedBy(V2D_Envelope aabb, int oom, RoundingMode rm) {
         if (getEnvelope(oom, rm).isIntersectedBy(aabb, oom)) {
             V2D_Point p = getP();
-            if (aabb.contains(p, oom)) {
+            if (aabb.isIntersectedBy(p, oom, rm)) {
                 return true;
             }
             V2D_Point q = getQ(oom, rm);
-            if (aabb.contains(q, oom)) {
+            if (aabb.isIntersectedBy(q, oom, rm)) {
                 return true;
             }
             V2D_FiniteGeometry left = aabb.getLeft(oom, rm);

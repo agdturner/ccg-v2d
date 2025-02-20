@@ -47,6 +47,16 @@ public abstract class V2D_Shape extends V2D_FiniteGeometry {
     }
     
     /**
+     * For storing the points.
+     */
+    protected HashMap<Integer, V2D_Point> points;
+
+    /**
+     * For storing the edges.
+     */
+    protected HashMap<Integer, V2D_LineSegment> edges;
+    
+    /**
      * For getting the points of a shape.
      * 
      * @param oom The Order of Magnitude for the precision.
@@ -61,7 +71,7 @@ public abstract class V2D_Shape extends V2D_FiniteGeometry {
      * 
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
-     * @return A HashMap of the points with integer identifier keys.
+     * @return A HashMap of the edges with integer identifier keys.
      */
     public abstract HashMap<Integer, V2D_LineSegment> getEdges(int oom, 
             RoundingMode rm);

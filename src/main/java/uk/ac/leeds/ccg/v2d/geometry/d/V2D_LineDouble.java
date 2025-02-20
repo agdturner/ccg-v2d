@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Andy Turner, University of Leeds.
+ * Copyright 2025 Andy Turner, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
  * point {@link #pv} with vector {@link #v}.
  *
  * @author Andy Turner
- * @version 1.0
+ * @version 2.0
  */
 public class V2D_LineDouble extends V2D_GeometryDouble {
 
@@ -318,17 +318,15 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @return {@code true} if pv is on the line.
      */
     public boolean isIntersectedBy(V2D_PointDouble pt) {
-        V2D_PointDouble tp = getP();
-        V2D_PointDouble tq = getQ();
-        if (tp.equals(pt)) {
-            return true;
-        }
-        if (tq.equals(pt)) {
+        p = getP();
+        q = getQ();
+        if (p.equals(pt)
+                || q.equals(pt)) {
             return true;
         }
         V2D_VectorDouble dpt = new V2D_VectorDouble(
-                    pt.getX() - tp.getX(),
-                    pt.getY() - tp.getY());
+                    pt.getX() - p.getX(),
+                    pt.getY() - p.getY());
         return dpt.isScalarMultiple(v);
     }
 
@@ -339,17 +337,14 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @return {@code true} if pv is on the line.
      */
     public boolean isIntersectedBy(double epsilon, V2D_PointDouble pt) {
-        V2D_PointDouble tp = getP();
-        V2D_PointDouble tq = getQ();
-        if (tp.equals(pt, epsilon)) {
-            return true;
-        }
-        if (tq.equals(pt, epsilon)) {
+        p = getP();
+        q = getQ();
+        if (p.equals(pt, epsilon) || q.equals(pt, epsilon)) {
             return true;
         }
         V2D_VectorDouble dpt = new V2D_VectorDouble(
-                    pt.getX() - tp.getX(),
-                    pt.getY() - tp.getY());
+                    pt.getX() - p.getX(),
+                    pt.getY() - p.getY());
         return dpt.isScalarMultiple(epsilon, v);
     }
     

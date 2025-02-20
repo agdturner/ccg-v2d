@@ -37,7 +37,7 @@ public class V2D_Envelope implements Serializable {
      * The environment.
      */
     protected final V2D_Environment env;
-    
+
     /**
      * For storing the offset of this.
      */
@@ -46,22 +46,22 @@ public class V2D_Envelope implements Serializable {
     /**
      * The minimum x-coordinate.
      */
-    private BigRational xMin;
+    private final BigRational xMin;
 
     /**
      * The maximum x-coordinate.
      */
-    private BigRational xMax;
+    private final BigRational xMax;
 
     /**
      * The minimum y-coordinate.
      */
-    private BigRational yMin;
+    private final BigRational yMin;
 
     /**
      * The maximum y-coordinate.
      */
-    private BigRational yMax;
+    private final BigRational yMax;
 
     /**
      * For storing the lower left point.
@@ -82,9 +82,9 @@ public class V2D_Envelope implements Serializable {
      * For storing the lower right point.
      */
     protected V2D_Point lr;
-    
+
     /**
-     * The top edge.
+     * The top/upper edge.
      */
     protected V2D_FiniteGeometry t;
 
@@ -94,7 +94,7 @@ public class V2D_Envelope implements Serializable {
     protected V2D_FiniteGeometry r;
 
     /**
-     * The bottom edge.
+     * The bottom/lower edge.
      */
     protected V2D_FiniteGeometry b;
 
@@ -102,12 +102,19 @@ public class V2D_Envelope implements Serializable {
      * The left edge.
      */
     protected V2D_FiniteGeometry l;
-    
+
+    /**
+     * For storing all the points. N.B {@link #ll}, {@link #ul}, {@link #ur},
+     * {@link #ul} may all be the same.
+     */
+    protected HashSet<V2D_Point> pts;
+
     /**
      * @param e An envelop.
      */
     public V2D_Envelope(V2D_Envelope e) {
         env = e.env;
+        offset = e.offset;
         yMin = e.yMin;
         yMax = e.yMax;
         xMin = e.xMin;
@@ -116,8 +123,42 @@ public class V2D_Envelope implements Serializable {
         r = e.r;
         b = e.b;
         l = e.l;
+        ll = e.ll;
+        ul = e.ul;
+        ur = e.ur;
+        lr = e.lr;
+        pts = e.pts;
     }
-    
+
+    /**
+     * Create a new instance.
+     *
+     * @param env What {@link #env} is set to.
+     * @param oom The Order of Magnitude for the precision.
+     * @param x The x-coordinate of a point.
+     * @param y The y-coordinate of a point.
+     */
+    public V2D_Envelope(V2D_Environment env, int oom, BigRational x, BigRational y) {
+        this(oom, new V2D_Point(env, x, y));
+    }
+
+    /**
+     * Create a new instance.
+     *
+     * @param env What {@link #env} is set to.
+     * @param oom The Order of Magnitude for the precision.
+     * @param xMin What {@link xMin} is set to.
+     * @param xMax What {@link xMax} is set to.
+     * @param yMin What {@link yMin} is set to.
+     * @param yMax What {@link yMax} is set to.
+     */
+    public V2D_Envelope(V2D_Environment env, int oom,
+            BigRational xMin, BigRational xMax,
+            BigRational yMin, BigRational yMax) {
+        this(oom, new V2D_Point(env, xMin, yMin),
+                new V2D_Point(env, xMax, yMax));
+    }
+
     /**
      * Create a new instance.
      *
@@ -130,12 +171,21 @@ public class V2D_Envelope implements Serializable {
         for (V2D_FiniteGeometry g : gs) {
             e = e.union(new V2D_Envelope(g, oom, rm), oom);
         }
-        this.offset = e.offset;
-        this.xMax = e.xMax;
-        this.xMin = e.xMin;
-        this.yMax = e.yMax;
-        this.yMin = e.yMin;
-        env = gs[0].env;
+        env = e.env;
+        offset = e.offset;
+        yMin = e.yMin;
+        yMax = e.yMax;
+        xMin = e.xMin;
+        xMax = e.xMax;
+        t = e.t;
+        r = e.r;
+        b = e.b;
+        l = e.l;
+        ll = e.ll;
+        ul = e.ul;
+        ur = e.ur;
+        lr = e.lr;
+        pts = e.pts;
     }
 
     /**
@@ -148,7 +198,7 @@ public class V2D_Envelope implements Serializable {
     public V2D_Envelope(V2D_FiniteGeometry g, int oom, RoundingMode rm) {
         this(oom, g.getPointsArray(oom, rm));
     }
-    
+
     /**
      * @param oom The Order of Magnitude for the precision.
      * @param points The points used to form the envelop.
@@ -194,38 +244,9 @@ public class V2D_Envelope implements Serializable {
         env = points[0].env;
     }
 
-    /**
-     * Create a new instance.
-     *
-     * @param env What {@link #env} is set to.
-     * @param oom The Order of Magnitude for the precision.
-     * @param x The x-coordinate of a point.
-     * @param y The y-coordinate of a point.
-     */
-    public V2D_Envelope(V2D_Environment env, int oom, BigRational x, BigRational y) {
-        this(oom, new V2D_Point(env, x, y));
-    }
-
-    /**
-     * Create a new instance.
-     *
-     * @param env What {@link #env} is set to.
-     * @param oom The Order of Magnitude for the precision.
-     * @param xMin What {@link xMin} is set to.
-     * @param xMax What {@link xMax} is set to.
-     * @param yMin What {@link yMin} is set to.
-     * @param yMax What {@link yMax} is set to.
-     */
-    public V2D_Envelope(V2D_Environment env, int oom,
-            BigRational xMin, BigRational xMax,
-            BigRational yMin, BigRational yMax) {
-        this(oom, new V2D_Point(env, xMin, yMin),
-                new V2D_Point(env, xMax, yMax));
-    }
-
     @Override
     public String toString() {
-        return toString(-3, RoundingMode.HALF_UP);
+        return toString(env.oom, env.rm);
     }
 
     /**
@@ -239,343 +260,26 @@ public class V2D_Envelope implements Serializable {
                 + ", yMin=" + getYMin(oom, rm) + ", yMax=" + getYMax(oom, rm) + ")";
     }
 
+    /**
+     * @return {@link #pts} initialising first if it is null.
+     */
     public HashSet<V2D_Point> getPoints() {
-        HashSet<V2D_Point> points = new HashSet<>(4);
-        points.add(getLL());
-        points.add(getUL());
-        points.add(getUR());
-        points.add(getLR());
-        return points;
-    }
-    
-    /**
-     * Translates this using {@code v}.
-     *
-     * @param v The vector of translation.
-     * @param oom The Order of Magnitude for the precision.
-     * @param rm The RoundingMode for any rounding.
-     */
-    public void translate(V2D_Vector v, int oom, RoundingMode rm) {
-        offset = offset.add(v, oom, rm);
-        if (ll != null) {
-            ll.translate(v, oom, rm);
+        if (pts == null) {
+            pts = new HashSet<>(4);
+            pts.add(getLL());
+            pts.add(getUL());
+            pts.add(getUR());
+            pts.add(getLR());
         }
-        if (ul != null) {
-            ul.translate(v, oom, rm);
-        }
-        if (ur != null) {
-            ur.translate(v, oom, rm);
-        }
-        if (lr != null) {
-            lr.translate(v, oom, rm);
-        }
-        if (l != null) {
-            l.translate(v, oom, rm);
-        }
-        if (t != null) {
-            l.translate(v, oom, rm);
-        }
-        if (r != null) {
-            l.translate(v, oom, rm);
-        }
-        if (b != null) {
-            l.translate(v, oom, rm);
-        }
-        xMax = xMax.add(v.getDX(oom, rm));
-        xMin = xMin.add(v.getDX(oom, rm));
-        yMax = yMax.add(v.getDY(oom, rm));
-        yMin = yMin.add(v.getDY(oom, rm));
-    }
-
-    /**
-     * @param e The V3D_Envelope to union with this.
-     * @param oom The Order of Magnitude for the precision.
-     * @return an Envelope which is {@code this} union {@code e}.
-     */
-    public V2D_Envelope union(V2D_Envelope e, int oom) {
-        if (this.contains(e, oom)) {
-            return this;
-        } else {
-            return new V2D_Envelope(env, oom,
-                    BigRational.min(e.getXMin(oom), getXMin(oom)),
-                    BigRational.max(e.getXMax(oom), getXMax(oom)),
-                    BigRational.min(e.getYMin(oom), getYMin(oom)),
-                    BigRational.max(e.getYMax(oom), getYMax(oom)));
-        }
-    }
-
-    /**
-     * If {@code e} touches, or overlaps then it intersects. For collision
-     * avoidance, this is biased towards returning an intersection even if there
-     * may not be one at a lower oom precision.
-     *
-     * @param e The Vector_Envelope2D to test for intersection.
-     * @param oom The Order of Magnitude for the precision.
-     * @return {@code true} if this intersects with {@code e} it the {@code oom}
-     * level of precision.
-     */
-    public boolean isIntersectedBy(V2D_Envelope e, int oom) {
-        if (isBeyond(e, oom)) {
-            return !e.isBeyond(this, oom);
-        } else {
-            return true;
-        }
-    }
-
-    /**
-     * @param e The envelope to test against.
-     * @param oom The Order of Magnitude for the precision.
-     * @return {@code true} iff e is beyond this (i.e. they do not touch or
-     * intersect).
-     */
-    public boolean isBeyond(V2D_Envelope e, int oom) {
-        if (getXMax(oom).compareTo(e.getXMin(oom)) == -1) {
-            return true;
-        } else if (getXMin(oom).compareTo(e.getXMax(oom)) == 1) {
-            return true;
-        } else if (getYMax(oom).compareTo(e.getYMin(oom)) == -1) {
-            return true;
-        } else if (getYMin(oom).compareTo(e.getYMax(oom)) == 1) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * @param e V3D_Envelope The envelope to test if it is contained.
-     * @param oom The Order of Magnitude for the precision.
-     * @return {@code true} iff {@code e} is contained by {@code this}
-     */
-    public boolean contains(V2D_Envelope e, int oom) {
-        return getXMax(oom).compareTo(e.getXMax(oom))!= -1
-                && getXMin(oom).compareTo(e.getXMin(oom)) != 1
-                && getYMax(oom).compareTo(e.getYMax(oom)) != -1
-                && getYMin(oom).compareTo(e.getYMin(oom)) != 1;
-    }
-    
-    /**
-     * The location of p may get rounded.
-     *
-     * @param p The point to test if it is contained.
-     * @param oom The Order of Magnitude for the precision.
-     * @return {@code} true iff {@code this} contains {@code p}
-     */
-    public boolean contains(V2D_Point p, int oom) {
-        BigRational xu = p.getX(oom, RoundingMode.CEILING);
-        BigRational xl = p.getX(oom, RoundingMode.FLOOR);
-        BigRational yu = p.getY(oom, RoundingMode.CEILING);
-        BigRational yl = p.getY(oom, RoundingMode.FLOOR);
-        return getXMax(oom).compareTo(xl) != -1
-                && getXMin(oom).compareTo(xu) != 1
-                && getYMax(oom).compareTo(yl) != -1
-                && getYMin(oom).compareTo(yu) != 1;
-    }
-    
-    /**
-     * @param x The x-coordinate of the point to test for intersection.
-     * @param y The y-coordinate of the point to test for intersection.
-     * @param oom The Order of Magnitude for the precision.
-     * @return {@code true} if this intersects with {@code pl}
-     */
-    public boolean contains(BigRational x, BigRational y, int oom) {
-        return getXMax(oom).compareTo(x) != -1
-                && getXMin(oom).compareTo(x) != 1
-                && getYMax(oom).compareTo(y) != -1
-                && getYMin(oom).compareTo(y) != 1;
-    }
-
-//    /**
-//     * @param p The point to test for intersection.
-//     * @param oom The Order of Magnitude for the precision.
-//     * @param rm The RoundingMode for any rounding.
-//     * @return {@code true} if this intersects with {@code pl}
-//     */
-//    public boolean isIntersectedBy(V2D_Point p, int oom, RoundingMode rm) {
-//        return isIntersectedBy(p.getX(oom, rm), p.getY(oom, rm), oom);
-//    }
-//
-//    /**
-//     * This biases intersection.
-//     *
-//     * @param x The x-coordinate of the point to test for intersection.
-//     * @param y The y-coordinate of the point to test for intersection.
-//     * @param oom The Order of Magnitude for the precision.
-//     * @return {@code true} if this intersects with {@code pl}
-//     */
-//    public boolean isIntersectedBy(BigRational x, BigRational y, int oom) {
-//        return x.compareTo(getXMin(oom)) != -1 && x.compareTo(getXMax(oom)) != 1
-//                && y.compareTo(getYMin(oom)) != -1 && y.compareTo(getYMax(oom)) != 1;
-//    }
-//    /**
-//     * @param l The line to test for intersection.
-//     * @param oom The Order of Magnitude for the precision.
-//     * @param rm The RoundingMode for any rounding.
-//     * @return {@code true} if this intersects with {@code pl}
-//     */
-//    public boolean isIntersectedBy(V2D_Line l, int oom, RoundingMode rm) {
-//        if (isIntersectedBy(l.getP(), oom, rm)) {
-//            return true;
-//        } else {
-//            if (isIntersectedBy(l.getQ(oom, rm), oom, rm)) {
-//                return true;
-//            }
-//        }
-//        if (t instanceof V2D_LineSegment tl) {
-//            if (tl.isIntersectedBy(l, oom)) {
-//                return true;
-//            } else {
-//                if (r instanceof V2D_LineSegment rl) {
-//                    if (rl.isIntersectedBy(l, oom)) {
-//                        return true;
-//                    } else {
-//                        if (b instanceof V2D_LineSegment bl) {
-//                            if (bl.isIntersectedBy(l, oom)) {
-//                                return true;
-//                            } else {
-//                                if (this.l instanceof V2D_LineSegment ll) {
-//                                    if (ll.isIntersectedBy(l, oom)) {
-//                                        return true;
-//                                    } else {
-//                                        return false;
-//                                    }
-//                                } else {
-//                                    // This should not happen!
-//                                    return false;
-//                                }
-//                            }
-//                        } else {
-//                            // This should not happen!
-//                            return false;
-//                        }
-//                    }
-//                } else {
-//                    return false;
-//                }
-//            }
-//        } else {
-//            if (r instanceof V2D_LineSegment rl) {
-//                if (rl.isIntersectedBy(l, oom)) {
-//                    return true;
-//                } else {
-//                    return l.isIntersectedBy(((V2D_Point) r), oom, rm);
-//                }
-//            } else {
-//                return l.isIntersectedBy(((V2D_Point) r), oom, rm);
-//            }
-//        }
-//        return false;
-//    }
-    
-//    /**
-//     * @param l The line to test for intersection.
-//     * @param oom The Order of Magnitude for the precision.
-//     * @param rm The RoundingMode for any rounding.
-//     * @return {@code true} if this intersects with {@code pl}
-//     */
-//    public boolean isIntersectedBy(V2D_LineSegment l, int oom, RoundingMode rm) {
-//        if (isIntersectedBy(l.getP(), oom, rm)) {
-//            return true;
-//        } else {
-//            if (isIntersectedBy(l.getQ(oom, rm), oom, rm)) {
-//                return true;
-//            }
-//        }
-//        if (t instanceof V2D_LineSegment tl) {
-//            if (tl.isIntersectedBy(this, oom)) {
-//                return true;
-//            } else {
-//                if (r instanceof V2D_LineSegment rl) {
-//                    if (rl.isIntersectedBy(this, oom)) {
-//                        return true;
-//                    } else {
-//                        if (b instanceof V2D_LineSegment bl) {
-//                            if (bl.isIntersectedBy(this, oom)) {
-//                                return true;
-//                            } else {
-//                                if (this.l instanceof V2D_LineSegment ll) {
-//                                    if (ll.isIntersectedBy(this, oom)) {
-//                                        return true;
-//                                    } else {
-//                                        return false;
-//                                    }
-//                                } else {
-//                                    // This should not happen!
-//                                    return false;
-//                                }
-//                            }
-//                        } else {
-//                            // This should not happen!
-//                            return false;
-//                        }
-//                    }
-//                } else {
-//                    return false;
-//                }
-//            }
-//        } else {
-//            if (r instanceof V2D_LineSegment rl) {
-//                if (rl.isIntersectedBy(this, oom)) {
-//                    return true;
-//                } else {
-//                    return isIntersectedBy(((V2D_Point) r), oom, rm);
-//                }
-//            } else {
-//                return isIntersectedBy(((V2D_Point) r), oom, rm);
-//            }
-//        }
-//        return false;
-//    }
-
-    /**
-     * @param l The line to test for containment.
-     * @param oom The Order of Magnitude for the precision.
-     * @param rm The RoundingMode for any rounding.
-     * @return {@code true} if this intersects with {@code pl}
-     */
-    public boolean contains(V2D_LineSegment l, int oom, RoundingMode rm) {
-        return contains(l.getP(), oom) && contains(l.getQ(oom, rm), oom);
-    }
-    
-    /**
-     * @param s The shape to test for containment.
-     * @param oom The Order of Magnitude for the precision.
-     * @param rm The RoundingMode for any rounding.
-     * @return {@code true} if this intersects with {@code pl}
-     */
-    public boolean contains(V2D_Shape s, int oom, RoundingMode rm) {
-        if (contains(s.getEnvelope(oom, rm), oom)) {
-            return s.getEdges(oom, rm).values().parallelStream().allMatch(x ->
-                    contains(x, oom, rm));
-        }
-        return false;
-    }
-    
-    /**
-     * @param en The envelope to intersect.
-     * @param oom The Order of Magnitude for the precision.
-     * @return {@code null} if there is no intersection; {@code en} if
-     * {@code this.equals(en)}; otherwise returns the intersection.
-     */
-    public V2D_Envelope getIntersection(V2D_Envelope en, int oom) {
-        if (this.equals(en, oom)) {
-            return en;
-        }
-        if (!this.isIntersectedBy(en, oom)) {
-            return null;
-        }
-        return new V2D_Envelope(env, oom,
-                BigRational.max(getXMin(oom), en.getXMin(oom)),
-                BigRational.min(getXMax(oom), en.getXMax(oom)),
-                BigRational.max(getYMin(oom), en.getYMin(oom)),
-                BigRational.min(getYMax(oom), en.getYMax(oom)));
+        return pts;
     }
 
     /**
      * Test for equality.
      *
-     * @param e The V3D_Envelope to test for equality with this.
+     * @param e The V2D_Envelope to test for equality with this.
      * @param oom The Order of Magnitude for the precision.
-     * @return {@code true} iff this and e are equal.
+     * @return {@code true} iff {@code this} and {@code e} are equal.
      */
     public boolean equals(V2D_Envelope e, int oom) {
         return this.getXMin(oom).compareTo(e.getXMin(oom)) == 0
@@ -667,7 +371,7 @@ public class V2D_Envelope implements Serializable {
     public BigRational getYMax(int oom, RoundingMode rm) {
         return yMax.add(offset.getDY(oom - 2, rm));
     }
-    
+
     /**
      * @return The LL corner point {@link #ll} setting it first if it is null.
      */
@@ -677,7 +381,7 @@ public class V2D_Envelope implements Serializable {
         }
         return ll;
     }
-    
+
     /**
      * @return The UL corner point {@link #ul} setting it first if it is null.
      */
@@ -687,7 +391,7 @@ public class V2D_Envelope implements Serializable {
         }
         return ul;
     }
-    
+
     /**
      * @return The UR corner point {@link #ur} setting it first if it is null.
      */
@@ -697,7 +401,7 @@ public class V2D_Envelope implements Serializable {
         }
         return ur;
     }
-    
+
     /**
      * @return The LR corner point {@link #lr} setting it first if it is null.
      */
@@ -707,7 +411,7 @@ public class V2D_Envelope implements Serializable {
         }
         return lr;
     }
-    
+
     /**
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
@@ -722,13 +426,13 @@ public class V2D_Envelope implements Serializable {
                 l = new V2D_Point(env, xmin, ymax);
             } else {
                 l = new V2D_LineSegment(
-                    new V2D_Point(env, xmin, ymin),
-                    new V2D_Point(env, xmin, ymax), oom, rm);
+                        new V2D_Point(env, xmin, ymin),
+                        new V2D_Point(env, xmin, ymax), oom, rm);
             }
         }
         return l;
     }
-    
+
     /**
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
@@ -743,13 +447,13 @@ public class V2D_Envelope implements Serializable {
                 r = new V2D_Point(env, xmax, ymax);
             } else {
                 r = new V2D_LineSegment(
-                    new V2D_Point(env, xmax, ymin),
-                    new V2D_Point(env, xmax, ymax), oom, rm);
+                        new V2D_Point(env, xmax, ymin),
+                        new V2D_Point(env, xmax, ymax), oom, rm);
             }
         }
         return r;
     }
-    
+
     /**
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
@@ -764,13 +468,13 @@ public class V2D_Envelope implements Serializable {
                 t = new V2D_Point(env, xmin, ymax);
             } else {
                 t = new V2D_LineSegment(
-                    new V2D_Point(env, xmin, ymax),
-                    new V2D_Point(env, xmax, ymax), oom, rm);
+                        new V2D_Point(env, xmin, ymax),
+                        new V2D_Point(env, xmax, ymax), oom, rm);
             }
         }
         return t;
     }
-    
+
     /**
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
@@ -785,10 +489,344 @@ public class V2D_Envelope implements Serializable {
                 b = new V2D_Point(env, xmin, ymin);
             } else {
                 b = new V2D_LineSegment(
-                    new V2D_Point(env, xmin, ymin),
-                    new V2D_Point(env, xmax, ymin), oom, rm);
+                        new V2D_Point(env, xmin, ymin),
+                        new V2D_Point(env, xmax, ymin), oom, rm);
             }
         }
         return b;
+    }
+
+    /**
+     * Translates this using {@code v}.
+     *
+     * @param v The vector of translation.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     */
+    public void translate(V2D_Vector v, int oom, RoundingMode rm) {
+        offset = offset.add(v, oom, rm);
+        pts = null;
+        if (ll != null) {
+            ll.translate(v, oom, rm);
+        }
+        if (ul != null) {
+            ul.translate(v, oom, rm);
+        }
+        if (ur != null) {
+            ur.translate(v, oom, rm);
+        }
+        if (lr != null) {
+            lr.translate(v, oom, rm);
+        }
+        if (l != null) {
+            l.translate(v, oom, rm);
+        }
+        if (t != null) {
+            t.translate(v, oom, rm);
+        }
+        if (r != null) {
+            r.translate(v, oom, rm);
+        }
+        if (b != null) {
+            b.translate(v, oom, rm);
+        }
+//        xMax = xMax.add(v.getDX(oom, rm));
+//        xMin = xMin.add(v.getDX(oom, rm));
+//        yMax = yMax.add(v.getDY(oom, rm));
+//        yMin = yMin.add(v.getDY(oom, rm));
+    }
+
+    /**
+     * Calculate and return the approximate (or exact) centroid of the envelope.
+     *
+     * @param oom The Order of Magnitude for the precision.
+     * @return The approximate or exact centre of this.
+     */
+    public V2D_Point getCentroid(int oom) {
+        return new V2D_Point(env,
+                getXMax(oom).add(getXMin(oom)).divide(2),
+                getYMax(oom).add(getYMin(oom)).divide(2));
+    }
+
+    /**
+     * @param e The V3D_Envelope to union with this.
+     * @param oom The Order of Magnitude for the precision.
+     * @return an Envelope which is {@code this} union {@code e}.
+     */
+    public V2D_Envelope union(V2D_Envelope e, int oom) {
+        if (this.contains(e, oom)) {
+            return this;
+        } else {
+            return new V2D_Envelope(env, oom,
+                    BigRational.min(e.getXMin(oom), getXMin(oom)),
+                    BigRational.max(e.getXMax(oom), getXMax(oom)),
+                    BigRational.min(e.getYMin(oom), getYMin(oom)),
+                    BigRational.max(e.getYMax(oom), getYMax(oom)));
+        }
+    }
+
+    /**
+     * If {@code e} touches, or overlaps then it intersects. For collision
+     * avoidance, this is biased towards returning an intersection even if there
+     * may not be one at a lower oom precision.
+     *
+     * @param e The Vector_Envelope2D to test for intersection.
+     * @param oom The Order of Magnitude for the precision.
+     * @return {@code true} if this intersects with {@code e} it the {@code oom}
+     * level of precision.
+     */
+    public boolean isIntersectedBy(V2D_Envelope e, int oom) {
+        if (isBeyond(e, oom)) {
+            return !e.isBeyond(this, oom);
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * @param e The envelope to test if {@code this} is beyond.
+     * @param oom The Order of Magnitude for the precision.
+     * @return {@code true} iff {@code this} is beyond {@code e} (i.e. they do
+     * not touch or intersect).
+     */
+    public boolean isBeyond(V2D_Envelope e, int oom) {
+        return getXMax(oom).compareTo(e.getXMin(oom)) == -1
+                || getXMin(oom).compareTo(e.getXMax(oom)) == 1
+                || getYMax(oom).compareTo(e.getYMin(oom)) == -1
+                || getYMin(oom).compareTo(e.getYMax(oom)) == 1;
+    }
+
+    /**
+     * @param e V3D_Envelope The envelope to test if it is contained.
+     * @param oom The Order of Magnitude for the precision.
+     * @return {@code true} iff {@code e} is contained by {@code this}
+     */
+    public boolean contains(V2D_Envelope e, int oom) {
+        return getXMax(oom).compareTo(e.getXMax(oom)) != -1
+                && getXMin(oom).compareTo(e.getXMin(oom)) != 1
+                && getYMax(oom).compareTo(e.getYMax(oom)) != -1
+                && getYMin(oom).compareTo(e.getYMin(oom)) != 1;
+    }
+
+    /**
+     * The location of p may get rounded.
+     *
+     * @param p The point to test if it is contained.
+     * @param oom The Order of Magnitude for the precision.
+     * @return {@code} true iff {@code this} contains {@code p}
+     */
+    public boolean contains(V2D_Point p, int oom) {
+        BigRational xu = p.getX(oom, RoundingMode.CEILING);
+        BigRational xl = p.getX(oom, RoundingMode.FLOOR);
+        BigRational yu = p.getY(oom, RoundingMode.CEILING);
+        BigRational yl = p.getY(oom, RoundingMode.FLOOR);
+        return getXMax(oom).compareTo(xl) != -1
+                && getXMin(oom).compareTo(xu) != 1
+                && getYMax(oom).compareTo(yl) != -1
+                && getYMin(oom).compareTo(yu) != 1;
+    }
+
+    /**
+     * @param x The x-coordinate of the point to test for intersection.
+     * @param y The y-coordinate of the point to test for intersection.
+     * @param oom The Order of Magnitude for the precision.
+     * @return {@code true} if this intersects with {@code pl}
+     */
+    public boolean contains(BigRational x, BigRational y, int oom) {
+        return getXMax(oom).compareTo(x) != -1
+                && getXMin(oom).compareTo(x) != 1
+                && getYMax(oom).compareTo(y) != -1
+                && getYMin(oom).compareTo(y) != 1;
+    }
+
+    /**
+     * @param l The line to test for containment.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} if this intersects with {@code pl}
+     */
+    public boolean contains(V2D_LineSegment l, int oom, RoundingMode rm) {
+        return contains(l.getP(), oom) && contains(l.getQ(oom, rm), oom);
+    }
+
+    /**
+     * @param s The shape to test for containment.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} if this intersects with {@code pl}
+     */
+    public boolean contains(V2D_Shape s, int oom, RoundingMode rm) {
+        if (contains(s.getEnvelope(oom, rm), oom)) {
+            return s.getPoints(oom, rm).values().parallelStream().allMatch(x
+                    -> contains(x, oom));
+        }
+        return false;
+    }
+
+    /**
+     * @param p The point to test for intersection.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} if this intersects with {@code pl}
+     */
+    public boolean isIntersectedBy(V2D_Point p, int oom, RoundingMode rm) {
+        return isIntersectedBy(p.getX(oom, rm), p.getY(oom, rm), oom);
+    }
+
+    /**
+     * This biases intersection.
+     *
+     * @param x The x-coordinate of the point to test for intersection.
+     * @param y The y-coordinate of the point to test for intersection.
+     * @param oom The Order of Magnitude for the precision.
+     * @return {@code true} if this intersects with {@code pl}
+     */
+    public boolean isIntersectedBy(BigRational x, BigRational y, int oom) {
+        return x.compareTo(getXMin(oom)) != -1
+                && x.compareTo(getXMax(oom)) != 1
+                && y.compareTo(getYMin(oom)) != -1
+                && y.compareTo(getYMax(oom)) != 1;
+    }
+
+//    /**
+//     * @param l The line to test for intersection.
+//     * @param oom The Order of Magnitude for the precision.
+//     * @param rm The RoundingMode for any rounding.
+//     * @return {@code true} if this intersects with {@code pl}
+//     */
+//    public boolean isIntersectedBy(V2D_Line l, int oom, RoundingMode rm) {
+//        if (isIntersectedBy(l.getP(), oom, rm)) {
+//            return true;
+//        } else {
+//            if (isIntersectedBy(l.getQ(oom, rm), oom, rm)) {
+//                return true;
+//            }
+//        }
+//        if (t instanceof V2D_LineSegment tl) {
+//            if (tl.isIntersectedBy(l, oom)) {
+//                return true;
+//            } else {
+//                if (r instanceof V2D_LineSegment rl) {
+//                    if (rl.isIntersectedBy(l, oom)) {
+//                        return true;
+//                    } else {
+//                        if (b instanceof V2D_LineSegment bl) {
+//                            if (bl.isIntersectedBy(l, oom)) {
+//                                return true;
+//                            } else {
+//                                if (this.l instanceof V2D_LineSegment ll) {
+//                                    if (ll.isIntersectedBy(l, oom)) {
+//                                        return true;
+//                                    } else {
+//                                        return false;
+//                                    }
+//                                } else {
+//                                    // This should not happen!
+//                                    return false;
+//                                }
+//                            }
+//                        } else {
+//                            // This should not happen!
+//                            return false;
+//                        }
+//                    }
+//                } else {
+//                    return false;
+//                }
+//            }
+//        } else {
+//            if (r instanceof V2D_LineSegment rl) {
+//                if (rl.isIntersectedBy(l, oom)) {
+//                    return true;
+//                } else {
+//                    return l.isIntersectedBy(((V2D_Point) r), oom, rm);
+//                }
+//            } else {
+//                return l.isIntersectedBy(((V2D_Point) r), oom, rm);
+//            }
+//        }
+//        return false;
+//    }
+//    /**
+//     * @param l The line to test for intersection.
+//     * @param oom The Order of Magnitude for the precision.
+//     * @param rm The RoundingMode for any rounding.
+//     * @return {@code true} if this intersects with {@code pl}
+//     */
+//    public boolean isIntersectedBy(V2D_LineSegment l, int oom, RoundingMode rm) {
+//        if (isIntersectedBy(l.getP(), oom, rm)) {
+//            return true;
+//        } else {
+//            if (isIntersectedBy(l.getQ(oom, rm), oom, rm)) {
+//                return true;
+//            }
+//        }
+//        if (t instanceof V2D_LineSegment tl) {
+//            if (tl.isIntersectedBy(this, oom)) {
+//                return true;
+//            } else {
+//                if (r instanceof V2D_LineSegment rl) {
+//                    if (rl.isIntersectedBy(this, oom)) {
+//                        return true;
+//                    } else {
+//                        if (b instanceof V2D_LineSegment bl) {
+//                            if (bl.isIntersectedBy(this, oom)) {
+//                                return true;
+//                            } else {
+//                                if (this.l instanceof V2D_LineSegment ll) {
+//                                    if (ll.isIntersectedBy(this, oom)) {
+//                                        return true;
+//                                    } else {
+//                                        return false;
+//                                    }
+//                                } else {
+//                                    // This should not happen!
+//                                    return false;
+//                                }
+//                            }
+//                        } else {
+//                            // This should not happen!
+//                            return false;
+//                        }
+//                    }
+//                } else {
+//                    return false;
+//                }
+//            }
+//        } else {
+//            if (r instanceof V2D_LineSegment rl) {
+//                if (rl.isIntersectedBy(this, oom)) {
+//                    return true;
+//                } else {
+//                    return isIntersectedBy(((V2D_Point) r), oom, rm);
+//                }
+//            } else {
+//                return isIntersectedBy(((V2D_Point) r), oom, rm);
+//            }
+//        }
+//        return false;
+//    }
+    /**
+     * @param en The envelope to intersect.
+     * @param oom The Order of Magnitude for the precision.
+     * @return {@code null} if there is no intersection; {@code en} if
+     * {@code this.equals(en)}; otherwise returns the intersection.
+     */
+    public V2D_Envelope getIntersection(V2D_Envelope en, int oom) {
+        if (!isIntersectedBy(en, oom)) {
+            return null;
+        }
+// Probably quicker without: 
+//        if (contains(en, oom)) {
+//            return this;
+//        }
+//        if (en.contains(this, oom)) {
+//            return en;
+//        }
+        return new V2D_Envelope(env, oom,
+                BigRational.max(getXMin(oom), en.getXMin(oom)),
+                BigRational.min(getXMax(oom), en.getXMax(oom)),
+                BigRational.max(getYMin(oom), en.getYMin(oom)),
+                BigRational.min(getYMax(oom), en.getYMax(oom)));
     }
 }

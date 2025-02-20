@@ -103,7 +103,8 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
      * @param rm The RoundingMode for any rounding.
      * @return A copy of {@link internalHoles} with the given tolerance applied.
      */
-    public HashMap<Integer, V2D_PolygonNoInternalHoles> getInternalHoles(int oom, RoundingMode rm) {
+    public HashMap<Integer, V2D_PolygonNoInternalHoles> getInternalHoles(
+            int oom, RoundingMode rm) {
         HashMap<Integer, V2D_PolygonNoInternalHoles> r = new HashMap<>();
         for (V2D_PolygonNoInternalHoles h : internalHoles.values()) {
             r.put(r.size(), new V2D_PolygonNoInternalHoles(h, oom, rm));
@@ -121,11 +122,9 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
      */
     @Override
     public boolean isIntersectedBy(V2D_Point pt, int oom, RoundingMode rm) {
-        if (super.isIntersectedBy(pt, oom, rm)) {
-            return !internalHoles.values().parallelStream().anyMatch(x -> x.contains(pt, oom, rm));
-            //return !internalHoles.values().parallelStream().anyMatch(x -> x.isIntersectedBy(pt, oom, rm));
-        }
-        return false;
+        return super.isIntersectedBy(pt, oom, rm)
+            && !internalHoles.values().parallelStream().anyMatch(x
+                    -> x.contains(pt, oom, rm));
     }
 
     /**
@@ -140,7 +139,7 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
     public boolean isIntersectedBy(V2D_LineSegment l, int oom, RoundingMode rm) {
         if (super.isIntersectedBy(l, oom, rm)) {
             if (internalHoles.values().parallelStream().anyMatch(
-                    x -> V2D_LineSegment.isIntersectedBy(oom, rm, l, x.externalEdges.values()))) {
+                    x -> V2D_LineSegment.isIntersectedBy(oom, rm, l, x.edges.values()))) {
                 return true;
             }
             return !internalHoles.values().parallelStream().anyMatch(x -> x.contains(l, oom, rm));
@@ -164,7 +163,7 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
         if (super.isIntersectedBy(t, oom, rm)) {
             if (t.getEdges(oom, rm).values().parallelStream().anyMatch(x -> 
                     internalHoles.values().parallelStream().anyMatch(y -> 
-                            V2D_LineSegment.isIntersectedBy(oom, rm, x, y.externalEdges.values())))) {
+                            V2D_LineSegment.isIntersectedBy(oom, rm, x, y.edges.values())))) {
                 return true;
             }
             // This should probably be contains?
@@ -190,7 +189,7 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
             }
             if (r.getEdges(oom, rm).values().parallelStream().anyMatch(x -> 
                     internalHoles.values().parallelStream().anyMatch(y -> 
-                            V2D_LineSegment.isIntersectedBy(oom, rm, x, y.externalEdges.values())))) {
+                            V2D_LineSegment.isIntersectedBy(oom, rm, x, y.edges.values())))) {
                 return true;
             }
             return !internalHoles.values().parallelStream().anyMatch(x -> x.contains(r, oom, rm));
@@ -215,7 +214,7 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
             }
             if (ch.getEdges(oom, rm).values().parallelStream().anyMatch(x -> 
                     internalHoles.values().parallelStream().anyMatch(y -> 
-                            V2D_LineSegment.isIntersectedBy(oom, rm, x, y.externalEdges.values())))) {
+                            V2D_LineSegment.isIntersectedBy(oom, rm, x, y.edges.values())))) {
                 return true;
             }
             return !internalHoles.values().parallelStream().anyMatch(x -> x.contains(ch, oom, rm));
@@ -266,7 +265,7 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
     @Override
     public V2D_Polygon rotate(V2D_Point pt, BigRational theta,
             Math_BigDecimal bd, int oom, RoundingMode rm) {
-        theta = Math_AngleBigRational.normalise(theta, bd, oom, rm);
+        theta = Math_AngleBigRational.normalise(theta, bd, oom - 2, rm);
         if (theta.compareTo(BigRational.ZERO) == 0) {
             return new V2D_Polygon(this, oom, rm);
         } else {
