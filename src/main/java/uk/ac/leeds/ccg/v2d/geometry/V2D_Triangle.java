@@ -56,7 +56,7 @@ public class V2D_Triangle extends V2D_Shape {
     protected final V2D_Vector rv;
 
     /**
-     * A point for a corner of the triangle.
+     * For storing a corner point of the triangle corresponding to {@link #pv}.
      */
     protected V2D_Point p;
 
@@ -72,7 +72,7 @@ public class V2D_Triangle extends V2D_Shape {
     RoundingMode prm;
 
     /**
-     * A point for a corner of the triangle.
+     * For storing a corner point of the triangle corresponding to {@link #qv}.
      */
     protected V2D_Point q;
 
@@ -88,7 +88,7 @@ public class V2D_Triangle extends V2D_Shape {
     RoundingMode qrm;
 
     /**
-     * A point for a corner of the triangle.
+     * For storing a corner point of the triangle corresponding to {@link #rv}.
      */
     protected V2D_Point r;
 
@@ -104,7 +104,7 @@ public class V2D_Triangle extends V2D_Shape {
     RoundingMode rrm;
 
     /**
-     * For storing the line segment from {@link #getP()} to {@link #getQ()} for
+     * For storing the line segment from {@link #p} to {@link #q} for
      * a given Order of Magnitude and RoundingMode precision.
      */
     private V2D_LineSegment pq;
@@ -120,7 +120,7 @@ public class V2D_Triangle extends V2D_Shape {
     RoundingMode pqrm;
 
     /**
-     * For storing the line segment from {@link #getQ()} to {@link #getR()} for
+     * For storing the line segment from {@link #q} to {@link #r} for
      * a given Order of Magnitude and RoundingMode precision.
      */
     private V2D_LineSegment qr;
@@ -136,7 +136,7 @@ public class V2D_Triangle extends V2D_Shape {
     RoundingMode qrrm;
 
     /**
-     * For storing the line segment from {@link #getR()} to {@link #getP()} for
+     * For storing the line segment from {@link #r} to {@link #p} for
      * a given Order of Magnitude and RoundingMode precision.
      */
     private V2D_LineSegment rp;
@@ -213,7 +213,8 @@ public class V2D_Triangle extends V2D_Shape {
     }
 
     /**
-     * Creates a new triangle.{@link #offset} is set to {@link V2D_Vector#ZERO}.
+     * Creates a new triangle. {@link #offset} is set to 
+     * {@link V2D_Vector#ZERO}.
      *
      * @param env What {@link #env} is set to.
      * @param p What {@link #pl} is set to.
@@ -625,7 +626,7 @@ public class V2D_Triangle extends V2D_Shape {
 
     /**
      * Intersected, but not on the edge.
-     * 
+     *
      * @param pt The point to intersect with.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
@@ -676,7 +677,7 @@ public class V2D_Triangle extends V2D_Shape {
                 && (getRP(oom, rm).l.isOnSameSide(q, lsp, oom, rm)
                 || rp.l.isOnSameSide(q, lsq, oom, rm));
     }
-    
+
     /**
      * @param ls The line segments to test for containment.
      * @param oom The Order of Magnitude for the precision.
@@ -685,9 +686,9 @@ public class V2D_Triangle extends V2D_Shape {
      */
     public boolean contains(V2D_LineSegment ls, int oom, RoundingMode rm) {
         return contains(ls.getP(), oom, rm)
-            && contains(ls.getQ(oom, rm), oom, rm);
+                && contains(ls.getQ(oom, rm), oom, rm);
     }
-    
+
     /**
      * Identify if this contains triangle.
      *
@@ -771,7 +772,7 @@ public class V2D_Triangle extends V2D_Shape {
                 || t.intersects0(getQ(oom, rm), oom, rm)
                 || t.intersects0(getR(oom, rm), oom, rm);
     }
-    
+
     /**
      * https://en.wikipedia.org/wiki/Heron%27s_formula
      *
@@ -1226,8 +1227,8 @@ public class V2D_Triangle extends V2D_Shape {
      * @return {@code true} iff {@code this} is equal to {@code t}.
      */
     public boolean equals(V2D_Triangle t, int oom, RoundingMode rm) {
-        return getPoints(oom, rm).values().parallelStream().allMatch(x -> 
-                x.equalsAny(t.getPoints(oom, rm).values(), oom, rm));
+        return getPoints(oom, rm).values().parallelStream().allMatch(x
+                -> x.equalsAny(t.getPoints(oom, rm).values(), oom, rm));
 //        V2D_Point tp = t.getP(oom, rm);
 //        V2D_Point thisp = getP(oom, rm);
 //        if (tp.equals(thisp, oom, rm)) {
@@ -1792,7 +1793,7 @@ public class V2D_Triangle extends V2D_Shape {
 
     /**
      * Identify if {@code this} is intersected by {@code aabb}.
-     * 
+     *
      * @param aabb The envelope to test for intersection.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
@@ -1816,7 +1817,7 @@ public class V2D_Triangle extends V2D_Shape {
                     return true;
                 }
             } else {
-                if(intersects((V2D_Point) l, oom, rm)) {
+                if (intersects((V2D_Point) l, oom, rm)) {
                     return true;
                 }
             }
