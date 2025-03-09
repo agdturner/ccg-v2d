@@ -50,7 +50,7 @@ public class V2D_Point extends V2D_FiniteGeometry {
     public V2D_Vector rel;
 
     /**
-     * Create a new instance which is completely independent of {@code pv}.
+     * Create a new instance.
      *
      * @param p The point to clone/duplicate.
      */
@@ -73,7 +73,7 @@ public class V2D_Point extends V2D_FiniteGeometry {
     /**
      * Create a new instance.
      *
-     * @param env The environment.
+     * @param env What {@link #env} is set to.
      * @param offset What {@link #offset} is set to.
      * @param rel Cloned to initialise {@link #rel}.
      */
@@ -86,7 +86,7 @@ public class V2D_Point extends V2D_FiniteGeometry {
      * Create a new instance with {@link #offset} set to
      * {@link V2D_Vector#ZERO}.
      *
-     * @param env The environment.
+     * @param env What {@link #env} is set to.
      * @param x What {@link #rel} x component is set to.
      * @param y What {@link #rel} y component is set to.
      */
@@ -99,7 +99,7 @@ public class V2D_Point extends V2D_FiniteGeometry {
      * Create a new instance with {@link #offset} set to
      * {@link V2D_Vector#ZERO}.
      *
-     * @param env The environment.
+     * @param env What {@link #env} is set to.
      * @param x What {@link #rel} x component is set to.
      * @param y What {@link #rel} y component is set to.
      */
@@ -111,7 +111,7 @@ public class V2D_Point extends V2D_FiniteGeometry {
      * Create a new instance with {@link #offset} set to
      * {@link V2D_Vector#ZERO}.
      *
-     * @param env The environment.
+     * @param env What {@link #env} is set to.
      * @param x What {@link #rel} x component is set to.
      * @param y What {@link #rel} y component is set to.
      */
@@ -123,7 +123,7 @@ public class V2D_Point extends V2D_FiniteGeometry {
      * Create a new instance with {@link #offset} set to
      * {@link V2D_Vector#ZERO}.
      *
-     * @param env The environment.
+     * @param env What {@link #env} is set to.
      * @param x What {@link #rel} x component is set to.
      * @param y What {@link #rel} y component is set to.
      */

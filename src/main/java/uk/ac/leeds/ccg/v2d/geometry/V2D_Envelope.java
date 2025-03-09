@@ -64,24 +64,24 @@ public class V2D_Envelope implements Serializable {
     private final BigRational yMax;
 
     /**
-     * For storing the lower left point.
+     * For storing the left lower point.
      */
     protected V2D_Point ll;
 
     /**
-     * For storing the upper left point.
+     * For storing the left upper point.
+     */
+    protected V2D_Point lu;
+
+    /**
+     * For storing the right upper point.
+     */
+    protected V2D_Point uu;
+
+    /**
+     * For storing the right lower point.
      */
     protected V2D_Point ul;
-
-    /**
-     * For storing the upper right point.
-     */
-    protected V2D_Point ur;
-
-    /**
-     * For storing the lower right point.
-     */
-    protected V2D_Point lr;
 
     /**
      * The top/upper edge.
@@ -104,13 +104,13 @@ public class V2D_Envelope implements Serializable {
     protected V2D_FiniteGeometry l;
 
     /**
-     * For storing all the points. N.B {@link #ll}, {@link #ul}, {@link #ur},
-     * {@link #ul} may all be the same.
+     * For storing all the points.N.B {@link #ll}, {@link #lu}, {@link #uu},
+    {@link #lu} may all be the same.
      */
     protected HashSet<V2D_Point> pts;
 
     /**
-     * @param e An envelop.
+     * @param e An envelope.
      */
     public V2D_Envelope(V2D_Envelope e) {
         env = e.env;
@@ -119,14 +119,14 @@ public class V2D_Envelope implements Serializable {
         yMax = e.yMax;
         xMin = e.xMin;
         xMax = e.xMax;
-        t = e.t;
+        ll = e.ll;
+        lu = e.lu;
+        uu = e.uu;
+        ul = e.ul;
+        l = e.l;
         r = e.r;
         b = e.b;
-        l = e.l;
-        ll = e.ll;
-        ul = e.ul;
-        ur = e.ur;
-        lr = e.lr;
+        t = e.t;
         pts = e.pts;
     }
 
@@ -182,9 +182,9 @@ public class V2D_Envelope implements Serializable {
         b = e.b;
         l = e.l;
         ll = e.ll;
+        lu = e.lu;
+        uu = e.uu;
         ul = e.ul;
-        ur = e.ur;
-        lr = e.lr;
         pts = e.pts;
     }
 
@@ -266,10 +266,10 @@ public class V2D_Envelope implements Serializable {
     public HashSet<V2D_Point> getPoints() {
         if (pts == null) {
             pts = new HashSet<>(4);
-            pts.add(getLL());
-            pts.add(getUL());
-            pts.add(getUR());
-            pts.add(getLR());
+            pts.add(getll());
+            pts.add(getlu());
+            pts.add(getuu());
+            pts.add(getul());
         }
         return pts;
     }
@@ -373,9 +373,9 @@ public class V2D_Envelope implements Serializable {
     }
 
     /**
-     * @return The LL corner point {@link #ll} setting it first if it is null.
+     * @return {@link #ll} setting it first if it is null.
      */
-    public V2D_Point getLL() {
+    public V2D_Point getll() {
         if (ll == null) {
             ll = new V2D_Point(env, xMin, yMin);
         }
@@ -383,33 +383,33 @@ public class V2D_Envelope implements Serializable {
     }
 
     /**
-     * @return The UL corner point {@link #ul} setting it first if it is null.
+     * @return {@link #lu} setting it first if it is null.
      */
-    public V2D_Point getUL() {
+    public V2D_Point getlu() {
+        if (lu == null) {
+            lu = new V2D_Point(env, xMin, yMax);
+        }
+        return lu;
+    }
+
+    /**
+     * @return {@link #uu} setting it first if it is null.
+     */
+    public V2D_Point getuu() {
+        if (uu == null) {
+            uu = new V2D_Point(env, xMax, yMax);
+        }
+        return uu;
+    }
+
+    /**
+     * @return {@link #ul} setting it first if it is null.
+     */
+    public V2D_Point getul() {
         if (ul == null) {
-            ul = new V2D_Point(env, xMin, yMax);
+            ul = new V2D_Point(env, xMax, yMin);
         }
         return ul;
-    }
-
-    /**
-     * @return The UR corner point {@link #ur} setting it first if it is null.
-     */
-    public V2D_Point getUR() {
-        if (ur == null) {
-            ur = new V2D_Point(env, xMax, yMax);
-        }
-        return ur;
-    }
-
-    /**
-     * @return The LR corner point {@link #lr} setting it first if it is null.
-     */
-    public V2D_Point getLR() {
-        if (lr == null) {
-            lr = new V2D_Point(env, xMax, yMin);
-        }
-        return lr;
     }
 
     /**
@@ -509,14 +509,14 @@ public class V2D_Envelope implements Serializable {
         if (ll != null) {
             ll.translate(v, oom, rm);
         }
+        if (lu != null) {
+            lu.translate(v, oom, rm);
+        }
+        if (uu != null) {
+            uu.translate(v, oom, rm);
+        }
         if (ul != null) {
             ul.translate(v, oom, rm);
-        }
-        if (ur != null) {
-            ur.translate(v, oom, rm);
-        }
-        if (lr != null) {
-            lr.translate(v, oom, rm);
         }
         if (l != null) {
             l.translate(v, oom, rm);
@@ -599,7 +599,7 @@ public class V2D_Envelope implements Serializable {
     /**
      * @param e V3D_Envelope The envelope to test if it is contained.
      * @param oom The Order of Magnitude for the precision.
-     * @return {@code true} iff {@code e} is contained by {@code this}
+     * @return {@code true} iff {@code this} contains {@code e}.
      */
     public boolean contains(V2D_Envelope e, int oom) {
         return getXMax(oom).compareTo(e.getXMax(oom)) != -1
@@ -613,7 +613,7 @@ public class V2D_Envelope implements Serializable {
      *
      * @param p The point to test if it is contained.
      * @param oom The Order of Magnitude for the precision.
-     * @return {@code} true iff {@code this} contains {@code p}
+     * @return {@code} true iff {@code this} contains {@code p}.
      */
     public boolean contains(V2D_Point p, int oom) {
         BigRational xu = p.getX(oom, RoundingMode.CEILING);
@@ -627,10 +627,11 @@ public class V2D_Envelope implements Serializable {
     }
 
     /**
-     * @param x The x-coordinate of the point to test for intersection.
-     * @param y The y-coordinate of the point to test for intersection.
+     * @param x The x-coordinate of the point to test for containment.
+     * @param y The y-coordinate of the point to test for containment.
      * @param oom The Order of Magnitude for the precision.
-     * @return {@code true} if this intersects with {@code pl}
+     * @return {@code true} iff {@code this} contains the point defined by
+     * {@code x}, {@code y} and {@code z}.
      */
     public boolean contains(BigRational x, BigRational y, int oom) {
         return getXMax(oom).compareTo(x) != -1
@@ -643,7 +644,7 @@ public class V2D_Envelope implements Serializable {
      * @param l The line to test for containment.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
-     * @return {@code true} if this intersects with {@code pl}
+     * @return {@code true} if this contains {@code l}
      */
     public boolean contains(V2D_LineSegment l, int oom, RoundingMode rm) {
         return contains(l.getP(), oom) && contains(l.getQ(oom, rm), oom);
@@ -653,7 +654,7 @@ public class V2D_Envelope implements Serializable {
      * @param s The shape to test for containment.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
-     * @return {@code true} if this intersects with {@code pl}
+     * @return {@code true} if this contains {@code s}
      */
     public boolean contains(V2D_Shape s, int oom, RoundingMode rm) {
         return contains(s.getEnvelope(oom, rm), oom)
@@ -664,7 +665,7 @@ public class V2D_Envelope implements Serializable {
      * @param s The shape to test for containment.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
-     * @return {@code true} if this intersects with {@code pl}
+     * @return {@code true} if this contains {@code s}
      */
     public boolean contains0(V2D_Shape s, int oom, RoundingMode rm) {
         return s.getPoints(oom, rm).values().parallelStream().allMatch(x

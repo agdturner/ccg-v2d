@@ -209,25 +209,25 @@ public class V2D_Ray extends V2D_Geometry {
     }
 
     /**
-     * Intersects a ray with a plane. {@code null} is returned if there is no
-     * intersection, {@code this} is returned if the ray is on the plane.
+     * Intersects a ray with a line. {@code null} is returned if there is no
+     * intersection, {@code this} is returned if the ray is on the line.
      * Otherwise a point is returned.
      *
-     * It is possible to distinguish a ray intersection with a plane (ray-plane)
-     * and a plane intersection with a ray (plane-ray). In some cases the two
-     * are the same, but due to coordinate number imprecision, sometimes an
+     * It is possible to distinguish a ray intersection with a line (ray-line)
+     * and a line intersection with a ray (line-ray). In some cases the two
+     * are the same, but due to coordinate imprecision, sometimes an
      * intersection point cannot be found that is both on the ray and on the
-     * plane. For a ray-plane intersection we can force the point to be on the
-     * ray and either choose a point on or before the plane, or on or after the
-     * plane.
+     * line. For a ray-line intersection we can force the point to be on the
+     * ray and either choose a point on or before the line, or on or after the
+     * line.
      *
-     * For the plane-ray intersection we can force the point to be on the plane
+     * For the line-ray intersection we can force the point to be on the line
      * and choose the vague direction of the point from the intersection using
-     * the orientation of the ray relative to the plane (and where the ray is
-     * perpendicular to the plane, we can choose the direction relative to the
+     * the orientation of the ray relative to the line (and where the ray is
+     * perpendicular to the line, we can choose the direction relative to the
      * orientation of the axes and origin).
      *
-     * Support ray-plane intersection to choose on or before, or on or after?
+     * Support ray-line intersection to choose on or before, or on or after?
      *
      * @param l The line to get the geometrical intersection with this.
      * @param oom The Order of Magnitude for the precision.

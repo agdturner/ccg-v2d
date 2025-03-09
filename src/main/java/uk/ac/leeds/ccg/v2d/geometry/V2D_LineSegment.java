@@ -177,7 +177,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
     /**
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
-     * @return {@link #qv} with {@link #offset} applied.
+     * @return {@code l.getQ(oom, rm)}.
      */
     public V2D_Point getQ(int oom, RoundingMode rm) {
         return l.getQ(oom, rm);
