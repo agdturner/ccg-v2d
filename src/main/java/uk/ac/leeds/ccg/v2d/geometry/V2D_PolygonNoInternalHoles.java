@@ -317,9 +317,9 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
     }
 
     @Override
-    public V2D_Envelope getEnvelope(int oom, RoundingMode rm) {
+    public V2D_AABB getAABB(int oom, RoundingMode rm) {
         if (en == null) {
-            en = ch.getEnvelope(oom, rm);
+            en = ch.getAABB(oom, rm);
         }
         return en;
     }
@@ -402,7 +402,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
      * @param rm The RoundingMode for any rounding.
      * @return {@code true} iff there is containment.
      */
-    public boolean contains(V2D_Envelope aabb, int oom, RoundingMode rm) {
+    public boolean contains(V2D_AABB aabb, int oom, RoundingMode rm) {
         BigRational xmin = aabb.getXMin(oom);
         BigRational xmax = aabb.getXMax(oom);
         BigRational ymin = aabb.getYMin(oom);
@@ -644,8 +644,8 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
     }
 
 //    @Override
-//    public boolean intersects(V2D_Envelope aabb, int oom, RoundingMode rm) {
-//        if (getEnvelope(oom, rm).intersects(aabb, oom)) {
+//    public boolean intersects(V2D_AABB aabb, int oom, RoundingMode rm) {
+//        if (getAABB(oom, rm).intersects(aabb, oom)) {
 //            if (ch.intersects(aabb, oom, rm)) {
 //                return true;
 //            }

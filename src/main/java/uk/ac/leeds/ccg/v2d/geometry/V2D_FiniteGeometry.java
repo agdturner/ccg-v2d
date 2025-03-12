@@ -32,18 +32,9 @@ public abstract class V2D_FiniteGeometry extends V2D_Geometry {
     private static final long serialVersionUID = 1L;
     
     /**
-     * For storing the envelope.
+     * For storing the Axis Aligned Bounding Box.
      */
-    protected V2D_Envelope en;
-    
-    /**
-     * For getting the envelope of the geometry
-     *
-     * @param oom The Order of Magnitude for the precision.
-     * @param rm The RoundingMode for any rounding.
-     * @return The envelope.
-     */
-    public abstract V2D_Envelope getEnvelope(int oom, RoundingMode rm);
+    protected V2D_AABB en;
     
     /**
      * Creates a new instance with offset V2D_Vector.ZERO.
@@ -63,6 +54,15 @@ public abstract class V2D_FiniteGeometry extends V2D_Geometry {
     public V2D_FiniteGeometry(V2D_Environment env, V2D_Vector offset) {
         super(env, offset);
     }
+    
+    /**
+     * For getting the Axis Aligned Bounding Box of the geometry.
+     *
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return The Axis Aligned Bounding Box.
+     */
+    public abstract V2D_AABB getAABB(int oom, RoundingMode rm);
     
     /**
      * @param oom The Order of Magnitude for the precision.

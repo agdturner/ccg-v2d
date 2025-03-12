@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigRational;
 import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
-import uk.ac.leeds.ccg.v2d.geometry.V2D_Envelope;
+import uk.ac.leeds.ccg.v2d.geometry.V2D_AABB;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_Point;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_Vector;
 //import org.junit.jupiter.api.Disabled;
@@ -106,15 +106,15 @@ public class V2D_PointTest extends V2D_Test {
     }
 
     /**
-     * Test of getEnvelope method, of class V2D_Point.
+     * Test of getAABB method, of class V2D_Point.
      */
     @Test
     public void testGetEnvelope() {
         System.out.println("getEnvelope");
         int oom = -6;
         RoundingMode rm = RoundingMode.HALF_UP;
-        V2D_Envelope expResult = new V2D_Envelope(oom, pP1P2);
-        V2D_Envelope result = pP1P2.getEnvelope(oom, rm);
+        V2D_AABB expResult = new V2D_AABB(oom, pP1P2);
+        V2D_AABB result = pP1P2.getAABB(oom, rm);
         assertTrue(expResult.equals(result, oom));
     }
 

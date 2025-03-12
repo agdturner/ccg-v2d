@@ -22,18 +22,18 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import uk.ac.leeds.ccg.v2d.geometry.d.V2D_EnvelopeDouble;
+import uk.ac.leeds.ccg.v2d.geometry.d.V2D_AABBDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_VectorDouble;
 
 /**
- * Test class for V2D_EnvelopeDouble.
+ * Test class for V2D_AABBDouble.
  *
  * @author Andy Turner
  * @version 1.0
  */
-public class V2D_EnvelopeDoubleTest extends V2D_TestDouble {
+public class V2D_AABBDoubleTest extends V2D_TestDouble {
 
-    public V2D_EnvelopeDoubleTest() {
+    public V2D_AABBDoubleTest() {
         super();
     }
 
@@ -54,13 +54,13 @@ public class V2D_EnvelopeDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of toString method, of class V2D_EnvelopeDouble.
+     * Test of toString method, of class V2D_AABBDouble.
      */
     @Test
     public void testToString() {
         System.out.println("toString");
-        V2D_EnvelopeDouble instance = new V2D_EnvelopeDouble(pP0P0);
-        String expResult = "V2D_EnvelopeDouble(xMin=0.0, xMax=0.0, yMin=0.0,"
+        V2D_AABBDouble instance = new V2D_AABBDouble(pP0P0);
+        String expResult = "V2D_AABBDouble(xMin=0.0, xMax=0.0, yMin=0.0,"
                 + " yMax=0.0)";
         String result = instance.toString();
         //System.out.println(result);
@@ -68,50 +68,50 @@ public class V2D_EnvelopeDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of envelop method, of class V2D_EnvelopeDouble.
+     * Test of envelop method, of class V2D_AABBDouble.
      */
     @Test
-    public void testEnvelope() {
+    public void testAABB() {
         System.out.println("envelope");
-        V2D_EnvelopeDouble e1 = new V2D_EnvelopeDouble(pP0P0);
-        V2D_EnvelopeDouble instance = new V2D_EnvelopeDouble(pP1P1);
-        V2D_EnvelopeDouble expResult = new V2D_EnvelopeDouble(pP0P0, pP1P1);
-        V2D_EnvelopeDouble result = instance.union(e1);
+        V2D_AABBDouble e1 = new V2D_AABBDouble(pP0P0);
+        V2D_AABBDouble instance = new V2D_AABBDouble(pP1P1);
+        V2D_AABBDouble expResult = new V2D_AABBDouble(pP0P0, pP1P1);
+        V2D_AABBDouble result = instance.union(e1);
         assertTrue(result.equals(expResult));
     }
 
     /**
-     * Test of intersects method, of class V2D_EnvelopeDouble.
+     * Test of intersects method, of class V2D_AABBDouble.
      */
     @Test
-    public void testIsIntersectedBy_V2D_EnvelopeDouble() {
+    public void testIsIntersectedBy_V2D_AABBDouble() {
         System.out.println("intersects");
-        V2D_EnvelopeDouble instance = new V2D_EnvelopeDouble(pP0P0);
-        V2D_EnvelopeDouble en = new V2D_EnvelopeDouble(pP0P0, pP1P1);
+        V2D_AABBDouble instance = new V2D_AABBDouble(pP0P0);
+        V2D_AABBDouble en = new V2D_AABBDouble(pP0P0, pP1P1);
         assertTrue(instance.intersects(en));
         // Test 2
-        instance = new V2D_EnvelopeDouble(pN1N1, pP0P0);
+        instance = new V2D_AABBDouble(pN1N1, pP0P0);
         assertTrue(instance.intersects(en));
         // Test 3
-        en = new V2D_EnvelopeDouble(pN2N2, pP2P2);
+        en = new V2D_AABBDouble(pN2N2, pP2P2);
         assertTrue(instance.intersects(en));
         // Test 4
-        en = new V2D_EnvelopeDouble(pP0P0, pP1P1);
-        instance = new V2D_EnvelopeDouble(pN1N1, pN1P0);
+        en = new V2D_AABBDouble(pP0P0, pP1P1);
+        instance = new V2D_AABBDouble(pN1N1, pN1P0);
         assertFalse(instance.intersects(en));
         // Test 5
-        en = new V2D_EnvelopeDouble(pP0P0, pP1P1);
-        instance = new V2D_EnvelopeDouble(pN1P0, pP0P1);
+        en = new V2D_AABBDouble(pP0P0, pP1P1);
+        instance = new V2D_AABBDouble(pN1P0, pP0P1);
         assertTrue(instance.intersects(en));
     }
 
     /**
-     * Test of intersects method, of class V2D_EnvelopeDouble.
+     * Test of intersects method, of class V2D_AABBDouble.
      */
     @Test
     public void testIsIntersectedBy_V2D_PointDouble() {
         System.out.println("intersects");
-        V2D_EnvelopeDouble instance = new V2D_EnvelopeDouble(pN1N1, pP1P1);
+        V2D_AABBDouble instance = new V2D_AABBDouble(pN1N1, pP1P1);
         // Test 1 the centre
         assertTrue(instance.intersects(pP0P0));
         // Test 2 to 6 the corners
@@ -126,165 +126,165 @@ public class V2D_EnvelopeDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of equals method, of class V2D_EnvelopeDouble.
+     * Test of equals method, of class V2D_AABBDouble.
      */
     @Test
     public void testEquals() {
         System.out.println("equals");
-        V2D_EnvelopeDouble instance = new V2D_EnvelopeDouble(pP0P0, pP1P1);
-        V2D_EnvelopeDouble en = new V2D_EnvelopeDouble(pP0P0, pP1P1);
+        V2D_AABBDouble instance = new V2D_AABBDouble(pP0P0, pP1P1);
+        V2D_AABBDouble en = new V2D_AABBDouble(pP0P0, pP1P1);
         assertTrue(instance.equals(en));
         // Test 2
-        en = new V2D_EnvelopeDouble(pP1P1, pP0P0);
+        en = new V2D_AABBDouble(pP1P1, pP0P0);
         assertTrue(instance.equals(en));
         // Test 3
-        en = new V2D_EnvelopeDouble(pP1N1, pP0P0);
+        en = new V2D_AABBDouble(pP1N1, pP0P0);
         assertFalse(instance.equals(en));
     }
 
     /**
-     * Test of intersects method, of class V2D_EnvelopeDouble. No need for a full
+     * Test of intersects method, of class V2D_AABBDouble. No need for a full
      * set of test here as this is covered by
      * {@link #testIsIntersectedBy_V2D_PointDouble()}
      */
     @Test
     public void testIsIntersectedBy_2args() {
         System.out.println("intersects");
-        V2D_EnvelopeDouble instance = new V2D_EnvelopeDouble(pN1N1, pP1P1);
+        V2D_AABBDouble instance = new V2D_AABBDouble(pN1N1, pP1P1);
         assertTrue(instance.intersects(0d, 0d));
-        instance = new V2D_EnvelopeDouble(pP1P0);
+        instance = new V2D_AABBDouble(pP1P0);
         assertFalse(instance.intersects(0d, 0d));
     }
 
     /**
-     * Test of getIntersection method, of class V2D_EnvelopeDouble.
+     * Test of getIntersection method, of class V2D_AABBDouble.
      */
     @Test
-    public void testGetIntersection_V2D_EnvelopeDouble() {
+    public void testGetIntersection_V2D_AABBDouble() {
         System.out.println("getIntersection");
-        V2D_EnvelopeDouble en;
-        V2D_EnvelopeDouble instance;
-        V2D_EnvelopeDouble expResult;
-        V2D_EnvelopeDouble result;
+        V2D_AABBDouble en;
+        V2D_AABBDouble instance;
+        V2D_AABBDouble expResult;
+        V2D_AABBDouble result;
         // Test 1
-        en = new V2D_EnvelopeDouble(pN1N1, pP1P1);
-        instance = new V2D_EnvelopeDouble(pP0P0, pP1P1);
-        expResult = new V2D_EnvelopeDouble(pP0P0, pP1P1);
+        en = new V2D_AABBDouble(pN1N1, pP1P1);
+        instance = new V2D_AABBDouble(pP0P0, pP1P1);
+        expResult = new V2D_AABBDouble(pP0P0, pP1P1);
         result = instance.getIntersection(en);
         assertTrue(result.equals(expResult));
         // Test 2
-        en = new V2D_EnvelopeDouble(pN1N1, pP0P0);
-        instance = new V2D_EnvelopeDouble(pP0P0, pP1P1);
-        expResult = new V2D_EnvelopeDouble(pP0P0);
+        en = new V2D_AABBDouble(pN1N1, pP0P0);
+        instance = new V2D_AABBDouble(pP0P0, pP1P1);
+        expResult = new V2D_AABBDouble(pP0P0);
         result = instance.getIntersection(en);
         assertTrue(result.equals(expResult));
         // Test 3
-        en = new V2D_EnvelopeDouble(pN1N1, pP0P0);
-        instance = new V2D_EnvelopeDouble(pP0P0, pP1P1);
-        expResult = new V2D_EnvelopeDouble(pP0P0);
+        en = new V2D_AABBDouble(pN1N1, pP0P0);
+        instance = new V2D_AABBDouble(pP0P0, pP1P1);
+        expResult = new V2D_AABBDouble(pP0P0);
         result = instance.getIntersection(en);
         assertTrue(result.equals(expResult));
         // Test 4
-        en = new V2D_EnvelopeDouble(pN1N1, pP0P1);
-        instance = new V2D_EnvelopeDouble(pP0N1, pP1P1);
-        expResult = new V2D_EnvelopeDouble(pP0N1, pP0P1);
+        en = new V2D_AABBDouble(pN1N1, pP0P1);
+        instance = new V2D_AABBDouble(pP0N1, pP1P1);
+        expResult = new V2D_AABBDouble(pP0N1, pP0P1);
         result = instance.getIntersection(en);
         assertTrue(result.equals(expResult));
     }
 
     /**
-     * Test of union method, of class V2D_EnvelopeDouble.
+     * Test of union method, of class V2D_AABBDouble.
      */
     @Test
     public void testUnion() {
         System.out.println("union");
-        V2D_EnvelopeDouble en = new V2D_EnvelopeDouble(pN2N2, pP1P1);
-        V2D_EnvelopeDouble instance = new V2D_EnvelopeDouble(pN1N1, pP2P2);
-        V2D_EnvelopeDouble expResult = new V2D_EnvelopeDouble(pN2N2, pP2P2);
-        V2D_EnvelopeDouble result = instance.union(en);
+        V2D_AABBDouble en = new V2D_AABBDouble(pN2N2, pP1P1);
+        V2D_AABBDouble instance = new V2D_AABBDouble(pN1N1, pP2P2);
+        V2D_AABBDouble expResult = new V2D_AABBDouble(pN2N2, pP2P2);
+        V2D_AABBDouble result = instance.union(en);
         assertTrue(result.equals(expResult));
     }
 
     /**
-     * Test of contains method, of class V2D_EnvelopeDouble.
+     * Test of contains method, of class V2D_AABBDouble.
      */
     @Test
     public void testIsContainedBy() {
         System.out.println("isContainedBy");
-        V2D_EnvelopeDouble en = new V2D_EnvelopeDouble(pN2N2, pP2P2);
-        V2D_EnvelopeDouble instance = new V2D_EnvelopeDouble(pN1N1, pP1P1);
+        V2D_AABBDouble en = new V2D_AABBDouble(pN2N2, pP2P2);
+        V2D_AABBDouble instance = new V2D_AABBDouble(pN1N1, pP1P1);
         assertTrue(instance.contains(en));
         // Test 2
-        instance = new V2D_EnvelopeDouble(pN2N2, pP2P2);
+        instance = new V2D_AABBDouble(pN2N2, pP2P2);
         assertTrue(instance.contains(en));
         // Test 3
-        en = new V2D_EnvelopeDouble(pN1N1, pP2P2);
+        en = new V2D_AABBDouble(pN1N1, pP2P2);
         assertFalse(instance.contains(en));
     }
 
     /**
-     * Test of getXMin method, of class V2D_EnvelopeDouble.
+     * Test of getXMin method, of class V2D_AABBDouble.
      */
     @Test
     public void testGetXMin() {
         System.out.println("getxMin");
-        V2D_EnvelopeDouble instance = new V2D_EnvelopeDouble(pP0N1, pP0N1, pN2N2);
+        V2D_AABBDouble instance = new V2D_AABBDouble(pP0N1, pP0N1, pN2N2);
         double expResult = -2d;
         double result = instance.getXMin();
         assertTrue(expResult == result);
     }
 
     /**
-     * Test of getXMax method, of class V2D_EnvelopeDouble.
+     * Test of getXMax method, of class V2D_AABBDouble.
      */
     @Test
     public void testGetXMax() {
         System.out.println("getxMax");
-        V2D_EnvelopeDouble instance = new V2D_EnvelopeDouble(pP0N1, pP0P0);
+        V2D_AABBDouble instance = new V2D_AABBDouble(pP0N1, pP0P0);
         double expResult = 0d;
         double result = instance.getXMax();
         assertTrue(expResult == result);
     }
 
     /**
-     * Test of getYMin method, of class V2D_EnvelopeDouble.
+     * Test of getYMin method, of class V2D_AABBDouble.
      */
     @Test
     public void testGetYMin() {
         System.out.println("getyMin");
-        V2D_EnvelopeDouble instance = new V2D_EnvelopeDouble(pP0N1, pP0P0, pN2N2);
+        V2D_AABBDouble instance = new V2D_AABBDouble(pP0N1, pP0P0, pN2N2);
         double expResult = -2d;
         double result = instance.getYMin();
         assertTrue(expResult == result);
     }
 
     /**
-     * Test of getYMax method, of class V2D_EnvelopeDouble.
+     * Test of getYMax method, of class V2D_AABBDouble.
      */
     @Test
     public void testGetYMax() {
         System.out.println("getyMax");
-        V2D_EnvelopeDouble instance = new V2D_EnvelopeDouble(pP0N1, pP0N1, pN2N2);
+        V2D_AABBDouble instance = new V2D_AABBDouble(pP0N1, pP0N1, pN2N2);
         double expResult = -1d;
         double result = instance.getYMax();
         assertTrue(expResult == result);
     }
 
     /**
-     * Test of translate method, of class V2D_EnvelopeDouble.
+     * Test of translate method, of class V2D_AABBDouble.
      */
     @Test
     public void testTranslate() {
         System.out.println("translate");
         V2D_VectorDouble v = P1P1;
-        V2D_EnvelopeDouble instance = new V2D_EnvelopeDouble(pP0P0, pP1P1);
-        V2D_EnvelopeDouble expResult = new V2D_EnvelopeDouble(pP1P1, pP2P2);
+        V2D_AABBDouble instance = new V2D_AABBDouble(pP0P0, pP1P1);
+        V2D_AABBDouble expResult = new V2D_AABBDouble(pP1P1, pP2P2);
         instance.translate(v);
         assertTrue(expResult.equals(instance));
         // Test 2
         v = N1N1;
-        instance = new V2D_EnvelopeDouble(pP0P0, pP1P1);
-        expResult = new V2D_EnvelopeDouble(pN1N1, pP0P0);
+        instance = new V2D_AABBDouble(pP0P0, pP1P1);
+        expResult = new V2D_AABBDouble(pN1N1, pP0P0);
         instance.translate(v);
         assertTrue(expResult.equals(instance));
     }

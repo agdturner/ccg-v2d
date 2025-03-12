@@ -317,9 +317,9 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
     }
 
     @Override
-    public V2D_EnvelopeDouble getEnvelope() {
+    public V2D_AABBDouble getAABB() {
         if (en == null) {
-            en = new V2D_EnvelopeDouble(getP(), getQ(), getR());
+            en = new V2D_AABBDouble(getP(), getQ(), getR());
         }
         return en;
     }
@@ -365,7 +365,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      * @return {@code true} iff {@code this} is intersected by {@code pt}
      */
     public boolean intersects(V2D_PointDouble pt, double epsilon) {
-        if (getEnvelope().intersects(pt.getEnvelope())) {
+        if (getAABB().intersects(pt.getAABB())) {
             return intersects0(pt, epsilon);
         }
         return false;
@@ -393,7 +393,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      * @return True iff there is an intersection.
      */
     public boolean intersects(V2D_LineSegmentDouble ls, double epsilon) {
-        if (ls.intersects(getEnvelope(), epsilon)) {
+        if (ls.intersects(getAABB(), epsilon)) {
             return intersects0(ls, epsilon);
         } else {
             return false;
@@ -498,8 +498,8 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      * @return True iff there is an intersection.
      */
     public boolean intersects(V2D_TriangleDouble t, double epsilon) {
-        //if (t.getEnvelope().intersects(getEnvelope())) {
-        if (t.intersects(getEnvelope(), epsilon)) {
+        //if (t.getAABB().intersects(getAABB())) {
+        if (t.intersects(getAABB(), epsilon)) {
             return V2D_TriangleDouble.this.intersects0(t, epsilon);
         } else {
             return false;
@@ -720,7 +720,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      */
     public V2D_FiniteGeometryDouble getIntersection(V2D_TriangleDouble t,
             double epsilon) {
-        if (getEnvelope().intersects(t.getEnvelope(), epsilon)) {
+        if (getAABB().intersects(t.getAABB(), epsilon)) {
             /**
              * Get intersections between the triangle edges. If there are none,
              * then either this returns t or vice versa. If there are some, then
@@ -1485,13 +1485,13 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff {@code this} is intersected by {@code aabb}.
      */
-    public boolean intersects(V2D_EnvelopeDouble aabb, double epsilon) {
+    public boolean intersects(V2D_AABBDouble aabb, double epsilon) {
 // Was resulting in java.util.ConcurrentModificationException!
 //        return (getPoints().values().parallelStream().anyMatch(x
 //                -> aabb.contains(x))
 //                || aabb.getPoints().parallelStream().anyMatch(x
 //                -> intersects(x, epsilon)));
-        if (getEnvelope().intersects(aabb, epsilon)) {
+        if (getAABB().intersects(aabb, epsilon)) {
             if (aabb.intersects(getP())
                     || aabb.intersects(getQ())
                     || aabb.intersects(getR())) {

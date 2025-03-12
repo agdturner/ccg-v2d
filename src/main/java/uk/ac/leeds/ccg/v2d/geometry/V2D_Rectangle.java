@@ -208,9 +208,9 @@ public class V2D_Rectangle extends V2D_Shape {
     }
 
     @Override
-    public V2D_Envelope getEnvelope(int oom, RoundingMode rm) {
+    public V2D_AABB getAABB(int oom, RoundingMode rm) {
         if (en == null) {
-            en = rsp.getEnvelope(oom, rm).union(pqr.getEnvelope(oom, rm), oom);
+            en = rsp.getAABB(oom, rm).union(pqr.getAABB(oom, rm), oom);
         }
         return en;
     }
@@ -651,7 +651,7 @@ public class V2D_Rectangle extends V2D_Shape {
      * @param rm The RoundingMode if rounding is needed.
      * @return {@code true} iff {@code this} is intersected by {@code aabb}.
      */
-    public boolean intersects(V2D_Envelope aabb, int oom, RoundingMode rm) {
+    public boolean intersects(V2D_AABB aabb, int oom, RoundingMode rm) {
         if (pqr.intersects(aabb, oom, rm)) {
             return true;
         }

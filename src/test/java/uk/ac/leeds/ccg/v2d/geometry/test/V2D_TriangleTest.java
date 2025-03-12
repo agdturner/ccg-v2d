@@ -28,7 +28,7 @@ import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigRational;
 import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_ConvexHull;
-import uk.ac.leeds.ccg.v2d.geometry.V2D_Envelope;
+import uk.ac.leeds.ccg.v2d.geometry.V2D_AABB;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_FiniteGeometry;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_Geometry;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_Line;
@@ -123,16 +123,16 @@ public class V2D_TriangleTest extends V2D_Test {
     }
 
     /**
-     * Test of getEnvelope method, of class V2D_Triangle.
+     * Test of getAABB method, of class V2D_Triangle.
      */
     @Test
-    public void testGetEnvelope() {
-        System.out.println("getEnvelope");
+    public void testGetAABB() {
+        System.out.println("getAABB");
         int oom = -6;
         RoundingMode rm = RoundingMode.HALF_UP;
         V2D_Triangle instance = new V2D_Triangle(pP0P0, pP0P1, pP1P0, oom, rm);
-        V2D_Envelope expResult = new V2D_Envelope(oom, pP0P0, pP0P1, pP1P0);
-        V2D_Envelope result = instance.getEnvelope(oom, rm);
+        V2D_AABB expResult = new V2D_AABB(oom, pP0P0, pP0P1, pP1P0);
+        V2D_AABB result = instance.getAABB(oom, rm);
         assertTrue(expResult.equals(result, oom));
     }
 

@@ -282,12 +282,12 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
     }
 
     /**
-     * @return {@code new V2D_Envelope(start, end)}
+     * @return {@code new V2D_AABB(start, end)}
      */
     @Override
-    public V2D_EnvelopeDouble getEnvelope() {
+    public V2D_AABBDouble getAABB() {
         if (en == null) {
-            en = new V2D_EnvelopeDouble(getP(), getQ());
+            en = new V2D_AABBDouble(getP(), getQ());
         }
         return en;
     }
@@ -305,7 +305,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      * @return {@code true} if {@code this} is intersected by {@code pv}.
      */
     public boolean intersects(V2D_PointDouble pt) {
-        if (getEnvelope().intersects(pt.getEnvelope())) {
+        if (getAABB().intersects(pt.getAABB())) {
             if (l.intersects(pt)) {
                 V2D_PointDouble tp = getP();
                 double a = pt.getDistance(tp);
@@ -332,7 +332,7 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      * @return {@code true} if {@code this} is intersected by {@code pv}.
      */
     public boolean intersects(V2D_PointDouble pt, double epsilon) {
-        if (getEnvelope().intersects(pt.getEnvelope(), epsilon)) {
+        if (getAABB().intersects(pt.getAABB(), epsilon)) {
             return intersects0(pt, epsilon);
         }
         return false;
@@ -534,8 +534,8 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
      */
     public V2D_FiniteGeometryDouble getIntersection(double epsilon,
             V2D_LineSegmentDouble ls) {
-        if (!getEnvelope().intersects(ls.getEnvelope())) {
-        //if (!getEnvelope().intersects(ls.getEnvelope(), epsilon)) {
+        if (!getAABB().intersects(ls.getAABB())) {
+        //if (!getAABB().intersects(ls.getAABB(), epsilon)) {
             return null;
         }
         double x1 = getP().getX();
@@ -1355,8 +1355,8 @@ public class V2D_LineSegmentDouble extends V2D_FiniteGeometryDouble {
 //            return this;
 //        }
 //    }
-    public boolean intersects(V2D_EnvelopeDouble aabb, double epsilon) {
-        if (getEnvelope().intersects(aabb, epsilon)) {
+    public boolean intersects(V2D_AABBDouble aabb, double epsilon) {
+        if (getAABB().intersects(aabb, epsilon)) {
             V2D_PointDouble p = getP();
             if (aabb.intersects(p)) {
                 return true;

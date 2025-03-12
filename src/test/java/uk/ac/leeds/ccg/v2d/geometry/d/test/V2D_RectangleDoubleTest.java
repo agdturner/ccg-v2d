@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import uk.ac.leeds.ccg.math.arithmetic.Math_Double;
 import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
-import uk.ac.leeds.ccg.v2d.geometry.d.V2D_EnvelopeDouble;
+import uk.ac.leeds.ccg.v2d.geometry.d.V2D_AABBDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_GeometryDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_LineDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_LineSegmentDouble;
@@ -60,11 +60,11 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of getEnvelope method, of class V2D_RectangleDouble.
+     * Test of getAABB method, of class V2D_RectangleDouble.
      */
     @Test
-    public void testGetEnvelope() {
-        System.out.println("getEnvelope");
+    public void testGetAABB() {
+        System.out.println("getAABB");
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
         /*
@@ -75,26 +75,26 @@ public class V2D_RectangleDoubleTest extends V2D_TestDouble {
          * pv ----------- s
          */
         V2D_RectangleDouble instance;
-        V2D_EnvelopeDouble expResult;
-        V2D_EnvelopeDouble result;
+        V2D_AABBDouble expResult;
+        V2D_AABBDouble result;
         instance = new V2D_RectangleDouble(pN1P1, pP1P1, pP1N1, pN1N1);
-        expResult = new V2D_EnvelopeDouble(pN1N1, pP1P1);
-        result = instance.getEnvelope();
+        expResult = new V2D_AABBDouble(pN1N1, pP1P1);
+        result = instance.getAABB();
         assertTrue(expResult.equals(result));
         // Test 2
         instance = new V2D_RectangleDouble(pN1P1, pP1P1, pP1N1, pN1N1);
-        expResult = new V2D_EnvelopeDouble(pN1N1, pP1P1);
-        result = instance.getEnvelope();
+        expResult = new V2D_AABBDouble(pN1N1, pP1P1);
+        result = instance.getAABB();
         assertTrue(expResult.equals(result));
         // Test 3
         instance = new V2D_RectangleDouble(pN1P1, pP1P1, pP1N1, pN1N1);
-        expResult = new V2D_EnvelopeDouble(pN1N1, pP1P1);
-        result = instance.getEnvelope();
+        expResult = new V2D_AABBDouble(pN1N1, pP1P1);
+        result = instance.getAABB();
         assertTrue(expResult.equals(result));
         // Test 4
         instance = new V2D_RectangleDouble(pN1N1, pP1N1, pP1P1, pN1P1);
-        expResult = new V2D_EnvelopeDouble(pN1N1, pP1P1);
-        result = instance.getEnvelope();
+        expResult = new V2D_AABBDouble(pN1N1, pP1P1);
+        result = instance.getAABB();
         assertTrue(expResult.equals(result));
     }
 

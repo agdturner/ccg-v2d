@@ -202,9 +202,9 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
     }
 
     @Override
-    public V2D_EnvelopeDouble getEnvelope() {
+    public V2D_AABBDouble getAABB() {
         if (en == null) {
-            en = getRSP().getEnvelope().union(getPQR().getEnvelope());
+            en = getRSP().getAABB().union(getPQR().getAABB());
         }
         return en;
     }
@@ -647,7 +647,7 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff {@code this} is intersected by {@code aabb}.
      */
-    public boolean intersects(V2D_EnvelopeDouble aabb, double epsilon) {
+    public boolean intersects(V2D_AABBDouble aabb, double epsilon) {
         if (pqr.intersects(aabb, epsilon)) {
             return true;
         }

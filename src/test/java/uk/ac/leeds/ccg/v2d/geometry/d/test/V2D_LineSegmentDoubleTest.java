@@ -22,7 +22,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import uk.ac.leeds.ccg.math.arithmetic.Math_Double;
-import uk.ac.leeds.ccg.v2d.geometry.d.V2D_EnvelopeDouble;
+import uk.ac.leeds.ccg.v2d.geometry.d.V2D_AABBDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_GeometryDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_LineDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_LineSegmentDouble;
@@ -77,18 +77,18 @@ public class V2D_LineSegmentDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of getEnvelope method, of class V2D_LineSegmentDouble.
+     * Test of getAABB method, of class V2D_LineSegmentDouble.
      */
     @Test
-    public void testGetEnvelope() {
-        System.out.println("getEnvelope");
+    public void testGetAABB() {
+        System.out.println("getAABB");
         V2D_LineSegmentDouble instance = new V2D_LineSegmentDouble(pN1N1, pP1P1);
-        V2D_EnvelopeDouble expResult = new V2D_EnvelopeDouble(pN1N1, pP1P1);
-        V2D_EnvelopeDouble result = instance.getEnvelope();
+        V2D_AABBDouble expResult = new V2D_AABBDouble(pN1N1, pP1P1);
+        V2D_AABBDouble result = instance.getAABB();
         assertTrue(expResult.equals(result));
         // Test 2
         instance = new V2D_LineSegmentDouble(pP1N1, pN1P1);
-        result = instance.getEnvelope();
+        result = instance.getAABB();
         assertTrue(expResult.equals(result));
         
     }

@@ -335,8 +335,8 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
     }
 
     @Override
-    public V2D_EnvelopeDouble getEnvelope() {
-        return new V2D_EnvelopeDouble(this);
+    public V2D_AABBDouble getAABB() {
+        return new V2D_AABBDouble(this);
     }
 
     /**
@@ -470,7 +470,7 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
 //            V2D_PointDouble... pts) {
 //        return getUnique(Arrays.asList(pts), epsilon);
 //    }
-    public boolean intersects(V2D_EnvelopeDouble aabb, double epsilon) {
+    public boolean intersects(V2D_AABBDouble aabb, double epsilon) {
         return aabb.intersects(this);
     }
 

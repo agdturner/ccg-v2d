@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigRational;
 import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
-import uk.ac.leeds.ccg.v2d.geometry.V2D_Envelope;
+import uk.ac.leeds.ccg.v2d.geometry.V2D_AABB;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_Geometry;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_Line;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_LineSegment;
@@ -63,11 +63,11 @@ public class V2D_RectangleTest extends V2D_Test {
     }
 
     /**
-     * Test of getEnvelope method, of class V2D_Rectangle.
+     * Test of getAABB method, of class V2D_Rectangle.
      */
     @Test
-    public void testGetEnvelope() {
-        System.out.println("getEnvelope");
+    public void testGetAABB() {
+        System.out.println("getAABB");
         int oom = -6;
         RoundingMode rm = RoundingMode.HALF_UP;
         /*
@@ -78,26 +78,26 @@ public class V2D_RectangleTest extends V2D_Test {
          * pv ----------- s
          */
         V2D_Rectangle instance;
-        V2D_Envelope expResult;
-        V2D_Envelope result;
+        V2D_AABB expResult;
+        V2D_AABB result;
         instance = new V2D_Rectangle(pN1P1, pP1P1, pP1N1, pN1N1, oom, rm);
-        expResult = new V2D_Envelope(oom, pN1N1, pP1P1);
-        result = instance.getEnvelope(oom, rm);
+        expResult = new V2D_AABB(oom, pN1N1, pP1P1);
+        result = instance.getAABB(oom, rm);
         assertTrue(expResult.equals(result, oom));
         // Test 2
         instance = new V2D_Rectangle(pN1P1, pP1P1, pP1N1, pN1N1, oom, rm);
-        expResult = new V2D_Envelope(oom, pN1N1, pP1P1);
-        result = instance.getEnvelope(oom, rm);
+        expResult = new V2D_AABB(oom, pN1N1, pP1P1);
+        result = instance.getAABB(oom, rm);
         assertTrue(expResult.equals(result, oom));
         // Test 3
         instance = new V2D_Rectangle(pN1P1, pP1P1, pP1N1, pN1N1, oom, rm);
-        expResult = new V2D_Envelope(oom, pN1N1, pP1P1);
-        result = instance.getEnvelope(oom, rm);
+        expResult = new V2D_AABB(oom, pN1N1, pP1P1);
+        result = instance.getAABB(oom, rm);
         assertTrue(expResult.equals(result, oom));
         // Test 4
         instance = new V2D_Rectangle(pN1N1, pP1N1, pP1P1, pN1P1, oom, rm);
-        expResult = new V2D_Envelope(oom, pN1N1, pP1P1);
-        result = instance.getEnvelope(oom, rm);
+        expResult = new V2D_AABB(oom, pN1N1, pP1P1);
+        result = instance.getAABB(oom, rm);
         assertTrue(expResult.equals(result, oom));
     }
 

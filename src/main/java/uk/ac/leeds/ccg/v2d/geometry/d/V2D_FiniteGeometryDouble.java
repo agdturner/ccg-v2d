@@ -32,7 +32,7 @@ public abstract class V2D_FiniteGeometryDouble extends V2D_GeometryDouble {
     /**
      * For storing the envelope.
      */
-    protected V2D_EnvelopeDouble en;
+    protected V2D_AABBDouble en;
     
     /**
      * Creates a new instance with offset V2D_Vector.ZERO.
@@ -54,11 +54,11 @@ public abstract class V2D_FiniteGeometryDouble extends V2D_GeometryDouble {
     }
     
     /**
-     * For getting the envelope of the geometry
+     * For getting the Axis Aligned Bounding Box of the geometry
      *
-     * @return The envelope.
+     * @return The Axis Aligned Bounding Box.
      */
-    public abstract V2D_EnvelopeDouble getEnvelope();
+    public abstract V2D_AABBDouble getAABB();
     
     /**
      * Translate (move relative to the origin).

@@ -22,14 +22,18 @@ import java.util.HashSet;
 import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
 
 /**
- * An envelope contains all the extreme values with respect to the X and Y axes.
- * It is an axis aligned bounding box, which may have length of zero in any
- * direction. For a point the envelope is essentially the point.
+ * An Axis Aligned Bounding Box defined by the extreme values with respect to 
+ * the X and Y axes. If {@link xMin} &LT; {@link xMax} and {@link yMin} &LT; 
+ * {@link yMax} the bounding box defines a rectangular area in the XY plane. If 
+ * {@link xMin} = {@link xMax} or {@link yMin} = {@link yMax} the bounding box 
+ * is a line segment parallel to either the Y axis or X axis respectively. If 
+ * {@link xMin} = {@link xMax} and {@link yMin} = {@link yMax} the bounding box 
+ * is a point.
  *
  * @author Andy Turner
  * @version 2.0
  */
-public class V2D_Envelope implements Serializable {
+public class V2D_AABB implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -84,25 +88,35 @@ public class V2D_Envelope implements Serializable {
     protected V2D_Point ul;
 
     /**
-     * The top/upper edge.
+     * The left geometry.
      */
-    protected V2D_FiniteGeometry t;
+    protected V3D_AABBX l;
 
     /**
-     * The right edge.
+     * The right geometry.
      */
-    protected V2D_FiniteGeometry r;
+    protected V3D_AABBX r;
 
     /**
-     * The bottom/lower edge.
+     * The top geometry.
      */
-    protected V2D_FiniteGeometry b;
+    protected V3D_AABBY t;
 
     /**
-     * The left edge.
+     * The bottom geometry.
      */
-    protected V2D_FiniteGeometry l;
+    protected V3D_AABBY b;
 
+    /**
+     * The fore geometry.
+     */
+    protected V3D_AABBZ f;
+    
+    /**
+     * The aft geometry.
+     */
+    protected V3D_AABBZ a;
+    
     /**
      * For storing all the points.N.B {@link #ll}, {@link #lu}, {@link #uu},
     {@link #lu} may all be the same.
@@ -110,9 +124,9 @@ public class V2D_Envelope implements Serializable {
     protected HashSet<V2D_Point> pts;
 
     /**
-     * @param e An envelope.
+     * @param e An Axis Aligned Bounding Box.
      */
-    public V2D_Envelope(V2D_Envelope e) {
+    public V2D_AABB(V2D_AABB e) {
         env = e.env;
         offset = e.offset;
         yMin = e.yMin;
@@ -138,7 +152,7 @@ public class V2D_Envelope implements Serializable {
      * @param x The x-coordinate of a point.
      * @param y The y-coordinate of a point.
      */
-    public V2D_Envelope(V2D_Environment env, int oom, BigRational x, BigRational y) {
+    public V2D_AABB(V2D_Environment env, int oom, BigRational x, BigRational y) {
         this(oom, new V2D_Point(env, x, y));
     }
 
@@ -152,7 +166,7 @@ public class V2D_Envelope implements Serializable {
      * @param yMin What {@link yMin} is set to.
      * @param yMax What {@link yMax} is set to.
      */
-    public V2D_Envelope(V2D_Environment env, int oom,
+    public V2D_AABB(V2D_Environment env, int oom,
             BigRational xMin, BigRational xMax,
             BigRational yMin, BigRational yMax) {
         this(oom, new V2D_Point(env, xMin, yMin),
@@ -164,12 +178,12 @@ public class V2D_Envelope implements Serializable {
      *
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
-     * @param gs The geometries used to form the envelope.
+     * @param gs The geometries used to form the Axis Aligned Bounding Box.
      */
-    public V2D_Envelope(int oom, RoundingMode rm, V2D_FiniteGeometry... gs) {
-        V2D_Envelope e = new V2D_Envelope(gs[0], oom, rm);
+    public V2D_AABB(int oom, RoundingMode rm, V2D_FiniteGeometry... gs) {
+        V2D_AABB e = new V2D_AABB(gs[0], oom, rm);
         for (V2D_FiniteGeometry g : gs) {
-            e = e.union(new V2D_Envelope(g, oom, rm), oom);
+            e = e.union(new V2D_AABB(g, oom, rm), oom);
         }
         env = e.env;
         offset = e.offset;
@@ -191,11 +205,11 @@ public class V2D_Envelope implements Serializable {
     /**
      * Create a new instance.
      *
-     * @param g The geometry used to form the envelope.
+     * @param g The geometry used to form the Axis Aligned Bounding Box.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.
      */
-    public V2D_Envelope(V2D_FiniteGeometry g, int oom, RoundingMode rm) {
+    public V2D_AABB(V2D_FiniteGeometry g, int oom, RoundingMode rm) {
         this(oom, g.getPointsArray(oom, rm));
     }
 
@@ -204,13 +218,13 @@ public class V2D_Envelope implements Serializable {
      * @param points The points used to form the envelop.
      * @throws RuntimeException if points.length == 0.
      */
-    public V2D_Envelope(int oom, V2D_Point... points) {
+    public V2D_AABB(int oom, V2D_Point... points) {
         //offset = points[0].offset;
         //offset = V2D_Vector.ZERO;
         int len = points.length;
         switch (len) {
             case 0 ->
-                throw new RuntimeException("Cannot create envelope from an empty "
+                throw new RuntimeException("Cannot create Axis Aligned Bounding Box from an empty "
                         + "collection of points.");
             case 1 -> {
                 offset = V2D_Vector.ZERO;
@@ -277,11 +291,11 @@ public class V2D_Envelope implements Serializable {
     /**
      * Test for equality.
      *
-     * @param e The V2D_Envelope to test for equality with this.
+     * @param e The V2D_AABB to test for equality with this.
      * @param oom The Order of Magnitude for the precision.
      * @return {@code true} iff {@code this} and {@code e} are equal.
      */
-    public boolean equals(V2D_Envelope e, int oom) {
+    public boolean equals(V2D_AABB e, int oom) {
         return this.getXMin(oom).compareTo(e.getXMin(oom)) == 0
                 && this.getXMax(oom).compareTo(e.getXMax(oom)) == 0
                 && this.getYMin(oom).compareTo(e.getYMin(oom)) == 0
@@ -415,7 +429,7 @@ public class V2D_Envelope implements Serializable {
     /**
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
-     * @return the left of the envelope.
+     * @return the left of the Axis Aligned Bounding Box.
      */
     public V2D_FiniteGeometry getLeft(int oom, RoundingMode rm) {
         if (l == null) {
@@ -436,7 +450,7 @@ public class V2D_Envelope implements Serializable {
     /**
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
-     * @return the right of the envelope.
+     * @return the right of the Axis Aligned Bounding Box.
      */
     public V2D_FiniteGeometry getRight(int oom, RoundingMode rm) {
         if (r == null) {
@@ -457,7 +471,7 @@ public class V2D_Envelope implements Serializable {
     /**
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
-     * @return the top of the envelope.
+     * @return the top of the Axis Aligned Bounding Box.
      */
     public V2D_FiniteGeometry getTop(int oom, RoundingMode rm) {
         if (t == null) {
@@ -478,7 +492,7 @@ public class V2D_Envelope implements Serializable {
     /**
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
-     * @return the bottom of the envelope.
+     * @return the bottom of the Axis Aligned Bounding Box.
      */
     public V2D_FiniteGeometry getBottom(int oom, RoundingMode rm) {
         if (b == null) {
@@ -537,7 +551,7 @@ public class V2D_Envelope implements Serializable {
     }
 
     /**
-     * Calculate and return the approximate (or exact) centroid of the envelope.
+     * Calculate and return the approximate (or exact) centroid of the Axis Aligned Bounding Box.
      *
      * @param oom The Order of Magnitude for the precision.
      * @return The approximate or exact centre of this.
@@ -549,15 +563,16 @@ public class V2D_Envelope implements Serializable {
     }
 
     /**
-     * @param e The V3D_Envelope to union with this.
+     * @param e The Axis Aligned Bounding Box to union with this.
      * @param oom The Order of Magnitude for the precision.
-     * @return an Envelope which is {@code this} union {@code e}.
+     * @return the Axis Aligned Bounding Box which contains both {@code this} 
+     * and {@code e}.
      */
-    public V2D_Envelope union(V2D_Envelope e, int oom) {
+    public V2D_AABB union(V2D_AABB e, int oom) {
         if (this.contains(e, oom)) {
             return this;
         } else {
-            return new V2D_Envelope(env, oom,
+            return new V2D_AABB(env, oom,
                     BigRational.min(e.getXMin(oom), getXMin(oom)),
                     BigRational.max(e.getXMax(oom), getXMax(oom)),
                     BigRational.min(e.getYMin(oom), getYMin(oom)),
@@ -570,12 +585,12 @@ public class V2D_Envelope implements Serializable {
      * avoidance, this is biased towards returning an intersection even if there
      * may not be one at a lower oom precision.
      *
-     * @param e The Vector_Envelope2D to test for intersection.
+     * @param e The Vector_AABB2D to test for intersection.
      * @param oom The Order of Magnitude for the precision.
      * @return {@code true} if this intersects with {@code e} it the {@code oom}
      * level of precision.
      */
-    public boolean intersects(V2D_Envelope e, int oom) {
+    public boolean intersects(V2D_AABB e, int oom) {
         if (isBeyond(e, oom)) {
             return !e.isBeyond(this, oom);
         } else {
@@ -584,12 +599,12 @@ public class V2D_Envelope implements Serializable {
     }
 
     /**
-     * @param e The envelope to test if {@code this} is beyond.
+     * @param e The Axis Aligned Bounding Box to test if {@code this} is beyond.
      * @param oom The Order of Magnitude for the precision.
      * @return {@code true} iff {@code this} is beyond {@code e} (i.e. they do
      * not touch or intersect).
      */
-    public boolean isBeyond(V2D_Envelope e, int oom) {
+    public boolean isBeyond(V2D_AABB e, int oom) {
         return getXMax(oom).compareTo(e.getXMin(oom)) == -1
                 || getXMin(oom).compareTo(e.getXMax(oom)) == 1
                 || getYMax(oom).compareTo(e.getYMin(oom)) == -1
@@ -597,11 +612,11 @@ public class V2D_Envelope implements Serializable {
     }
 
     /**
-     * @param e V3D_Envelope The envelope to test if it is contained.
+     * @param e V3D_AABB The Axis Aligned Bounding Box to test if it is contained.
      * @param oom The Order of Magnitude for the precision.
      * @return {@code true} iff {@code this} contains {@code e}.
      */
-    public boolean contains(V2D_Envelope e, int oom) {
+    public boolean contains(V2D_AABB e, int oom) {
         return getXMax(oom).compareTo(e.getXMax(oom)) != -1
                 && getXMin(oom).compareTo(e.getXMin(oom)) != 1
                 && getYMax(oom).compareTo(e.getYMax(oom)) != -1
@@ -657,7 +672,7 @@ public class V2D_Envelope implements Serializable {
      * @return {@code true} if this contains {@code s}
      */
     public boolean contains(V2D_Shape s, int oom, RoundingMode rm) {
-        return contains(s.getEnvelope(oom, rm), oom)
+        return contains(s.getAABB(oom, rm), oom)
                 && contains0(s, oom, rm);
     }
 
@@ -816,12 +831,12 @@ public class V2D_Envelope implements Serializable {
 //        return false;
 //    }
     /**
-     * @param en The envelope to intersect.
+     * @param en The Axis Aligned Bounding Box to intersect.
      * @param oom The Order of Magnitude for the precision.
      * @return {@code null} if there is no intersection; {@code en} if
      * {@code this.equals(en)}; otherwise returns the intersection.
      */
-    public V2D_Envelope getIntersection(V2D_Envelope en, int oom) {
+    public V2D_AABB getIntersection(V2D_AABB en, int oom) {
         if (!intersects(en, oom)) {
             return null;
         }
@@ -832,7 +847,7 @@ public class V2D_Envelope implements Serializable {
 //        if (en.contains(this, oom)) {
 //            return en;
 //        }
-        return new V2D_Envelope(env, oom,
+        return new V2D_AABB(env, oom,
                 BigRational.max(getXMin(oom), en.getXMin(oom)),
                 BigRational.min(getXMax(oom), en.getXMax(oom)),
                 BigRational.max(getYMin(oom), en.getYMin(oom)),

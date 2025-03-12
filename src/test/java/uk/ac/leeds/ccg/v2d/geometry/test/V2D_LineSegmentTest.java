@@ -16,10 +16,7 @@
 package uk.ac.leeds.ccg.v2d.geometry.test;
 
 import ch.obermuhlner.math.big.BigRational;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
-import uk.ac.leeds.ccg.v2d.geometry.d.test.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,9 +25,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigRational;
-import uk.ac.leeds.ccg.math.arithmetic.Math_Double;
 import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
-import uk.ac.leeds.ccg.v2d.geometry.V2D_Envelope;
+import uk.ac.leeds.ccg.v2d.geometry.V2D_AABB;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_Geometry;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_Line;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_LineSegment;
@@ -87,20 +83,20 @@ public class V2D_LineSegmentTest extends V2D_Test {
     }
 
     /**
-     * Test of getEnvelope method, of class V2D_LineSegment.
+     * Test of getAABB method, of class V2D_LineSegment.
      */
     @Test
-    public void testGetEnvelope() {
-        System.out.println("getEnvelope");
+    public void testGetAABB() {
+        System.out.println("getAABB");
         int oom = -6;
         RoundingMode rm = RoundingMode.HALF_UP;
         V2D_LineSegment instance = new V2D_LineSegment(pN1N1, pP1P1, oom, rm);
-        V2D_Envelope expResult = new V2D_Envelope(oom, pN1N1, pP1P1);
-        V2D_Envelope result = instance.getEnvelope(oom, rm);
+        V2D_AABB expResult = new V2D_AABB(oom, pN1N1, pP1P1);
+        V2D_AABB result = instance.getAABB(oom, rm);
         assertTrue(expResult.equals(result, oom));
         // Test 2
         instance = new V2D_LineSegment(pP1N1, pN1P1, oom, rm);
-        result = instance.getEnvelope(oom, rm);
+        result = instance.getAABB(oom, rm);
         assertTrue(expResult.equals(result, oom));
     }
 
@@ -378,7 +374,7 @@ public class V2D_LineSegmentTest extends V2D_Test {
         // Test 5
         p = pN1N1;
         expResult = BigRational.TWO;
-        result = instance.getDistanceSquared(pN1N1, oom, rm);
+        result = instance.getDistanceSquared(p, oom, rm);
         assertTrue(Math_BigRational.equals(expResult, result, oom));
         // Test 6
         p = pN2N2;
@@ -492,7 +488,6 @@ public class V2D_LineSegmentTest extends V2D_Test {
         // Test 3
         l0 = new V2D_LineSegment(pP1P0, pP1P1, oom, rm);
         l1 = new V2D_Line(pN1P0, pN2P0, oom, rm);
-        expResult = null;
         result = l0.getLineOfIntersection(l1, oom, rm);
         assertNull(result);
         // Test 4

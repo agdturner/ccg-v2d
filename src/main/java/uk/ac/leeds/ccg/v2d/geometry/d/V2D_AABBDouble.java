@@ -28,7 +28,7 @@ import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
  * @author Andy Turner
  * @version 1.0
  */
-public class V2D_EnvelopeDouble implements Serializable {
+public class V2D_AABBDouble implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -111,7 +111,7 @@ public class V2D_EnvelopeDouble implements Serializable {
     /**
      * @param e An envelop.
      */
-    public V2D_EnvelopeDouble(V2D_EnvelopeDouble e) {
+    public V2D_AABBDouble(V2D_AABBDouble e) {
         env = e.env;
         offset = e.offset;
         yMin = e.yMin;
@@ -136,7 +136,7 @@ public class V2D_EnvelopeDouble implements Serializable {
      * @param x The x-coordinate of a point.
      * @param y The y-coordinate of a point.
      */
-    public V2D_EnvelopeDouble(V2D_EnvironmentDouble env, double x, double y) {
+    public V2D_AABBDouble(V2D_EnvironmentDouble env, double x, double y) {
         this(new V2D_PointDouble(env, x, y));
     }
 
@@ -149,7 +149,7 @@ public class V2D_EnvelopeDouble implements Serializable {
      * @param yMin What {@link yMin} is set to.
      * @param yMax What {@link yMax} is set to.
      */
-    public V2D_EnvelopeDouble(V2D_EnvironmentDouble env,
+    public V2D_AABBDouble(V2D_EnvironmentDouble env,
             double xMin, double xMax,
             double yMin, double yMax) {
         this(new V2D_PointDouble(env, xMin, yMin),
@@ -161,10 +161,10 @@ public class V2D_EnvelopeDouble implements Serializable {
      *
      * @param gs The geometries used to form the envelope.
      */
-    public V2D_EnvelopeDouble(V2D_FiniteGeometryDouble... gs) {
-        V2D_EnvelopeDouble e = new V2D_EnvelopeDouble(gs[0]);
+    public V2D_AABBDouble(V2D_FiniteGeometryDouble... gs) {
+        V2D_AABBDouble e = new V2D_AABBDouble(gs[0]);
         for (V2D_FiniteGeometryDouble g : gs) {
-            e = e.union(new V2D_EnvelopeDouble(g));
+            e = e.union(new V2D_AABBDouble(g));
         }
         env = e.env;
         yMin = e.yMin;
@@ -187,7 +187,7 @@ public class V2D_EnvelopeDouble implements Serializable {
      *
      * @param g The geometry used to form the envelope.
      */
-    public V2D_EnvelopeDouble(V2D_FiniteGeometryDouble g) {
+    public V2D_AABBDouble(V2D_FiniteGeometryDouble g) {
         this(g.getPointsArray());
     }
 
@@ -196,7 +196,7 @@ public class V2D_EnvelopeDouble implements Serializable {
      *
      * @param points The points used to form the envelope.
      */
-    public V2D_EnvelopeDouble(V2D_PointDouble... points) {
+    public V2D_AABBDouble(V2D_PointDouble... points) {
         //offset = points[0].offset;
         //offset = V2D_VectorDouble.ZERO;
         int len = points.length;
@@ -267,10 +267,10 @@ public class V2D_EnvelopeDouble implements Serializable {
     /**
      * Test for equality.
      *
-     * @param e The V2D_Envelope to test for equality with this.
+     * @param e The V2D_AABB to test for equality with this.
      * @return {@code true} iff {@code this} and {@code e} are equal.
      */
-    public boolean equals(V2D_EnvelopeDouble e) {
+    public boolean equals(V2D_AABBDouble e) {
         return this.getXMin() == e.getXMin()
                 && this.getXMax() == e.getXMax()
                 && this.getYMin() == e.getYMin()
@@ -463,14 +463,14 @@ public class V2D_EnvelopeDouble implements Serializable {
     }
 
     /**
-     * @param e The V2D_Envelope to union with this.
+     * @param e The V2D_AABB to union with this.
      * @return an Envelope which is {@code this} union {@code e}.
      */
-    public V2D_EnvelopeDouble union(V2D_EnvelopeDouble e) {
+    public V2D_AABBDouble union(V2D_AABBDouble e) {
         if (contains(e)) {
             return this;
         } else {
-            return new V2D_EnvelopeDouble(e.env,
+            return new V2D_AABBDouble(e.env,
                     Math.min(e.getXMin(), getXMin()),
                     Math.max(e.getXMax(), getXMax()),
                     Math.min(e.getYMin(), getYMin()),
@@ -484,7 +484,7 @@ public class V2D_EnvelopeDouble implements Serializable {
      * @param e The Vector_Envelope2D to test for intersection.
      * @return {@code true} if this intersects with {@code e}.
      */
-    public boolean intersects(V2D_EnvelopeDouble e) {
+    public boolean intersects(V2D_AABBDouble e) {
         return intersects(e, 0d);
     }
 
@@ -496,7 +496,7 @@ public class V2D_EnvelopeDouble implements Serializable {
      * equal.
      * @return {@code true} if this intersects with {@code e}.
      */
-    public boolean intersects(V2D_EnvelopeDouble e, double epsilon) {
+    public boolean intersects(V2D_AABBDouble e, double epsilon) {
         if (isBeyond(e, epsilon)) {
             return !e.isBeyond(this, epsilon);
         } else {
@@ -511,7 +511,7 @@ public class V2D_EnvelopeDouble implements Serializable {
      * @return {@code true} iff {@code this} is beyond {@code e} (i.e. they do
      * not touch or intersect).
      */
-    public boolean isBeyond(V2D_EnvelopeDouble e, double epsilon) {
+    public boolean isBeyond(V2D_AABBDouble e, double epsilon) {
         return getXMax() + epsilon < e.getXMin()
                 || getXMin() - epsilon > e.getXMax()
                 || getYMax() + epsilon < e.getYMin()
@@ -522,10 +522,10 @@ public class V2D_EnvelopeDouble implements Serializable {
      * Containment includes the boundary. So anything in or on the boundary is
      * contained.
      *
-     * @param e V2D_Envelope
+     * @param e V2D_AABB
      * @return if this is contained by {@code e}
      */
-    public boolean contains(V2D_EnvelopeDouble e) {
+    public boolean contains(V2D_AABBDouble e) {
         return getXMax() <= e.getXMax()
                 && getXMin() >= e.getXMin()
                 && getYMax() <= e.getYMax()
@@ -567,8 +567,7 @@ public class V2D_EnvelopeDouble implements Serializable {
      * @return {@code true} if this intersects with {@code pl}
      */
     public boolean contains(V2D_ShapeDouble s) {
-        return contains(s.getEnvelope())
-                && contains0(s);
+        return contains(s.getAABB()) && contains0(s);
     }
 
     /**
@@ -605,11 +604,11 @@ public class V2D_EnvelopeDouble implements Serializable {
      * @return {@code null} if there is no intersection; {@code en} if
      * {@code this.equals(en)}; otherwise returns the intersection.
      */
-    public V2D_EnvelopeDouble getIntersection(V2D_EnvelopeDouble en) {
+    public V2D_AABBDouble getIntersection(V2D_AABBDouble en) {
         if (!this.intersects(en)) {
             return null;
         }
-        return new V2D_EnvelopeDouble(en.env,
+        return new V2D_AABBDouble(en.env,
                 Math.max(getXMin(), en.getXMin()),
                 Math.min(getXMax(), en.getXMax()),
                 Math.max(getYMin(), en.getYMin()),

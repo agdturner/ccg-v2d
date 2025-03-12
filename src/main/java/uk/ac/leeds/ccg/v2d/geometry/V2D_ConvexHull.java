@@ -286,11 +286,11 @@ public class V2D_ConvexHull extends V2D_Shape {
     }
 
     @Override
-    public V2D_Envelope getEnvelope(int oom, RoundingMode rm) {
+    public V2D_AABB getAABB(int oom, RoundingMode rm) {
         if (en == null) {
-            en = points.get(0).getEnvelope(oom, rm);
+            en = points.get(0).getAABB(oom, rm);
             for (int i = 1; i < points.size(); i++) {
-                en = en.union(points.get(i).getEnvelope(oom, rm), oom);
+                en = en.union(points.get(i).getAABB(oom, rm), oom);
             }
         }
         return en;
@@ -326,7 +326,7 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @return {@code true} iff {@code this} is intersected by {@code p}.
      */
     public boolean intersects(V2D_Point pt, int oom, RoundingMode rm) {
-        return getEnvelope(oom, rm).contains(pt, oom)
+        return getAABB(oom, rm).contains(pt, oom)
                 && intersects0(pt, oom, rm);
     }
 
@@ -428,7 +428,7 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @return {@code true} iff {@code this} is intersected by {@code l}.
      */
     public boolean intersects(V2D_LineSegment l, int oom, RoundingMode rm) {
-        return l.intersects(getEnvelope(oom, rm), oom, rm)
+        return l.intersects(getAABB(oom, rm), oom, rm)
                 && intersects0(l, oom, rm);
     }
 
@@ -454,7 +454,7 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @return {@code true} iff {@code this} is intersected by {@code t}.
      */
     public boolean intersects(V2D_Triangle t, int oom, RoundingMode rm) {
-        return t.intersects(getEnvelope(oom, rm), oom, rm)
+        return t.intersects(getAABB(oom, rm), oom, rm)
                 && intersects0(t, oom, rm);
     }
 
@@ -480,7 +480,7 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @return {@code true} iff {@code this} is intersected by {@code r}.
      */
     public boolean intersects(V2D_Rectangle r, int oom, RoundingMode rm) {
-        return r.intersects(getEnvelope(oom, rm), oom, rm)
+        return r.intersects(getAABB(oom, rm), oom, rm)
                 && intersects0(r, oom, rm);
     }
 
@@ -506,8 +506,8 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @return {@code true} iff {@code this} is intersected by {@code ch}.
      */
     public boolean intersects(V2D_ConvexHull ch, int oom, RoundingMode rm) {
-        return ch.intersects(getEnvelope(oom, rm), oom, rm)
-                && intersects(ch.getEnvelope(oom, rm), oom, rm)
+        return ch.intersects(getAABB(oom, rm), oom, rm)
+                && intersects(ch.getAABB(oom, rm), oom, rm)
                 && intersects0(ch, oom, rm);
     }
 
@@ -618,8 +618,8 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @param rm The RoundingMode if rounding is needed.
      * @return {@code true} iff {@code this} is intersected by {@code aabb}.
      */
-    public boolean intersects(V2D_Envelope aabb, int oom, RoundingMode rm) {
-        return getEnvelope(oom, rm).intersects(aabb, oom)
+    public boolean intersects(V2D_AABB aabb, int oom, RoundingMode rm) {
+        return getAABB(oom, rm).intersects(aabb, oom)
                 && intersects0(aabb, oom, rm);
     }
 
@@ -633,7 +633,7 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @return {@code true} iff the geometry intersects aabb at the given 
      * precision.
      */
-    public boolean intersects0(V2D_Envelope aabb, int oom, RoundingMode rm) {
+    public boolean intersects0(V2D_AABB aabb, int oom, RoundingMode rm) {
         return getTriangles(oom, rm).parallelStream().anyMatch(x
                 -> x.intersects(aabb, oom, rm));
     }

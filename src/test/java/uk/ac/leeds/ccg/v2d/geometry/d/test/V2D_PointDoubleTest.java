@@ -22,7 +22,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import uk.ac.leeds.ccg.v2d.geometry.d.V2D_EnvelopeDouble;
+import uk.ac.leeds.ccg.v2d.geometry.d.V2D_AABBDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_PointDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_VectorDouble;
 
@@ -97,13 +97,13 @@ public class V2D_PointDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of getEnvelope method, of class V2D_PointDouble.
+     * Test of getAABB method, of class V2D_PointDouble.
      */
     @Test
     public void testGetEnvelope() {
         System.out.println("getEnvelope");
-        V2D_EnvelopeDouble expResult = new V2D_EnvelopeDouble(pP1P2);
-        V2D_EnvelopeDouble result = pP1P2.getEnvelope();
+        V2D_AABBDouble expResult = new V2D_AABBDouble(pP1P2);
+        V2D_AABBDouble result = pP1P2.getAABB();
         assertTrue(expResult.equals(result));
     }
 

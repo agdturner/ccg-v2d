@@ -366,8 +366,8 @@ public class V2D_Point extends V2D_FiniteGeometry {
     }
 
     @Override
-    public V2D_Envelope getEnvelope(int oom, RoundingMode rm) {
-        return new V2D_Envelope(oom, this);
+    public V2D_AABB getAABB(int oom, RoundingMode rm) {
+        return new V2D_AABB(oom, this);
     }
 
     /**

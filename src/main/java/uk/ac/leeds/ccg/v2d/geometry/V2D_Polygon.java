@@ -460,7 +460,7 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
     }
 
 //    @Override
-//    public boolean intersects(V2D_Envelope aabb, int oom, RoundingMode rm) {
+//    public boolean intersects(V2D_AABB aabb, int oom, RoundingMode rm) {
 //        if (getEnvelope(oom, rm).intersects(aabb, oom)) {
 //            if (getConvexHull(oom, rm).intersects(aabb, oom, rm)) {
 //                return true;

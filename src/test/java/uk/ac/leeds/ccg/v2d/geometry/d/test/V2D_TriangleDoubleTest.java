@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import uk.ac.leeds.ccg.math.arithmetic.Math_Double;
 import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_ConvexHullDouble;
-import uk.ac.leeds.ccg.v2d.geometry.d.V2D_EnvelopeDouble;
+import uk.ac.leeds.ccg.v2d.geometry.d.V2D_AABBDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_FiniteGeometryDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_GeometryDouble;
 import uk.ac.leeds.ccg.v2d.geometry.d.V2D_LineDouble;
@@ -120,16 +120,16 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of getEnvelope method, of class V2D_TriangleDouble.
+     * Test of getAABB method, of class V2D_TriangleDouble.
      */
     @Test
-    public void testGetEnvelope() {
-        System.out.println("getEnvelope");
+    public void testGetAABB() {
+        System.out.println("getAABB");
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
         V2D_TriangleDouble instance = new V2D_TriangleDouble(pP0P0, pP0P1, pP1P0);
-        V2D_EnvelopeDouble expResult = new V2D_EnvelopeDouble(pP0P0, pP0P1, pP1P0);
-        V2D_EnvelopeDouble result = instance.getEnvelope();
+        V2D_AABBDouble expResult = new V2D_AABBDouble(pP0P0, pP0P1, pP1P0);
+        V2D_AABBDouble result = instance.getAABB();
         assertTrue(expResult.equals(result));
     }
 

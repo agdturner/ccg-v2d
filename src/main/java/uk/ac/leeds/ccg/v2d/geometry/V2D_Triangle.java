@@ -568,9 +568,9 @@ public class V2D_Triangle extends V2D_Shape {
     }
 
     @Override
-    public V2D_Envelope getEnvelope(int oom, RoundingMode rm) {
+    public V2D_AABB getAABB(int oom, RoundingMode rm) {
         if (en == null) {
-            en = new V2D_Envelope(oom, getP(oom, rm), getQ(oom, rm), getR(oom, rm));
+            en = new V2D_AABB(oom, getP(oom, rm), getQ(oom, rm), getR(oom, rm));
         }
         return en;
     }
@@ -618,7 +618,7 @@ public class V2D_Triangle extends V2D_Shape {
      * @return True iff there is an intersection.
      */
     public boolean intersects(V2D_Point pt, int oom, RoundingMode rm) {
-        if (getEnvelope(oom, rm).contains(pt, oom)) {
+        if (getAABB(oom, rm).contains(pt, oom)) {
             return intersects0(pt, oom, rm);
         }
         return false;
@@ -649,7 +649,7 @@ public class V2D_Triangle extends V2D_Shape {
      * @return True iff there is an intersection.
      */
     public boolean intersects(V2D_LineSegment ls, int oom, RoundingMode rm) {
-        if (ls.intersects(getEnvelope(oom, rm), oom, rm)) {
+        if (ls.intersects(getAABB(oom, rm), oom, rm)) {
             return intersects0(ls, oom, rm);
         } else {
             return false;
@@ -743,8 +743,8 @@ public class V2D_Triangle extends V2D_Shape {
      * @return True iff there is an intersection.
      */
     public boolean intersects(V2D_Triangle t, int oom, RoundingMode rm) {
-        //if (t.getEnvelope(oom, rm).intersects(getEnvelope(oom, rm), oom)) {
-        if (t.intersects(getEnvelope(oom, rm), oom, rm)) {
+        //if (t.getAABB(oom, rm).intersects(getAABB(oom, rm), oom)) {
+        if (t.intersects(getAABB(oom, rm), oom, rm)) {
             return intersects0(t, oom, rm);
         } else {
             return false;
@@ -1020,7 +1020,7 @@ public class V2D_Triangle extends V2D_Shape {
     public V2D_FiniteGeometry getIntersection(V2D_Triangle t, int oom,
             RoundingMode rm) {
         int oomn2 = oom - 2;
-        if (getEnvelope(oom, rm).intersects(t.getEnvelope(oomn2, rm), oomn2)) {
+        if (getAABB(oom, rm).intersects(t.getAABB(oomn2, rm), oomn2)) {
             /**
              * Get intersections between the triangle edges. If there are none,
              * then either this returns t or vice versa. If there are some, then
@@ -1799,13 +1799,13 @@ public class V2D_Triangle extends V2D_Shape {
      * @param rm The RoundingMode if rounding is needed.
      * @return {@code true} iff {@code this} is intersected by {@code aabb}.
      */
-    public boolean intersects(V2D_Envelope aabb, int oom, RoundingMode rm) {
+    public boolean intersects(V2D_AABB aabb, int oom, RoundingMode rm) {
 // Was resulting in java.util.ConcurrentModificationException!
 //        return (getPoints(oom, rm).values().parallelStream().anyMatch(x
 //                -> aabb.contains(x, oom))
 //                || aabb.getPoints().parallelStream().anyMatch(x
 //                        -> intersects(x, oom, rm)));
-        if (getEnvelope(oom, rm).intersects(aabb, oom)) {
+        if (getAABB(oom, rm).intersects(aabb, oom)) {
             if (aabb.contains(getP(oom, rm), oom)
                     || aabb.contains(getQ(oom, rm), oom)
                     || aabb.contains(getR(oom, rm), oom)) {

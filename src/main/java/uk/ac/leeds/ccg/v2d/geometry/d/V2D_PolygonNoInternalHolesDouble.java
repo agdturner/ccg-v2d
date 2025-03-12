@@ -316,9 +316,9 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
     }
 
     @Override
-    public V2D_EnvelopeDouble getEnvelope() {
+    public V2D_AABBDouble getAABB() {
         if (en == null) {
-            en = ch.getEnvelope();
+            en = ch.getAABB();
         }
         return en;
     }
@@ -403,7 +403,7 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff there is containment.
      */
-    public boolean contains(V2D_EnvelopeDouble aabb, double epsilon) {
+    public boolean contains(V2D_AABBDouble aabb, double epsilon) {
         double xmin = aabb.getXMin();
         double xmax = aabb.getXMax();
         double ymin = aabb.getYMin();
@@ -645,8 +645,8 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
     }
 
 //    @Override
-//    public boolean intersects(V2D_EnvelopeDouble aabb, double epsilon) {
-//        if (getEnvelope().intersects(aabb)) {
+//    public boolean intersects(V2D_AABBDouble aabb, double epsilon) {
+//        if (getAABB().intersects(aabb)) {
 //            if (ch.intersects(aabb, epsilon)) {
 //                return true;
 //            }

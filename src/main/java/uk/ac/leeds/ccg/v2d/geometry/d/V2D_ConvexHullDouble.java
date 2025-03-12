@@ -281,11 +281,11 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
     }
 
     @Override
-    public V2D_EnvelopeDouble getEnvelope() {
+    public V2D_AABBDouble getAABB() {
         if (en == null) {
-            en = points.get(0).getEnvelope();
+            en = points.get(0).getAABB();
             for (int i = 1; i < points.size(); i++) {
-                en = en.union(points.get(i).getEnvelope());
+                en = en.union(points.get(i).getAABB());
             }
         }
         return en;
@@ -321,7 +321,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @return {@code true} iff {@code this} is intersected by {@code p}.
      */
     public boolean intersects(V2D_PointDouble pt, double epsilon) {
-        return getEnvelope().intersects(pt)
+        return getAABB().intersects(pt)
                 && intersects0(pt, epsilon);
     }
 
@@ -426,7 +426,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @return {@code true} iff {@code this} is intersected by {@code l}.
      */
     public boolean intersects(V2D_LineSegmentDouble l, double epsilon) {
-        return l.intersects(getEnvelope(), epsilon)
+        return l.intersects(getAABB(), epsilon)
                 && intersects0(l, epsilon);
     }
 
@@ -452,7 +452,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @return {@code true} iff {@code this} is intersected by {@code t}.
      */
     public boolean intersects(V2D_TriangleDouble t, double epsilon) {
-        return t.intersects(getEnvelope(), epsilon)
+        return t.intersects(getAABB(), epsilon)
                 && intersects0(t, epsilon);
     }
 
@@ -478,7 +478,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @return {@code true} iff {@code this} is intersected by {@code r}.
      */
     public boolean intersects(V2D_RectangleDouble r, double epsilon) {
-        return r.intersects(getEnvelope(), epsilon)
+        return r.intersects(getAABB(), epsilon)
                 && intersects0(r, epsilon);
     }
 
@@ -504,8 +504,8 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @return {@code true} iff {@code this} is intersected by {@code ch}.
      */
     public boolean intersects(V2D_ConvexHullDouble ch, double epsilon) {
-        return ch.intersects(getEnvelope(), epsilon)
-                && intersects(ch.getEnvelope(), epsilon)
+        return ch.intersects(getAABB(), epsilon)
+                && intersects(ch.getAABB(), epsilon)
                 && intersects0(ch, epsilon);
     }
 
@@ -613,8 +613,8 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff {@code this} is intersected by {@code aabb}.
      */
-    public boolean intersects(V2D_EnvelopeDouble aabb, double epsilon) {
-        return getEnvelope().intersects(aabb, epsilon)
+    public boolean intersects(V2D_AABBDouble aabb, double epsilon) {
+        return getAABB().intersects(aabb, epsilon)
                 && intersects0(aabb, epsilon);
     }
     
@@ -628,7 +628,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @return {@code true} iff the geometry intersects aabb at the given 
      * precision.
      */
-    public boolean intersects0(V2D_EnvelopeDouble aabb, double epsilon) {
+    public boolean intersects0(V2D_AABBDouble aabb, double epsilon) {
         return getTriangles().parallelStream().anyMatch(x
                     -> x.intersects(aabb, epsilon));
     }

@@ -450,7 +450,7 @@ public class V2D_PolygonDouble extends V2D_PolygonNoInternalHolesDouble {
     }
 
 //    @Override
-//    public boolean intersects(V2D_EnvelopeDouble aabb, double epsilon) {
+//    public boolean intersects(V2D_AABBDouble aabb, double epsilon) {
 //        if (getEnvelope().intersects(aabb, epsilon)) {
 //            if (getConvexHull(epsilon).intersects(aabb, epsilon)) {
 //                return true;

@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import uk.ac.leeds.ccg.v2d.geometry.V2D_Envelope;
+import uk.ac.leeds.ccg.v2d.geometry.V2D_AABB;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_LineSegment;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_Point;
 import static uk.ac.leeds.ccg.v2d.geometry.test.V2D_Test.env;
@@ -32,9 +32,9 @@ import static uk.ac.leeds.ccg.v2d.geometry.test.V2D_Test.env;
  *
  * @author geoagdt
  */
-public class V2D_EnvelopeTest {
+public class V2D_AABBTest {
 
-    public V2D_EnvelopeTest() {
+    public V2D_AABBTest() {
     }
 
     @BeforeAll
@@ -54,20 +54,20 @@ public class V2D_EnvelopeTest {
     }
 
     /**
-     * Test of toString method, of class V2D_Envelope.
+     * Test of toString method, of class V2D_AABB.
      */
     @Test
     public void testToString() {
         System.out.println("toString");
         int oom = -6;
-        V2D_Envelope instance = new V2D_Envelope(env, oom, BigRational.ZERO, BigRational.ONE, BigRational.ZERO, BigRational.ONE);;
-        String expResult = "V2D_Envelope(xMin=0, xMax=1, yMin=0, yMax=1)";
+        V2D_AABB instance = new V2D_AABB(env, oom, BigRational.ZERO, BigRational.ONE, BigRational.ZERO, BigRational.ONE);;
+        String expResult = "V2D_AABB(xMin=0, xMax=1, yMin=0, yMax=1)";
         String result = instance.toString();
         Assertions.assertEquals(expResult, result);
     }
 
     /**
-     * Test of union method, of class V2D_Envelope.
+     * Test of union method, of class V2D_AABB.
      */
     @Test
     public void testUnion() {
@@ -82,24 +82,24 @@ public class V2D_EnvelopeTest {
         BigRational y1 = BigRational.ONE;
         BigRational y2 = BigRational.TWO;
         BigRational y3 = BigRational.valueOf(3);
-        V2D_Envelope e = new V2D_Envelope(env, oom, x1, x2, y1, y2);
-        V2D_Envelope instance = new V2D_Envelope(env, oom, x1, x2, y1, y2);
-        V2D_Envelope expResult = new V2D_Envelope(env, oom, x1, x2, y1, y2);
-        V2D_Envelope result = instance.union(e, oom);
+        V2D_AABB e = new V2D_AABB(env, oom, x1, x2, y1, y2);
+        V2D_AABB instance = new V2D_AABB(env, oom, x1, x2, y1, y2);
+        V2D_AABB expResult = new V2D_AABB(env, oom, x1, x2, y1, y2);
+        V2D_AABB result = instance.union(e, oom);
         Assertions.assertTrue(expResult.equals(result, oom));
         // Test 2
-        e = new V2D_Envelope(env, oom, x1, x2, y1, y2);
-        instance = new V2D_Envelope(env, oom, x0, x1, y1, y2);
-        expResult = new V2D_Envelope(env, oom, x0, x2, y1, y2);
+        e = new V2D_AABB(env, oom, x1, x2, y1, y2);
+        instance = new V2D_AABB(env, oom, x0, x1, y1, y2);
+        expResult = new V2D_AABB(env, oom, x0, x2, y1, y2);
         result = instance.union(e, oom);
         Assertions.assertTrue(expResult.equals(result, oom));
     }
 
     /**
-     * Test of intersects method, of class V2D_Envelope.
+     * Test of intersects method, of class V2D_AABB.
      */
     @Test
-    public void testIsIntersectedBy_V2D_Envelope() {
+    public void testIsIntersectedBy_V2D_AABB() {
         System.out.println("intersects");
         int oom = -6;
         RoundingMode rm = RoundingMode.HALF_UP;
@@ -111,16 +111,16 @@ public class V2D_EnvelopeTest {
         BigRational y1 = BigRational.ONE;
         BigRational y2 = BigRational.TWO;
         BigRational y3 = BigRational.valueOf(3);
-        V2D_Envelope e = new V2D_Envelope(env, oom, x1, x2, y1, y2);
-        V2D_Envelope instance = new V2D_Envelope(env, oom, x1, x2, y1, y2);
+        V2D_AABB e = new V2D_AABB(env, oom, x1, x2, y1, y2);
+        V2D_AABB instance = new V2D_AABB(env, oom, x1, x2, y1, y2);
         Assertions.assertTrue(instance.intersects(e, oom));
         // Test 2
-        e = new V2D_Envelope(env, oom, x0, x1, y0, y1);
-        instance = new V2D_Envelope(env, oom, x1, x2, y1, y2);
+        e = new V2D_AABB(env, oom, x0, x1, y0, y1);
+        instance = new V2D_AABB(env, oom, x1, x2, y1, y2);
         Assertions.assertTrue(instance.intersects(e, oom));
         // Test 3
-        e = new V2D_Envelope(env, oom, x0, x1, y0, y1);
-        instance = new V2D_Envelope(env, oom, x2, x3, y2, y3);
+        e = new V2D_AABB(env, oom, x0, x1, y0, y1);
+        instance = new V2D_AABB(env, oom, x2, x3, y2, y3);
         Assertions.assertFalse(instance.intersects(e, oom));
         System.out.println("intersects");
         // Test 4
@@ -128,8 +128,8 @@ public class V2D_EnvelopeTest {
         BigRational TEN = BigRational.TEN;
         V2D_Point a;
         V2D_Point b = new V2D_Point(env, ONE, ONE);
-        V2D_Envelope be = b.getEnvelope(oom, rm);
-        V2D_Envelope abe;
+        V2D_AABB be = b.getAABB(oom, rm);
+        V2D_AABB abe;
         BigRational aX = ONE;
         BigRational aY = ONE;
         // Test 1
@@ -138,15 +138,15 @@ public class V2D_EnvelopeTest {
             aY = aY.divide(TEN);
             a = new V2D_Point(env, aX, aY);
             //System.out.println("a " + a.toString());
-            abe = new V2D_Envelope(oom, a, b);
+            abe = new V2D_AABB(oom, a, b);
             //System.out.println("abe " + abe.toString());
-            Assertions.assertTrue(abe.intersects(a.getEnvelope(oom, rm), oom));
+            Assertions.assertTrue(abe.intersects(a.getAABB(oom, rm), oom));
             Assertions.assertTrue(abe.intersects(be, oom));
         }
     }
 
     /**
-     * Test of contains method, of class V2D_Envelope.
+     * Test of contains method, of class V2D_AABB.
      */
     @Test
     public void testContains() {
@@ -160,24 +160,24 @@ public class V2D_EnvelopeTest {
         BigRational y1 = BigRational.ONE;
         BigRational y2 = BigRational.TWO;
         BigRational y3 = BigRational.valueOf(3);
-        V2D_Envelope e = new V2D_Envelope(env, oom, x0, x3, y0, y3);
-        V2D_Envelope instance = new V2D_Envelope(env, oom, x1, x2, y1, y2);
+        V2D_AABB e = new V2D_AABB(env, oom, x0, x3, y0, y3);
+        V2D_AABB instance = new V2D_AABB(env, oom, x1, x2, y1, y2);
         boolean result = e.contains(instance, oom);
         Assertions.assertTrue(result);
         // Test 2
-        e = new V2D_Envelope(env, oom, x1, x2, y1, y2);
-        instance = new V2D_Envelope(env, oom, x0, x3, y0, y3);
+        e = new V2D_AABB(env, oom, x1, x2, y1, y2);
+        instance = new V2D_AABB(env, oom, x0, x3, y0, y3);
         result = e.contains(instance, oom);
         Assertions.assertFalse(result);
         // Test 3
-        e = new V2D_Envelope(env, oom, x0, x3, y0, y3);
-        instance = new V2D_Envelope(env, oom, x1, x2, y1, BigRational.valueOf(4));
+        e = new V2D_AABB(env, oom, x0, x3, y0, y3);
+        instance = new V2D_AABB(env, oom, x1, x2, y1, BigRational.valueOf(4));
         result = e.contains(instance, oom);
         Assertions.assertFalse(result);
     }
 
     /**
-     * Test of intersects method, of class V2D_Envelope.
+     * Test of intersects method, of class V2D_AABB.
      */
     @Test
     public void testContains_V2D_Point() {
@@ -193,7 +193,7 @@ public class V2D_EnvelopeTest {
         BigRational y2 = BigRational.TWO;
         BigRational y3 = BigRational.valueOf(3);
         V2D_Point p = new V2D_Point(env, x0, y0);
-        V2D_Envelope instance = new V2D_Envelope(env, oom, x0, x1, y0, y1);
+        V2D_AABB instance = new V2D_AABB(env, oom, x0, x1, y0, y1);
         Assertions.assertTrue(instance.contains(p, oom));
         // Test 2
         p = new V2D_Point(env, x1, y0);
@@ -210,7 +210,7 @@ public class V2D_EnvelopeTest {
     }
 
     /**
-     * Test of intersects method, of class V2D_Envelope.
+     * Test of intersects method, of class V2D_AABB.
      */
     @Test
     public void testContains_BigRational_BigRational() {
@@ -225,7 +225,7 @@ public class V2D_EnvelopeTest {
         BigRational y1 = BigRational.ONE;
         BigRational y2 = BigRational.TWO;
         BigRational y3 = BigRational.valueOf(3);
-        V2D_Envelope instance = new V2D_Envelope(env, oom, x0, x1, y0, y1);
+        V2D_AABB instance = new V2D_AABB(env, oom, x0, x1, y0, y1);
         Assertions.assertTrue(instance.contains(x0, y0, oom));
         // Test 2
         Assertions.assertTrue(instance.contains(x1, y0, oom));
@@ -238,7 +238,7 @@ public class V2D_EnvelopeTest {
     }
 
 //    /**
-//     * Test of intersects method, of class V2D_Envelope.
+//     * Test of intersects method, of class V2D_AABB.
 //     */
 //    @Test
 //    public void testIsIntersectedBy_V2D_LineSegment() {
@@ -253,7 +253,7 @@ public class V2D_EnvelopeTest {
 //        BigRational y1 = BigRational.ONE;
 //        BigRational y2 = BigRational.TWO;
 //        BigRational y3 = BigRational.valueOf(3);
-//        V2D_Envelope instance = new V2D_Envelope(env, oom, x0, x2, y0, y2);
+//        V2D_AABB instance = new V2D_AABB(env, oom, x0, x2, y0, y2);
 //        V2D_Point p0 = new V2D_Point(env, x0, y0);
 //        V2D_Point p1 = new V2D_Point(env, x0, y1);
 //        V2D_LineSegment l = new V2D_LineSegment(oom, rm, p0, p1);
@@ -281,7 +281,7 @@ public class V2D_EnvelopeTest {
 //    }
 
     /**
-     * Test of intersects method, of class V2D_Envelope.
+     * Test of intersects method, of class V2D_AABB.
      */
     @Test
     public void testContains_V2D_LineSegment() {
@@ -296,7 +296,7 @@ public class V2D_EnvelopeTest {
         BigRational y1 = BigRational.ONE;
         BigRational y2 = BigRational.TWO;
         BigRational y3 = BigRational.valueOf(3);
-        V2D_Envelope instance = new V2D_Envelope(env, oom, x0, x2, y0, y2);
+        V2D_AABB instance = new V2D_AABB(env, oom, x0, x2, y0, y2);
         V2D_Point p0 = new V2D_Point(env, x0, y0);
         V2D_Point p1 = new V2D_Point(env, x0, y1);
         V2D_LineSegment l = new V2D_LineSegment(oom, rm, p0, p1);
@@ -324,7 +324,7 @@ public class V2D_EnvelopeTest {
     }
     
     /**
-     * Test of getIntersection method, of class V2D_Envelope.
+     * Test of getIntersection method, of class V2D_AABB.
      */
     @Test
     public void testGetIntersection() {
@@ -339,45 +339,45 @@ public class V2D_EnvelopeTest {
         BigRational y1 = BigRational.ONE;
         BigRational y2 = BigRational.TWO;
         BigRational y3 = BigRational.valueOf(3);
-        V2D_Envelope en = new V2D_Envelope(env, oom, x0, x2, y0, y2);
-        V2D_Envelope instance = new V2D_Envelope(env, oom, x0, x1, y0, y1);
-        V2D_Envelope expResult = new V2D_Envelope(env, oom, x0, x1, y0, y1);
-        V2D_Envelope result = instance.getIntersection(en, oom);
+        V2D_AABB en = new V2D_AABB(env, oom, x0, x2, y0, y2);
+        V2D_AABB instance = new V2D_AABB(env, oom, x0, x1, y0, y1);
+        V2D_AABB expResult = new V2D_AABB(env, oom, x0, x1, y0, y1);
+        V2D_AABB result = instance.getIntersection(en, oom);
         Assertions.assertTrue(expResult.equals(result, oom));
         // Test 2
-        en = new V2D_Envelope(env, oom, x0, x1, y0, y1);
-        instance = new V2D_Envelope(env, oom, x0, x1, y0, y1);
-        expResult = new V2D_Envelope(env, oom, x0, x1, y0, y1);
+        en = new V2D_AABB(env, oom, x0, x1, y0, y1);
+        instance = new V2D_AABB(env, oom, x0, x1, y0, y1);
+        expResult = new V2D_AABB(env, oom, x0, x1, y0, y1);
         result = instance.getIntersection(en, oom);
         Assertions.assertTrue(expResult.equals(result, oom));
         // Test 3
-        en = new V2D_Envelope(env, oom, x0, x1, y0, y1);
-        instance = new V2D_Envelope(env, oom, x0, x2, y0, y2);
-        expResult = new V2D_Envelope(env, oom, x0, x1, y0, y1);
+        en = new V2D_AABB(env, oom, x0, x1, y0, y1);
+        instance = new V2D_AABB(env, oom, x0, x2, y0, y2);
+        expResult = new V2D_AABB(env, oom, x0, x1, y0, y1);
         result = instance.getIntersection(en, oom);
         Assertions.assertTrue(expResult.equals(result, oom));
         // Test 4
-        en = new V2D_Envelope(env, oom, x0, x3, y0, y3);
-        instance = new V2D_Envelope(env, oom, x0, x2, y0, y2);
-        expResult = new V2D_Envelope(env, oom, x0, x2, y0, y2);
+        en = new V2D_AABB(env, oom, x0, x3, y0, y3);
+        instance = new V2D_AABB(env, oom, x0, x2, y0, y2);
+        expResult = new V2D_AABB(env, oom, x0, x2, y0, y2);
         result = instance.getIntersection(en, oom);
         Assertions.assertTrue(expResult.equals(result, oom));
         // Test 5
-        en = new V2D_Envelope(env, oom, x0, x2, y0, y2);
-        instance = new V2D_Envelope(env, oom, x0, x1, y1, y3);
-        expResult = new V2D_Envelope(env, oom, x0, x1, y1, y2);
+        en = new V2D_AABB(env, oom, x0, x2, y0, y2);
+        instance = new V2D_AABB(env, oom, x0, x1, y1, y3);
+        expResult = new V2D_AABB(env, oom, x0, x1, y1, y2);
         result = instance.getIntersection(en, oom);
         Assertions.assertTrue(expResult.equals(result, oom));
         // Test 6
-        en = new V2D_Envelope(env, oom, x0, x2, y0, y3);
-        instance = new V2D_Envelope(env, oom, x0, x1, y1, y3);
-        expResult = new V2D_Envelope(env, oom, x0, x1, y1, y3);
+        en = new V2D_AABB(env, oom, x0, x2, y0, y3);
+        instance = new V2D_AABB(env, oom, x0, x1, y1, y3);
+        expResult = new V2D_AABB(env, oom, x0, x1, y1, y3);
         result = instance.getIntersection(en, oom);
         Assertions.assertTrue(expResult.equals(result, oom));
     }
 
     /**
-     * Test of equals method, of class V2D_Envelope.
+     * Test of equals method, of class V2D_AABB.
      */
     @Test
     public void testEquals() {
@@ -385,16 +385,16 @@ public class V2D_EnvelopeTest {
         int oom = -6;
         //RoundingMode rm = RoundingMode.HALF_UP;
         BigRational z = BigRational.ZERO;
-        V2D_Envelope e = new V2D_Envelope(env, oom, z, z, z, z);
-        V2D_Envelope instance = new V2D_Envelope(env, oom, z, z, z, z);
+        V2D_AABB e = new V2D_AABB(env, oom, z, z, z, z);
+        V2D_AABB instance = new V2D_AABB(env, oom, z, z, z, z);
         Assertions.assertTrue(instance.equals(e, oom));
         // Test 2
-        instance = new V2D_Envelope(env, oom, z, z, z, BigRational.ONE);
+        instance = new V2D_AABB(env, oom, z, z, z, BigRational.ONE);
         Assertions.assertFalse(instance.equals(e, oom));
     }
 
     /**
-     * Test of hashCode method, of class V2D_Envelope.
+     * Test of hashCode method, of class V2D_AABB.
      */
     @Test
     public void testHashCode() {
@@ -403,7 +403,7 @@ public class V2D_EnvelopeTest {
     }
 
     /**
-     * Test of getxMin method, of class V2D_Envelope.
+     * Test of getxMin method, of class V2D_AABB.
      */
     @Test
     public void testGetxMin() {
@@ -411,14 +411,14 @@ public class V2D_EnvelopeTest {
         //RoundingMode rm = RoundingMode.HALF_UP;
         System.out.println("getxMin");
         BigRational z = BigRational.ZERO;
-        V2D_Envelope instance = new V2D_Envelope(env, oom, z, z, z, z);
+        V2D_AABB instance = new V2D_AABB(env, oom, z, z, z, z);
         BigRational expResult = z;
         BigRational result = instance.getXMin(oom);
         Assertions.assertEquals(expResult, result);
     }
 
     /**
-     * Test of getxMax method, of class V2D_Envelope.
+     * Test of getxMax method, of class V2D_AABB.
      */
     @Test
     public void testGetxMax() {
@@ -426,14 +426,14 @@ public class V2D_EnvelopeTest {
         int oom = -6;
         //RoundingMode rm = RoundingMode.HALF_UP;
         BigRational z = BigRational.ZERO;
-        V2D_Envelope instance = new V2D_Envelope(env, oom, z, z, z, z);
+        V2D_AABB instance = new V2D_AABB(env, oom, z, z, z, z);
         BigRational expResult = z;
         BigRational result = instance.getXMax(oom);
         Assertions.assertEquals(expResult, result);
     }
 
     /**
-     * Test of getyMin method, of class V2D_Envelope.
+     * Test of getyMin method, of class V2D_AABB.
      */
     @Test
     public void testGetyMin() {
@@ -441,14 +441,14 @@ public class V2D_EnvelopeTest {
         int oom = -6;
         //RoundingMode rm = RoundingMode.HALF_UP;
         BigRational z = BigRational.ZERO;
-        V2D_Envelope instance = new V2D_Envelope(env, oom, z, z, z, z);
+        V2D_AABB instance = new V2D_AABB(env, oom, z, z, z, z);
         BigRational expResult = z;
         BigRational result = instance.getYMax(oom);
         Assertions.assertEquals(expResult, result);
     }
 
     /**
-     * Test of getyMax method, of class V2D_Envelope.
+     * Test of getyMax method, of class V2D_AABB.
      */
     @Test
     public void testGetyMax() {
@@ -456,7 +456,7 @@ public class V2D_EnvelopeTest {
         int oom = -6;
         //RoundingMode rm = RoundingMode.HALF_UP;
         BigRational z = BigRational.ZERO;
-        V2D_Envelope instance = new V2D_Envelope(env, oom, z, z, z, z);
+        V2D_AABB instance = new V2D_AABB(env, oom, z, z, z, z);
         BigRational expResult = z;
         BigRational result = instance.getYMax(oom);
     }

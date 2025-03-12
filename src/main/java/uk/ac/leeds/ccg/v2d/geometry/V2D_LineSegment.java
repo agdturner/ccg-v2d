@@ -301,12 +301,12 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
     /**
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
-     * @return {@code new V2D_Envelope(start, end)}
+     * @return {@code new V2D_AABB(start, end)}
      */
     @Override
-    public V2D_Envelope getEnvelope(int oom, RoundingMode rm) {
+    public V2D_AABB getAABB(int oom, RoundingMode rm) {
         if (en == null) {
-            en = new V2D_Envelope(oom, getP(), getQ(oom, rm));
+            en = new V2D_AABB(oom, getP(), getQ(oom, rm));
         }
         return en;
     }
@@ -328,7 +328,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @return {@code true} if {@code this} is intersected by {@code pv}.
      */
     public boolean intersects(V2D_Point pt, int oom, RoundingMode rm) {
-        if (getEnvelope(oom, rm).contains(pt, oom)) {
+        if (getAABB(oom, rm).contains(pt, oom)) {
             return intersects0(pt, oom, rm);
         } else {
             return false;
@@ -542,7 +542,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @return The intersection between {@code this} and {@code l}.
      */
     public V2D_FiniteGeometry getIntersection(V2D_LineSegment ls, int oom, RoundingMode rm) {
-        if (!getEnvelope(oom, rm).intersects(ls.getEnvelope(oom, rm), oom)) {
+        if (!getAABB(oom, rm).intersects(ls.getAABB(oom, rm), oom)) {
             return null;
         }
         BigRational x1 = getP().getX(oom, rm);
@@ -1503,8 +1503,8 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
 //            return this;
 //        }
 //    }
-    public boolean intersects(V2D_Envelope aabb, int oom, RoundingMode rm) {
-        if (getEnvelope(oom, rm).intersects(aabb, oom)) {
+    public boolean intersects(V2D_AABB aabb, int oom, RoundingMode rm) {
+        if (getAABB(oom, rm).intersects(aabb, oom)) {
             V2D_Point p = getP();
             if (aabb.intersects(p, oom, rm)) {
                 return true;
