@@ -557,12 +557,12 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
 //     * equal.
 //     * @return The V2D_Geometry.
 //     */
-//    public V2D_FiniteGeometryDouble getIntersection(V2D_TriangleDouble t,
+//    public V2D_FiniteGeometryDouble getIntersect(V2D_TriangleDouble t,
 //            double epsilon) {
 //        // Create a set all the intersecting triangles from this.
 //        List<V2D_PointDouble> ts = new ArrayList<>();
 //        for (V2D_TriangleDouble t2 : triangles) {
-//            V2D_FiniteGeometryDouble i = t2.getIntersection(t, epsilon);
+//            V2D_FiniteGeometryDouble i = t2.getIntersect(t, epsilon);
 //            ts.addAll(Arrays.asList(i.getPoints()));
 //        }
 //        ArrayList<V2D_PointDouble> tsu = V2D_PointDouble.getUnique(ts, epsilon);

@@ -168,11 +168,11 @@ public class V2D_RectangleTest extends V2D_Test {
     }
 
     /**
-     * Test of getIntersection method, of class V2D_Rectangle.
+     * Test of getIntersect method, of class V2D_Rectangle.
      */
     @Test
     public void testGetIntersection() {
-        System.out.println("getIntersection");
+        System.out.println("getIntersect");
         int oom = -6;
         RoundingMode rm = RoundingMode.HALF_UP;
         V2D_Line l = new V2D_Line(pP0N1, pP0P1, oom, rm);
@@ -181,7 +181,7 @@ public class V2D_RectangleTest extends V2D_Test {
         V2D_Geometry result;
         instance = new V2D_Rectangle(pN1P1, pP1P1, pP1N1, pN1N1, oom, rm);
         expResult = new V2D_LineSegment(pP0N1, pP0P1, oom, rm);
-        result = instance.getIntersection(l, oom, rm);
+        result = instance.getIntersect(l, oom, rm);
         assertTrue(((V2D_LineSegment) expResult).equalsIgnoreDirection(
                 (V2D_LineSegment) result, oom, rm));
     }
@@ -214,16 +214,16 @@ public class V2D_RectangleTest extends V2D_Test {
     }
 
     /**
-     * Test of getIntersection method, of class V2D_Rectangle.
+     * Test of getIntersect method, of class V2D_Rectangle.
      */
     @Test
     public void testGetIntersection_V2D_LineSegment_double() {
-        System.out.println("getIntersection");
+        System.out.println("getIntersect");
         int oom = -6;
         RoundingMode rm = RoundingMode.HALF_UP;
         V2D_LineSegment l = new V2D_LineSegment(pN1N1, pP2P2, oom, rm);
         V2D_Rectangle instance = new V2D_Rectangle(pP0P0, pP0P1, pP1P1, pP1P0, oom, rm);
-        V2D_Geometry result = instance.getIntersection(l, oom, rm);
+        V2D_Geometry result = instance.getIntersect(l, oom, rm);
         V2D_Geometry expResult = new V2D_LineSegment(pP0P0, pP1P1, oom, rm);
         assertTrue(((V2D_LineSegment) expResult).equalsIgnoreDirection(
                 (V2D_LineSegment) result, oom, rm));
@@ -231,14 +231,14 @@ public class V2D_RectangleTest extends V2D_Test {
         l = new V2D_LineSegment(pP0P0, pP1P0, oom, rm);
         instance = new V2D_Rectangle(pP0P0, pP1P0, pP1P1, pP0P1, oom, rm);
         expResult = new V2D_LineSegment(pP0P0, pP1P0, oom, rm);
-        result = instance.getIntersection(l, oom, rm);
+        result = instance.getIntersect(l, oom, rm);
         assertTrue(((V2D_LineSegment) expResult).equalsIgnoreDirection(
                 (V2D_LineSegment) result, oom, rm));
         // Test 3
         l = new V2D_LineSegment(pP1N1, pP1P2, oom, rm);
         instance = new V2D_Rectangle(pP0P0, pP0P1, pP2P1, pP2P0, oom, rm);
         expResult = new V2D_LineSegment(pP1P1, pP1P0, oom, rm);
-        result = instance.getIntersection(l, oom, rm);
+        result = instance.getIntersect(l, oom, rm);
         assertTrue(((V2D_LineSegment) expResult).equalsIgnoreDirection(
                 (V2D_LineSegment) result, oom, rm));
     }
@@ -300,13 +300,13 @@ public class V2D_RectangleTest extends V2D_Test {
 
     @Test
     public void testGetIntersection_V2D_Line_double() {
-        System.out.println("getIntersection");
+        System.out.println("getIntersect");
         int oom = -6;
         RoundingMode rm = RoundingMode.HALF_UP;
         V2D_Line l = new V2D_Line(pP0P0, pP1P0, oom, rm);
         V2D_Rectangle instance = new V2D_Rectangle(pP0P0, pP0P1, pP1P1, pP1P0, oom, rm);
         V2D_Geometry expResult = new V2D_LineSegment(pP0P0, pP1P0, oom, rm);
-        V2D_Geometry result = instance.getIntersection(l, oom, rm);
+        V2D_Geometry result = instance.getIntersect(l, oom, rm);
         assertTrue(((V2D_LineSegment) expResult).equalsIgnoreDirection(
                 (V2D_LineSegment) result, oom, rm));
     }
@@ -397,17 +397,17 @@ public class V2D_RectangleTest extends V2D_Test {
     }
 
     /**
-     * Test of getIntersection method, of class V2D_Rectangle.
+     * Test of getIntersect method, of class V2D_Rectangle.
      */
     @Test
     public void testGetIntersection_V2D_Triangle_double() {
-        System.out.println("getIntersection");
+        System.out.println("getIntersect");
         int oom = -6;
         RoundingMode rm = RoundingMode.HALF_UP;
         V2D_Triangle t = new V2D_Triangle(pP0P0, pP0P1, pP1P1, oom, rm);
         V2D_Rectangle instance = new V2D_Rectangle(pP0P0, pP0P1, pP1P1, pP1P0, oom, rm);
         V2D_Geometry expResult = new V2D_Triangle(pP0P0, pP0P1, pP1P1, oom, rm);
-        V2D_Geometry result = instance.getIntersection(t, oom, rm);
+        V2D_Geometry result = instance.getIntersect(t, oom, rm);
         assertTrue(((V2D_Triangle) expResult).equals((V2D_Triangle) result, oom, rm));
         // Test 2
         t = new V2D_Triangle(pP2P2, new V2D_Point(env, 4d, 4d),
@@ -419,7 +419,7 @@ public class V2D_RectangleTest extends V2D_Test {
                 new V2D_Point(env, 6d, 0d), oom, rm);
         expResult = new V2D_Triangle(pP2P2, new V2D_Point(env, 4d, 4d),
                 new V2D_Point(env, 2d, 4d), oom, rm);
-        result = instance.getIntersection(t, oom, rm);
+        result = instance.getIntersect(t, oom, rm);
         assertTrue(((V2D_Triangle) expResult).equals(
                 (V2D_Triangle) result, oom, rm));
         // Test 3
@@ -436,7 +436,7 @@ public class V2D_RectangleTest extends V2D_Test {
                 new V2D_Point(env, 0d, 4d),
                 new V2D_Point(env, 0d, 5d),
                 new V2D_Point(env, 1d, 4d), oom, rm);
-        result = instance.getIntersection(t, oom, rm);
+        result = instance.getIntersect(t, oom, rm);
         assertTrue(((V2D_Triangle) expResult).equals(
                 (V2D_Triangle) result, oom, rm));
 //        // Test 3 This returns a coonvexhull, but this should be simplified to a triangle
@@ -447,7 +447,7 @@ public class V2D_RectangleTest extends V2D_Test {
 //                 new V2D_Point(6d,6d),
 //                 new V2D_Point(6d,0d));
 //         expResult = new V2D_Triangle(pP0P0, pP0P1, pP1P0);
-//         result = instance.getIntersection(t, oom, rm);
+//         result = instance.getIntersect(t, oom, rm);
 //        assertTrue(((V2D_Triangle) expResult).equals(
 //                (V2D_Triangle) result, oom, rm));
 //        // Test 4
@@ -459,7 +459,7 @@ public class V2D_RectangleTest extends V2D_Test {
 //                 new V2D_Point(6d,6d),
 //                 new V2D_Point(6d,0d));
 //         expResult = new V2D_LineSegment(new V2D_Point(4d,4d), new V2D_Point(5d,5d));
-//         result = instance.getIntersection(t, oom, rm);
+//         result = instance.getIntersect(t, oom, rm);
 //        assertTrue(((V2D_LineSegment) expResult).equalsIgnoreDirection(
 //                (V2D_LineSegment) result), oom, rm);
 //        // Test 5
@@ -470,7 +470,7 @@ public class V2D_RectangleTest extends V2D_Test {
 //                 new V2D_Point(0d,6d),
 //                 new V2D_Point(6d,6d),
 //                 new V2D_Point(6d,0d));
-//        result =  instance.getIntersection(t, oom, rm);
+//        result =  instance.getIntersect(t, oom, rm);
 //        assertNull(result);
 //        // Test 6
 //         t = new V2D_Triangle(new V2D_Point(0d,1d,-1), new V2D_Point(0d,5d), 
@@ -481,7 +481,7 @@ public class V2D_RectangleTest extends V2D_Test {
 //                 new V2D_Point(6d,6d,0d),
 //                 new V2D_Point(6d,0d,0d));
 //         expResult = new V2D_LineSegment(new V2D_Point(0d,1.5d,0d), new V2D_Point(0d,3.5d,0d));
-//         result = instance.getIntersection(t, oom, rm);
+//         result = instance.getIntersect(t, oom, rm);
 //        assertTrue(((V2D_LineSegment) expResult).equalsIgnoreDirection(
 //               (V2D_LineSegment) result, oom, rm));
 //        // Test 7
@@ -493,7 +493,7 @@ public class V2D_RectangleTest extends V2D_Test {
 //                 new V2D_Point(6d,6d,0d),
 //                 new V2D_Point(6d,0d,0d));
 //         expResult = new V2D_LineSegment(new V2D_Point(0d,1.5d,0d), new V2D_Point(0d,3.5d,0d));
-//         result = instance.getIntersection(t, oom, rm);
+//         result = instance.getIntersect(t, oom, rm);
 //        assertTrue(((V2D_LineSegment) expResult).equalsIgnoreDirection(
 //              (V2D_LineSegment) result, oom, rm));
 //        // Test 8
@@ -505,7 +505,7 @@ public class V2D_RectangleTest extends V2D_Test {
 //                 new V2D_Point(6d,6d,0d),
 //                 new V2D_Point(6d,0d,0d));
 //         expResult = new V2D_LineSegment(new V2D_Point(0d,1.5d,0d), new V2D_Point(0d,3.5d,0d));
-//         result = instance.getIntersection(t, oom, rm);
+//         result = instance.getIntersect(t, oom, rm);
 //        assertTrue(((V2D_LineSegment) expResult).equalsIgnoreDirection(
 //                 (V2D_LineSegment) result, oom, rm));
 //        // Test 9
@@ -517,7 +517,7 @@ public class V2D_RectangleTest extends V2D_Test {
 //                 new V2D_Point(6d,6d,0d),
 //                 new V2D_Point(6d,0d,0d));
 //         expResult = new V2D_LineSegment(new V2D_Point(0d,1.5d,0d), new V2D_Point(0d,3.5d,0d));
-//         result = instance.getIntersection(t, oom, rm);
+//         result = instance.getIntersect(t, oom, rm);
 //        assertTrue(((V2D_LineSegment) expResult).equalsIgnoreDirection(
 //                (V2D_LineSegment) result, oom, rm));
 //        // Test 10
@@ -529,7 +529,7 @@ public class V2D_RectangleTest extends V2D_Test {
 //                 new V2D_Point(6d,6d,0d),
 //                 new V2D_Point(6d,0d,0d));
 //         expResult = new V2D_LineSegment(new V2D_Point(0d,1.5d,0d), new V2D_Point(0d,3.5d,0d));
-//         result = instance.getIntersection(t, oom, rm);
+//         result = instance.getIntersect(t, oom, rm);
 //        assertTrue(((V2D_LineSegment) expResult).equalsIgnoreDirection(
 //                (V2D_LineSegment) result, oom, rm));
     }

@@ -562,12 +562,12 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @param rm The RoundingMode if rounding is needed.
      * @return The V2D_Geometry.
      */
-    public V2D_FiniteGeometry getIntersection(V2D_Triangle t, int oom,
+    public V2D_FiniteGeometry getIntersect(V2D_Triangle t, int oom,
             RoundingMode rm) {
         // Create a set all the intersecting triangles from this.
         List<V2D_Point> ts = new ArrayList<>();
         for (V2D_Triangle t2 : triangles) {
-            V2D_FiniteGeometry i = t2.getIntersection(t, oom, rm);
+            V2D_FiniteGeometry i = t2.getIntersect(t, oom, rm);
             ts.addAll(Arrays.asList(i.getPointsArray(oom, rm)));
         }
         ArrayList<V2D_Point> tsu = V2D_Point.getUnique(ts, oom, rm);
@@ -673,7 +673,7 @@ public class V2D_ConvexHull extends V2D_Shape {
 //     * @return null, the whole or a part of this.
 //     */
 //    public V2D_FiniteGeometry clip(V2D_Plane pl, V2D_Point p, int oom, RoundingMode rm) {
-//        V2D_FiniteGeometry i = getIntersection(pl, oom, rm);
+//        V2D_FiniteGeometry i = getIntersect(pl, oom, rm);
 //        if (i == null) {
 //            V2D_Point pp = this.triangles.get(0).getPl(oom, rm).getP();
 //            if (pl.isOnSameSide(pp, p, oom, rm)) {

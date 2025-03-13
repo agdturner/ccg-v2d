@@ -222,7 +222,7 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
             return true;
         }
         if (l.intersects(epsilon, pt)) {
-//            V2D_Point poi = l.getPointOfIntersection(pt);
+//            V2D_Point poi = l.getPointOfIntersect(pt);
 //            V2D_Ray r = new V2D_Ray(e, getP(), poi.getVector());
             pl = getPl();
 //            V2D_Ray r = new V2D_Ray(l.getP(), pt);
@@ -257,8 +257,8 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
 //     * @return The intersection between {@code this} and {@code t}.
 //     */
 //    @Override
-//    public V2D_FiniteGeometry getIntersection(V2D_Triangle t, int oom, RoundingMode rm) {
-//        V2D_Geometry g = getIntersection(t.pl);
+//    public V2D_FiniteGeometry getIntersect(V2D_Triangle t, int oom, RoundingMode rm) {
+//        V2D_Geometry g = getIntersect(t.pl);
 //        if (g == null) {
 //            return null;
 //        } else {
@@ -269,7 +269,7 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
 //                    return null;
 //                }
 //            } else {
-//                V2D_Geometry g2 = t.getIntersection(l);
+//                V2D_Geometry g2 = t.getIntersect(l);
 //                if (g2 instanceof V2D_Point g2p) {
 //                    //if (intersects(g2p)) {
 //                    if (t.isAligned(g2p)) {
@@ -278,7 +278,7 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
 //                        return null;
 //                    }
 //                } else {
-//                    return getIntersection((V2D_LineSegment) g2);
+//                    return getIntersect((V2D_LineSegment) g2);
 //                }
 //            }
 //        }
@@ -294,9 +294,9 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
      * @param epsilon The tolerance within which two vectors are regarded as equal.
      * @return The intersection between {@code this} and {@code l}.
      */
-    public V2D_GeometryDouble getIntersection(V2D_LineDouble l, double epsilon) {
+    public V2D_GeometryDouble getIntersect(V2D_LineDouble l, double epsilon) {
         // Check if infinite lines intersect.
-        V2D_GeometryDouble g = this.l.getIntersection(epsilon, l);
+        V2D_GeometryDouble g = this.l.getIntersect(epsilon, l);
         if (g == null) {
             // There is no intersection.
             return g;
@@ -324,8 +324,8 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
      * @param epsilon The tolerance within which two vectors are regarded as equal.
      * @return The intersection between {@code this} and {@code r}.
      */
-    public V2D_GeometryDouble getIntersection(V2D_RayDouble r, double epsilon) {
-        V2D_GeometryDouble rtl = r.getIntersection(l, epsilon);
+    public V2D_GeometryDouble getIntersect(V2D_RayDouble r, double epsilon) {
+        V2D_GeometryDouble rtl = r.getIntersect(l, epsilon);
         if (rtl == null) {
             return null;
         } else if (rtl instanceof V2D_PointDouble pt) {
@@ -337,7 +337,7 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
             }
         } else {
             // Then rtl is an instance of V2D_Ray.
-            V2D_GeometryDouble grl = getIntersection(r.l, epsilon);
+            V2D_GeometryDouble grl = V2D_RayDouble.this.getIntersect(r.l, epsilon);
             if (grl instanceof V2D_PointDouble) {
                 return grl;
             } else {
@@ -384,9 +384,9 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
      * @param epsilon The tolerance within which two vectors are regarded as equal.
      * @return The intersection between {@code this} and {@code l}.
      */
-    public V2D_FiniteGeometryDouble getIntersection(V2D_LineSegmentDouble ls,
+    public V2D_FiniteGeometryDouble getIntersect(V2D_LineSegmentDouble ls,
             double epsilon) {
-        V2D_GeometryDouble g = getIntersection(ls.l, epsilon);
+        V2D_GeometryDouble g = V2D_RayDouble.this.getIntersect(ls.l, epsilon);
         if (g == null) {
             return null;
         } else if (g instanceof V2D_PointDouble pt) {

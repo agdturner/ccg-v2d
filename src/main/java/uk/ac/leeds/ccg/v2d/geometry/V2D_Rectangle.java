@@ -319,10 +319,10 @@ public class V2D_Rectangle extends V2D_Shape {
      * @param rm The RoundingMode for any rounding.
      * @return A point or line segment.
      */
-    public V2D_FiniteGeometry getIntersection(V2D_Line l,
+    public V2D_FiniteGeometry getIntersect(V2D_Line l,
             int oom, RoundingMode rm) {
-            V2D_FiniteGeometry pqri = pqr.getIntersection(l, oom, rm);
-            V2D_FiniteGeometry rspi = rsp.getIntersection(l, oom, rm);
+            V2D_FiniteGeometry pqri = pqr.getIntersect(l, oom, rm);
+            V2D_FiniteGeometry rspi = rsp.getIntersect(l, oom, rm);
             return join(oom, rm, pqri, rspi);
     }
 
@@ -363,10 +363,10 @@ public class V2D_Rectangle extends V2D_Shape {
      * @param rm The RoundingMode for any rounding.
      * @return The intersection or {@code null} iff there is no intersection.
      */
-    public V2D_FiniteGeometry getIntersection(V2D_LineSegment l,
+    public V2D_FiniteGeometry getIntersect(V2D_LineSegment l,
             int oom, RoundingMode rm) {
-            V2D_FiniteGeometry pqri = pqr.getIntersection(l, oom, rm);
-            V2D_FiniteGeometry rspi = rsp.getIntersection(l, oom, rm);
+            V2D_FiniteGeometry pqri = pqr.getIntersect(l, oom, rm);
+            V2D_FiniteGeometry rspi = rsp.getIntersect(l, oom, rm);
             return join(oom, rm, pqri, rspi);
     }
 
@@ -452,11 +452,11 @@ public class V2D_Rectangle extends V2D_Shape {
      * @return The intersection between {@code t} and {@code this} or
      * {@code null} if there is no intersection.
      */
-    public V2D_FiniteGeometry getIntersection(V2D_Triangle t,
+    public V2D_FiniteGeometry getIntersect(V2D_Triangle t,
             int oom, RoundingMode rm) {
         int oomn2 = oom -2;
-            V2D_FiniteGeometry pqrit = pqr.getIntersection(t, oomn2-10, rm);
-            V2D_FiniteGeometry rspit = rsp.getIntersection(t, oomn2, rm);
+            V2D_FiniteGeometry pqrit = pqr.getIntersect(t, oomn2-10, rm);
+            V2D_FiniteGeometry rspit = rsp.getIntersect(t, oomn2, rm);
             if (pqrit == null) {
                 return rspit;
             } else if (pqrit instanceof V2D_Point) {
@@ -491,9 +491,9 @@ public class V2D_Rectangle extends V2D_Shape {
      * @param rm The RoundingMode for any rounding.
      * @return The V2D_Geometry.
      */
-    public V2D_FiniteGeometry getIntersection(V2D_Ray r, int oom, RoundingMode rm) {
-        V2D_FiniteGeometry gpqr = pqr.getIntersection(r, oom, rm);
-        V2D_FiniteGeometry grsp = rsp.getIntersection(r, oom, rm);
+    public V2D_FiniteGeometry getIntersect(V2D_Ray r, int oom, RoundingMode rm) {
+        V2D_FiniteGeometry gpqr = pqr.getIntersect(r, oom, rm);
+        V2D_FiniteGeometry grsp = rsp.getIntersect(r, oom, rm);
         if (gpqr == null) {
             return grsp;
         } else {

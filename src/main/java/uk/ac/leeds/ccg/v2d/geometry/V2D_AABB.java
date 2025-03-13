@@ -88,35 +88,25 @@ public class V2D_AABB implements Serializable {
     protected V2D_Point ul;
 
     /**
-     * The left geometry.
+     * The top/upper edge.
      */
-    protected V3D_AABBX l;
+    protected V2D_FiniteGeometry t;
 
     /**
-     * The right geometry.
+     * The right edge.
      */
-    protected V3D_AABBX r;
+    protected V2D_FiniteGeometry r;
 
     /**
-     * The top geometry.
+     * The bottom/lower edge.
      */
-    protected V3D_AABBY t;
+    protected V2D_FiniteGeometry b;
 
     /**
-     * The bottom geometry.
+     * The left edge.
      */
-    protected V3D_AABBY b;
+    protected V2D_FiniteGeometry l;
 
-    /**
-     * The fore geometry.
-     */
-    protected V3D_AABBZ f;
-    
-    /**
-     * The aft geometry.
-     */
-    protected V3D_AABBZ a;
-    
     /**
      * For storing all the points.N.B {@link #ll}, {@link #lu}, {@link #uu},
     {@link #lu} may all be the same.
@@ -836,7 +826,7 @@ public class V2D_AABB implements Serializable {
      * @return {@code null} if there is no intersection; {@code en} if
      * {@code this.equals(en)}; otherwise returns the intersection.
      */
-    public V2D_AABB getIntersection(V2D_AABB en, int oom) {
+    public V2D_AABB getIntersect(V2D_AABB en, int oom) {
         if (!intersects(en, oom)) {
             return null;
         }

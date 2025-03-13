@@ -359,7 +359,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @param y4 l.q.getY()
      * @return ((x1 - x2) * (y3 - y4)) - ((y1 - y2) * (x3 - x4))
      */
-    public static double getIntersectionDenominator(double x1,  double x2,
+    public static double getIntersectDenominator(double x1,  double x2,
             double x3, double x4, double y1, double y2, double y3, double y4) {
         return ((x1 - x2) * (y3 - y4)) - ((y1 - y2) * (x3 - x4));
     }
@@ -371,14 +371,14 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
 //     */
 //    public boolean intersects(V2D_LineDouble l) {
 //        return intersects(l, 
-//                getIntersectionDenominator(p.getX(), q.getX(), l.p.getX(),
+//                getIntersectDenominator(p.getX(), q.getX(), l.p.getX(),
 //                l.q.getX(), p.getY(), q.getY(), l.p.getY(), l.q.getY()));
 //    }
 //    
 //    /**
 //     * https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
 //     * @param l A line to test for intersection.
-//     * @param den getIntersectionDenominator(p.getX(), q.getX(), l.p.getX(),
+//     * @param den getIntersectDenominator(p.getX(), q.getX(), l.p.getX(),
 //     *           l.q.getX(), p.getY(), q.getY(), l.p.getY(), l.q.getY())
 //     * @return {@code true} if lines intersect.
 //     */
@@ -406,7 +406,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
 //    public boolean intersects(V2D_LineDouble l, double x1,  double x2,
 //            double x3, double x4, double y1, double y2, double y3, double y4) {
 //        return intersects(l,
-//                getIntersectionDenominator(x1, x2, x3, x4, y1, y2, y3, y4));
+//                getIntersectDenominator(x1, x2, x3, x4, y1, y2, y3, y4));
 //    }
     
     /**
@@ -417,7 +417,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      */
     public boolean intersects(double epsilon, V2D_LineDouble l) {
         return intersects(epsilon, l, 
-                getIntersectionDenominator(p.getX(), getQ().getX(), l.p.getX(),
+                getIntersectDenominator(p.getX(), getQ().getX(), l.p.getX(),
                 l.getQ().getX(), p.getY(), q.getY(), l.p.getY(), l.q.getY()));
     }
     
@@ -439,15 +439,15 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
             double x2, double x3, double x4, double y1, double y2, double y3, 
             double y4) {
         return intersects(epsilon, l, 
-                getIntersectionDenominator(x1, x2, x3, x4, y1, y2, y3, y4));
+                getIntersectDenominator(x1, x2, x3, x4, y1, y2, y3, y4));
     }
     
     /**
      * https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
      * @param epsilon The tolerance within which two lines are considered equal.
      * @param l A line to test for intersection.
-     * @param den getIntersectionDenominator(p.getX(), q.getX(), l.p.getX(),
-     *           l.q.getX(), p.getY(), q.getY(), l.p.getY(), l.q.getY())
+     * @param den getIntersectDenominator(p.getX(), q.getX(), l.p.getX(),
+           l.q.getX(), p.getY(), q.getY(), l.p.getY(), l.q.getY())
      * @return {@code true} if lines intersect.
      */
     public boolean intersects(double epsilon, V2D_LineDouble l, double den) {
@@ -465,7 +465,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @param l Line to intersect with.
      * @return The geometry or null if there is no intersection.
      */
-    public V2D_GeometryDouble getIntersection(double epsilon, V2D_LineDouble l) {
+    public V2D_GeometryDouble getIntersect(double epsilon, V2D_LineDouble l) {
         double x1 = getP().getX();
         double x2 = getQ().getX();
         double x3 = l.getP().getX();
@@ -474,15 +474,15 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
         double y2 = q.getY();
         double y3 = l.p.getY();
         double y4 = l.q.getY();
-        double den = getIntersectionDenominator(x1, x2, x3, x4, y1, y2, y3, y4);
-        return getIntersection(epsilon, l, den, x1, x2, x3, x4, y1, y2, y3, y4);
+        double den = getIntersectDenominator(x1, x2, x3, x4, y1, y2, y3, y4);
+        return getIntersect(epsilon, l, den, x1, x2, x3, x4, y1, y2, y3, y4);
     }
     
     /**
      * https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
      * @param epsilon The tolerance within which two lines are considered equal.
      * @param l Line to intersect with.
-     * @param den getIntersectionDenominator(x1, x2, x3, x4, y1, y2, y3, y4)
+     * @param den getIntersectDenominator(x1, x2, x3, x4, y1, y2, y3, y4)
      * @param x1 getP().getX()
      * @param x2 getQ().getX()
      * @param x3 l.getP().getX()
@@ -493,7 +493,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @param y4 l.q.getY()
      * @return The geometry or null if there is no intersection.
      */
-    public V2D_GeometryDouble getIntersection(double epsilon, V2D_LineDouble l, 
+    public V2D_GeometryDouble getIntersect(double epsilon, V2D_LineDouble l, 
             double den, double x1, double x2, double x3, double x4, double y1, 
             double y2, double y3, double y4) {
         if (intersects(epsilon, l, den)) {
@@ -528,12 +528,12 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @return The line segment having the shortest distance between {@code pt}
      * and {@code this}.
      */
-    public V2D_FiniteGeometryDouble getLineOfIntersection(V2D_PointDouble pt,
+    public V2D_FiniteGeometryDouble getLineOfIntersect(V2D_PointDouble pt,
             double epsilon) {
         if (intersects(epsilon, pt)) {
             return pt;
         }
-        return new V2D_LineSegmentDouble(pt, getPointOfIntersection(pt, epsilon));
+        return new V2D_LineSegmentDouble(pt, getPointOfIntersect(pt, epsilon));
     }
 
     /**
@@ -543,11 +543,11 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @return A point on {@code this} which is the shortest distance from
      * {@code pt}.
      */
-    public V2D_PointDouble getPointOfIntersection(V2D_PointDouble pt, double epsilon) {
+    public V2D_PointDouble getPointOfIntersect(V2D_PointDouble pt, double epsilon) {
         if (intersects(epsilon, pt)) {
             return pt;
         }
-        return getPointOfIntersection(pt, true, epsilon);
+        return V2D_LineDouble.this.getPointOfIntersect(pt, true, epsilon);
     }
     
     /**
@@ -558,9 +558,9 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @return A point on {@code this} which is the shortest distance from
      * {@code pt}.
      */
-    public V2D_PointDouble getPointOfIntersection(V2D_PointDouble pt, boolean noint, double epsilon) {
+    public V2D_PointDouble getPointOfIntersect(V2D_PointDouble pt, boolean noint, double epsilon) {
         V2D_LineDouble l = new V2D_LineDouble(pt, v.rotate90());
-        return (V2D_PointDouble) getIntersection(epsilon, l);
+        return (V2D_PointDouble) V2D_LineDouble.this.getIntersect(epsilon, l);
     }
     
     /**
@@ -597,7 +597,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @return The minimum distance between this and {@code pv}.
      */
     public double getDistanceSquared(V2D_PointDouble pt, boolean noint, double epsilon) {
-        V2D_PointDouble poi = getPointOfIntersection(pt, noint, epsilon);
+        V2D_PointDouble poi = V2D_LineDouble.this.getPointOfIntersect(pt, noint, epsilon);
         return poi.getDistanceSquared(pt);
     }
 

@@ -401,28 +401,6 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
     }
 
     /**
-     * @param ls The line segment to test for intersection.
-     * @param epsilon The tolerance within which two vectors are regarded as
-     * equal.
-     * @return True iff there is an intersection.
-     */
-    protected boolean intersects0(V2D_LineSegmentDouble ls, double epsilon) {
-        // Ensure use of p, q and r. 
-        getP();
-        getQ();
-        getR();
-        // Get the points.
-        V2D_PointDouble lsp = ls.getP();
-        V2D_PointDouble lsq = ls.getQ();
-        return (getPQ().l.isOnSameSide(r, lsp, epsilon)
-                || pq.l.isOnSameSide(r, lsq, epsilon))
-                && (getQR().l.isOnSameSide(p, lsp, epsilon)
-                || qr.l.isOnSameSide(p, lsq, epsilon))
-                && (getRP().l.isOnSameSide(q, lsp, epsilon)
-                || rp.l.isOnSameSide(q, lsq, epsilon));
-    }
-
-    /**
      * @param ls The line segments to test for intersection.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
@@ -483,7 +461,20 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      * @param epsilon The tolerance.
      * @return {@code true} iff l is aligned with this.
      */
-    public boolean isInteresctedBy0(V2D_LineSegmentDouble l, double epsilon) {
+    public boolean intersects0(V2D_LineSegmentDouble l, double epsilon) {
+//        // Ensure use of p, q and r. 
+//        getP();
+//        getQ();
+//        getR();
+//        // Get the points.
+//        V2D_PointDouble lsp = l.getP();
+//        V2D_PointDouble lsq = l.getQ();
+//        return (getPQ().l.isOnSameSide(r, lsp, epsilon)
+//                || pq.l.isOnSameSide(r, lsq, epsilon))
+//                && (getQR().l.isOnSameSide(p, lsp, epsilon)
+//                || qr.l.isOnSameSide(p, lsq, epsilon))
+//                && (getRP().l.isOnSameSide(q, lsp, epsilon)
+//                || rp.l.isOnSameSide(q, lsq, epsilon));
         if (intersects0(l.getP(), epsilon)) {
             return intersects0(l.getQ(), epsilon);
         }
@@ -550,14 +541,14 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      * equal.
      * @return A point or line segment.
      */
-    public V2D_FiniteGeometryDouble getIntersection(V2D_LineDouble l,
+    public V2D_FiniteGeometryDouble getIntersect(V2D_LineDouble l,
             double epsilon) {
         /**
          * Get the intersection of the line and each edge of the triangle.
          */
-        V2D_FiniteGeometryDouble lpqi = getPQ().getIntersection(epsilon, l);
-        V2D_FiniteGeometryDouble lqri = getQR().getIntersection(epsilon, l);
-        V2D_FiniteGeometryDouble lrpi = getRP().getIntersection(epsilon, l);
+        V2D_FiniteGeometryDouble lpqi = getPQ().getIntersect(epsilon, l);
+        V2D_FiniteGeometryDouble lqri = getQR().getIntersect(epsilon, l);
+        V2D_FiniteGeometryDouble lrpi = getRP().getIntersect(epsilon, l);
         /**
          * This may appear overly complicated in parts, but due to imprecision
          * some odd cases may arise!
@@ -621,9 +612,9 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      * equal.
      * @return The V2D_Geometry.
      */
-    public V2D_FiniteGeometryDouble getIntersection(V2D_RayDouble r,
+    public V2D_FiniteGeometryDouble getIntersect(V2D_RayDouble r,
             double epsilon) {
-        V2D_FiniteGeometryDouble g = getIntersection(r.l, epsilon);
+        V2D_FiniteGeometryDouble g = V2D_TriangleDouble.this.getIntersect(r.l, epsilon);
         if (g == null) {
             return null;
         }
@@ -673,9 +664,9 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      * equal.
      * @return The V2D_Geometry.
      */
-    public V2D_FiniteGeometryDouble getIntersection(V2D_LineSegmentDouble l,
+    public V2D_FiniteGeometryDouble getIntersect(V2D_LineSegmentDouble l,
             double epsilon) {
-        V2D_FiniteGeometryDouble g = getIntersection(l.l, epsilon);
+        V2D_FiniteGeometryDouble g = V2D_TriangleDouble.this.getIntersect(l.l, epsilon);
         if (g == null) {
             return null;
         }
@@ -688,7 +679,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
             return null;
         }
         V2D_LineSegmentDouble ls = (V2D_LineSegmentDouble) g;
-        V2D_FiniteGeometryDouble lils = l.getIntersectionLS(epsilon, ls);
+        V2D_FiniteGeometryDouble lils = l.getIntersect0(epsilon, ls);
         if (lils == null) {
             return null;
         } else if (lils instanceof V2D_PointDouble lilsp) {
@@ -700,7 +691,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
         } else {
             V2D_LineSegmentDouble lilsl = (V2D_LineSegmentDouble) lils;
             if (intersects(lilsl, epsilon)) {
-                return l.getIntersectionLS(epsilon, ls);
+                return l.getIntersect0(epsilon, ls);
             } else {
                 return null;
             }
@@ -718,7 +709,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      * @return The intersection between {@code t} and {@code this} or
      * {@code null} if there is no intersection.
      */
-    public V2D_FiniteGeometryDouble getIntersection(V2D_TriangleDouble t,
+    public V2D_FiniteGeometryDouble getIntersect(V2D_TriangleDouble t,
             double epsilon) {
         if (getAABB().intersects(t.getAABB(), epsilon)) {
             /**
@@ -751,9 +742,9 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
 //            if (t.intersects0(this, epsilon)) {
 //                return this;
 //            }
-            V2D_FiniteGeometryDouble gpq = t.getIntersection(getPQ(), epsilon);
-            V2D_FiniteGeometryDouble gqr = t.getIntersection(getQR(), epsilon);
-            V2D_FiniteGeometryDouble grp = t.getIntersection(getRP(), epsilon);
+            V2D_FiniteGeometryDouble gpq = t.getIntersect(getPQ(), epsilon);
+            V2D_FiniteGeometryDouble gqr = t.getIntersect(getQR(), epsilon);
+            V2D_FiniteGeometryDouble grp = t.getIntersect(getRP(), epsilon);
             if (gpq == null) {
                 if (gqr == null) {
                     if (grp == null) {
@@ -1200,7 +1191,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
     protected static V2D_FiniteGeometryDouble getGeometry(
             V2D_LineSegmentDouble ab, V2D_LineSegmentDouble cd,
             double epsilon) {
-        V2D_FiniteGeometryDouble g = ab.getIntersection(epsilon, cd);
+        V2D_FiniteGeometryDouble g = ab.getIntersect(epsilon, cd);
         if (g instanceof V2D_PointDouble pt) {
             V2D_PointDouble abp = ab.getP();
             V2D_PointDouble cdp = cd.getP();
@@ -1374,7 +1365,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      * @return The minimum distance to {@code l}.
      */
     public double getDistanceSquared(V2D_LineSegmentDouble l, double epsilon) {
-        if (getIntersection(l, epsilon) != null) {
+        if (V2D_TriangleDouble.this.getIntersect(l, epsilon) != null) {
             return 0d;
         }
         double dlpq2 = l.getDistanceSquared(getPQ(), epsilon);
@@ -1417,7 +1408,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      * @return The minimum distance squared to {@code t}.
      */
     public double getDistanceSquared(V2D_TriangleDouble t, double epsilon) {
-        if (getIntersection(t, epsilon) != null) {
+        if (getIntersect(t, epsilon) != null) {
             return 0d;
         }
         double dtpq2 = t.getDistanceSquared(getPQ(), epsilon);

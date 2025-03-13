@@ -234,9 +234,9 @@ public class V2D_Ray extends V2D_Geometry {
      * @param rm The RoundingMode if rounding is needed.
      * @return The intersection between {@code this} and {@code pl}.
      */
-    public V2D_Geometry getIntersection(V2D_Line l, int oom, RoundingMode rm) {
+    public V2D_Geometry getIntersect(V2D_Line l, int oom, RoundingMode rm) {
         // Check if infinite lines intersect.
-        V2D_Geometry g = this.l.getIntersection(l, oom, rm);
+        V2D_Geometry g = this.l.getIntersect(l, oom, rm);
         if (g == null) {
             // There is no intersection.
             return g;
@@ -265,8 +265,8 @@ public class V2D_Ray extends V2D_Geometry {
      * @param rm The RoundingMode if rounding is needed.
      * @return The intersection between {@code this} and {@code r}.
      */
-    public V2D_Geometry getIntersection(V2D_Ray r, int oom, RoundingMode rm) {
-        V2D_Geometry rtl = r.getIntersection(l, oom, rm);
+    public V2D_Geometry getIntersect(V2D_Ray r, int oom, RoundingMode rm) {
+        V2D_Geometry rtl = r.getIntersect(l, oom, rm);
         if (rtl == null) {
             return null;
         } else if (rtl instanceof V2D_Point pt) {
@@ -278,7 +278,7 @@ public class V2D_Ray extends V2D_Geometry {
             }
         } else {
             // Then rtl is an instance of V2D_Ray.
-            V2D_Geometry grl = getIntersection(r.l, oom, rm);
+            V2D_Geometry grl = V2D_Ray.this.getIntersect(r.l, oom, rm);
             if (grl instanceof V2D_Point) {
                 return grl;
             } else {
@@ -326,8 +326,8 @@ public class V2D_Ray extends V2D_Geometry {
      * @param rm The RoundingMode if rounding is needed.
      * @return The intersection between {@code this} and {@code l}.
      */
-    public V2D_FiniteGeometry getIntersection(V2D_LineSegment ls, int oom, RoundingMode rm) {
-        V2D_Geometry g = getIntersection(ls.l, oom, rm);
+    public V2D_FiniteGeometry getIntersect(V2D_LineSegment ls, int oom, RoundingMode rm) {
+        V2D_Geometry g = V2D_Ray.this.getIntersect(ls.l, oom, rm);
         if (g == null) {
             return null;
         } else if (g instanceof V2D_Point pt) {

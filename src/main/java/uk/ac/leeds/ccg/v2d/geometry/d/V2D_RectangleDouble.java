@@ -305,10 +305,10 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
      * equal.
      * @return A point or line segment.
      */
-    public V2D_FiniteGeometryDouble getIntersection(V2D_LineDouble l,
+    public V2D_FiniteGeometryDouble getIntersect(V2D_LineDouble l,
             double epsilon) {
-        V2D_FiniteGeometryDouble pqri = pqr.getIntersection(l, epsilon);
-        V2D_FiniteGeometryDouble rspi = rsp.getIntersection(l, epsilon);
+        V2D_FiniteGeometryDouble pqri = pqr.getIntersect(l, epsilon);
+        V2D_FiniteGeometryDouble rspi = rsp.getIntersect(l, epsilon);
         return join(epsilon, pqri, rspi);
     }
 
@@ -349,10 +349,10 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
      * equal.
      * @return The intersection or {@code null} iff there is no intersection.
      */
-    public V2D_FiniteGeometryDouble getIntersection(V2D_LineSegmentDouble l,
+    public V2D_FiniteGeometryDouble getIntersect(V2D_LineSegmentDouble l,
             double epsilon) {
-        V2D_FiniteGeometryDouble pqri = pqr.getIntersection(l, epsilon);
-        V2D_FiniteGeometryDouble rspi = rsp.getIntersection(l, epsilon);
+        V2D_FiniteGeometryDouble pqri = pqr.getIntersect(l, epsilon);
+        V2D_FiniteGeometryDouble rspi = rsp.getIntersect(l, epsilon);
         return join(epsilon, pqri, rspi);
     }
 
@@ -431,10 +431,10 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
      * @return The intersection between {@code t} and {@code this} or
      * {@code null} if there is no intersection.
      */
-    public V2D_FiniteGeometryDouble getIntersection(V2D_TriangleDouble t,
+    public V2D_FiniteGeometryDouble getIntersect(V2D_TriangleDouble t,
             double epsilon) {
-        V2D_FiniteGeometryDouble pqrit = pqr.getIntersection(t, epsilon);
-        V2D_FiniteGeometryDouble rspit = rsp.getIntersection(t, epsilon);
+        V2D_FiniteGeometryDouble pqrit = pqr.getIntersect(t, epsilon);
+        V2D_FiniteGeometryDouble rspit = rsp.getIntersect(t, epsilon);
         if (pqrit == null) {
             return rspit;
         } else if (pqrit instanceof V2D_PointDouble) {
@@ -472,7 +472,7 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
      * @return The intersection between {@code t} and {@code this} or
      * {@code null} if there is no intersection.
      */
-    public V2D_FiniteGeometryDouble getIntersection(V2D_ConvexHullDouble ch,
+    public V2D_FiniteGeometryDouble getIntersect(V2D_ConvexHullDouble ch,
             double epsilon) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
@@ -485,10 +485,10 @@ public class V2D_RectangleDouble extends V2D_ShapeDouble {
      * equal.
      * @return The V2D_Geometry.
      */
-    public V2D_FiniteGeometryDouble getIntersection(V2D_RayDouble r,
+    public V2D_FiniteGeometryDouble getIntersect(V2D_RayDouble r,
             double epsilon) {
-        V2D_FiniteGeometryDouble gpqr = pqr.getIntersection(r, epsilon);
-        V2D_FiniteGeometryDouble grsp = rsp.getIntersection(r, epsilon);
+        V2D_FiniteGeometryDouble gpqr = pqr.getIntersect(r, epsilon);
+        V2D_FiniteGeometryDouble grsp = rsp.getIntersect(r, epsilon);
         if (gpqr == null) {
             return grsp;
         } else {

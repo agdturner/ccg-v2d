@@ -324,7 +324,7 @@ public class V2D_AABBTest {
     }
     
     /**
-     * Test of getIntersection method, of class V2D_AABB.
+     * Test of getIntersect method, of class V2D_AABB.
      */
     @Test
     public void testGetIntersection() {
@@ -342,37 +342,37 @@ public class V2D_AABBTest {
         V2D_AABB en = new V2D_AABB(env, oom, x0, x2, y0, y2);
         V2D_AABB instance = new V2D_AABB(env, oom, x0, x1, y0, y1);
         V2D_AABB expResult = new V2D_AABB(env, oom, x0, x1, y0, y1);
-        V2D_AABB result = instance.getIntersection(en, oom);
+        V2D_AABB result = instance.getIntersect(en, oom);
         Assertions.assertTrue(expResult.equals(result, oom));
         // Test 2
         en = new V2D_AABB(env, oom, x0, x1, y0, y1);
         instance = new V2D_AABB(env, oom, x0, x1, y0, y1);
         expResult = new V2D_AABB(env, oom, x0, x1, y0, y1);
-        result = instance.getIntersection(en, oom);
+        result = instance.getIntersect(en, oom);
         Assertions.assertTrue(expResult.equals(result, oom));
         // Test 3
         en = new V2D_AABB(env, oom, x0, x1, y0, y1);
         instance = new V2D_AABB(env, oom, x0, x2, y0, y2);
         expResult = new V2D_AABB(env, oom, x0, x1, y0, y1);
-        result = instance.getIntersection(en, oom);
+        result = instance.getIntersect(en, oom);
         Assertions.assertTrue(expResult.equals(result, oom));
         // Test 4
         en = new V2D_AABB(env, oom, x0, x3, y0, y3);
         instance = new V2D_AABB(env, oom, x0, x2, y0, y2);
         expResult = new V2D_AABB(env, oom, x0, x2, y0, y2);
-        result = instance.getIntersection(en, oom);
+        result = instance.getIntersect(en, oom);
         Assertions.assertTrue(expResult.equals(result, oom));
         // Test 5
         en = new V2D_AABB(env, oom, x0, x2, y0, y2);
         instance = new V2D_AABB(env, oom, x0, x1, y1, y3);
         expResult = new V2D_AABB(env, oom, x0, x1, y1, y2);
-        result = instance.getIntersection(en, oom);
+        result = instance.getIntersect(en, oom);
         Assertions.assertTrue(expResult.equals(result, oom));
         // Test 6
         en = new V2D_AABB(env, oom, x0, x2, y0, y3);
         instance = new V2D_AABB(env, oom, x0, x1, y1, y3);
         expResult = new V2D_AABB(env, oom, x0, x1, y1, y3);
-        result = instance.getIntersection(en, oom);
+        result = instance.getIntersect(en, oom);
         Assertions.assertTrue(expResult.equals(result, oom));
     }
 

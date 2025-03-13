@@ -382,11 +382,11 @@ public class V2D_Line extends V2D_Geometry {
      * https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
      * 
      * @param l A line to test for intersection.
-     * @param den getIntersectionDenominator(getP().getX(oom, rm), 
-     * getQ(oom, rm).getX(oom, rm), l.getP().getX(oom, rm),
-     * l.getQ(oom, rm).getX(oom, rm), getP().getY(oom, rm), 
-     * getQ(oom, rm).getY(oom, rm), l.getP().getY(oom, rm),
-     * l.getQ(oom, rm).getY(oom, rm))
+     * @param den getIntersectDenominator(getP().getX(oom, rm), 
+ getQ(oom, rm).getX(oom, rm), l.getP().getX(oom, rm),
+ l.getQ(oom, rm).getX(oom, rm), getP().getY(oom, rm), 
+ getQ(oom, rm).getY(oom, rm), l.getP().getY(oom, rm),
+ l.getQ(oom, rm).getY(oom, rm))
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
      * @return {@code true} if lines intersect.
@@ -453,7 +453,7 @@ public class V2D_Line extends V2D_Geometry {
      * @return {@code true} if lines intersect.
      */
     public boolean intersects(V2D_Line l, int oom, RoundingMode rm) {
-        return intersects(l, getIntersectionDenominator(p.getX(oom, rm),
+        return intersects(l, getIntersectDenominator(p.getX(oom, rm),
                         getQ(oom, rm).getX(oom, rm), l.p.getX(oom, rm),
                         l.getQ(oom, rm).getX(oom, rm), p.getY(oom, rm), 
                         q.getY(oom, rm), l.p.getY(oom, rm), l.q.getY(oom, rm)),
@@ -480,7 +480,7 @@ public class V2D_Line extends V2D_Geometry {
             BigRational x2, BigRational x3, BigRational x4, BigRational y1,
             BigRational y2, BigRational y3, BigRational y4,
             int oom, RoundingMode rm) {
-        return intersects(l, V2D_Line.getIntersectionDenominator(x1, x2, 
+        return intersects(l, V2D_Line.getIntersectDenominator(x1, x2, 
                 x3, x4, y1, y2, y3, y4), oom, rm);
     }
 
@@ -505,7 +505,7 @@ public class V2D_Line extends V2D_Geometry {
      * @param rm The RoundingMode for any rounding.
      * @return The intersection between {@code this} and {@code l}.
      */
-    public V2D_Geometry getIntersection(V2D_Line l, int oom, RoundingMode rm) {
+    public V2D_Geometry getIntersect(V2D_Line l, int oom, RoundingMode rm) {
         BigRational x1 = getP().getX(oom, rm);
         BigRational x2 = getQ(oom, rm).getX(oom, rm);
         BigRational x3 = l.getP().getX(oom, rm);
@@ -514,14 +514,14 @@ public class V2D_Line extends V2D_Geometry {
         BigRational y2 = q.getY(oom, rm);
         BigRational y3 = l.p.getY(oom, rm);
         BigRational y4 = l.q.getY(oom, rm);
-        BigRational den = getIntersectionDenominator(x1, x2, x3, x4, y1, y2, y3, y4);
-        return getIntersection(l, den, x1, x2, x3, x4, y1, y2, y3, y4, oom, rm);
+        BigRational den = getIntersectDenominator(x1, x2, x3, x4, y1, y2, y3, y4);
+        return V2D_Line.this.getIntersect(l, den, x1, x2, x3, x4, y1, y2, y3, y4, oom, rm);
     }
     
     /**
      * https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
      * @param l Line to intersect with.
-     * @param den getIntersectionDenominator(x1, x2, x3, x4, y1, y2, y3, y4)
+     * @param den getIntersectDenominator(x1, x2, x3, x4, y1, y2, y3, y4)
      * @param x1 getP().getX(oom, rm)
      * @param x2 getQ(oom, rm).getX(oom, rm)
      * @param x3 l.getP().getX(oom, rm)
@@ -534,7 +534,7 @@ public class V2D_Line extends V2D_Geometry {
      * @param rm The RoundingMode for any rounding.
      * @return The geometry or null if there is no intersection.
      */
-    public V2D_Geometry getIntersection(V2D_Line l, BigRational den, 
+    public V2D_Geometry getIntersect(V2D_Line l, BigRational den, 
             BigRational x1, BigRational x2, BigRational x3, BigRational x4, 
             BigRational y1, BigRational y2, BigRational y3, BigRational y4, 
             int oom, RoundingMode rm) {
@@ -565,7 +565,7 @@ public class V2D_Line extends V2D_Geometry {
      * @param y4 l.q.getY()
      * @return ((x1 - x2) * (y3 - y4)) - ((y1 - y2) * (x3 - x4))
      */
-    public static BigRational getIntersectionDenominator(BigRational x1,  
+    public static BigRational getIntersectDenominator(BigRational x1,  
             BigRational x2, BigRational x3, BigRational x4, BigRational y1, 
             BigRational y2, BigRational y3, BigRational y4) {
         return ((x1.subtract(x2)).multiply(y3.subtract(y4))).subtract(
@@ -580,13 +580,13 @@ public class V2D_Line extends V2D_Geometry {
      * @return The line segment having the shortest distance between {@code pt}
      * and {@code this}.
      */
-    public V2D_FiniteGeometry getLineOfIntersection(V2D_Point pt, int oom,
+    public V2D_FiniteGeometry getLineOfIntersect(V2D_Point pt, int oom,
             RoundingMode rm) {
         if (intersects(pt, oom, rm)) {
             return pt;
         }
-        return new V2D_LineSegment(pt, getPointOfIntersection(pt, true, oom, rm), oom, rm);
-        //return new V2D_LineSegment(pt.getVector(oom), getPointOfIntersection(pt, oom).getVector(oom), oom);
+        return new V2D_LineSegment(pt, V2D_Line.this.getPointOfIntersect(pt, true, oom, rm), oom, rm);
+        //return new V2D_LineSegment(pt.getVector(oom), getPointOfIntersect(pt, oom).getVector(oom), oom);
     }
     /**
      * @param pt The point projected onto this.
@@ -595,12 +595,12 @@ public class V2D_Line extends V2D_Geometry {
      * @return A point on {@code this} which is the shortest distance from
      * {@code pt}.
      */
-    public V2D_Point getPointOfIntersection(V2D_Point pt, int oom,
+    public V2D_Point getPointOfIntersect(V2D_Point pt, int oom,
             RoundingMode rm) {
         if (intersects(pt, oom, rm)) {
             return pt;
         }
-        return getPointOfIntersection(pt, true, oom, rm);
+        return V2D_Line.this.getPointOfIntersect(pt, true, oom, rm);
     }
 
     /**
@@ -611,10 +611,10 @@ public class V2D_Line extends V2D_Geometry {
      * @return A point on {@code this} which is the shortest distance from
      * {@code pt}.
      */
-    public V2D_Point getPointOfIntersection(V2D_Point pt, boolean noint, int oom,
+    public V2D_Point getPointOfIntersect(V2D_Point pt, boolean noint, int oom,
             RoundingMode rm) {
         V2D_Line l = new V2D_Line(pt, v.rotate90());
-        return (V2D_Point) getIntersection(l, oom, rm);
+        return (V2D_Point) getIntersect(l, oom, rm);
     }
 
     /**
@@ -633,12 +633,12 @@ public class V2D_Line extends V2D_Geometry {
      * near l. Whether the points are on or near is down to rounding error and
      * precision.
      */
-    public V2D_LineSegment getLineOfIntersection(V2D_Line l, int oom, RoundingMode rm) {
+    public V2D_LineSegment getLineOfIntersect(V2D_Line l, int oom, RoundingMode rm) {
         int oomn6 = oom - 6;
         if (isParallel(l, oom, rm)) {
             return null;
         }
-        if (getIntersection(l, oom, rm) != null) {
+        if (getIntersect(l, oom, rm) != null) {
             return null;
         }
         V2D_Point tp = getP();
@@ -810,7 +810,7 @@ public class V2D_Line extends V2D_Geometry {
      */
     protected BigRational getDistanceSquared(V2D_Point pt, boolean noint,
             int oom, RoundingMode rm) {
-        V2D_Point poi = getPointOfIntersection(pt, noint, oom, rm);
+        V2D_Point poi = V2D_Line.this.getPointOfIntersect(pt, noint, oom, rm);
         return poi.getDistanceSquared(pt, oom, rm);
     }
 
