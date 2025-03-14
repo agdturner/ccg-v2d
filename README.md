@@ -6,7 +6,7 @@ The spatial dimensions are defined by orthogonal coordinate axes X and Y that me
 
 There are two implementations distinguished by the type of numbers used for calculations and to represent coordinates:
 1. Coordinates and calculations using Java double precision primitive numbers. These use a small user defined epsilon (a small number) which is used to determine if there are vector intersections. This is limited by the vaguaries of floating point arithmetic.
-2. Coordinates and calculations using a combination of [BigRational](https://github.com/eobermuhlner/big-math/blob/master/ch.obermuhlner.math.big/src/main/java/ch/obermuhlner/math/big/BigRational.java) and [Math_BigRationalSqrt](https://github.com/agdturner/ccg-math/blob/master/src/main/java/uk/ac/leeds/ccg/math/number/Math_BigRationalSqrt.java) numbers. These use a user provided Order Of Magnitude (OOM) and RoundingMode (RM) to store process coordinates. With this for example, it is possible to have a coordinate at precisely x=y=$\sqrt2.   
+2. Coordinates and calculations using a combination of [BigRational](https://github.com/eobermuhlner/big-math/blob/master/ch.obermuhlner.math.big/src/main/java/ch/obermuhlner/math/big/BigRational.java) and [Math_BigRationalSqrt](https://github.com/agdturner/ccg-math/blob/master/src/main/java/uk/ac/leeds/ccg/math/number/Math_BigRationalSqrt.java) numbers. These use a user provided Order Of Magnitude (OOM) and RoundingMode (RM) to store process coordinates. With this for example, it is possible to have a coordinate at precisely x=y=$\sqrt{2}.   
 
 The code is being developed along with [ccg-r2d](https://github.com/agdturner/ccg-r2d) - rendering code that helps demonstrate capabilities of the library.
 
