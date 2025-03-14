@@ -491,7 +491,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
     public boolean intersects(V2D_TriangleDouble t, double epsilon) {
         //if (t.getAABB().intersects(getAABB())) {
         if (t.intersects(getAABB(), epsilon)) {
-            return V2D_TriangleDouble.this.intersects0(t, epsilon);
+            return intersects0(t, epsilon);
         } else {
             return false;
         }
@@ -506,8 +506,8 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
     public boolean intersects0(V2D_TriangleDouble t, double epsilon) {
 //        return (getPoints().values().parallelStream().anyMatch(x
 //                -> t.intersects0(x, epsilon))
-//                || t.getPoints().values().parallelStream().anyMatch(x
-//                        -> intersects0(x, epsilon)));
+//                || t.getPoints().values().parallelStream().anyMatch(y
+//                        -> intersects0(y, epsilon)));
         return intersects0(t.getP(), epsilon)
                 || intersects0(t.getQ(), epsilon)
                 || intersects0(t.getR(), epsilon)
@@ -614,7 +614,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      */
     public V2D_FiniteGeometryDouble getIntersect(V2D_RayDouble r,
             double epsilon) {
-        V2D_FiniteGeometryDouble g = V2D_TriangleDouble.this.getIntersect(r.l, epsilon);
+        V2D_FiniteGeometryDouble g = getIntersect(r.l, epsilon);
         if (g == null) {
             return null;
         }
@@ -666,7 +666,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      */
     public V2D_FiniteGeometryDouble getIntersect(V2D_LineSegmentDouble l,
             double epsilon) {
-        V2D_FiniteGeometryDouble g = V2D_TriangleDouble.this.getIntersect(l.l, epsilon);
+        V2D_FiniteGeometryDouble g = getIntersect(l.l, epsilon);
         if (g == null) {
             return null;
         }
@@ -1365,7 +1365,7 @@ public class V2D_TriangleDouble extends V2D_ShapeDouble {
      * @return The minimum distance to {@code l}.
      */
     public double getDistanceSquared(V2D_LineSegmentDouble l, double epsilon) {
-        if (V2D_TriangleDouble.this.getIntersect(l, epsilon) != null) {
+        if (getIntersect(l, epsilon) != null) {
             return 0d;
         }
         double dlpq2 = l.getDistanceSquared(getPQ(), epsilon);

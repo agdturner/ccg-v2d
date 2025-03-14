@@ -380,7 +380,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      */
     public boolean intersects(V2D_Line l, int oom, RoundingMode rm) {
         if (this.l.intersects(l, oom, rm)) {
-            return V2D_LineSegment.this.getIntersect(l, oom, rm) != null;
+            return getIntersect(l, oom, rm) != null;
         }
         return false;
     }
@@ -569,7 +569,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
         V2D_Geometry li = l.getIntersect(ls.l, den, x1, x2, x3, x4, y1, y2, 
                 y3, y4, oom, rm);
         // Get intersection with infinite lines.
-        V2D_FiniteGeometry tils = V2D_LineSegment.this.getIntersect(ls.l, li, den, x1, x2, x3, x4,
+        V2D_FiniteGeometry tils = getIntersect(ls.l, li, den, x1, x2, x3, x4,
                 y1, y2, y3, y4, oom, rm);
         V2D_FiniteGeometry lsil = ls.getIntersect(l, li, den, x1, x2, x3, x4,
                 y1, y2, y3, y4, oom, rm);
@@ -824,7 +824,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
         if (intersects(pt, oom, rm)) {
             return BigRational.ZERO;
         }
-        V2D_Point poi = l.getPointOfIntersect(pt, oom, rm);
+        V2D_Point poi = l.getPointOfIntersect(pt, true, oom, rm);
         if (isAligned(poi, oom, rm)) {
             return poi.getDistanceSquared(pt, oom, rm);
         } else {
@@ -1092,7 +1092,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      */
     public V2D_LineSegment getLineOfIntersect(V2D_Line l, int oom, 
             RoundingMode rm) {
-        if (V2D_LineSegment.this.getIntersect(l, oom, rm) != null) {
+        if (getIntersect(l, oom, rm) != null) {
             return null;
         }
         V2D_LineSegment loi = null;
@@ -1103,10 +1103,10 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
             BigRational qd = l.getDistanceSquared(tq, oom, rm);
             if (pd.compareTo(qd) == 1) {
                 return new V2D_LineSegment(tq, 
-                        l.getPointOfIntersect(tq, oom, rm), oom, rm);
+                        l.getPointOfIntersect(tq, true, oom, rm), oom, rm);
             } else {
                 return new V2D_LineSegment(tp, 
-                        l.getPointOfIntersect(tp, oom, rm), oom, rm);
+                        l.getPointOfIntersect(tp, true, oom, rm), oom, rm);
             }
         } else {
             V2D_Point lsp = loi.getP();
@@ -1182,7 +1182,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
             V2D_Point tp = getP();
             V2D_Point tq = getQ(oom, rm);
             // Get the line of intersection between this and ls.l
-            V2D_LineSegment tloi = V2D_LineSegment.this.getLineOfIntersect(ls.l, oom, rm);
+            V2D_LineSegment tloi = getLineOfIntersect(ls.l, oom, rm);
             V2D_LineSegment lsloi = ls.getLineOfIntersect(l, oom, rm);
             if (tloi == null) {
                 if (lsloi == null) {
@@ -1452,7 +1452,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @return The minimum distance squared to {@code l}.
      */
     public BigRational getDistanceSquared(V2D_Line l, int oom, RoundingMode rm) {
-        if (V2D_LineSegment.this.getIntersect(l, oom, rm) != null) {
+        if (getIntersect(l, oom, rm) != null) {
             return BigRational.ZERO;
         }
         BigRational pd = l.getDistanceSquared(getP(), oom, rm);

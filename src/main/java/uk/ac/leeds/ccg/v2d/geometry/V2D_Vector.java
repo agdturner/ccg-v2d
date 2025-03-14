@@ -37,7 +37,7 @@ import uk.ac.leeds.ccg.v2d.geometry.light.V2D_V;
  * @version 2.0
  */
 public class V2D_Vector implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
 
     /**
@@ -218,7 +218,7 @@ public class V2D_Vector implements Serializable {
     public V2D_Vector(V2D_V v) {
         this(v.x, v.y);
     }
-    
+
     @Override
     public String toString() {
         //return toString("");
@@ -262,7 +262,7 @@ public class V2D_Vector implements Serializable {
         return pad + "dx=" + dx.toStringSimple()
                 + ", dy=" + dy.toStringSimple();
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -272,7 +272,7 @@ public class V2D_Vector implements Serializable {
         }
         return false;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 3;
@@ -544,22 +544,34 @@ public class V2D_Vector implements Serializable {
                  */
                 return true;
             }
+            /**
+             * General case: A little complicated as there is a need to deal
+             * with: zero vector components; cases where the vectors point in
+             * different directions; and, precision issues.
+             */
             if (v.dx.abs().equals(dx.abs(), oom)) {
-                // |dx| = |v.dx|
-                if (dx.equals(Math_BigRationalSqrt.ZERO, oom)) {
-                    // dx = v.dx = 0d
+                // |v.dx| = |dx|
+                if (v.dx.equals(Math_BigRationalSqrt.ZERO, oom)) {
+                    // v.dx = 0d
                     return true;
                 } else {
-                    // |dx| = |v.dx| != 0d
+                    // |v.dx| = |dx| != 0d
                     if (v.dy.abs().equals(dy.abs(), oom)) {
                         if (v.dy.equals(Math_BigRationalSqrt.ZERO, oom)) {
                             return true;
                         } else {
-                            Math_BigRationalSqrt scalar = v.dx.divide(dx, oom, rm);
-                            return v.dy.equals(dy.multiply(scalar, oom, rm), oom);
+                            // Divide bigger by smaller number for precision reasons.
+                            if (v.dx.abs().compareTo(dx.abs()) == 1) {
+                                Math_BigRationalSqrt scalar = v.dx.divide(dx, oom, rm);
+                                return v.dy.equals(dy.multiply(scalar, oom, rm), oom);
+                            } else {
+                                Math_BigRationalSqrt scalar = dx.divide(v.dx, oom, rm);
+                                return dy.equals(v.dy.multiply(scalar, oom, rm), oom);
+                            }
                         }
                     } else {
                         // |dx| = |v.dx| != 0d, |dy| != |v.dy|
+                        // The scalar will only by 1 or -1
                         Math_BigRationalSqrt scalar = v.dx.divide(dx, oom, rm);
                         return v.dy.equals(dy.multiply(scalar, oom, rm), oom);
                     }
@@ -569,8 +581,23 @@ public class V2D_Vector implements Serializable {
                 if (dx.equals(Math_BigRationalSqrt.ZERO, oom)) {
                     return isZero;
                 } else {
-                    Math_BigRationalSqrt scalar = v.dx.divide(dx, oom, rm);
-                    return v.dy.equals(dy.multiply(scalar, oom, rm), oom);
+                    // Divide bigger by smaller number for precision reasons.
+                    if (v.dx.abs().compareTo(dx.abs()) == 1) {
+                        if (dx.isZero()) {
+                            return false;
+                        } else {
+                            // dx != 0
+                            Math_BigRationalSqrt scalar = v.dx.divide(dx, oom, rm);
+                            return v.dy.equals(dy.multiply(scalar, oom, rm), oom);
+                        }
+                    } else {
+                        if (v.dx.isZero()) {
+                            return false;
+                        } else {
+                            Math_BigRationalSqrt scalar = dx.divide(v.dx, oom, rm);
+                            return dy.equals(v.dy.multiply(scalar, oom, rm), oom);
+                        }
+                    }
                 }
             }
         }
@@ -631,7 +658,7 @@ public class V2D_Vector implements Serializable {
      * @return A new vector which it {@code #this} rotated by the angle theta
      * about the point pt. If theta is positive the angle is clockwise.
      */
-    public V2D_Vector rotateN(BigRational theta, Math_BigDecimal bd, int oom, 
+    public V2D_Vector rotateN(BigRational theta, Math_BigDecimal bd, int oom,
             RoundingMode rm) {
         BigRational dxr = dx.getSqrt(oom, rm);
         BigRational dyr = dy.getSqrt(oom, rm);

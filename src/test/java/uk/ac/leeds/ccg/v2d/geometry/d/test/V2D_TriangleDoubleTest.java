@@ -66,8 +66,8 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
      * Test of intersects method, of class V2D_TriangleDouble.
      */
     @Test
-    public void testIsAligned_V2D_PointDouble_double() {
-        System.out.println("isAligned");
+    public void testIntersects0_3args() {
+        System.out.println("intersects0");
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
         V2D_PointDouble pt = pP0N1;
@@ -85,8 +85,8 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
      * Test of intersects method, of class V2D_TriangleDouble.
      */
     @Test
-    public void testIsAligned_V2D_LineSegmentDouble_double() {
-        System.out.println("isAligned");
+    public void testIntersects0_2args() {
+        System.out.println("intersects0");
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
         V2D_LineSegmentDouble ls;
@@ -101,7 +101,7 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
      * Test of intersects method, of class V2D_TriangleDouble.
      */
     @Test
-    public void testIsIntersectedBy() {
+    public void testIntersects_2args() {
         System.out.println("intersects");
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
@@ -117,6 +117,22 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
         // Test 4
         pt = pN1P2;
         assertFalse(instance.intersects(pt, epsilon));
+    }
+    
+    /**
+     * Test of intersects method, of class V2D_TriangleDouble.
+     */
+    @Test
+    public void testIntersects_2args2() {
+        System.out.println("intersects");
+        double epsilon = 1d / 10000000d;
+        V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
+        V2D_TriangleDouble t = new V2D_TriangleDouble(pN1N1, pP0P1, pP1N1);
+        V2D_TriangleDouble instance = new V2D_TriangleDouble(pN1N1, pP0P1, pP1N1);
+        assertTrue(instance.intersects(t, epsilon));        
+        // Test 2
+        t  = new V2D_TriangleDouble(pN2N2, pP0P2, pP2N2);
+        assertTrue(instance.intersects(t, epsilon));
     }
 
     /**
@@ -148,14 +164,6 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of translate method, of class V2D_TriangleDouble.
-     */
-    @Test
-    public void testApply() {
-        // No test.
-    }
-
-    /**
      * Test of getPerimeter method, of class V2D_TriangleDouble.
      */
     @Test
@@ -176,8 +184,8 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
      * Test of getIntersect method, of class V2D_TriangleDouble.
      */
     @Test
-    public void testGetIntersection_V2D_LineDouble() {
-        System.out.println("getIntersection");
+    public void testGetIntersect_V2D_LineDouble() {
+        System.out.println("getIntersect");
         double epsilon = 1d / 10000000d;
         V2D_LineDouble l = new V2D_LineDouble(pP1N1, pP1P2);
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
@@ -186,7 +194,6 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
         V2D_GeometryDouble result = instance.getIntersect(l, epsilon);
         assertTrue(((V2D_LineSegmentDouble) expResult).equalsIgnoreDirection(
                 epsilon, (V2D_LineSegmentDouble) result));
-        System.out.println("getIntersection");
         // Test 2
         instance = new V2D_TriangleDouble(env, P0P0, P1P0, P1P2, P2P0);
         l = new V2D_LineDouble(pP1P1, pP1N1);
@@ -276,8 +283,8 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
      * Test of getIntersect method, of class V2D_TriangleDouble.
      */
     @Test
-    public void testGetIntersection_V2D_LineSegmentDouble() {
-        System.out.println("getIntersection");
+    public void testGetIntersect_V2D_LineSegmentDouble() {
+        System.out.println("getIntersect");
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
         V2D_LineSegmentDouble l;
@@ -436,8 +443,8 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
      * Test of getIntersect method, of class V2D_TriangleDouble.
      */
     @Test
-    public void testGetIntersection_V2D_RayDouble() {
-        System.out.println("getIntersection");
+    public void testGetIntersect_V2D_RayDouble() {
+        System.out.println("getIntersect");
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
         V2D_TriangleDouble t;
@@ -522,14 +529,14 @@ public class V2D_TriangleDoubleTest extends V2D_TestDouble {
 //    }
 
     /**
-     * Test of getIntersection method, of class V2D_TriangleDouble.
+     * Test of getIntersect method, of class V2D_TriangleDouble.
      *
      * Look for some examples here:
      * https://math.stackexchange.com/questions/1220102/how-do-i-find-the-intersection-of-two-2d-triangles
      */
     @Test
-    public void testGetIntersection_V2D_TriangleDouble() {
-        System.out.println("getIntersection");
+    public void testGetIntersect_V2D_TriangleDouble() {
+        System.out.println("getIntersect");
         double epsilon = 1d / 10000000d;
         V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(epsilon);
         V2D_TriangleDouble t = new V2D_TriangleDouble(pP0P0, pP0P1, pP1P0);
