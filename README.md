@@ -23,7 +23,7 @@ The code is being developed along with [ccg-r2d](https://github.com/agdturner/cc
   - Raise awareness
   - Develop use cases
 
-## Contributions welcome
+## Contributing
 - Thanks for thinking about this.
 - If this is to form into a collaborative project, it could do with a Code of Conduct and Contributor Guidelines based on something like this: [Open Source Guide](https://opensource.guide/)
 
