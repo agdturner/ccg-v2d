@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Andy Turner, University of Leeds.
+ * Copyright 2020-2025 Andy Turner, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@ package uk.ac.leeds.ccg.v2d.geometry.d.light;
 import java.io.Serializable;
 
 /**
- * For representing and processing lightweight triangles in 2D. The triangle is
- * made of 3 V2D_VLine instances {@link #pq}, {@link #qr} and {@link #rp}. The
- * following depicts a triangle {@code
+ * For representing simple triangles in 2D. The triangle is
+ * defined by three edge lines {@link #pq}, {@link #qr} and {@link #rp}. The
+ * following is a depiction {@code
  *
  *  p *- - - - - - - - - - - - - - - - - - - - - - -* q
  *     \                                           /
@@ -48,29 +48,30 @@ import java.io.Serializable;
  *                           *
  *                           r
  * }
- * For more complicated triangles uk.ac.leeds.ccg.v3d.geometry.V2D_Triangle.
+ * A more complicated triangle representation is given in 
+ * uk.ac.leeds.ccg.v3d.geometry.d.V2D_Triangle_d.
  *
  * @author Andy Turner
- * @version 1.0
+ * @version 2.0
  */
-public class V2D_VTriangleDouble implements Serializable {
+public class V2D_VTriangle_d implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * The pq edge.
      */
-    public V2D_VLineDouble pq;
+    public V2D_VLine_d pq;
 
     /**
      * The qr edge.
      */
-    public V2D_VLineDouble qr;
+    public V2D_VLine_d qr;
 
     /**
      * The rp edge.
      */
-    public V2D_VLineDouble rp;
+    public V2D_VLine_d rp;
 
     /**
      * Creates a new triangle.
@@ -79,8 +80,8 @@ public class V2D_VTriangleDouble implements Serializable {
      * @param qr What {@link #qr} is set to.
      * @param rp What {@link #rp} is set to.
      */
-    public V2D_VTriangleDouble(V2D_VLineDouble pq, V2D_VLineDouble qr, 
-            V2D_VLineDouble rp) {
+    public V2D_VTriangle_d(V2D_VLine_d pq, V2D_VLine_d qr, 
+            V2D_VLine_d rp) {
         this.pq = pq;
         this.qr = qr;
         this.rp = rp;

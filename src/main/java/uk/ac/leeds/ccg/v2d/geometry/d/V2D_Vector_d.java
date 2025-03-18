@@ -19,7 +19,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import uk.ac.leeds.ccg.math.arithmetic.Math_Double;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
-import uk.ac.leeds.ccg.v2d.geometry.d.light.V2D_VDouble;
+import uk.ac.leeds.ccg.v2d.geometry.d.light.V2D_V_d;
 
 /**
  * A vector.
@@ -27,7 +27,7 @@ import uk.ac.leeds.ccg.v2d.geometry.d.light.V2D_VDouble;
  * @author Andy Turner
  * @version 1.0
  */
-public class V2D_VectorDouble implements Serializable {
+public class V2D_Vector_d implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -49,47 +49,47 @@ public class V2D_VectorDouble implements Serializable {
     /**
      * The zero vector {@code <0,0>} where: {@link #dx} = {@link #dy} = 0.
      */
-    public static final V2D_VectorDouble ZERO = new V2D_VectorDouble(0, 0);
+    public static final V2D_Vector_d ZERO = new V2D_Vector_d(0, 0);
 
     /**
      * The I vector {@code <1,0>}.
      */
-    public static final V2D_VectorDouble I = new V2D_VectorDouble(1, 0);
+    public static final V2D_Vector_d I = new V2D_Vector_d(1, 0);
 
     /**
      * The J vector {@code <0,1>}.
      */
-    public static final V2D_VectorDouble J = new V2D_VectorDouble(0, 1);
+    public static final V2D_Vector_d J = new V2D_Vector_d(0, 1);
 
     /**
      * The nI vector {@code <-1,0>}.
      */
-    public static final V2D_VectorDouble nI = new V2D_VectorDouble(-1, 0);
+    public static final V2D_Vector_d nI = new V2D_Vector_d(-1, 0);
 
     /**
      * The nJ vector {@code <0,-1>}.
      */
-    public static final V2D_VectorDouble nJ = new V2D_VectorDouble(0, -1);
+    public static final V2D_Vector_d nJ = new V2D_Vector_d(0, -1);
 
     /**
      * The IJ vector {@code <1,1>}.
      */
-    public static final V2D_VectorDouble IJ = new V2D_VectorDouble(1, 1);
+    public static final V2D_Vector_d IJ = new V2D_Vector_d(1, 1);
 
     /**
      * The InJ vector {@code <1,-1>}.
      */
-    public static final V2D_VectorDouble InJ = new V2D_VectorDouble(1, -1);
+    public static final V2D_Vector_d InJ = new V2D_Vector_d(1, -1);
 
     /**
      * The nIJ vector {@code <-1,1>}.
      */
-    public static final V2D_VectorDouble nIJ = new V2D_VectorDouble(-1, 1);
+    public static final V2D_Vector_d nIJ = new V2D_Vector_d(-1, 1);
 
     /**
      * The nInJ vector {@code <-1,-1>}.
      */
-    public static final V2D_VectorDouble nInJ = new V2D_VectorDouble(-1, -1);
+    public static final V2D_Vector_d nInJ = new V2D_Vector_d(-1, -1);
 
     /**
      * Create a new instance.
@@ -97,7 +97,7 @@ public class V2D_VectorDouble implements Serializable {
      * @param v Used to initialise this. A deep copy of all components is made
      * so that {@code this} is completely independent of {@code v}.
      */
-    public V2D_VectorDouble(V2D_VectorDouble v) {
+    public V2D_Vector_d(V2D_Vector_d v) {
         this.dx = v.dx;
         this.dy = v.dy;
     }
@@ -108,7 +108,7 @@ public class V2D_VectorDouble implements Serializable {
      * @param dx What {@link #dx} is set to.
      * @param dy What {@link #dy} is set to.
      */
-    public V2D_VectorDouble(double dx, double dy) {
+    public V2D_Vector_d(double dx, double dy) {
         this.dx = dx;
         this.dy = dy;
     }
@@ -118,7 +118,7 @@ public class V2D_VectorDouble implements Serializable {
      * @param dy Used to initialise {@link #dy}.
      * @param m What {@link #m} is set to.
      */
-    public V2D_VectorDouble(double dx, double dy, double m) {
+    public V2D_Vector_d(double dx, double dy, double m) {
         this(dx, dy);
         this.m = m;
     }
@@ -129,7 +129,7 @@ public class V2D_VectorDouble implements Serializable {
      * @param p the point where the vector starts.
      * @param q the point where the vector ends.
      */
-    public V2D_VectorDouble(V2D_PointDouble p, V2D_PointDouble q) {
+    public V2D_Vector_d(V2D_Point_d p, V2D_Point_d q) {
         this(q.getX() - p.getX(), q.getY() - p.getY());
     }
 
@@ -138,7 +138,7 @@ public class V2D_VectorDouble implements Serializable {
      *
      * @param p the point where the vector starts.
      */
-    public V2D_VectorDouble(V2D_PointDouble p) {
+    public V2D_Vector_d(V2D_Point_d p) {
         this(p.getVector());
     }
 
@@ -147,7 +147,7 @@ public class V2D_VectorDouble implements Serializable {
      *
      * @param v the light Vector.
      */
-    public V2D_VectorDouble(V2D_VDouble v) {
+    public V2D_Vector_d(V2D_V_d v) {
         this(v.x, v.y);
     }
 
@@ -199,7 +199,7 @@ public class V2D_VectorDouble implements Serializable {
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
-        } else if (obj instanceof V2D_VectorDouble v) {
+        } else if (obj instanceof V2D_Vector_d v) {
             return equals(v);
         }
         return false;
@@ -219,7 +219,7 @@ public class V2D_VectorDouble implements Serializable {
      * @param v The vector to test for equality with {@code this}.
      * @return {@code true} iff {@code this} is the same as {@code v}.
      */
-    public boolean equals(V2D_VectorDouble v) {
+    public boolean equals(V2D_Vector_d v) {
         /**
          * The hashcode cannot be used to speed things up as there is the case
          * of -0.0 == 0.0!
@@ -234,9 +234,9 @@ public class V2D_VectorDouble implements Serializable {
      * @param points The points to test if they are coincident.
      * @return {@code true} iff all the points are coincident.
      */
-    public static boolean equals(V2D_VectorDouble... v) {
-        V2D_VectorDouble v0 = v[0];
-        for (V2D_VectorDouble v1 : v) {
+    public static boolean equals(V2D_Vector_d... v) {
+        V2D_Vector_d v0 = v[0];
+        for (V2D_Vector_d v1 : v) {
             if (!v1.equals(v0)) {
                 return false;
             }
@@ -255,7 +255,7 @@ public class V2D_VectorDouble implements Serializable {
      * @param v The vector to test for equality with {@code this}.
      * @return {@code true} iff {@code this} is the same as {@code v}.
      */
-    public boolean equals(double epsilon, V2D_VectorDouble v) {
+    public boolean equals(double epsilon, V2D_Vector_d v) {
         return Math_Double.equals(dx, v.dx, epsilon)
                 && Math_Double.equals(dy, v.dy, epsilon);
     }
@@ -266,12 +266,12 @@ public class V2D_VectorDouble implements Serializable {
      * @param vs The vectors to test for equality.
      * @return {@code true} iff all vs are equal within epsilon.
      */
-    public static boolean equals(double epsilon, V2D_VectorDouble... vs) {
+    public static boolean equals(double epsilon, V2D_Vector_d... vs) {
         if (vs.length < 2) {
             return true;
         }
-        V2D_VectorDouble v0 = vs[0];
-        for (V2D_VectorDouble v : vs) {
+        V2D_Vector_d v0 = vs[0];
+        for (V2D_Vector_d v : vs) {
             if (!v.equals(v0)) {
                 return false;
             }
@@ -285,7 +285,7 @@ public class V2D_VectorDouble implements Serializable {
      * @param v The vector to compare with {@code this}.
      * @return {@code true} iff {@code this} is the reverse of {@code v}.
      */
-    public boolean isReverse(V2D_VectorDouble v) {
+    public boolean isReverse(V2D_Vector_d v) {
         return equals(v.reverse());
     }
 
@@ -297,7 +297,7 @@ public class V2D_VectorDouble implements Serializable {
      * equal.
      * @return {@code true} iff {@code this} is the reverse of {@code v}.
      */
-    public boolean isReverse(V2D_VectorDouble v, double epsilon) {
+    public boolean isReverse(V2D_Vector_d v, double epsilon) {
         return equals(epsilon, v.reverse());
     }
 
@@ -320,16 +320,16 @@ public class V2D_VectorDouble implements Serializable {
      * @param s The scalar value to multiply this by.
      * @return Scaled vector.
      */
-    public V2D_VectorDouble multiply(double s) {
-        return new V2D_VectorDouble(dx * s, dy * s);
+    public V2D_Vector_d multiply(double s) {
+        return new V2D_Vector_d(dx * s, dy * s);
     }
 
     /**
      * @param s The scalar value to divide this by.
      * @return Scaled vector.
      */
-    public V2D_VectorDouble divide(double s) {
-        return new V2D_VectorDouble(dx / s, dy / s);
+    public V2D_Vector_d divide(double s) {
+        return new V2D_Vector_d(dx / s, dy / s);
     }
 
     /**
@@ -338,23 +338,23 @@ public class V2D_VectorDouble implements Serializable {
      * @param v The vector to add.
      * @return A new vector which is {@code this} add {@code v}.
      */
-    public V2D_VectorDouble add(V2D_VectorDouble v) {
-        return new V2D_VectorDouble(dx + v.dx, dy + v.dy);
+    public V2D_Vector_d add(V2D_Vector_d v) {
+        return new V2D_Vector_d(dx + v.dx, dy + v.dy);
     }
 
     /**
      * @param v The vector to subtract.
      * @return A new vector which is {@code this} minus {@code v}.
      */
-    public V2D_VectorDouble subtract(V2D_VectorDouble v) {
-        return new V2D_VectorDouble(dx - v.dx, dy - v.dy);
+    public V2D_Vector_d subtract(V2D_Vector_d v) {
+        return new V2D_Vector_d(dx - v.dx, dy - v.dy);
     }
 
     /**
      * @return A new vector which is the opposite to {@code this}.
      */
-    public V2D_VectorDouble reverse() {
-        return new V2D_VectorDouble(-dx, -dy);
+    public V2D_Vector_d reverse() {
+        return new V2D_Vector_d(-dx, -dy);
     }
 
     /**
@@ -364,7 +364,7 @@ public class V2D_VectorDouble implements Serializable {
      * @param v The other vector to compose the cross product from.
      * @return The dot product.
      */
-    public double getDotProduct(V2D_VectorDouble v) {
+    public double getDotProduct(V2D_Vector_d v) {
         return dx * v.dx + dy * v.dy;
     }
     
@@ -375,7 +375,7 @@ public class V2D_VectorDouble implements Serializable {
      * @param v The other vector to compose the cross product from.
      * @return The dot product.
      */
-    public double getDeterminant(V2D_VectorDouble v) {
+    public double getDeterminant(V2D_Vector_d v) {
         return dx * v.dy - dy * v.dx;
     }
 
@@ -385,7 +385,7 @@ public class V2D_VectorDouble implements Serializable {
      * @param v The vector to test for orthogonality with.
      * @return {@code true} if this and {@code v} are orthogonal.
      */
-    public boolean isOrthogonal(V2D_VectorDouble v) {
+    public boolean isOrthogonal(V2D_Vector_d v) {
 //        // Special case
 //        if (isScalarMultiple(v)) {
 //            return false;
@@ -405,7 +405,7 @@ public class V2D_VectorDouble implements Serializable {
      * @param v The vector to test for orthogonality with.
      * @return {@code true} if this and {@code v} are orthogonal.
      */
-    public boolean isOrthogonal(double epsilon, V2D_VectorDouble v) {
+    public boolean isOrthogonal(double epsilon, V2D_Vector_d v) {
         // Special case
         if (isScalarMultiple(epsilon, v)) {
             return false;
@@ -425,7 +425,7 @@ public class V2D_VectorDouble implements Serializable {
 //     * equal.
 //     * @return {@code true} if this and {@code v} are orthogonal.
 //     */
-//    public boolean isOrthogonal(V2D_VectorDouble v, double epsilon) {
+//    public boolean isOrthogonal(V2D_Vector_d v, double epsilon) {
     ////        // Special case
 ////        if (isScalarMultiple(v, epsilon)) {
 ////            return false;
@@ -455,7 +455,7 @@ public class V2D_VectorDouble implements Serializable {
      * @param v The vector to test if it is a scalar multiple of {@code this}.
      * @return {@code true} if {@code this} and {@code v} are scalar multiples.
      */
-    public boolean isScalarMultiple(V2D_VectorDouble v) {
+    public boolean isScalarMultiple(V2D_Vector_d v) {
         if (equals(v)) {
             return true;
         } else {
@@ -497,7 +497,7 @@ public class V2D_VectorDouble implements Serializable {
      * @param v The vector to test if it is a scalar multiple of {@code this}.
      * @return {@code true} if {@code this} and {@code v} are scalar multiples.
      */
-    public boolean isScalarMultiple(double epsilon, V2D_VectorDouble v) {
+    public boolean isScalarMultiple(double epsilon, V2D_Vector_d v) {
         if (equals(epsilon, v)) {
             return true;
         } else {
@@ -573,7 +573,7 @@ public class V2D_VectorDouble implements Serializable {
      * @param v The vector to find the angle between.
      * @return The angle in radians between {@code this} and {@code v}.
      */
-    public double getAngle2(V2D_VectorDouble v) {
+    public double getAngle2(V2D_Vector_d v) {
         double dp = getDotProduct(v);
         double det = getDeterminant(v);
         return Math.atan2(det, dp);
@@ -586,7 +586,7 @@ public class V2D_VectorDouble implements Serializable {
      * @param v The vector to find the angle between.
      * @return The angle in radians between {@code this} and {@code v}.
      */
-    public double getAngle(V2D_VectorDouble v) {
+    public double getAngle(V2D_Vector_d v) {
         double dp = getDotProduct(v);
         double mag = getMagnitude();
         double vmag = v.getMagnitude();
@@ -600,10 +600,10 @@ public class V2D_VectorDouble implements Serializable {
      * @return A new vector which it {@code #this} rotated by the angle theta
      * about the point pt. If theta is positive the angle is clockwise.
      */
-    public V2D_VectorDouble rotate(double theta) {
+    public V2D_Vector_d rotate(double theta) {
         theta = Math_AngleDouble.normalise(theta);
         if (theta == 0d) {
-            return new V2D_VectorDouble(this);
+            return new V2D_Vector_d(this);
         } else {
             return rotateN(theta);
         }
@@ -617,10 +617,10 @@ public class V2D_VectorDouble implements Serializable {
      * @return A new vector which it {@code #this} rotated by the angle theta
      * about the point pt. If theta is positive the angle is clockwise.
      */
-    public V2D_VectorDouble rotateN(double theta) {
+    public V2D_Vector_d rotateN(double theta) {
         double dx2 = dx * Math.cos(theta) + dy * Math.sin(theta);
         double dy2 = dy * Math.cos(theta) - dx * Math.sin(theta);
-        return new V2D_VectorDouble(dx2, dy2);
+        return new V2D_Vector_d(dx2, dy2);
     }
 
     /**
@@ -628,8 +628,8 @@ public class V2D_VectorDouble implements Serializable {
      *
      * @return A new vector which is this rotated 90 degrees.
      */
-    public V2D_VectorDouble rotate90() {
-        return new V2D_VectorDouble(-dy, dx);
+    public V2D_Vector_d rotate90() {
+        return new V2D_Vector_d(-dy, dx);
     }
 
     /**
@@ -638,7 +638,7 @@ public class V2D_VectorDouble implements Serializable {
      *
      * @return this scaled by {@link #m}.
      */
-    public V2D_VectorDouble getUnitVector() {
+    public V2D_Vector_d getUnitVector() {
         return divide(getMagnitude());
     }
 
@@ -648,9 +648,9 @@ public class V2D_VectorDouble implements Serializable {
      * @param pt The point controlling the direction of the unit vector.
      * @return this scaled by {@link #m}.
      */
-    public V2D_VectorDouble getUnitVector(V2D_PointDouble pt) {
+    public V2D_Vector_d getUnitVector(V2D_Point_d pt) {
         double direction = getDotProduct(pt.getVector()) / getDotProduct(this);
-        V2D_VectorDouble r = getUnitVector();
+        V2D_Vector_d r = getUnitVector();
         if (direction < 0) {
             r = r.reverse();
         }

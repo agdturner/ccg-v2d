@@ -16,7 +16,7 @@
 package uk.ac.leeds.ccg.v2d.geometry.d;
 
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
-import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
+import uk.ac.leeds.ccg.v2d.core.d.V2D_Environment_d;
 
 /**
  * 3D representation of a ray - like a line, but one that starts at a point
@@ -54,29 +54,29 @@ import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
  * @author Andy Turner
  * @version 2.0
  */
-public class V2D_RayDouble extends V2D_GeometryDouble  {
+public class V2D_Ray_d extends V2D_Geometry_d  {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * The line of this ray.
      */
-    public V2D_LineDouble l;
+    public V2D_Line_d l;
     
     /**
      * For storing the line perpendicular to this ray that goes through the 
      * start point.
      */
-    public V2D_LineDouble pl;
+    public V2D_Line_d pl;
 
     /**
      * Create a new instance.
      *
      * @param r What {@code this} is created from.
      */
-    public V2D_RayDouble(V2D_RayDouble r) {
+    public V2D_Ray_d(V2D_Ray_d r) {
         super(r.env);
-        l = new V2D_LineDouble(r.l);
+        l = new V2D_Line_d(r.l);
     }
 
     /**
@@ -85,22 +85,22 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
      * @param p What {@code this} is created from.
      * @param v What {@code this} is created from.
      */
-    public V2D_RayDouble(V2D_PointDouble p, V2D_VectorDouble v) {
+    public V2D_Ray_d(V2D_Point_d p, V2D_Vector_d v) {
         super(p.env, p.offset);
-        l = new V2D_LineDouble(p, v);
+        l = new V2D_Line_d(p, v);
     }
 
     /**
      * Create a new instance. {@link #offset} is set to
-     * {@link V2D_VectorDouble#ZERO}.
+     * {@link V2D_Vector_d#ZERO}.
      *
      * @param env What {@link #env} is set to.
      * @param p What {@code this} is created from.
      * @param q What {@code this} is created from.
      */
-    public V2D_RayDouble(V2D_EnvironmentDouble env, V2D_VectorDouble p, 
-            V2D_VectorDouble q) {
-        this(env, V2D_VectorDouble.ZERO, p, q);
+    public V2D_Ray_d(V2D_Environment_d env, V2D_Vector_d p, 
+            V2D_Vector_d q) {
+        this(env, V2D_Vector_d.ZERO, p, q);
     }
 
     /**
@@ -111,10 +111,10 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
      * @param p What {@link #l} point is set to.
      * @param q What {@link #l} vector is set from.
      */
-    public V2D_RayDouble(V2D_EnvironmentDouble env, V2D_VectorDouble offset, 
-            V2D_VectorDouble p, V2D_VectorDouble q) {
+    public V2D_Ray_d(V2D_Environment_d env, V2D_Vector_d offset, 
+            V2D_Vector_d p, V2D_Vector_d q) {
         super(env, offset);
-        l = new V2D_LineDouble(env, offset, p, q);
+        l = new V2D_Line_d(env, offset, p, q);
     }
 
     /**
@@ -122,9 +122,9 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
      *
      * @param l What {@code this} is created from.
      */
-    public V2D_RayDouble(V2D_LineDouble l) {
+    public V2D_Ray_d(V2D_Line_d l) {
         super(l.env, l.offset);
-        this.l = new V2D_LineDouble(l);
+        this.l = new V2D_Line_d(l);
     }
 
     /**
@@ -133,9 +133,9 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
      * @param p What {@link #offset} and {@link #l} point are set from.
      * @param q What {@link #l} vector is set from.
      */
-    public V2D_RayDouble(V2D_PointDouble p, V2D_PointDouble q) {
+    public V2D_Ray_d(V2D_Point_d p, V2D_Point_d q) {
         super(p.env, p.offset);
-        this.l = new V2D_LineDouble(p, q);
+        this.l = new V2D_Line_d(p, q);
     }
 
     /**
@@ -143,7 +143,7 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
      * @param epsilon The tolerance within which two vectors are regarded as equal.
      * @return {@code true} iff {@code r} is the same as {@code this}.
      */
-    public boolean equals(V2D_RayDouble r, double epsilon) {
+    public boolean equals(V2D_Ray_d r, double epsilon) {
         if (l.getP().equals(r.l.getP())) {
             if (l.v.getDirection() == r.l.v.getDirection()) {
                 return l.v.isScalarMultiple(epsilon, r.l.v);
@@ -204,10 +204,10 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
     /**
      * @return the line perpendicular to the ray passing through l.p.
      */
-    public V2D_LineDouble getPl() {
+    public V2D_Line_d getPl() {
         if (pl == null) {
-            V2D_PointDouble pt = l.getP();
-            pl = new V2D_LineDouble(pt, l.v.rotate90());
+            V2D_Point_d pt = l.getP();
+            pl = new V2D_Line_d(pt, l.v.rotate90());
         }
         return pl;
     }
@@ -217,7 +217,7 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
      * @param epsilon The tolerance within which two vectors are regarded as equal.
      * @return {@code true} if {@code this} is intersected by {@code pl}.
      */
-    public boolean intersects(V2D_PointDouble pt, double epsilon) {
+    public boolean intersects(V2D_Point_d pt, double epsilon) {
         if (pt.equals(l.getP())) {
             return true;
         }
@@ -294,9 +294,9 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
      * @param epsilon The tolerance within which two vectors are regarded as equal.
      * @return The intersection between {@code this} and {@code l}.
      */
-    public V2D_GeometryDouble getIntersect(V2D_LineDouble l, double epsilon) {
+    public V2D_Geometry_d getIntersect(V2D_Line_d l, double epsilon) {
         // Check if infinite lines intersect.
-        V2D_GeometryDouble g = this.l.getIntersect(epsilon, l);
+        V2D_Geometry_d g = this.l.getIntersect(epsilon, l);
         if (g == null) {
             // There is no intersection.
             return g;
@@ -304,7 +304,7 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
         /**
          * If lines intersects at a point, then check this point is on this.
          */
-        if (g instanceof V2D_PointDouble pt) {
+        if (g instanceof V2D_Point_d pt) {
             if (isAligned(pt, epsilon)) {
                 return g;
             } else {
@@ -324,11 +324,11 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
      * @param epsilon The tolerance within which two vectors are regarded as equal.
      * @return The intersection between {@code this} and {@code r}.
      */
-    public V2D_GeometryDouble getIntersect(V2D_RayDouble r, double epsilon) {
-        V2D_GeometryDouble rtl = r.getIntersect(l, epsilon);
+    public V2D_Geometry_d getIntersect(V2D_Ray_d r, double epsilon) {
+        V2D_Geometry_d rtl = r.getIntersect(l, epsilon);
         if (rtl == null) {
             return null;
-        } else if (rtl instanceof V2D_PointDouble pt) {
+        } else if (rtl instanceof V2D_Point_d pt) {
             pl = getPl();
             if (pl.isOnSameSide(pt, l.getQ(), epsilon)) {
                 return pt;
@@ -337,8 +337,8 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
             }
         } else {
             // Then rtl is an instance of V2D_Ray.
-            V2D_GeometryDouble grl = V2D_RayDouble.this.getIntersect(r.l, epsilon);
-            if (grl instanceof V2D_PointDouble) {
+            V2D_Geometry_d grl = V2D_Ray_d.this.getIntersect(r.l, epsilon);
+            if (grl instanceof V2D_Point_d) {
                 return grl;
             } else {
                 /**
@@ -350,22 +350,22 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
                  * points they start at intersect with the other ray and in this
                  * instance, the intersection is the line segment between them.
                  */
-                V2D_PointDouble tp = l.getP();
-                V2D_PointDouble rp = r.l.getP();
+                V2D_Point_d tp = l.getP();
+                V2D_Point_d rp = r.l.getP();
                 pl = getPl();
-                V2D_LineDouble rpl = r.getPl();
+                V2D_Line_d rpl = r.getPl();
                 if (pl.isOnSameSide(rp, l.getQ(), epsilon)) {
                     if (rpl.isOnSameSide(tp, r.l.getQ(), epsilon)) {
                         if (tp.equals(rp)) {
                             return tp;
                         }
-                        return new V2D_LineSegmentDouble(rp, tp);
+                        return new V2D_LineSegment_d(rp, tp);
                     } else {
-                        return new V2D_RayDouble(rp, l.v);
+                        return new V2D_Ray_d(rp, l.v);
                     }
                 } else {
                     if (rpl.isOnSameSide(tp, r.l.getQ(), epsilon)) {
-                        return new V2D_RayDouble(tp, l.v);
+                        return new V2D_Ray_d(tp, l.v);
                     } else {
                         return null;
                     }
@@ -384,12 +384,12 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
      * @param epsilon The tolerance within which two vectors are regarded as equal.
      * @return The intersection between {@code this} and {@code l}.
      */
-    public V2D_FiniteGeometryDouble getIntersect(V2D_LineSegmentDouble ls,
+    public V2D_FiniteGeometry_d getIntersect(V2D_LineSegment_d ls,
             double epsilon) {
-        V2D_GeometryDouble g = V2D_RayDouble.this.getIntersect(ls.l, epsilon);
+        V2D_Geometry_d g = V2D_Ray_d.this.getIntersect(ls.l, epsilon);
         if (g == null) {
             return null;
-        } else if (g instanceof V2D_PointDouble pt) {
+        } else if (g instanceof V2D_Point_d pt) {
             if (isAligned(pt, epsilon)) {
                 if (ls.isBetween(pt, epsilon)) {
                     return pt;
@@ -400,19 +400,19 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
                 return null;
             }
         } else {
-            V2D_PointDouble rp = l.getP();
+            V2D_Point_d rp = l.getP();
             //V2D_Point rq = l.getQ();
-            V2D_PointDouble lsp = ls.getP();
-            V2D_PointDouble lsq = ls.getQ();
+            V2D_Point_d lsp = ls.getP();
+            V2D_Point_d lsq = ls.getQ();
             if (isAligned(lsp, epsilon)) {
                 if (isAligned(lsq, epsilon)) {
                     return ls;
                 } else {
-                    return V2D_LineSegmentDouble.getGeometry(rp, lsp, epsilon);
+                    return V2D_LineSegment_d.getGeometry(rp, lsp, epsilon);
                 }
             } else {
                 if (isAligned(lsq, epsilon)) {
-                    return V2D_LineSegmentDouble.getGeometry(rp, lsq, epsilon);
+                    return V2D_LineSegment_d.getGeometry(rp, lsq, epsilon);
                 } else {
                     if (intersects(lsp, epsilon)) {
                         return lsp;
@@ -434,7 +434,7 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
      * @param epsilon The tolerance within which two vectors are regarded as equal.
      * @return {@code true} If pt is in line with this.
      */
-    public boolean isAligned(V2D_PointDouble pt, double epsilon) {
+    public boolean isAligned(V2D_Point_d pt, double epsilon) {
         return getPl().isOnSameSide(pt, l.getQ(), epsilon);
     }
 
@@ -444,7 +444,7 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
      * @param v The vector to translate.
      */
     @Override
-    public void translate(V2D_VectorDouble v) {
+    public void translate(V2D_Vector_d v) {
         l.translate(v);
         if (pl != null) {
             pl.translate(v);
@@ -452,17 +452,17 @@ public class V2D_RayDouble extends V2D_GeometryDouble  {
     }
     
     @Override
-    public V2D_RayDouble rotate(V2D_PointDouble pt, double theta) {
+    public V2D_Ray_d rotate(V2D_Point_d pt, double theta) {
         theta = Math_AngleDouble.normalise(theta);
         if (theta == 0d) {
-            return new V2D_RayDouble(this);
+            return new V2D_Ray_d(this);
         } else {
             return rotateN(pt, theta);
         }
     }
     
     @Override
-    public V2D_RayDouble rotateN(V2D_PointDouble pt, double theta) {
-        return new V2D_RayDouble(l.rotateN(pt, theta));
+    public V2D_Ray_d rotateN(V2D_Point_d pt, double theta) {
+        return new V2D_Ray_d(l.rotateN(pt, theta));
     }
 }

@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Objects;
 import uk.ac.leeds.ccg.math.arithmetic.Math_Double;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
-import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
+import uk.ac.leeds.ccg.v2d.core.d.V2D_Environment_d;
 
 /**
  * A point is defined by two vectors: {@link #offset} and {@link #rel}. Adding
@@ -33,40 +33,40 @@ import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
  * @author Andy Turner
  * @version 2.0
  */
-public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Comparable<V2D_PointDouble> {
+public class V2D_Point_d extends V2D_FiniteGeometry_d implements Comparable<V2D_Point_d> {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * The origin of the Euclidean space.
      */
-    public static final V2D_PointDouble ORIGIN = new V2D_PointDouble(null, 0, 0);
+    public static final V2D_Point_d ORIGIN = new V2D_Point_d(null, 0, 0);
 
     /**
      * The position relative to the {@link #offset}. Taken together with
      * {@link #offset}, this gives the point location.
      */
-    public V2D_VectorDouble rel;
+    public V2D_Vector_d rel;
 
     /**
      * Create a new instance which is completely independent of {@code pv}.
      *
      * @param p The point to clone/duplicate.
      */
-    public V2D_PointDouble(V2D_PointDouble p) {
-        super(p.env, new V2D_VectorDouble(p.offset));
-        rel = new V2D_VectorDouble(p.rel);
+    public V2D_Point_d(V2D_Point_d p) {
+        super(p.env, new V2D_Vector_d(p.offset));
+        rel = new V2D_Vector_d(p.rel);
     }
 
     /**
      * Create a new instance with {@link #offset} set to
-     * {@link V2D_VectorDouble#ZERO}.
+     * {@link V2D_Vector_d#ZERO}.
      *
      * @param env The environment.
      * @param rel Cloned to initialise {@link #rel}.
      */
-    public V2D_PointDouble(V2D_EnvironmentDouble env, V2D_VectorDouble rel) {
-        this(env, V2D_VectorDouble.ZERO, rel);
+    public V2D_Point_d(V2D_Environment_d env, V2D_Vector_d rel) {
+        this(env, V2D_Vector_d.ZERO, rel);
     }
 
     /**
@@ -76,23 +76,23 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
      * @param offset What {@link #offset} is set to.
      * @param rel Cloned to initialise {@link #rel}.
      */
-    public V2D_PointDouble(V2D_EnvironmentDouble env, V2D_VectorDouble offset,
-            V2D_VectorDouble rel) {
+    public V2D_Point_d(V2D_Environment_d env, V2D_Vector_d offset,
+            V2D_Vector_d rel) {
         super(env, offset);
-        this.rel = new V2D_VectorDouble(rel);
+        this.rel = new V2D_Vector_d(rel);
     }
 
     /**
      * Create a new instance with {@link #offset} set to
-     * {@link V2D_VectorDouble#ZERO}.
+     * {@link V2D_Vector_d#ZERO}.
      *
      * @param env The environment.
      * @param x What {@link #rel} x component is set to.
      * @param y What {@link #rel} y component is set to.
      */
-    public V2D_PointDouble(V2D_EnvironmentDouble env, double x, double y) {
-        super(env, V2D_VectorDouble.ZERO);
-        rel = new V2D_VectorDouble(x, y);
+    public V2D_Point_d(V2D_Environment_d env, double x, double y) {
+        super(env, V2D_Vector_d.ZERO);
+        rel = new V2D_Vector_d(x, y);
     }
 
     @Override
@@ -143,7 +143,7 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
     @Override
     public boolean equals(Object o) {
         if (o != null) {
-            if (o instanceof V2D_PointDouble p) {
+            if (o instanceof V2D_Point_d p) {
                 return equals(p);
             }
         }
@@ -164,7 +164,7 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
      * @param p The point to test if it is the same as {@code this}.
      * @return {@code true} iff {@code pv} is the same as {@code this}.
      */
-    public boolean equals(V2D_PointDouble p) {
+    public boolean equals(V2D_Point_d p) {
         if (p == null) {
             return false;
         }
@@ -186,7 +186,7 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
      * @return {@code true} iff {@code pv} is equal to {@code this} given the
      * epsilon.
      */
-    public boolean equals(V2D_PointDouble p, double epsilon) {
+    public boolean equals(V2D_Point_d p, double epsilon) {
         if (p == null) {
             return false;
         }
@@ -204,7 +204,7 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
      * @param ps The points to test if they are coincident.
      * @return {@code true} iff all the points are coincident.
      */
-    public static boolean equals(double epsilon, V2D_PointDouble... ps) {
+    public static boolean equals(double epsilon, V2D_Point_d... ps) {
         if (ps.length < 2) {
             return true;
         }
@@ -226,7 +226,7 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
      * @return {@code true} iff all points in {@code ps} are equal to 
      * {@code this}.
      */
-    public boolean equalsAll(Collection<V2D_PointDouble> ps, double epsilon) {
+    public boolean equalsAll(Collection<V2D_Point_d> ps, double epsilon) {
         return ps.parallelStream().allMatch(x -> equals(x, epsilon));
     }
 
@@ -240,14 +240,14 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
      * @return {@code true} iff all points in {@code ps} are equal to 
      * {@code this}.
      */
-    public boolean equalsAny(Collection<V2D_PointDouble> ps, double epsilon) {
+    public boolean equalsAny(Collection<V2D_Point_d> ps, double epsilon) {
         return ps.parallelStream().anyMatch(x -> equals(x, epsilon));
     }
 
     /**
      * @return The vector - {@code v.add(offset, oom)}.
      */
-    public V2D_VectorDouble getVector() {
+    public V2D_Vector_d getVector() {
         return rel.add(offset);
     }
 
@@ -273,8 +273,8 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
     }
     
     @Override
-    public V2D_PointDouble[] getPointsArray() {
-        V2D_PointDouble[] r = new V2D_PointDouble[1];
+    public V2D_Point_d[] getPointsArray() {
+        V2D_Point_d[] r = new V2D_Point_d[1];
         r[0] = this;
         return r;
     }
@@ -289,7 +289,7 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
      * @param b A point
      * @return true iff this is equal to the ORIGIN.
      */
-    public boolean isBetween(double epsilon, V2D_PointDouble a, V2D_PointDouble b) {
+    public boolean isBetween(double epsilon, V2D_Point_d a, V2D_Point_d b) {
         if (this.equals(a)) {
             return true;
         }
@@ -299,11 +299,11 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
         if (a.equals(b)) {
             return false;
         }
-        V2D_VectorDouble ab = new V2D_VectorDouble(a, b);
-        V2D_VectorDouble v90 = ab.rotate90();
-        V2D_LineDouble ap = new V2D_LineDouble(a, v90);
+        V2D_Vector_d ab = new V2D_Vector_d(a, b);
+        V2D_Vector_d v90 = ab.rotate90();
+        V2D_Line_d ap = new V2D_Line_d(a, v90);
         if (ap.isOnSameSide(this, b, epsilon)) {
-            V2D_LineDouble bp = new V2D_LineDouble(b, v90);
+            V2D_Line_d bp = new V2D_Line_d(b, v90);
             return bp.isOnSameSide(this, a, epsilon);
         }
         return false;
@@ -315,7 +315,7 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
      * @param p A point.
      * @return The distance from {@code pv} to this.
      */
-    public double getDistance(V2D_PointDouble p) {
+    public double getDistance(V2D_Point_d p) {
         if (this.equals(p)) {
             return 0d;
         }
@@ -328,15 +328,15 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
      * @param pt A point.
      * @return The distance squared from {@code pv} to this.
      */
-    public double getDistanceSquared(V2D_PointDouble pt) {
+    public double getDistanceSquared(V2D_Point_d pt) {
         double dx = getX() - pt.getX();
         double dy = getY() - pt.getY();
         return dx * dx + dy * dy;
     }
 
     @Override
-    public V2D_AABBDouble getAABB() {
-        return new V2D_AABBDouble(this);
+    public V2D_AABB_d getAABB() {
+        return new V2D_AABB_d(this);
     }
 
     /**
@@ -379,7 +379,7 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
      *
      * @param offset What {@link #offset} is set to.
      */
-    public void setOffset(V2D_VectorDouble offset) {
+    public void setOffset(V2D_Vector_d offset) {
         if (!offset.equals(this.offset)) {
             rel = getVector().subtract(offset);
             this.offset = offset;
@@ -392,29 +392,29 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
      *
      * @param rel What {@link #rel} is set to.
      */
-    public void setRel(V2D_VectorDouble rel) {
+    public void setRel(V2D_Vector_d rel) {
         //offset = getVector(e.oom).subtract(v, e.oom);
         offset = offset.subtract(rel).add(this.rel);
         this.rel = rel;
     }
 
     @Override
-    public V2D_PointDouble rotate(V2D_PointDouble pt, double theta) {
+    public V2D_Point_d rotate(V2D_Point_d pt, double theta) {
         theta = Math_AngleDouble.normalise(theta);
         if (theta == 0d) {
-            return new V2D_PointDouble(this);
+            return new V2D_Point_d(this);
         } else {
             return rotateN(pt, theta);
         }
     }
 
     @Override
-    public V2D_PointDouble rotateN(V2D_PointDouble pt, double theta) {
-        V2D_VectorDouble tv = new V2D_VectorDouble(pt.getX(), pt.getY());
-        V2D_PointDouble tp = new V2D_PointDouble(this);
+    public V2D_Point_d rotateN(V2D_Point_d pt, double theta) {
+        V2D_Vector_d tv = new V2D_Vector_d(pt.getX(), pt.getY());
+        V2D_Point_d tp = new V2D_Point_d(this);
         tp.translate(tv.reverse());
-        V2D_VectorDouble tpv = tp.getVector();
-        V2D_PointDouble r = new V2D_PointDouble(env, tpv.rotateN(theta));
+        V2D_Vector_d tpv = tp.getVector();
+        V2D_Point_d r = new V2D_Point_d(env, tpv.rotateN(theta));
         r.translate(tv);
         return r;
     }
@@ -427,22 +427,22 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
      * @param pts The points to derive a unique list from.
      * @return A unique list made from those in pts.
      */
-    public static ArrayList<V2D_PointDouble> getUnique(
-            List<V2D_PointDouble> pts, double epsilon) {
+    public static ArrayList<V2D_Point_d> getUnique(
+            List<V2D_Point_d> pts, double epsilon) {
 //        System.out.println("Before unique");
 //        for (int i = 0; i < pts.size(); i++) {
 //            System.out.println("i=" + i);
 //            System.out.println(pts.get(i).toStringSimple(""));
 //        }
         HashSet<Integer> indexes = new HashSet<>();
-        ArrayList<V2D_PointDouble> r = new ArrayList<>();
+        ArrayList<V2D_Point_d> r = new ArrayList<>();
         for (int i = 0; i < pts.size(); i++) {
             if (!indexes.contains(i)) {
-                V2D_PointDouble p = pts.get(i);
+                V2D_Point_d p = pts.get(i);
                 r.add(p);
                 for (int j = i + 1; j < pts.size(); j++) {
                     if (!indexes.contains(j)) {
-                        V2D_PointDouble p2 = pts.get(j);
+                        V2D_Point_d p2 = pts.get(j);
                         if (p.equals(p2, epsilon)) {
                             indexes.add(j);
                         }
@@ -466,16 +466,16 @@ public class V2D_PointDouble extends V2D_FiniteGeometryDouble implements Compara
 //     * equal.
 //     * @return A unique list made from those in pts.
 //     */
-//    public static ArrayList<V2D_PointDouble> getUnique(double epsilon, 
-//            V2D_PointDouble... pts) {
+//    public static ArrayList<V2D_Point_d> getUnique(double epsilon, 
+//            V2D_Point_d... pts) {
 //        return getUnique(Arrays.asList(pts), epsilon);
 //    }
-    public boolean intersects(V2D_AABBDouble aabb, double epsilon) {
+    public boolean intersects(V2D_AABB_d aabb, double epsilon) {
         return aabb.intersects(this);
     }
 
     @Override
-    public int compareTo(V2D_PointDouble p) {
+    public int compareTo(V2D_Point_d p) {
         if (getY() > p.getY()) {
             return 1;
         } else {

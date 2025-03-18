@@ -26,12 +26,14 @@ import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
 
 /**
- * For representing a convex hulls - convex shapes with no holes.
- *
+ * V2D_ConvexArea extends V2D_Area and is for representing a convex area
+ * comprising one or more triangles sharing internal edges and with a convex
+ * external edge. All points of convex areas are on the external edge.
+ * 
  * @author Andy Turner
  * @version 2.0
  */
-public class V2D_ConvexHull extends V2D_Shape {
+public class V2D_ConvexArea extends V2D_Area {
 
     private static final long serialVersionUID = 1L;
 
@@ -47,7 +49,7 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @param rm The RoundingMode for any rounding.
      * @param triangles A non-empty list of coplanar triangles.
      */
-    public V2D_ConvexHull(int oom, RoundingMode rm, V2D_Triangle... triangles) {
+    public V2D_ConvexArea(int oom, RoundingMode rm, V2D_Triangle... triangles) {
         this(oom, rm, V2D_Triangle.getPoints(triangles, oom, rm));
     }
 
@@ -58,7 +60,7 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @param rm The RoundingMode for any rounding.
      * @param points A list of points with at least 3 that are non-coplanar.
      */
-    public V2D_ConvexHull(int oom, RoundingMode rm, V2D_Point... points) {
+    public V2D_ConvexArea(int oom, RoundingMode rm, V2D_Point... points) {
         this(oom, rm, Arrays.asList(points));
     }
 
@@ -103,7 +105,7 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @param points The points from which to construct the convex hull. There
      * must be at least three non-linear points.
      */
-    public V2D_ConvexHull(int oom, RoundingMode rm, List<V2D_Point> points) {
+    public V2D_ConvexArea(int oom, RoundingMode rm, List<V2D_Point> points) {
         super(points.get(0).env, V2D_Vector.ZERO);
         ArrayList<V2D_Point> h = new ArrayList<>();
         ArrayList<V2D_Point> uniquePoints = V2D_Point.getUnique(
@@ -163,7 +165,7 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
      */
-    public V2D_ConvexHull(V2D_ConvexHull ch, int oom, RoundingMode rm) {
+    public V2D_ConvexArea(V2D_ConvexArea ch, int oom, RoundingMode rm) {
         this(oom, rm, ch.getPointsArray(oom, rm));
     }
 
@@ -175,7 +177,7 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
      */
-    public V2D_ConvexHull(V2D_ConvexHull ch, V2D_Triangle t,
+    public V2D_ConvexArea(V2D_ConvexArea ch, V2D_Triangle t,
             int oom, RoundingMode rm) {
         this(oom, rm, V2D_FiniteGeometry.getPoints(oom, rm, ch, t));
     }
@@ -247,7 +249,7 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @param rm The RoundingMode for any rounding.
      * @return {@code true} iff all the triangles are the same.
      */
-    public boolean equals(V2D_ConvexHull c, int oom, RoundingMode rm) {
+    public boolean equals(V2D_ConvexArea c, int oom, RoundingMode rm) {
         if (points.values().parallelStream().allMatch(x
                 -> x.equalsAny(c.points.values(), oom, rm))) {
             return c.points.values().parallelStream().allMatch(x
@@ -409,7 +411,7 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @param rm The RoundingMode if rounding is needed.
      * @return {@code true} iff {@code this} contains {@code ch}.
      */
-    public boolean contains(V2D_ConvexHull ch, int oom, RoundingMode rm) {
+    public boolean contains(V2D_ConvexArea ch, int oom, RoundingMode rm) {
         return intersects(ch, oom, rm)
                 && ch.getPoints(oom, rm).values().parallelStream().allMatch(x
                         -> contains(x, oom, rm));
@@ -505,7 +507,7 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @param rm The RoundingMode if rounding is needed.
      * @return {@code true} iff {@code this} is intersected by {@code ch}.
      */
-    public boolean intersects(V2D_ConvexHull ch, int oom, RoundingMode rm) {
+    public boolean intersects(V2D_ConvexArea ch, int oom, RoundingMode rm) {
         return ch.intersects(getAABB(oom, rm), oom, rm)
                 && intersects(ch.getAABB(oom, rm), oom, rm)
                 && intersects0(ch, oom, rm);
@@ -519,7 +521,7 @@ public class V2D_ConvexHull extends V2D_Shape {
      * @param rm The RoundingMode if rounding is needed.
      * @return {@code true} iff {@code this} is intersected by {@code ch.
      */
-    public boolean intersects0(V2D_ConvexHull ch, int oom, RoundingMode rm) {
+    public boolean intersects0(V2D_ConvexArea ch, int oom, RoundingMode rm) {
         return getTriangles(oom, rm).parallelStream().anyMatch(x
                 -> ch.intersects(x, oom, rm))
                 || ch.getTriangles(oom, rm).parallelStream().anyMatch(x
@@ -574,7 +576,7 @@ public class V2D_ConvexHull extends V2D_Shape {
         if (tsu.isEmpty()) {
             return null;
         } else {
-            return new V2D_ConvexHull(oom, rm,
+            return new V2D_ConvexArea(oom, rm,
                     tsu.toArray(V2D_Point[]::new)).simplify(oom, rm);
         }
 //        switch (size) {
@@ -590,24 +592,24 @@ public class V2D_ConvexHull extends V2D_Shape {
     }
 
     @Override
-    public V2D_ConvexHull rotate(V2D_Point pt, BigRational theta,
+    public V2D_ConvexArea rotate(V2D_Point pt, BigRational theta,
             Math_BigDecimal bd, int oom, RoundingMode rm) {
         theta = Math_AngleBigRational.normalise(theta, bd, oom - 2, rm);
         if (theta.compareTo(BigRational.ZERO) == 0d) {
-            return new V2D_ConvexHull(this, oom, rm);
+            return new V2D_ConvexArea(this, oom, rm);
         } else {
             return rotateN(pt, theta, bd, oom, rm);
         }
     }
 
     @Override
-    public V2D_ConvexHull rotateN(V2D_Point pt, BigRational theta,
+    public V2D_ConvexArea rotateN(V2D_Point pt, BigRational theta,
             Math_BigDecimal bd, int oom, RoundingMode rm) {
         V2D_Point[] pts = new V2D_Point[points.size()];
         for (int i = 0; i < points.size(); i++) {
             pts[0] = points.get(i).rotateN(pt, theta, bd, oom, rm);
         }
-        return new V2D_ConvexHull(oom, rm, V2D_Triangle.getPoints(pts, oom, rm));
+        return new V2D_ConvexArea(oom, rm, V2D_Triangle.getPoints(pts, oom, rm));
     }
 
     /**
@@ -704,7 +706,7 @@ public class V2D_ConvexHull extends V2D_Shape {
 //            if (pts.isEmpty()) {
 //                return il;
 //            } else {
-//                return new V2D_ConvexHull(oom, rm,
+//                return new V2D_ConvexArea(oom, rm,
 //                        this.triangles.get(0).getPl(oom, rm).n,
 //                        pts.toArray(V2D_Point[]::new));
 //            }
@@ -757,11 +759,11 @@ public class V2D_ConvexHull extends V2D_Shape {
 //            } else if (cppltcqpl instanceof V2D_Triangle cppltcqplt) {
 //                return cppltcqplt.clip(rpl, pt, oom, rm);
 //            } else {
-//                V2D_ConvexHull c = (V2D_ConvexHull) cppltcqpl;
+//                V2D_ConvexArea c = (V2D_ConvexArea) cppltcqpl;
 //                return c.clip(rpl, tq, oom, rm);
 //            }
 //        } else {
-//            V2D_ConvexHull c = (V2D_ConvexHull) cppl;
+//            V2D_ConvexArea c = (V2D_ConvexArea) cppl;
 //            V2D_FiniteGeometry cc = c.clip(qpl, pt, oom, rm);
 //            if (cc == null) {
 //                return cc;
@@ -779,7 +781,7 @@ public class V2D_ConvexHull extends V2D_Shape {
 //            } else if (cc instanceof V2D_Triangle ccct) {
 //                return ccct.clip(rpl, tq, oom, rm);
 //            } else {
-//                V2D_ConvexHull ccc = (V2D_ConvexHull) cc;
+//                V2D_ConvexArea ccc = (V2D_ConvexArea) cc;
 //                return ccc.clip(rpl, pt, oom, rm);
 //            }
 //        }
@@ -787,14 +789,14 @@ public class V2D_ConvexHull extends V2D_Shape {
     /**
      * If pts are all equal then a V2D_Point is returned. If two are different,
      * then a V2D_LineSegment is returned. Three different, then a V2D_Triangle
-     * is returned. If four or more are different then a V2D_ConvexHullCoplanar
+     * is returned. If four or more are different then a V2D_ConvexAreaCoplanar
      * is returned.
      *
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
      * @param pts The points.
      * @return Either a V2D_Point, V2D_LineSegment, V2D_Triangle, or
-     * V2D_ConvexHullCoplanar.
+     * V2D_ConvexAreaCoplanar.
      */
     public static V2D_FiniteGeometry getGeometry(int oom, RoundingMode rm,
             ArrayList<V2D_Point> pts) {
@@ -803,15 +805,15 @@ public class V2D_ConvexHull extends V2D_Shape {
 
     /**
      * If pts are all equal then a V2D_Point is returned.If two are different,
-     * then a V2D_LineSegment is returned. Three different, then a V2D_Triangle
-     * is returned. If four or more are different then a V2D_ConvexHull is
-     * returned.
+     * then a V2D_LineSegment is returned.Three different, then a V2D_Triangle
+ is returned. If four or more are different then a V2D_ConvexArea is
+ returned.
      *
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
      * @param pts The points.
      * @return Either a V2D_Point, V2D_LineSegment, V2D_Triangle, or
-     * V2D_ConvexHull.
+ V2D_ConvexArea.
      */
     public static V2D_FiniteGeometry getGeometry(int oom, RoundingMode rm,
             V2D_Point... pts) {
@@ -838,7 +840,7 @@ public class V2D_ConvexHull extends V2D_Shape {
                 if (V2D_Line.isCollinear(oom, rm, ip, iq, ir)) {
                     return new V2D_LineSegment(oom, rm, pts);
                 } else {
-                    return new V2D_ConvexHull(oom, rm, pts);
+                    return new V2D_ConvexArea(oom, rm, pts);
                 }
             }
         }

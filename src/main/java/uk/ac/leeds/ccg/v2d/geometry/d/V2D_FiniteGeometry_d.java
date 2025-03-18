@@ -17,7 +17,7 @@ package uk.ac.leeds.ccg.v2d.geometry.d;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
+import uk.ac.leeds.ccg.v2d.core.d.V2D_Environment_d;
 
 /**
  * V2D_FiniteGeometry for representing finite geometries.
@@ -25,22 +25,22 @@ import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
  * @author Andy Turner
  * @version 1.0
  */
-public abstract class V2D_FiniteGeometryDouble extends V2D_GeometryDouble {
+public abstract class V2D_FiniteGeometry_d extends V2D_Geometry_d {
 
     private static final long serialVersionUID = 1L;
     
     /**
      * For storing the envelope.
      */
-    protected V2D_AABBDouble en;
+    protected V2D_AABB_d en;
     
     /**
      * Creates a new instance with offset V2D_Vector.ZERO.
      * 
      * @param env The environment.
      */
-    public V2D_FiniteGeometryDouble(V2D_EnvironmentDouble env) {
-        this(env, V2D_VectorDouble.ZERO);
+    public V2D_FiniteGeometry_d(V2D_Environment_d env) {
+        this(env, V2D_Vector_d.ZERO);
     }
     
     /**
@@ -49,7 +49,7 @@ public abstract class V2D_FiniteGeometryDouble extends V2D_GeometryDouble {
      * @param env The environment.
      * @param offset What {@link #offset} is set to.
      */
-    public V2D_FiniteGeometryDouble(V2D_EnvironmentDouble env, V2D_VectorDouble offset) {
+    public V2D_FiniteGeometry_d(V2D_Environment_d env, V2D_Vector_d offset) {
         super(env, offset);
     }
     
@@ -58,7 +58,7 @@ public abstract class V2D_FiniteGeometryDouble extends V2D_GeometryDouble {
      *
      * @return The Axis Aligned Bounding Box.
      */
-    public abstract V2D_AABBDouble getAABB();
+    public abstract V2D_AABB_d getAABB();
     
     /**
      * Translate (move relative to the origin).
@@ -66,7 +66,7 @@ public abstract class V2D_FiniteGeometryDouble extends V2D_GeometryDouble {
      * @param v The vector to translate.
      */
     @Override
-    public void translate(V2D_VectorDouble v) {
+    public void translate(V2D_Vector_d v) {
         super.translate(v);
         if (en != null) {
             en.translate(v);
@@ -74,17 +74,17 @@ public abstract class V2D_FiniteGeometryDouble extends V2D_GeometryDouble {
         //en = null;
     }
     
-    public abstract V2D_PointDouble[] getPointsArray();
+    public abstract V2D_Point_d[] getPointsArray();
     
     /**
      * @return A copy of the points of the geometries gs.
      * @param gs The geometries.
      */
-    public static V2D_PointDouble[] getPoints(V2D_FiniteGeometryDouble... gs) {
-        ArrayList<V2D_PointDouble> list = new ArrayList<>();
+    public static V2D_Point_d[] getPoints(V2D_FiniteGeometry_d... gs) {
+        ArrayList<V2D_Point_d> list = new ArrayList<>();
         for (var x: gs) {
             list.addAll(Arrays.asList(x.getPointsArray()));
         }
-        return list.toArray(V2D_PointDouble[]::new);
+        return list.toArray(V2D_Point_d[]::new);
     }
 }

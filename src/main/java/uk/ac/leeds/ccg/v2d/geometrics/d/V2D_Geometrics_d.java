@@ -15,18 +15,18 @@
  */
 package uk.ac.leeds.ccg.v2d.geometrics.d;
 
-import uk.ac.leeds.ccg.v2d.geometry.d.V2D_PointDouble;
+import uk.ac.leeds.ccg.v2d.geometry.d.V2D_Point_d;
 
 /**
  *
  * @author Andy Turner
  */
-public class V2D_GeometricsDouble {
+public class V2D_Geometrics_d {
     
     /**
      * Create a new instance.
      */
-    public V2D_GeometricsDouble(){}
+    public V2D_Geometrics_d(){}
     
     /**
      * https://en.wikipedia.org/wiki/Centroid
@@ -35,7 +35,7 @@ public class V2D_GeometricsDouble {
      * @param ps The input point(s).
      * @return A sort of centroid.
      */
-    public static V2D_PointDouble getCentroid(V2D_PointDouble... ps) {
+    public static V2D_Point_d getCentroid(V2D_Point_d... ps) {
         double x = ps[0].getX();
         double y = ps[0].getY();
         double n = ps.length;
@@ -45,16 +45,16 @@ public class V2D_GeometricsDouble {
         }
         x /= n;
         y /= n;
-        return new V2D_PointDouble(ps[0].env, x, y);
+        return new V2D_Point_d(ps[0].env, x, y);
     }
 
     /**
      * @param ps The points the index of the max of which is returned.
      * @return The maximum point (largest y, largest x).
      */
-    public static int getMax(V2D_PointDouble... ps) {
+    public static int getMax(V2D_Point_d... ps) {
         int r = 0;
-        V2D_PointDouble max = ps[0];
+        V2D_Point_d max = ps[0];
         double n = ps.length;
         for (int i = 1; i < n; i ++) {
             if (ps[i].compareTo(max) == 1) {
@@ -68,9 +68,9 @@ public class V2D_GeometricsDouble {
      * @param ps The points the index of the min of which is returned.
      * @return The minimum point (smallest y, smallest x).
      */
-    public static int getMin(V2D_PointDouble... ps) {
+    public static int getMin(V2D_Point_d... ps) {
         int r = 0;
-        V2D_PointDouble max = ps[0];
+        V2D_Point_d max = ps[0];
         double n = ps.length;
         for (int i = 1; i < n; i ++) {
             if (ps[i].compareTo(max) == -1) {

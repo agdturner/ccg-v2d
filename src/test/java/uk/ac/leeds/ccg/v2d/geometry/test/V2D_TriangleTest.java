@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigRational;
 import uk.ac.leeds.ccg.math.number.Math_BigRationalSqrt;
-import uk.ac.leeds.ccg.v2d.geometry.V2D_ConvexHull;
+import uk.ac.leeds.ccg.v2d.geometry.V2D_ConvexArea;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_AABB;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_FiniteGeometry;
 import uk.ac.leeds.ccg.v2d.geometry.V2D_Geometry;
@@ -608,7 +608,7 @@ public class V2D_TriangleTest extends V2D_Test {
         // We are expecting a convex hull with 4 points that can be tested to 
         // see if they are made up of the two triangles as expected.
         V2D_FiniteGeometry gi = t0.getIntersect(t1, oom, rm);
-        ArrayList<V2D_Triangle> git = ((V2D_ConvexHull) gi).getTriangles(oom, rm);
+        ArrayList<V2D_Triangle> git = ((V2D_ConvexArea) gi).getTriangles(oom, rm);
         for (int i = 0; i < git.size(); i ++) {
             assertTrue(expected.get(i).equals(git.get(i), oom, rm));
         }
@@ -655,7 +655,7 @@ public class V2D_TriangleTest extends V2D_Test {
         // Expecting a convex hull with 6 points that can be tested to 
         // see if they are made up of the four triangles as expected.
         gi = t0.getIntersect(t1, oom, rm);
-        git = ((V2D_ConvexHull) gi).getTriangles(oom, rm);
+        git = ((V2D_ConvexArea) gi).getTriangles(oom, rm);
         for (int i = 0; i < git.size(); i ++) {
             assertTrue(expected.get(i).equals(git.get(i), oom, rm));
         }

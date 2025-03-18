@@ -23,19 +23,21 @@ import java.util.List;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
 
 /**
- * For representing convex hulls - convex shapes with no holes.
+ * V2D_ConvexArea_d extends V2D_Area_d and is for representing a convex area
+ * comprising one or more triangles sharing internal edges and with a convex
+ * external edge. All points of convex areas are on the external edge.
  *
  * @author Andy Turner
  * @version 2.0
  */
-public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
+public class V2D_ConvexArea_d extends V2D_Area_d {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * For storing the contiguous triangles.
      */
-    public ArrayList<V2D_TriangleDouble> triangles;
+    public ArrayList<V2D_Triangle_d> triangles;
 
     /**
      * Create a new instance.
@@ -44,8 +46,8 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * equal.
      * @param triangles A non-empty list of coplanar triangles.
      */
-    public V2D_ConvexHullDouble(double epsilon, V2D_TriangleDouble... triangles) {
-        this(epsilon, V2D_TriangleDouble.getPoints(triangles));
+    public V2D_ConvexArea_d(double epsilon, V2D_Triangle_d... triangles) {
+        this(epsilon, V2D_Triangle_d.getPoints(triangles));
     }
 
     /**
@@ -55,7 +57,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * equal.
      * @param points A list of points with at least 3 that are non-coplanar.
      */
-    public V2D_ConvexHullDouble(double epsilon, V2D_PointDouble... points) {
+    public V2D_ConvexArea_d(double epsilon, V2D_Point_d... points) {
         this(epsilon, Arrays.asList(points));
     }
 
@@ -99,17 +101,17 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * equal.
      * @param points A non-empty list of points in a plane given by n.
      */
-    public V2D_ConvexHullDouble(double epsilon, List<V2D_PointDouble> points) {
-        super(points.get(0).env, V2D_VectorDouble.ZERO);
-        ArrayList<V2D_PointDouble> h = new ArrayList<>();
-        ArrayList<V2D_PointDouble> uniquePoints = V2D_PointDouble.getUnique(
+    public V2D_ConvexArea_d(double epsilon, List<V2D_Point_d> points) {
+        super(points.get(0).env, V2D_Vector_d.ZERO);
+        ArrayList<V2D_Point_d> h = new ArrayList<>();
+        ArrayList<V2D_Point_d> uniquePoints = V2D_Point_d.getUnique(
                 points, epsilon);
-        //uniquePoints.sort(V2D_PointDouble::compareTo);
+        //uniquePoints.sort(V2D_Point_d::compareTo);
         uniquePoints.sort((p1, p2) -> p1.compareTo(p2));
         // Compute convex hull
         // https://rosettacode.org/wiki/Convex_hull#Java
         // lower hull
-        for (V2D_PointDouble pt : uniquePoints) {
+        for (V2D_Point_d pt : uniquePoints) {
             while (h.size() >= 2 && !ccw(h.get(h.size() - 2),
                     h.get(h.size() - 1), pt)) {
                 h.remove(h.size() - 1);
@@ -119,31 +121,31 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
         // upper hull
         int t = h.size() + 1;
         for (int i = uniquePoints.size() - 1; i >= 0; i--) {
-            V2D_PointDouble pt = uniquePoints.get(i);
+            V2D_Point_d pt = uniquePoints.get(i);
             while (h.size() >= t && !ccw(h.get(h.size() - 2), h.get(h.size() - 1), pt)) {
                 h.remove(h.size() - 1);
             }
             h.add(pt);
         }
-        ArrayList<V2D_PointDouble> ups = V2D_PointDouble.getUnique(h, epsilon);
+        ArrayList<V2D_Point_d> ups = V2D_Point_d.getUnique(h, epsilon);
         this.points = new HashMap<>();
         for (var p : ups) {
             this.points.put(this.points.size(), p);
         }
         // Add edge
         edges = new HashMap<>();
-        V2D_PointDouble p0 = this.points.get(0);
+        V2D_Point_d p0 = this.points.get(0);
         for (int i = 1; i < this.points.size(); i++) {
-            V2D_PointDouble p1 = this.points.get(i);
-            edges.put(edges.size(), new V2D_LineSegmentDouble(p0, p1));
+            V2D_Point_d p1 = this.points.get(i);
+            edges.put(edges.size(), new V2D_LineSegment_d(p0, p1));
             p0 = p1;
         }
-        edges.put(edges.size(), new V2D_LineSegmentDouble(p0, this.points.get(0)));
+        edges.put(edges.size(), new V2D_LineSegment_d(p0, this.points.get(0)));
     }
 
     // ccw returns true if the three points make a counter-clockwise turn
-    private static boolean ccw(V2D_PointDouble a, V2D_PointDouble b,
-            V2D_PointDouble c) {
+    private static boolean ccw(V2D_Point_d a, V2D_Point_d b,
+            V2D_Point_d c) {
         double ax = a.getX();
         double ay = a.getY();
         return ((b.getX() - ax) * (c.getY() - ay))
@@ -157,7 +159,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
      */
-    public V2D_ConvexHullDouble(V2D_ConvexHullDouble ch, double epsilon) {
+    public V2D_ConvexArea_d(V2D_ConvexArea_d ch, double epsilon) {
         this(epsilon, ch.getPointsArray());
     }
 
@@ -170,23 +172,23 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
      */
-    public V2D_ConvexHullDouble(V2D_ConvexHullDouble ch, V2D_TriangleDouble t,
+    public V2D_ConvexArea_d(V2D_ConvexArea_d ch, V2D_Triangle_d t,
             double epsilon) {
-        this(epsilon, V2D_FiniteGeometryDouble.getPoints(ch, t));
+        this(epsilon, V2D_FiniteGeometry_d.getPoints(ch, t));
     }
 
     @Override
-    public V2D_PointDouble[] getPointsArray() {
+    public V2D_Point_d[] getPointsArray() {
         int np = points.size();
-        V2D_PointDouble[] pts = new V2D_PointDouble[np];
+        V2D_Point_d[] pts = new V2D_Point_d[np];
         for (int i = 0; i < np; i++) {
-            pts[i] = new V2D_PointDouble(points.get(i));
+            pts[i] = new V2D_Point_d(points.get(i));
         }
         return pts;
     }
 
     @Override
-    public HashMap<Integer, V2D_PointDouble> getPoints() {
+    public HashMap<Integer, V2D_Point_d> getPoints() {
         return points;
     }
 
@@ -242,7 +244,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff all the triangles are the same.
      */
-    public boolean equals(V2D_ConvexHullDouble c, double epsilon) {
+    public boolean equals(V2D_ConvexArea_d c, double epsilon) {
         if (points.values().parallelStream().allMatch(x
                 -> x.equalsAny(c.points.values(), epsilon))) {
             return c.points.values().parallelStream().allMatch(x
@@ -281,7 +283,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
     }
 
     @Override
-    public V2D_AABBDouble getAABB() {
+    public V2D_AABB_d getAABB() {
         if (en == null) {
             en = points.get(0).getAABB();
             for (int i = 1; i < points.size(); i++) {
@@ -300,12 +302,12 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * equal.
      * @return Either a triangle, rectangle or this.
      */
-    public V2D_FiniteGeometryDouble simplify(double epsilon) {
+    public V2D_FiniteGeometry_d simplify(double epsilon) {
         if (isTriangle()) {
-            return new V2D_TriangleDouble(points.get(0), points.get(1),
+            return new V2D_Triangle_d(points.get(0), points.get(1),
                     points.get(2));
         } else if (isRectangle(epsilon)) {
-            return new V2D_RectangleDouble(points.get(0), points.get(2),
+            return new V2D_Rectangle_d(points.get(0), points.get(2),
                     points.get(1), points.get(3));
         } else {
             return this;
@@ -320,7 +322,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff {@code this} is intersected by {@code p}.
      */
-    public boolean intersects(V2D_PointDouble pt, double epsilon) {
+    public boolean intersects(V2D_Point_d pt, double epsilon) {
         return getAABB().intersects(pt)
                 && intersects0(pt, epsilon);
     }
@@ -334,7 +336,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff {@code this} is intersected by {@code p}.
      */
-    public boolean intersects0(V2D_PointDouble pt, double epsilon) {
+    public boolean intersects0(V2D_Point_d pt, double epsilon) {
         return getTriangles().parallelStream().anyMatch(x
                 -> x.intersects(pt, epsilon));
     }
@@ -347,9 +349,9 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff {@code this} contains {@code p}.
      */
-    public boolean contains(V2D_PointDouble pt, double epsilon) {
+    public boolean contains(V2D_Point_d pt, double epsilon) {
         return intersects(pt, epsilon)
-                && !V2D_LineSegmentDouble.intersects(epsilon, pt,
+                && !V2D_LineSegment_d.intersects(epsilon, pt,
                         edges.values());
     }
 
@@ -361,9 +363,9 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff {@code this} contains {@code l}.
      */
-    public boolean contains(V2D_LineSegmentDouble l, double epsilon) {
+    public boolean contains(V2D_LineSegment_d l, double epsilon) {
         return intersects(l, epsilon)
-                && !V2D_LineSegmentDouble.intersects(epsilon, l,
+                && !V2D_LineSegment_d.intersects(epsilon, l,
                         edges.values());
     }
 
@@ -375,13 +377,13 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff {@code this} contains {@code t}.
      */
-    public boolean contains(V2D_TriangleDouble t, double epsilon) {
+    public boolean contains(V2D_Triangle_d t, double epsilon) {
         return intersects(t, epsilon)
                 && t.getPoints().values().parallelStream().allMatch(x
                         -> contains(x, epsilon));
 //        return intersects(t, epsilon)
 //                && !t.getEdges().values().parallelStream().anyMatch(x
-//                        -> V2D_LineSegmentDouble.intersects(epsilon, x,
+//                        -> V2D_LineSegment_d.intersects(epsilon, x,
 //                        edges.values()));
     }
 
@@ -393,7 +395,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff {@code this} contains {@code r}.
      */
-    public boolean contains(V2D_RectangleDouble r, double epsilon) {
+    public boolean contains(V2D_Rectangle_d r, double epsilon) {
         return intersects(r, epsilon)
                 && r.getPoints().values().parallelStream().allMatch(x
                         -> contains(x, epsilon));
@@ -407,13 +409,13 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff {@code this} is intersected by {@code p}.
      */
-    public boolean contains(V2D_ConvexHullDouble ch, double epsilon) {
+    public boolean contains(V2D_ConvexArea_d ch, double epsilon) {
         return intersects(ch, epsilon)
                 && ch.getPoints().values().parallelStream().allMatch(x
                         -> contains(x, epsilon));
 //        return intersects(ch, epsilon)
 //                && !ch.getEdges().values().parallelStream().anyMatch(x
-//                -> V2D_LineSegmentDouble.intersects(epsilon, x,
+//                -> V2D_LineSegment_d.intersects(epsilon, x,
 //                        edges.values()));
     }
 
@@ -425,7 +427,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff {@code this} is intersected by {@code l}.
      */
-    public boolean intersects(V2D_LineSegmentDouble l, double epsilon) {
+    public boolean intersects(V2D_LineSegment_d l, double epsilon) {
         return l.intersects(getAABB(), epsilon)
                 && intersects0(l, epsilon);
     }
@@ -438,7 +440,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff {@code this} is intersected by {@code l}.
      */
-    public boolean intersects0(V2D_LineSegmentDouble l, double epsilon) {
+    public boolean intersects0(V2D_LineSegment_d l, double epsilon) {
         return getTriangles().parallelStream().anyMatch(x
                 -> x.intersects(l, epsilon));
     }
@@ -451,7 +453,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff {@code this} is intersected by {@code t}.
      */
-    public boolean intersects(V2D_TriangleDouble t, double epsilon) {
+    public boolean intersects(V2D_Triangle_d t, double epsilon) {
         return t.intersects(getAABB(), epsilon)
                 && intersects0(t, epsilon);
     }
@@ -464,7 +466,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff {@code this} is intersected by {@code t}.
      */
-    public boolean intersects0(V2D_TriangleDouble t, double epsilon) {
+    public boolean intersects0(V2D_Triangle_d t, double epsilon) {
         return getTriangles().parallelStream().anyMatch(x
                 -> x.intersects(t, epsilon));
     }
@@ -477,7 +479,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff {@code this} is intersected by {@code r}.
      */
-    public boolean intersects(V2D_RectangleDouble r, double epsilon) {
+    public boolean intersects(V2D_Rectangle_d r, double epsilon) {
         return r.intersects(getAABB(), epsilon)
                 && intersects0(r, epsilon);
     }
@@ -490,7 +492,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff {@code this} is intersected by {@code r}.
      */
-    public boolean intersects0(V2D_RectangleDouble r, double epsilon) {
+    public boolean intersects0(V2D_Rectangle_d r, double epsilon) {
         return getTriangles().parallelStream().anyMatch(x
                 -> r.intersects(x, epsilon));
     }
@@ -503,7 +505,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff {@code this} is intersected by {@code ch}.
      */
-    public boolean intersects(V2D_ConvexHullDouble ch, double epsilon) {
+    public boolean intersects(V2D_ConvexArea_d ch, double epsilon) {
         return ch.intersects(getAABB(), epsilon)
                 && intersects(ch.getAABB(), epsilon)
                 && intersects0(ch, epsilon);
@@ -517,7 +519,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff {@code this} is intersected by {@code ch}.
      */
-    public boolean intersects0(V2D_ConvexHullDouble ch, double epsilon) {
+    public boolean intersects0(V2D_ConvexArea_d ch, double epsilon) {
         return getTriangles().parallelStream().anyMatch(x
                 -> ch.intersects(x, epsilon))
                 || ch.getTriangles().parallelStream().anyMatch(x
@@ -557,20 +559,20 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
 //     * equal.
 //     * @return The V2D_Geometry.
 //     */
-//    public V2D_FiniteGeometryDouble getIntersect(V2D_TriangleDouble t,
+//    public V2D_FiniteGeometry_d getIntersect(V2D_Triangle_d t,
 //            double epsilon) {
 //        // Create a set all the intersecting triangles from this.
-//        List<V2D_PointDouble> ts = new ArrayList<>();
-//        for (V2D_TriangleDouble t2 : triangles) {
-//            V2D_FiniteGeometryDouble i = t2.getIntersect(t, epsilon);
+//        List<V2D_Point_d> ts = new ArrayList<>();
+//        for (V2D_Triangle_d t2 : triangles) {
+//            V2D_FiniteGeometry_d i = t2.getIntersect(t, epsilon);
 //            ts.addAll(Arrays.asList(i.getPoints()));
 //        }
-//        ArrayList<V2D_PointDouble> tsu = V2D_PointDouble.getUnique(ts, epsilon);
+//        ArrayList<V2D_Point_d> tsu = V2D_Point_d.getUnique(ts, epsilon);
 //        if (tsu.isEmpty()) {
 //            return null;
 //        } else {
-//            return new V2D_ConvexHullDouble(t.pl.n, epsilon,
-//                    tsu.toArray(V2D_PointDouble[]::new)).simplify(epsilon);
+//            return new V2D_ConvexArea_d(t.pl.n, epsilon,
+//                    tsu.toArray(V2D_Point_d[]::new)).simplify(epsilon);
 //        }
     ////        switch (size) {
 ////            case 0:
@@ -587,22 +589,22 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
     
     
     @Override
-    public V2D_ConvexHullDouble rotate(V2D_PointDouble pt, double theta) {
+    public V2D_ConvexArea_d rotate(V2D_Point_d pt, double theta) {
         theta = Math_AngleDouble.normalise(theta);
         if (theta == 0d) {
-            return new V2D_ConvexHullDouble(this, 0d);
+            return new V2D_ConvexArea_d(this, 0d);
         } else {
             return rotateN(pt, theta);
         }
     }
 
     @Override
-    public V2D_ConvexHullDouble rotateN(V2D_PointDouble pt, double theta) {
-        V2D_PointDouble[] pts = new V2D_PointDouble[points.size()];
+    public V2D_ConvexArea_d rotateN(V2D_Point_d pt, double theta) {
+        V2D_Point_d[] pts = new V2D_Point_d[points.size()];
         for (int i = 0; i < points.size(); i++) {
             pts[0] = points.get(i).rotateN(pt, theta);
         }
-        return new V2D_ConvexHullDouble(0d, pts);
+        return new V2D_ConvexArea_d(0d, pts);
     }
 
     /**
@@ -613,7 +615,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff {@code this} is intersected by {@code aabb}.
      */
-    public boolean intersects(V2D_AABBDouble aabb, double epsilon) {
+    public boolean intersects(V2D_AABB_d aabb, double epsilon) {
         return getAABB().intersects(aabb, epsilon)
                 && intersects0(aabb, epsilon);
     }
@@ -628,7 +630,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @return {@code true} iff the geometry intersects aabb at the given 
      * precision.
      */
-    public boolean intersects0(V2D_AABBDouble aabb, double epsilon) {
+    public boolean intersects0(V2D_AABB_d aabb, double epsilon) {
         return getTriangles().parallelStream().anyMatch(x
                     -> x.intersects(aabb, epsilon));
     }
@@ -651,7 +653,7 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      */
     public boolean isRectangle(double epsilon) {
         if (points.size() == 4) {
-            return V2D_RectangleDouble.isRectangle(points.get(0),
+            return V2D_Rectangle_d.isRectangle(points.get(0),
                     points.get(1), points.get(2), points.get(3), epsilon);
         }
         return false;
@@ -667,66 +669,66 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
 //     * equal.
 //     * @return null, the whole or a part of this.
 //     */
-//    public V2D_FiniteGeometryDouble clip(V2D_TriangleDouble t,
-//            V2D_PointDouble pt, double epsilon) {
-//        V2D_PointDouble tp = t.getP();
-//        V2D_PointDouble tq = t.getQ();
-//        V2D_PointDouble tr = t.getR();
-//        V2D_VectorDouble n = t.pl.n;
-//        V2D_PointDouble pp = new V2D_PointDouble(tp.offset.add(n), tp.rel);
+//    public V2D_FiniteGeometry_d clip(V2D_Triangle_d t,
+//            V2D_Point_d pt, double epsilon) {
+//        V2D_Point_d tp = t.getP();
+//        V2D_Point_d tq = t.getQ();
+//        V2D_Point_d tr = t.getR();
+//        V2D_Vector_d n = t.pl.n;
+//        V2D_Point_d pp = new V2D_Point_d(tp.offset.add(n), tp.rel);
 //        V2D_PlaneDouble ppl = new V2D_PlaneDouble(tp, tq, pp);
-//        V2D_PointDouble qp = new V2D_PointDouble(tq.offset.add(n), tq.rel);
+//        V2D_Point_d qp = new V2D_Point_d(tq.offset.add(n), tq.rel);
 //        V2D_PlaneDouble qpl = new V2D_PlaneDouble(tq, tr, qp);
-//        V2D_PointDouble rp = new V2D_PointDouble(tr.offset.add(n), tr.rel);
+//        V2D_Point_d rp = new V2D_Point_d(tr.offset.add(n), tr.rel);
 //        V2D_PlaneDouble rpl = new V2D_PlaneDouble(tr, tp, rp);
-//        V2D_FiniteGeometryDouble cppl = clip(ppl, tr, epsilon);
+//        V2D_FiniteGeometry_d cppl = clip(ppl, tr, epsilon);
 //        if (cppl == null) {
 //            return null;
-//        } else if (cppl instanceof V2D_PointDouble) {
+//        } else if (cppl instanceof V2D_Point_d) {
 //            return cppl;
-//        } else if (cppl instanceof V2D_LineSegmentDouble cppll) {
-//            V2D_FiniteGeometryDouble cppllcqpl = cppll.clip(qpl, pt, epsilon);
+//        } else if (cppl instanceof V2D_LineSegment_d cppll) {
+//            V2D_FiniteGeometry_d cppllcqpl = cppll.clip(qpl, pt, epsilon);
 //            if (cppllcqpl == null) {
 //                return null;
-//            } else if (cppllcqpl instanceof V2D_PointDouble) {
+//            } else if (cppllcqpl instanceof V2D_Point_d) {
 //                return cppllcqpl;
 //            } else {
-//                return ((V2D_LineSegmentDouble) cppllcqpl).clip(rpl, pt, epsilon);
+//                return ((V2D_LineSegment_d) cppllcqpl).clip(rpl, pt, epsilon);
 //            }
-//        } else if (cppl instanceof V2D_TriangleDouble cpplt) {
-//            V2D_FiniteGeometryDouble cppltcqpl = cpplt.clip(qpl, pt, epsilon);
+//        } else if (cppl instanceof V2D_Triangle_d cpplt) {
+//            V2D_FiniteGeometry_d cppltcqpl = cpplt.clip(qpl, pt, epsilon);
 //            if (cppltcqpl == null) {
 //                return null;
-//            } else if (cppltcqpl instanceof V2D_PointDouble) {
+//            } else if (cppltcqpl instanceof V2D_Point_d) {
 //                return cppltcqpl;
-//            } else if (cppltcqpl instanceof V2D_LineSegmentDouble cppltcqpll) {
+//            } else if (cppltcqpl instanceof V2D_LineSegment_d cppltcqpll) {
 //                return cppltcqpll.clip(rpl, pt, epsilon);
-//            } else if (cppltcqpl instanceof V2D_TriangleDouble cppltcqplt) {
+//            } else if (cppltcqpl instanceof V2D_Triangle_d cppltcqplt) {
 //                return cppltcqplt.clip(rpl, pt, epsilon);
 //            } else {
-//                V2D_ConvexHullDouble c = (V2D_ConvexHullDouble) cppltcqpl;
+//                V2D_ConvexArea_d c = (V2D_ConvexArea_d) cppltcqpl;
 //                return c.clip(rpl, tq, epsilon);
 //            }
 //        } else {
-//            V2D_ConvexHullDouble c = (V2D_ConvexHullDouble) cppl;
-//            V2D_FiniteGeometryDouble cc = c.clip(qpl, pt, epsilon);
+//            V2D_ConvexArea_d c = (V2D_ConvexArea_d) cppl;
+//            V2D_FiniteGeometry_d cc = c.clip(qpl, pt, epsilon);
 //            if (cc == null) {
 //                return cc;
-//            } else if (cc instanceof V2D_PointDouble) {
+//            } else if (cc instanceof V2D_Point_d) {
 //                return cc;
-//            } else if (cc instanceof V2D_LineSegmentDouble cppll) {
-//                V2D_FiniteGeometryDouble cccqpl = cppll.clip(qpl, pt, epsilon);
+//            } else if (cc instanceof V2D_LineSegment_d cppll) {
+//                V2D_FiniteGeometry_d cccqpl = cppll.clip(qpl, pt, epsilon);
 //                if (cccqpl == null) {
 //                    return null;
-//                } else if (cccqpl instanceof V2D_PointDouble) {
+//                } else if (cccqpl instanceof V2D_Point_d) {
 //                    return cccqpl;
 //                } else {
-//                    return ((V2D_LineSegmentDouble) cccqpl).clip(rpl, pt, epsilon);
+//                    return ((V2D_LineSegment_d) cccqpl).clip(rpl, pt, epsilon);
 //                }
-//            } else if (cc instanceof V2D_TriangleDouble ccct) {
+//            } else if (cc instanceof V2D_Triangle_d ccct) {
 //                return ccct.clip(rpl, tq, epsilon);
 //            } else {
-//                V2D_ConvexHullDouble ccc = (V2D_ConvexHullDouble) cc;
+//                V2D_ConvexArea_d ccc = (V2D_ConvexArea_d) cc;
 //                return ccc.clip(rpl, pt, epsilon);
 //            }
 //        }
@@ -744,9 +746,9 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @return Either a V2D_Point, V2D_LineSegment, V2D_Triangle, or
      * V2D_ConvexHullCoplanar.
      */
-    public static V2D_FiniteGeometryDouble getGeometry(double epsilon,
-            ArrayList<V2D_PointDouble> pts) {
-        return getGeometry(epsilon, pts.toArray(V2D_PointDouble[]::new));
+    public static V2D_FiniteGeometry_d getGeometry(double epsilon,
+            ArrayList<V2D_Point_d> pts) {
+        return getGeometry(epsilon, pts.toArray(V2D_Point_d[]::new));
     }
 
     /**
@@ -761,36 +763,36 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @return Either a V2D_Point, V2D_LineSegment, V2D_Triangle, or
      * V2D_ConvexHullCoplanar.
      */
-    public static V2D_FiniteGeometryDouble getGeometry(double epsilon,
-            V2D_PointDouble... pts) {
-        ArrayList<V2D_PointDouble> upts = V2D_PointDouble.getUnique(
+    public static V2D_FiniteGeometry_d getGeometry(double epsilon,
+            V2D_Point_d... pts) {
+        ArrayList<V2D_Point_d> upts = V2D_Point_d.getUnique(
                 Arrays.asList(pts), epsilon);
-        Iterator<V2D_PointDouble> i = upts.iterator();
+        Iterator<V2D_Point_d> i = upts.iterator();
         switch (upts.size()) {
             case 1 -> {
                 return i.next();
             }
             case 2 -> {
-                return new V2D_LineSegmentDouble(i.next(), i.next());
+                return new V2D_LineSegment_d(i.next(), i.next());
             }
             case 3 -> {
-                if (V2D_LineDouble.isCollinear(epsilon, pts)) {
-                    return V2D_LineSegmentDouble.getGeometry(epsilon, pts);
+                if (V2D_Line_d.isCollinear(epsilon, pts)) {
+                    return V2D_LineSegment_d.getGeometry(epsilon, pts);
                 } else {
-                    return new V2D_TriangleDouble(i.next(), i.next(), i.next());
+                    return new V2D_Triangle_d(i.next(), i.next(), i.next());
                 }
             }
             default -> {
-                V2D_PointDouble ip = i.next();
-                V2D_PointDouble iq = i.next();
-                V2D_PointDouble ir = i.next();
-                while (V2D_LineDouble.isCollinear(epsilon, ip, iq, ir) && i.hasNext()) {
+                V2D_Point_d ip = i.next();
+                V2D_Point_d iq = i.next();
+                V2D_Point_d ir = i.next();
+                while (V2D_Line_d.isCollinear(epsilon, ip, iq, ir) && i.hasNext()) {
                     ir = i.next();
                 }
-                if (V2D_LineDouble.isCollinear(epsilon, ip, iq, ir)) {
-                    return new V2D_LineSegmentDouble(epsilon, pts);
+                if (V2D_Line_d.isCollinear(epsilon, ip, iq, ir)) {
+                    return new V2D_LineSegment_d(epsilon, pts);
                 } else {
-                    return new V2D_ConvexHullDouble(epsilon, pts);
+                    return new V2D_ConvexArea_d(epsilon, pts);
                 }
             }
         }
@@ -804,15 +806,15 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      *
      * @return A list of triangles that make up the convex hull.
      */
-    public ArrayList<V2D_TriangleDouble> getTriangles() {
+    public ArrayList<V2D_Triangle_d> getTriangles() {
         if (triangles == null) {
             triangles = new ArrayList<>();
-            V2D_PointDouble[] ps = getPointsArray();
-            V2D_PointDouble p0 = ps[0];
-            V2D_PointDouble p1 = ps[1];
+            V2D_Point_d[] ps = getPointsArray();
+            V2D_Point_d p0 = ps[0];
+            V2D_Point_d p1 = ps[1];
             for (int i = 2; i < ps.length; i++) {
-                V2D_PointDouble p2 = ps[i];
-                triangles.add(new V2D_TriangleDouble(p0, p1, p2));
+                V2D_Point_d p2 = ps[i];
+                triangles.add(new V2D_Triangle_d(p0, p1, p2));
                 p1 = p2;
             }
         }
@@ -825,19 +827,19 @@ public class V2D_ConvexHullDouble extends V2D_ShapeDouble {
      * @return A list of triangles that make up the convex hull.
      */
     @Override
-    public HashMap<Integer, V2D_LineSegmentDouble> getEdges() {
+    public HashMap<Integer, V2D_LineSegment_d> getEdges() {
         if (edges == null) {
             edges = new HashMap<>();
-            V2D_PointDouble p0 = this.points.get(0);
-            V2D_PointDouble p1 = this.points.get(1);
-            this.edges.put(this.edges.size(), new V2D_LineSegmentDouble(p0, p1));
+            V2D_Point_d p0 = this.points.get(0);
+            V2D_Point_d p1 = this.points.get(1);
+            this.edges.put(this.edges.size(), new V2D_LineSegment_d(p0, p1));
             for (int i = 2; i < this.points.size(); i++) {
                 p0 = p1;
                 p1 = this.points.get(i);
-                this.edges.put(this.edges.size(), new V2D_LineSegmentDouble(
+                this.edges.put(this.edges.size(), new V2D_LineSegment_d(
                         p0, p1));
             }
-            edges.put(this.edges.size(), new V2D_LineSegmentDouble(p1,
+            edges.put(this.edges.size(), new V2D_LineSegment_d(p1,
                     this.points.get(0)));
         }
         return edges;

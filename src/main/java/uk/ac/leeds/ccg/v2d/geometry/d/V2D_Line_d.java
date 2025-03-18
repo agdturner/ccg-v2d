@@ -17,7 +17,7 @@ package uk.ac.leeds.ccg.v2d.geometry.d;
 
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
 import uk.ac.leeds.ccg.math.matrices.Math_Matrix_Double;
-import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
+import uk.ac.leeds.ccg.v2d.core.d.V2D_Environment_d;
 
 /**
  * 2D representation of an infinite length line. The line passes through the
@@ -26,21 +26,21 @@ import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
  * @author Andy Turner
  * @version 2.0
  */
-public class V2D_LineDouble extends V2D_GeometryDouble {
+public class V2D_Line_d extends V2D_Geometry_d {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * The x axis.
      */
-    public static final V2D_LineDouble X_AXIS = new V2D_LineDouble(null,
-            V2D_VectorDouble.ZERO, V2D_VectorDouble.I);
+    public static final V2D_Line_d X_AXIS = new V2D_Line_d(null,
+            V2D_Vector_d.ZERO, V2D_Vector_d.I);
 
     /**
      * The y axis.
      */
-    public static final V2D_LineDouble Y_AXIS = new V2D_LineDouble(null,
-            V2D_VectorDouble.ZERO, V2D_VectorDouble.J);
+    public static final V2D_Line_d Y_AXIS = new V2D_Line_d(null,
+            V2D_Vector_d.ZERO, V2D_Vector_d.J);
 
     /**
      * If this line is defined by a vector, then the calculation of {@link #q}
@@ -52,60 +52,60 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
     /**
      * Used to define {@link #p}.
      */
-    protected V2D_VectorDouble pv;
+    protected V2D_Vector_d pv;
 
     /**
      * Used to store a point on the line as derived from {@link #offset} and
      * {@link #pv}.
      */
-    protected V2D_PointDouble p;
+    protected V2D_Point_d p;
 
     /**
      * Another point on the line that is derived from {@link #offset},
      * {@link #pv} and {@link v}.
      */
-    protected V2D_PointDouble q;
+    protected V2D_Point_d q;
 
     /**
      * The vector that defines the line. This will not change under translation,
      * but will change under rotation.
      */
-    public V2D_VectorDouble v;
+    public V2D_Vector_d v;
 
     /**
      * @param l Used to initialise this.
      */
-    public V2D_LineDouble(V2D_LineDouble l) {
+    public V2D_Line_d(V2D_Line_d l) {
         super(l.env, l.offset);
-        this.pv = new V2D_VectorDouble(l.pv);
+        this.pv = new V2D_Vector_d(l.pv);
         if (l.p != null) {
-            this.p = new V2D_PointDouble(l.p);
+            this.p = new V2D_Point_d(l.p);
         }
         if (l.q != null) {
-            this.q = new V2D_PointDouble(l.q);
+            this.q = new V2D_Point_d(l.q);
         }
-        this.v = new V2D_VectorDouble(l.v);
+        this.v = new V2D_Vector_d(l.v);
         this.isDefinedByVector = l.isDefinedByVector;
     }
 
     /**
      * @param l Used to initialise this.
      */
-    public V2D_LineDouble(V2D_LineSegmentDouble l) {
+    public V2D_Line_d(V2D_LineSegment_d l) {
         this(l.l);
     }
 
     /**
      * {@code pv} should not be equal to {@code qv}. {@link #offset} is set to
-     * {@link V2D_VectorDouble#ZERO}.
+     * {@link V2D_Vector_d#ZERO}.
      *
      * @param env The environment.
      * @param p What {@link #pv} is set to.
      * @param q Another point on the line from which {@link #v} is derived.
      */
-    public V2D_LineDouble(V2D_EnvironmentDouble env, V2D_VectorDouble p, 
-            V2D_VectorDouble q) {
-        this(env, V2D_VectorDouble.ZERO, p, q);
+    public V2D_Line_d(V2D_Environment_d env, V2D_Vector_d p, 
+            V2D_Vector_d q) {
+        this(env, V2D_Vector_d.ZERO, p, q);
     }
 
     /**
@@ -117,33 +117,33 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @param qv Used to calculate {@link q} and {@link #v} (which is calculated
      * by taking the difference between pv and qv.
      */
-    public V2D_LineDouble(V2D_EnvironmentDouble env, V2D_VectorDouble offset,
-            V2D_VectorDouble pv, V2D_VectorDouble qv) {
+    public V2D_Line_d(V2D_Environment_d env, V2D_Vector_d offset,
+            V2D_Vector_d pv, V2D_Vector_d qv) {
         super(env, offset);
-        this.pv = new V2D_VectorDouble(pv);
+        this.pv = new V2D_Vector_d(pv);
         if (pv.equals(qv)) {
             throw new RuntimeException("" + pv + " and " + qv + " are the same"
                     + " so do not define a line.");
         }
-        //q = new V2D_PointDouble(offset, qv);
+        //q = new V2D_Point_d(offset, qv);
         v = qv.subtract(pv);
         isDefinedByVector = false;
     }
 
     /**
      * {@code v} should not be the zero vector {@code <0,0,0>}. {@link #offset}
-     * is set to {@link V2D_VectorDouble#ZERO}.
+     * is set to {@link V2D_Vector_d#ZERO}.
      *
      * @param env The environment.
      * @param p What {@link #pv} is cloned from.
      * @param v The vector defining the line from {@link #pv}. What {@link #v}
      * is cloned from.
      * @param flag To distinguish this method from
-     * {@link #V2D_LineDouble(uk.ac.leeds.ccg.v3d.geometry.d.V2D_VectorDouble, uk.ac.leeds.ccg.v3d.geometry.d.V2D_VectorDouble)}
+     * {@link #V2D_Line_d(uk.ac.leeds.ccg.v3d.geometry.d.V2D_Vector_d, uk.ac.leeds.ccg.v3d.geometry.d.V2D_Vector_d)}
      */
-    public V2D_LineDouble(V2D_EnvironmentDouble env, V2D_VectorDouble p, 
-            V2D_VectorDouble v, boolean flag) {
-        this(env, V2D_VectorDouble.ZERO, p, v, flag);
+    public V2D_Line_d(V2D_Environment_d env, V2D_Vector_d p, 
+            V2D_Vector_d v, boolean flag) {
+        this(env, V2D_Vector_d.ZERO, p, v, flag);
     }
 
     /**
@@ -152,7 +152,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @param p What {@link #pv} is set to.
      * @param v The vector defining the line from {@link #pv}.
      */
-    public V2D_LineDouble(V2D_PointDouble p, V2D_VectorDouble v) {
+    public V2D_Line_d(V2D_Point_d p, V2D_Vector_d v) {
         this(p.env, p.offset, p.rel, v, true);
     }
 
@@ -164,18 +164,18 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @param p What {@link #pv} is set to.
      * @param v The vector defining the line from {@link #pv}.
      * @param flag To distinguish this from
-     * {@link #V2D_LineDouble(uk.ac.leeds.ccg.v3d.geometry.d.V2D_VectorDouble, uk.ac.leeds.ccg.v3d.geometry.d.V2D_VectorDouble, uk.ac.leeds.ccg.v3d.geometry.d.V2D_VectorDouble)}
+     * {@link #V2D_Line_d(uk.ac.leeds.ccg.v3d.geometry.d.V2D_Vector_d, uk.ac.leeds.ccg.v3d.geometry.d.V2D_Vector_d, uk.ac.leeds.ccg.v3d.geometry.d.V2D_Vector_d)}
      * @throws RuntimeException if {@code v.isZero()}.
      */
-    public V2D_LineDouble(V2D_EnvironmentDouble env, V2D_VectorDouble offset, 
-            V2D_VectorDouble p, V2D_VectorDouble v, boolean flag) {
+    public V2D_Line_d(V2D_Environment_d env, V2D_Vector_d offset, 
+            V2D_Vector_d p, V2D_Vector_d v, boolean flag) {
         super(env, offset);
         if (v.isZero()) {
             throw new RuntimeException("Vector " + v + " is the zero vector "
                     + "which cannot be used to define a line.");
         }
-        pv = new V2D_VectorDouble(p);
-        this.v = new V2D_VectorDouble(v);
+        pv = new V2D_Vector_d(p);
+        this.v = new V2D_Vector_d(v);
         isDefinedByVector = true;
     }
 
@@ -185,15 +185,15 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @param p What {@link #pv} is cloned from.
      * @param q What {@link #v} is derived from.
      */
-    public V2D_LineDouble(V2D_PointDouble p, V2D_PointDouble q) {
-        super(p.env, new V2D_VectorDouble(p.offset));
-        V2D_PointDouble q2 = new V2D_PointDouble(q);
+    public V2D_Line_d(V2D_Point_d p, V2D_Point_d q) {
+        super(p.env, new V2D_Vector_d(p.offset));
+        V2D_Point_d q2 = new V2D_Point_d(q);
         q2.setOffset(p.offset);
         if (p.rel.equals(q2.rel)) {
             throw new RuntimeException("Points " + p + " and " + q
                     + " are the same and so do not define a line.");
         }
-        pv = new V2D_VectorDouble(p.rel);
+        pv = new V2D_Vector_d(p.rel);
         v = q2.rel.subtract(pv);
     }
 
@@ -255,7 +255,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @param l The line to test if it is the same as {@code this}.
      * @return {@code true} iff {@code l} is the same as {@code this}.
      */
-    public boolean equals(V2D_LineDouble l) {
+    public boolean equals(V2D_Line_d l) {
 //        if (v.isScalarMultiple(l.v)) {
 //            if (intersects(l.getP())) {
 //                if (intersects(l.getQ())) {
@@ -277,7 +277,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @return {@code true} iff {@code l} is the same as {@code this} within
      * epsilon.
      */
-    public boolean equals(V2D_LineDouble l, double epsilon) {
+    public boolean equals(V2D_Line_d l, double epsilon) {
         //if (v.isScalarMultiple(epsilon, l.v)) {
         if (l.intersects(epsilon, getP())) {
             if (l.intersects(epsilon, getQ())) {
@@ -293,9 +293,9 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      *
      * @return {@link #pv} with {@link #offset} applied.
      */
-    public V2D_PointDouble getP() {
+    public V2D_Point_d getP() {
         if (p == null) {
-            p = new V2D_PointDouble(env, offset, pv);
+            p = new V2D_Point_d(env, offset, pv);
         }
         return p;
     }
@@ -306,9 +306,9 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      *
      * @return Another point on the line derived from {@link #v}.
      */
-    public V2D_PointDouble getQ() {
+    public V2D_Point_d getQ() {
         if (q == null) {
-            q = new V2D_PointDouble(env, offset, pv.add(v));
+            q = new V2D_Point_d(env, offset, pv.add(v));
         }
         return q;
     }
@@ -317,14 +317,14 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @param pt A point to test for intersection.
      * @return {@code true} if pv is on the line.
      */
-    public boolean intersects(V2D_PointDouble pt) {
+    public boolean intersects(V2D_Point_d pt) {
         p = getP();
         q = getQ();
         if (p.equals(pt)
                 || q.equals(pt)) {
             return true;
         }
-        V2D_VectorDouble dpt = new V2D_VectorDouble(
+        V2D_Vector_d dpt = new V2D_Vector_d(
                     pt.getX() - p.getX(),
                     pt.getY() - p.getY());
         return dpt.isScalarMultiple(v);
@@ -336,13 +336,13 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @param pt A point to test for intersection.
      * @return {@code true} if pv is on the line.
      */
-    public boolean intersects(double epsilon, V2D_PointDouble pt) {
+    public boolean intersects(double epsilon, V2D_Point_d pt) {
         p = getP();
         q = getQ();
         if (p.equals(pt, epsilon) || q.equals(pt, epsilon)) {
             return true;
         }
-        V2D_VectorDouble dpt = new V2D_VectorDouble(
+        V2D_Vector_d dpt = new V2D_Vector_d(
                     pt.getX() - p.getX(),
                     pt.getY() - p.getY());
         return dpt.isScalarMultiple(epsilon, v);
@@ -369,7 +369,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
 //     * @param l A line to test for intersection.
 //     * @return {@code true} if lines intersect.
 //     */
-//    public boolean intersects(V2D_LineDouble l) {
+//    public boolean intersects(V2D_Line_d l) {
 //        return intersects(l, 
 //                getIntersectDenominator(p.getX(), q.getX(), l.p.getX(),
 //                l.q.getX(), p.getY(), q.getY(), l.p.getY(), l.q.getY()));
@@ -382,7 +382,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
 //     *           l.q.getX(), p.getY(), q.getY(), l.p.getY(), l.q.getY())
 //     * @return {@code true} if lines intersect.
 //     */
-//    public boolean intersects(V2D_LineDouble l, double den) {
+//    public boolean intersects(V2D_Line_d l, double den) {
 //        if (den == 0.0D) {
 //            // Lines are parallel or coincident.
 //            return equals(l);
@@ -403,7 +403,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
 //     * @param y4 l.q.getY()
 //     * @return {@code true} if lines intersect.
 //     */
-//    public boolean intersects(V2D_LineDouble l, double x1,  double x2,
+//    public boolean intersects(V2D_Line_d l, double x1,  double x2,
 //            double x3, double x4, double y1, double y2, double y3, double y4) {
 //        return intersects(l,
 //                getIntersectDenominator(x1, x2, x3, x4, y1, y2, y3, y4));
@@ -415,7 +415,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @param l A line to test for intersection.
      * @return {@code true} if lines intersect.
      */
-    public boolean intersects(double epsilon, V2D_LineDouble l) {
+    public boolean intersects(double epsilon, V2D_Line_d l) {
         return intersects(epsilon, l, 
                 getIntersectDenominator(p.getX(), getQ().getX(), l.p.getX(),
                 l.getQ().getX(), p.getY(), q.getY(), l.p.getY(), l.q.getY()));
@@ -435,7 +435,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @param y4 l.q.getY()
      * @return {@code true} if lines intersect.
      */
-    public boolean intersects(double epsilon, V2D_LineDouble l, double x1,
+    public boolean intersects(double epsilon, V2D_Line_d l, double x1,
             double x2, double x3, double x4, double y1, double y2, double y3, 
             double y4) {
         return intersects(epsilon, l, 
@@ -450,7 +450,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
            l.q.getX(), p.getY(), q.getY(), l.p.getY(), l.q.getY())
      * @return {@code true} if lines intersect.
      */
-    public boolean intersects(double epsilon, V2D_LineDouble l, double den) {
+    public boolean intersects(double epsilon, V2D_Line_d l, double den) {
         if (den == 0d) {
             // Lines are parallel or coincident.
             return equals(l, epsilon);
@@ -465,7 +465,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @param l Line to intersect with.
      * @return The geometry or null if there is no intersection.
      */
-    public V2D_GeometryDouble getIntersect(double epsilon, V2D_LineDouble l) {
+    public V2D_Geometry_d getIntersect(double epsilon, V2D_Line_d l) {
         double x1 = getP().getX();
         double x2 = getQ().getX();
         double x3 = l.getP().getX();
@@ -493,7 +493,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @param y4 l.q.getY()
      * @return The geometry or null if there is no intersection.
      */
-    public V2D_GeometryDouble getIntersect(double epsilon, V2D_LineDouble l, 
+    public V2D_Geometry_d getIntersect(double epsilon, V2D_Line_d l, 
             double den, double x1, double x2, double x3, double x4, double y1, 
             double y2, double y3, double y4) {
         if (intersects(epsilon, l, den)) {
@@ -505,7 +505,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
             double x3y4sy3x4 = (x3 * y4 - y3 * x4);
             double numx = (x1y2sy1x2 * (x3 - x4)) - ((x1 - x2) * x3y4sy3x4);
             double numy = (x1y2sy1x2 * (y3 - y4)) - ((y1 - y2) * x3y4sy3x4);
-            return new V2D_PointDouble(env, numx / den, numy / den);            
+            return new V2D_Point_d(env, numx / den, numy / den);            
         }
         return null;
     }
@@ -516,7 +516,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @param l The line to test if it is parallel to this.
      * @return {@code true} If this and {@code l} are parallel.
      */
-    public boolean isParallel(V2D_LineDouble l, double epsilon) {
+    public boolean isParallel(V2D_Line_d l, double epsilon) {
         return v.isScalarMultiple(epsilon, l.v);
     }
     
@@ -528,12 +528,12 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @return The line segment having the shortest distance between {@code pt}
      * and {@code this}.
      */
-    public V2D_FiniteGeometryDouble getLineOfIntersect(V2D_PointDouble pt,
+    public V2D_FiniteGeometry_d getLineOfIntersect(V2D_Point_d pt,
             double epsilon) {
         if (intersects(epsilon, pt)) {
             return pt;
         }
-        return new V2D_LineSegmentDouble(pt, getPointOfIntersect(pt, epsilon));
+        return new V2D_LineSegment_d(pt, getPointOfIntersect(pt, epsilon));
     }
 
     /**
@@ -543,11 +543,11 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @return A point on {@code this} which is the shortest distance from
      * {@code pt}.
      */
-    public V2D_PointDouble getPointOfIntersect(V2D_PointDouble pt, double epsilon) {
+    public V2D_Point_d getPointOfIntersect(V2D_Point_d pt, double epsilon) {
         if (intersects(epsilon, pt)) {
             return pt;
         }
-        return V2D_LineDouble.this.getPointOfIntersect(pt, true, epsilon);
+        return V2D_Line_d.this.getPointOfIntersect(pt, true, epsilon);
     }
     
     /**
@@ -558,9 +558,9 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @return A point on {@code this} which is the shortest distance from
      * {@code pt}.
      */
-    public V2D_PointDouble getPointOfIntersect(V2D_PointDouble pt, boolean noint, double epsilon) {
-        V2D_LineDouble l = new V2D_LineDouble(pt, v.rotate90());
-        return (V2D_PointDouble) V2D_LineDouble.this.getIntersect(epsilon, l);
+    public V2D_Point_d getPointOfIntersect(V2D_Point_d pt, boolean noint, double epsilon) {
+        V2D_Line_d l = new V2D_Line_d(pt, v.rotate90());
+        return (V2D_Point_d) V2D_Line_d.this.getIntersect(epsilon, l);
     }
     
     /**
@@ -570,7 +570,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * considered equal.
      * @return The minimum distance between this and {@code pv}.
      */
-    public double getDistance(V2D_PointDouble pt, double epsilon) {
+    public double getDistance(V2D_Point_d pt, double epsilon) {
         return Math.sqrt(getDistanceSquared(pt, epsilon));
     }
     
@@ -581,7 +581,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * considered equal.
      * @return The minimum distance between this and {@code pv}.
      */
-    public double getDistanceSquared(V2D_PointDouble pt, double epsilon) {
+    public double getDistanceSquared(V2D_Point_d pt, double epsilon) {
         if (intersects(epsilon, pt)) {
             return 0d;
         }
@@ -596,8 +596,8 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * considered equal.
      * @return The minimum distance between this and {@code pv}.
      */
-    public double getDistanceSquared(V2D_PointDouble pt, boolean noint, double epsilon) {
-        V2D_PointDouble poi = V2D_LineDouble.this.getPointOfIntersect(pt, noint, epsilon);
+    public double getDistanceSquared(V2D_Point_d pt, boolean noint, double epsilon) {
+        V2D_Point_d poi = V2D_Line_d.this.getPointOfIntersect(pt, noint, epsilon);
         return poi.getDistanceSquared(pt);
     }
 
@@ -608,7 +608,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * considered equal.
      * @return The minimum distance between this and {@code l}.
      */
-    public double getDistance(V2D_LineDouble l, double epsilon) {
+    public double getDistance(V2D_Line_d l, double epsilon) {
         return Math.sqrt(getDistanceSquared(l, epsilon));
     }
 
@@ -619,7 +619,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * considered equal.
      * @return The minimum distance between this and {@code l}.
      */
-    public double getDistanceSquared(V2D_LineDouble l, double epsilon) {
+    public double getDistanceSquared(V2D_Line_d l, double epsilon) {
         if (this.equals(l, epsilon)) {
             return 0D;
         }
@@ -647,8 +647,8 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @return The points that define the plan as a matrix.
      */
     public Math_Matrix_Double getAsMatrix() {
-        V2D_PointDouble tp = getP();
-        V2D_PointDouble tq = getQ();
+        V2D_Point_d tp = getP();
+        V2D_Point_d tq = getQ();
         double[][] m = new double[2][2];
         m[0][0] = tp.getX();
         m[0][1] = tp.getY();
@@ -663,7 +663,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @param v The vector to translate.
      */
     @Override
-    public void translate(V2D_VectorDouble v) {
+    public void translate(V2D_Vector_d v) {
         super.translate(v);
         //pv.translate(v);
         if (p != null) {
@@ -675,28 +675,28 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
     }
 
     @Override
-    public V2D_LineDouble rotate(V2D_PointDouble pt, double theta) {
+    public V2D_Line_d rotate(V2D_Point_d pt, double theta) {
         theta = Math_AngleDouble.normalise(theta);
         if (theta == 0d) {
-            return new V2D_LineDouble(this);
+            return new V2D_Line_d(this);
         } else {
             return rotateN(pt, theta);
         }
     }
     
     @Override
-    public V2D_LineDouble rotateN(V2D_PointDouble pt, double theta) {
-        V2D_PointDouble rp = getP().rotateN(pt, theta);
-        V2D_VectorDouble rv = v.getUnitVector().rotateN(theta);
-        return new V2D_LineDouble(rp, rv);
+    public V2D_Line_d rotateN(V2D_Point_d pt, double theta) {
+        V2D_Point_d rp = getP().rotateN(pt, theta);
+        V2D_Vector_d rv = v.getUnitVector().rotateN(theta);
+        return new V2D_Line_d(rp, rv);
     }
     
     /**
      * @param ps The points to test for collinearity.
      * @return {@code true} iff all points are collinear with l.
      */
-    public static boolean isCollinear(V2D_PointDouble... ps) {
-        V2D_LineDouble l = getLine(ps);
+    public static boolean isCollinear(V2D_Point_d... ps) {
+        V2D_Line_d l = getLine(ps);
         if (l == null) {
             return false;
         }
@@ -711,11 +711,11 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @return A line defined by any two different points or null if the points
      * are coincident.
      */
-    public static V2D_LineDouble getLine(V2D_PointDouble... ps) {
+    public static V2D_Line_d getLine(V2D_Point_d... ps) {
         var p0 = ps[0];
         for (var p : ps) {
             if (!p.equals(p0)) {
-                return new V2D_LineDouble(p0, p);
+                return new V2D_Line_d(p0, p);
             }
         }
         return null;
@@ -726,8 +726,8 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @param ps The points to test if they are collinear with l.
      * @return {@code true} iff all points are collinear with l.
      */
-    public static boolean isCollinear(V2D_LineDouble l, 
-            V2D_PointDouble... ps) {        
+    public static boolean isCollinear(V2D_Line_d l, 
+            V2D_Point_d... ps) {        
         for (var p : ps) {
             if (!l.intersects(p)) {
                 return false;
@@ -743,8 +743,8 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @return {@code true} iff all points are collinear with l given epsilon 
      * tolerance.
      */
-    public static boolean isCollinear(double epsilon, V2D_PointDouble... ps) {
-        V2D_LineDouble l = getLine(epsilon, ps);
+    public static boolean isCollinear(double epsilon, V2D_Point_d... ps) {
+        V2D_Line_d l = getLine(epsilon, ps);
         if (l == null) {
             return false;
         }
@@ -758,8 +758,8 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @param ps The points to test if they are collinear with l.
      * @return {@code true} iff all points are collinear with l.
      */
-    public static boolean isCollinear(double epsilon, V2D_LineDouble l, 
-            V2D_PointDouble... ps) {
+    public static boolean isCollinear(double epsilon, V2D_Line_d l, 
+            V2D_Point_d... ps) {
         for (var p : ps) {
             if (!l.intersects(epsilon, p)) {
                 return false;
@@ -779,14 +779,14 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @return A line defined by any two different points or null if the points
      * are coincident.
      */
-    public static V2D_LineDouble getLine(double epsilon, V2D_PointDouble... points) {
+    public static V2D_Line_d getLine(double epsilon, V2D_Point_d... points) {
         if (points.length < 2) {
             return null;
         }
         // Find the points which are furthest apart.
         double max = 0d;
-        V2D_PointDouble a = null;
-        V2D_PointDouble b = null;
+        V2D_Point_d a = null;
+        V2D_Point_d b = null;
         for (int i = 0; i < points.length; i ++) {
             for (int j = i + 1; j < points.length; j ++) {
                 double d2 = points[i].getDistanceSquared(points[j]);
@@ -800,7 +800,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
         if (max == 0d) {
             return null;
         } else {
-            return new V2D_LineDouble(a, b);
+            return new V2D_Line_d(a, b);
         }
     }
     
@@ -812,7 +812,7 @@ public class V2D_LineDouble extends V2D_GeometryDouble {
      * @return True iff a and b are on the same side of this. (If a is on the 
      * line, then so must b for them to be on the same side.
      */
-    public boolean isOnSameSide(V2D_PointDouble a, V2D_PointDouble b, double epsilon) {
+    public boolean isOnSameSide(V2D_Point_d a, V2D_Point_d b, double epsilon) {
         if (intersects(epsilon, a) && intersects(epsilon, b)) {
             return true;
         }

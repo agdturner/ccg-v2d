@@ -16,7 +16,7 @@
 package uk.ac.leeds.ccg.v2d.geometry.d;
 
 import java.io.Serializable;
-import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
+import uk.ac.leeds.ccg.v2d.core.d.V2D_Environment_d;
 
 /**
  * For 2D Euclidean geometrical objects. The two dimensions have
@@ -51,28 +51,28 @@ import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
  * @author Andy Turner
  * @version 2.0
  */
-public abstract class V2D_GeometryDouble implements Serializable {
+public abstract class V2D_Geometry_d implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * The environment.
      */
-    public final V2D_EnvironmentDouble env;
+    public final V2D_Environment_d env;
     
     /**
      * The offset used to position a geometry object relative to the
-     * {@link V2D_PointDouble#ORIGIN}.
+     * {@link V2D_Point_d#ORIGIN}.
      */
-    protected V2D_VectorDouble offset;
+    protected V2D_Vector_d offset;
 
     /**
      * Creates a new instance.
      * 
      * @param env The environment.
      */
-    public V2D_GeometryDouble(V2D_EnvironmentDouble env) {
-        this(env, V2D_VectorDouble.ZERO);
+    public V2D_Geometry_d(V2D_Environment_d env) {
+        this(env, V2D_Vector_d.ZERO);
     }
 
     /**
@@ -81,7 +81,7 @@ public abstract class V2D_GeometryDouble implements Serializable {
      * @param env The environment.
      * @param offset What {@link #offset} is set to.
      */
-    public V2D_GeometryDouble(V2D_EnvironmentDouble env, V2D_VectorDouble offset) {
+    public V2D_Geometry_d(V2D_Environment_d env, V2D_Vector_d offset) {
         this.env = env;
         this.offset = offset;
     }
@@ -107,7 +107,7 @@ public abstract class V2D_GeometryDouble implements Serializable {
      *
      * @param v The translation vector.
      */
-    public void translate(V2D_VectorDouble v) {
+    public void translate(V2D_Vector_d v) {
         offset = offset.add(v);
     }
 
@@ -119,7 +119,7 @@ public abstract class V2D_GeometryDouble implements Serializable {
      * @param theta The angle of rotation about pt in radians.
      * @return The rotated geometry.
      */
-    public abstract V2D_GeometryDouble rotate(V2D_PointDouble pt, double theta);
+    public abstract V2D_Geometry_d rotate(V2D_Point_d pt, double theta);
     
     /**
      * Returns the geometry rotated by a normalised angle theta about pt. 
@@ -129,6 +129,6 @@ public abstract class V2D_GeometryDouble implements Serializable {
      * @param theta The angle of rotation around pt in radians.
      * @return The rotated geometry.
      */
-    public abstract V2D_GeometryDouble rotateN(V2D_PointDouble pt, double theta);
+    public abstract V2D_Geometry_d rotateN(V2D_Point_d pt, double theta);
     
 }

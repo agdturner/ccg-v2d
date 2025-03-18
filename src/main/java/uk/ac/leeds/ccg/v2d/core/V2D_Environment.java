@@ -21,7 +21,7 @@ import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.HashSet;
 import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
-import uk.ac.leeds.ccg.v2d.geometry.V2D_Shape;
+import uk.ac.leeds.ccg.v2d.geometry.V2D_Area;
 
 /**
  * V2D_Environment
@@ -76,7 +76,7 @@ public class V2D_Environment implements Serializable {
     /**
      * The shapes.
      */
-    public HashMap<Integer, V2D_Shape> shapes;
+    public HashMap<Integer, V2D_Area> shapes;
     
     /**
      * The ids of shapes.
@@ -111,7 +111,7 @@ public class V2D_Environment implements Serializable {
      * @param shape The shape to be put in {@link #shapes}.
      * @return The id of the shape allocated. 
      */
-    public int add(V2D_Shape shape) {
+    public int add(V2D_Area shape) {
         int id = getNextID();
         shapes.put(id, shape);
         return id;

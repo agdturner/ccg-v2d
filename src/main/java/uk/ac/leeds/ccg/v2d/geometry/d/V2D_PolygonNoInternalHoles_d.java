@@ -21,35 +21,36 @@ import java.util.HashMap;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleDouble;
 
 /**
- * For representing a polygon with no internal holes. External holes are similar
- * polygons that share some part of an edge with the convex hull.
+ * Defined by a V2D_ConvexArea_d and a collection of non edge sharing
+ * V2D_PolygonNoInternalHoles_d areas each defining an external hole or
+ * concavity.
  *
  * @author Andy Turner
  * @version 2.0
  */
-public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
+public class V2D_PolygonNoInternalHoles_d extends V2D_Area_d {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * The convex hull.
      */
-    public V2D_ConvexHullDouble ch;
+    public V2D_ConvexArea_d ch;
 
     /**
      * The collection of externalHoles comprised of points in {@link points}.
      * Only two points of an external hole should intersect the edges of the
      * convex hull.
      */
-    public HashMap<Integer, V2D_PolygonNoInternalHolesDouble> externalHoles;
+    public HashMap<Integer, V2D_PolygonNoInternalHoles_d> externalHoles;
 
     /**
      * Create a new instance that is a shallow copy of the polygon.
      *
      * @param p The polygon to copy.
      */
-    public V2D_PolygonNoInternalHolesDouble(
-            V2D_PolygonNoInternalHolesDouble p) {
+    public V2D_PolygonNoInternalHoles_d(
+            V2D_PolygonNoInternalHoles_d p) {
         this(p.points, p.ch, p.edges, p.externalHoles);
     }
 
@@ -60,9 +61,9 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
 //     * @param epsilon The tolerance within which two vectors are regarded as
 //     * equal.
 //     */
-//    public V2D_PolygonNoInternalHolesDouble(V2D_PolygonNoInternalHolesDouble p,
+//    public V2D_PolygonNoInternalHoles_d(V2D_PolygonNoInternalHoles_d p,
 //            double epsilon) {
-//        this(p.getPoints(), p.getConvexHull(epsilon), p.getEdges(),
+//        this(p.getPoints(), p.getConvexArea(epsilon), p.getEdges(),
 //                p.getExternalHoles(epsilon));
 //    }
     /**
@@ -73,7 +74,7 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
      */
-    public V2D_PolygonNoInternalHolesDouble(V2D_ConvexHullDouble ch,
+    public V2D_PolygonNoInternalHoles_d(V2D_ConvexArea_d ch,
             double epsilon) {
         this(ch.getPointsArray(), ch, epsilon);
     }
@@ -85,9 +86,9 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
      */
-    public V2D_PolygonNoInternalHolesDouble(V2D_PointDouble[] points,
+    public V2D_PolygonNoInternalHoles_d(V2D_Point_d[] points,
             double epsilon) {
-        this(points, new V2D_ConvexHullDouble(epsilon, points), epsilon);
+        this(points, new V2D_ConvexArea_d(epsilon, points), epsilon);
     }
 
     /**
@@ -98,9 +99,9 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
      */
-    public V2D_PolygonNoInternalHolesDouble(V2D_PointDouble[] points,
-            V2D_ConvexHullDouble ch, double epsilon) {
-        super(points[0].env, V2D_VectorDouble.ZERO);
+    public V2D_PolygonNoInternalHoles_d(V2D_Point_d[] points,
+            V2D_ConvexArea_d ch, double epsilon) {
+        super(points[0].env, V2D_Vector_d.ZERO);
         this.points = new HashMap<>();
         this.ch = ch;
         edges = new HashMap<>();
@@ -114,12 +115,12 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
         boolean foundStart = false;
         while (!foundStart) {
             p.p0 = points[i0];
-            p.p0int = V2D_LineSegmentDouble.intersects(epsilon, p.p0,
+            p.p0int = V2D_LineSegment_d.intersects(epsilon, p.p0,
                     ch.edges.values());
             if (p.p0int) {
                 foundStart = true;
             }
-            i0 ++;
+            i0++;
         }
         int i1 = i0;
         p.p1 = points[i1];
@@ -128,8 +129,8 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
             p.p1int = p.p0int;
         } else {
             this.points.put(this.points.size(), p.p0);
-            edges.put(edges.size(), new V2D_LineSegmentDouble(p.p0, p.p1));
-            p.p1int = V2D_LineSegmentDouble.intersects(epsilon, p.p1,
+            edges.put(edges.size(), new V2D_LineSegment_d(p.p0, p.p1));
+            p.p1int = V2D_LineSegment_d.intersects(epsilon, p.p1,
                     ch.edges.values());
             if (p.p0int) {
                 if (!p.p1int) {
@@ -153,15 +154,15 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
         if (p.p0.equals(p.p1, epsilon)) {
             p.p1int = p.p0int;
         } else {
-            p.p1int = V2D_LineSegmentDouble.intersects(epsilon, p.p1,
+            p.p1int = V2D_LineSegment_d.intersects(epsilon, p.p1,
                     ch.edges.values());
             if (p.isHole) {
                 if (p.p1int) {
                     p.pts.add(p.p0);
                     p.pts.add(p.p1);
                     externalHoles.put(externalHoles.size(),
-                            new V2D_PolygonNoInternalHolesDouble(
-                                    p.pts.toArray(V2D_PointDouble[]::new),
+                            new V2D_PolygonNoInternalHoles_d(
+                                    p.pts.toArray(V2D_Point_d[]::new),
                                     epsilon));
                     p.pts = new ArrayList<>();
                     p.isHole = false;
@@ -177,7 +178,7 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
                 }
             }
             this.points.put(this.points.size(), p.p0);
-            edges.put(edges.size(), new V2D_LineSegmentDouble(p.p0, p.p1));
+            edges.put(edges.size(), new V2D_LineSegment_d(p.p0, p.p1));
         }
     }
 
@@ -186,10 +187,10 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
         boolean isHole;
         boolean p0int;
         boolean p1int;
-        ArrayList<V2D_PointDouble> pts;
-        V2D_PointDouble[] points;
-        V2D_PointDouble p0;
-        V2D_PointDouble p1;
+        ArrayList<V2D_Point_d> pts;
+        V2D_Point_d[] points;
+        V2D_Point_d p0;
+        V2D_Point_d p1;
 
         PTThing() {
         }
@@ -203,11 +204,11 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      * @param externalEdges What {@link #edges} is set to.
      * @param externalHoles What {@link #externalHoles} is set to.
      */
-    public V2D_PolygonNoInternalHolesDouble(
-            HashMap<Integer, V2D_PointDouble> points, V2D_ConvexHullDouble ch,
-            HashMap<Integer, V2D_LineSegmentDouble> externalEdges,
-            HashMap<Integer, V2D_PolygonNoInternalHolesDouble> externalHoles) {
-        super(ch.env, V2D_VectorDouble.ZERO);
+    public V2D_PolygonNoInternalHoles_d(
+            HashMap<Integer, V2D_Point_d> points, V2D_ConvexArea_d ch,
+            HashMap<Integer, V2D_LineSegment_d> externalEdges,
+            HashMap<Integer, V2D_PolygonNoInternalHoles_d> externalHoles) {
+        super(ch.env, V2D_Vector_d.ZERO);
         this.points = points;
         this.ch = ch;
         this.edges = externalEdges;
@@ -260,15 +261,15 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
      */
-    public V2D_ConvexHullDouble getConvexHull(double epsilon) {
-        return new V2D_ConvexHullDouble(ch, epsilon);
+    public V2D_ConvexArea_d getConvexArea(double epsilon) {
+        return new V2D_ConvexArea_d(ch, epsilon);
     }
 
     /**
      * @return {@link #edges}.
      */
     @Override
-    public HashMap<Integer, V2D_LineSegmentDouble> getEdges() {
+    public HashMap<Integer, V2D_LineSegment_d> getEdges() {
         return edges;
     }
 
@@ -276,10 +277,10 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
 //     * @return Deep copy of {@link #edges}.
 //     */
 //    @Override
-//    public HashMap<Integer, V2D_LineSegmentDouble> getEdges() {
-//        HashMap<Integer, V2D_LineSegmentDouble> r = new HashMap<>();
-//        for (V2D_LineSegmentDouble l : edges.values()) {
-//            r.put(r.size(), new V2D_LineSegmentDouble(l));
+//    public HashMap<Integer, V2D_LineSegment_d> getEdges() {
+//        HashMap<Integer, V2D_LineSegment_d> r = new HashMap<>();
+//        for (V2D_LineSegment_d l : edges.values()) {
+//            r.put(r.size(), new V2D_LineSegment_d(l));
 //        }
 //        return r;
 //    }
@@ -288,11 +289,11 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      * equal.
      * @return A copy of {@link externalHoles} with the given tolerance applied.
      */
-    public HashMap<Integer, V2D_PolygonNoInternalHolesDouble> getExternalHoles(
+    public HashMap<Integer, V2D_PolygonNoInternalHoles_d> getExternalHoles(
             double epsilon) {
-        HashMap<Integer, V2D_PolygonNoInternalHolesDouble> r = new HashMap<>();
-        for (V2D_PolygonNoInternalHolesDouble h : externalHoles.values()) {
-            r.put(r.size(), new V2D_PolygonNoInternalHolesDouble(h));
+        HashMap<Integer, V2D_PolygonNoInternalHoles_d> r = new HashMap<>();
+        for (V2D_PolygonNoInternalHoles_d h : externalHoles.values()) {
+            r.put(r.size(), new V2D_PolygonNoInternalHoles_d(h));
         }
         return r;
     }
@@ -300,23 +301,23 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
     /**
      * @return {@link externalHoles}.
      */
-    public HashMap<Integer, V2D_PolygonNoInternalHolesDouble> getExternalHoles() {
+    public HashMap<Integer, V2D_PolygonNoInternalHoles_d> getExternalHoles() {
         return externalHoles;
     }
 
     @Override
-    public V2D_PointDouble[] getPointsArray() {
-        Collection<V2D_PointDouble> pts = points.values();
-        return pts.toArray(V2D_PointDouble[]::new);
+    public V2D_Point_d[] getPointsArray() {
+        Collection<V2D_Point_d> pts = points.values();
+        return pts.toArray(V2D_Point_d[]::new);
     }
 
     @Override
-    public HashMap<Integer, V2D_PointDouble> getPoints() {
+    public HashMap<Integer, V2D_Point_d> getPoints() {
         return points;
     }
 
     @Override
-    public V2D_AABBDouble getAABB() {
+    public V2D_AABB_d getAABB() {
         if (en == null) {
             en = ch.getAABB();
         }
@@ -331,9 +332,9 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff there is an intersection.
      */
-    public boolean intersects(V2D_PointDouble pt, double epsilon) {
+    public boolean intersects(V2D_Point_d pt, double epsilon) {
         return ch.intersects(pt, epsilon)
-                && (!V2D_LineSegmentDouble.intersects(epsilon, pt,
+                && (!V2D_LineSegment_d.intersects(epsilon, pt,
                         ch.edges.values())
                 && !externalHoles.values().parallelStream().anyMatch(x
                         -> x.contains(pt, epsilon)));
@@ -347,9 +348,9 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff there is an intersection.
      */
-    public boolean contains(V2D_PointDouble pt, double epsilon) {
+    public boolean contains(V2D_Point_d pt, double epsilon) {
         return intersects(pt, epsilon)
-                && !V2D_LineSegmentDouble.intersects(epsilon, pt,
+                && !V2D_LineSegment_d.intersects(epsilon, pt,
                         edges.values());
     }
 
@@ -361,7 +362,7 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff there is an intersection.
      */
-    public boolean contains(V2D_LineSegmentDouble ls, double epsilon) {
+    public boolean contains(V2D_LineSegment_d ls, double epsilon) {
         return contains(ls.getP(), epsilon)
                 && contains(ls.getQ(), epsilon);
     }
@@ -374,7 +375,7 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff there is containment.
      */
-    public boolean contains(V2D_TriangleDouble t, double epsilon) {
+    public boolean contains(V2D_Triangle_d t, double epsilon) {
         return contains(t.getP(), epsilon)
                 && contains(t.getQ(), epsilon)
                 && contains(t.getR(), epsilon);
@@ -388,7 +389,7 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff there is containment.
      */
-    public boolean contains(V2D_RectangleDouble r, double epsilon) {
+    public boolean contains(V2D_Rectangle_d r, double epsilon) {
         return contains(r.getP(), epsilon)
                 && contains(r.getQ(), epsilon)
                 && contains(r.getR(), epsilon)
@@ -403,15 +404,15 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff there is containment.
      */
-    public boolean contains(V2D_AABBDouble aabb, double epsilon) {
+    public boolean contains(V2D_AABB_d aabb, double epsilon) {
         double xmin = aabb.getXMin();
         double xmax = aabb.getXMax();
         double ymin = aabb.getYMin();
         double ymax = aabb.getYMax();
-        return contains(new V2D_PointDouble(env, xmin, ymin), epsilon)
-                && contains(new V2D_PointDouble(env, xmin, ymax), epsilon)
-                && contains(new V2D_PointDouble(env, xmax, ymax), epsilon)
-                && contains(new V2D_PointDouble(env, xmax, ymin), epsilon);
+        return contains(new V2D_Point_d(env, xmin, ymin), epsilon)
+                && contains(new V2D_Point_d(env, xmin, ymax), epsilon)
+                && contains(new V2D_Point_d(env, xmax, ymax), epsilon)
+                && contains(new V2D_Point_d(env, xmax, ymin), epsilon);
     }
 
     /**
@@ -422,7 +423,7 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff there is containment.
      */
-    public boolean contains(V2D_ConvexHullDouble ch, double epsilon) {
+    public boolean contains(V2D_ConvexArea_d ch, double epsilon) {
         return this.ch.intersects(ch, epsilon)
                 && ch.getPoints().values().parallelStream().allMatch(x
                         -> contains(x, epsilon));
@@ -436,7 +437,7 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff {@code this} contains {@code p}.
      */
-    public boolean contains(V2D_PolygonNoInternalHolesDouble p, double epsilon) {
+    public boolean contains(V2D_PolygonNoInternalHoles_d p, double epsilon) {
         return this.ch.intersects(p.ch, epsilon)
                 && p.getPoints().values().parallelStream().allMatch(x
                         -> contains(x, epsilon));
@@ -450,9 +451,9 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff this is intersected by l.
      */
-    public boolean intersects(V2D_LineSegmentDouble l, double epsilon) {
+    public boolean intersects(V2D_LineSegment_d l, double epsilon) {
         return ch.intersects(l, epsilon)
-                && (!V2D_LineSegmentDouble.intersects(epsilon, l,
+                && (!V2D_LineSegment_d.intersects(epsilon, l,
                         ch.edges.values())
                 || !externalHoles.values().parallelStream().anyMatch(x
                         -> x.contains(l, epsilon)));
@@ -466,7 +467,7 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff this is intersected by {@code t}.
      */
-    public boolean intersects(V2D_TriangleDouble t, double epsilon) {
+    public boolean intersects(V2D_Triangle_d t, double epsilon) {
         return ch.intersects(t, epsilon)
                 && intersects0(t, epsilon);
     }
@@ -479,15 +480,15 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff this is intersected by {@code t}.
      */
-    public boolean intersects0(V2D_TriangleDouble t, double epsilon) {
-        V2D_PointDouble tp = t.getP();
-        V2D_PointDouble tq = t.getQ();
-        V2D_PointDouble tr = t.getR();
+    public boolean intersects0(V2D_Triangle_d t, double epsilon) {
+        V2D_Point_d tp = t.getP();
+        V2D_Point_d tq = t.getQ();
+        V2D_Point_d tr = t.getR();
         return (intersects(tp, epsilon)
                 || intersects(tq, epsilon)
                 || intersects(tr, epsilon))
                 || t.getEdges().values().parallelStream().anyMatch(x
-                        -> V2D_LineSegmentDouble.intersects(epsilon, x,
+                        -> V2D_LineSegment_d.intersects(epsilon, x,
                         edges.values()))
                 && !externalHoles.values().parallelStream().anyMatch(x
                         -> x.contains(tp, epsilon)
@@ -503,7 +504,7 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff this is intersected by {@code r}.
      */
-    public boolean intersects(V2D_RectangleDouble r, double epsilon) {
+    public boolean intersects(V2D_Rectangle_d r, double epsilon) {
         return ch.intersects(r, epsilon)
                 && (intersects0(r.getPQR(), epsilon)
                 || intersects0(r.getRSP(), epsilon));
@@ -517,14 +518,14 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff this is intersected by {@code ch}.
      */
-    public boolean intersects(V2D_ConvexHullDouble ch, double epsilon) {
+    public boolean intersects(V2D_ConvexArea_d ch, double epsilon) {
         return this.ch.intersects(ch, epsilon)
                 && /**
                  * If any of the edges intersect or if one geometry contains the
                  * other, there is an intersection.
                  */
                 getEdges().values().parallelStream().anyMatch(x
-                        -> V2D_LineSegmentDouble.intersects(epsilon, x,
+                        -> V2D_LineSegment_d.intersects(epsilon, x,
                         ch.getEdges().values()))
                 || ch.getPoints().values().parallelStream().anyMatch(x
                         -> intersects(x, epsilon))
@@ -540,7 +541,7 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      * equal.
      * @return {@code true} iff this is intersected by {@code p}.
      */
-    public boolean intersects(V2D_PolygonNoInternalHolesDouble p,
+    public boolean intersects(V2D_PolygonNoInternalHoles_d p,
             double epsilon) {
         return p.ch.intersects(ch, epsilon)
                 && /**
@@ -548,7 +549,7 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
                  * other, there is an intersection.
                  */
                 getEdges().values().parallelStream().anyMatch(x
-                        -> V2D_LineSegmentDouble.intersects(epsilon, x,
+                        -> V2D_LineSegment_d.intersects(epsilon, x,
                         p.getEdges().values()))
                 || getPoints().values().parallelStream().anyMatch(x
                         -> p.intersects(x, epsilon))
@@ -587,7 +588,7 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
     }
 
     @Override
-    public void translate(V2D_VectorDouble v) {
+    public void translate(V2D_Vector_d v) {
         super.translate(v);
         if (en != null) {
             en.translate(v);
@@ -606,33 +607,33 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
     }
 
     @Override
-    public V2D_PolygonNoInternalHolesDouble rotate(V2D_PointDouble pt,
+    public V2D_PolygonNoInternalHoles_d rotate(V2D_Point_d pt,
             double theta) {
         theta = Math_AngleDouble.normalise(theta);
         if (theta == 0) {
-            return new V2D_PolygonNoInternalHolesDouble(this);
+            return new V2D_PolygonNoInternalHoles_d(this);
         } else {
             return rotateN(pt, theta);
         }
     }
 
     @Override
-    public V2D_PolygonNoInternalHolesDouble rotateN(V2D_PointDouble pt,
+    public V2D_PolygonNoInternalHoles_d rotateN(V2D_Point_d pt,
             double theta) {
         double epsilon = 0d;
-        V2D_ConvexHullDouble rch = getConvexHull(epsilon).rotate(pt, theta);
-        HashMap<Integer, V2D_PointDouble> rPoints = new HashMap<>();
+        V2D_ConvexArea_d rch = getConvexArea(epsilon).rotate(pt, theta);
+        HashMap<Integer, V2D_Point_d> rPoints = new HashMap<>();
         for (var x : this.points.entrySet()) {
             rPoints.put(x.getKey(), x.getValue().rotateN(pt, theta));
         }
-        HashMap<Integer, V2D_LineSegmentDouble> rExternalEdges = new HashMap<>();
+        HashMap<Integer, V2D_LineSegment_d> rExternalEdges = new HashMap<>();
         if (edges != null) {
             for (int i = 0; i < edges.size(); i++) {
                 rExternalEdges.put(rExternalEdges.size(), edges.get(i).rotate(
                         pt, theta));
             }
         }
-        HashMap<Integer, V2D_PolygonNoInternalHolesDouble> rExternalHoles
+        HashMap<Integer, V2D_PolygonNoInternalHoles_d> rExternalHoles
                 = new HashMap<>();
         if (externalHoles != null) {
             for (int i = 0; i < externalHoles.size(); i++) {
@@ -640,12 +641,12 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
                         externalHoles.get(i).rotate(pt, theta));
             }
         }
-        return new V2D_PolygonNoInternalHolesDouble(rPoints, rch,
+        return new V2D_PolygonNoInternalHoles_d(rPoints, rch,
                 rExternalEdges, rExternalHoles);
     }
 
 //    @Override
-//    public boolean intersects(V2D_AABBDouble aabb, double epsilon) {
+//    public boolean intersects(V2D_AABB_d aabb, double epsilon) {
 //        if (getAABB().intersects(aabb)) {
 //            if (ch.intersects(aabb, epsilon)) {
 //                return true;
@@ -659,7 +660,7 @@ public class V2D_PolygonNoInternalHolesDouble extends V2D_ShapeDouble {
      * @param p
      * @return the id assigned to the external hole
      */
-    public int addExternalHole(V2D_PolygonNoInternalHolesDouble p) {
+    public int addExternalHole(V2D_PolygonNoInternalHoles_d p) {
         int pid = externalHoles.size();
         externalHoles.put(pid, p);
         return pid;

@@ -17,7 +17,7 @@ package uk.ac.leeds.ccg.v2d.geometry.d;
 
 import java.io.Serializable;
 import java.util.HashSet;
-import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
+import uk.ac.leeds.ccg.v2d.core.d.V2D_Environment_d;
 
 /**
  * An envelope contains all the extreme values with respect to the X and Y axes.
@@ -28,19 +28,19 @@ import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
  * @author Andy Turner
  * @version 1.0
  */
-public class V2D_AABBDouble implements Serializable {
+public class V2D_AABB_d implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * The environment.
      */
-    protected final V2D_EnvironmentDouble env;
+    protected final V2D_Environment_d env;
 
     /**
      * For storing the offset of this.
      */
-    private V2D_VectorDouble offset;
+    private V2D_Vector_d offset;
 
     /**
      * The minimum x-coordinate.
@@ -65,53 +65,53 @@ public class V2D_AABBDouble implements Serializable {
     /**
      * For storing the left point.
      */
-    protected V2D_PointDouble ll;
+    protected V2D_Point_d ll;
 
     /**
      * For storing the upper left point.
      */
-    protected V2D_PointDouble ul;
+    protected V2D_Point_d ul;
 
     /**
      * For storing the upper right point.
      */
-    protected V2D_PointDouble ur;
+    protected V2D_Point_d ur;
 
     /**
      * For storing the lower right point.
      */
-    protected V2D_PointDouble lr;
+    protected V2D_Point_d lr;
 
     /**
      * The top/upper edge.
      */
-    protected V2D_FiniteGeometryDouble t;
+    protected V2D_FiniteGeometry_d t;
 
     /**
      * The right edge.
      */
-    protected V2D_FiniteGeometryDouble r;
+    protected V2D_FiniteGeometry_d r;
 
     /**
      * The bottom/lower edge.
      */
-    protected V2D_FiniteGeometryDouble b;
+    protected V2D_FiniteGeometry_d b;
 
     /**
      * The left edge.
      */
-    protected V2D_FiniteGeometryDouble l;
+    protected V2D_FiniteGeometry_d l;
 
     /**
      * For storing all the points. N.B {@link #ll}, {@link #ul}, {@link #ur},
      * {@link #ul} may all be the same.
      */
-    protected HashSet<V2D_PointDouble> pts;
+    protected HashSet<V2D_Point_d> pts;
 
     /**
      * @param e An envelop.
      */
-    public V2D_AABBDouble(V2D_AABBDouble e) {
+    public V2D_AABB_d(V2D_AABB_d e) {
         env = e.env;
         offset = e.offset;
         yMin = e.yMin;
@@ -136,8 +136,8 @@ public class V2D_AABBDouble implements Serializable {
      * @param x The x-coordinate of a point.
      * @param y The y-coordinate of a point.
      */
-    public V2D_AABBDouble(V2D_EnvironmentDouble env, double x, double y) {
-        this(new V2D_PointDouble(env, x, y));
+    public V2D_AABB_d(V2D_Environment_d env, double x, double y) {
+        this(new V2D_Point_d(env, x, y));
     }
 
     /**
@@ -149,11 +149,11 @@ public class V2D_AABBDouble implements Serializable {
      * @param yMin What {@link yMin} is set to.
      * @param yMax What {@link yMax} is set to.
      */
-    public V2D_AABBDouble(V2D_EnvironmentDouble env,
+    public V2D_AABB_d(V2D_Environment_d env,
             double xMin, double xMax,
             double yMin, double yMax) {
-        this(new V2D_PointDouble(env, xMin, yMin),
-                new V2D_PointDouble(env, xMax, yMax));
+        this(new V2D_Point_d(env, xMin, yMin),
+                new V2D_Point_d(env, xMax, yMax));
     }
 
     /**
@@ -161,10 +161,10 @@ public class V2D_AABBDouble implements Serializable {
      *
      * @param gs The geometries used to form the envelope.
      */
-    public V2D_AABBDouble(V2D_FiniteGeometryDouble... gs) {
-        V2D_AABBDouble e = new V2D_AABBDouble(gs[0]);
-        for (V2D_FiniteGeometryDouble g : gs) {
-            e = e.union(new V2D_AABBDouble(g));
+    public V2D_AABB_d(V2D_FiniteGeometry_d... gs) {
+        V2D_AABB_d e = new V2D_AABB_d(gs[0]);
+        for (V2D_FiniteGeometry_d g : gs) {
+            e = e.union(new V2D_AABB_d(g));
         }
         env = e.env;
         yMin = e.yMin;
@@ -187,7 +187,7 @@ public class V2D_AABBDouble implements Serializable {
      *
      * @param g The geometry used to form the envelope.
      */
-    public V2D_AABBDouble(V2D_FiniteGeometryDouble g) {
+    public V2D_AABB_d(V2D_FiniteGeometry_d g) {
         this(g.getPointsArray());
     }
 
@@ -196,9 +196,9 @@ public class V2D_AABBDouble implements Serializable {
      *
      * @param points The points used to form the envelope.
      */
-    public V2D_AABBDouble(V2D_PointDouble... points) {
+    public V2D_AABB_d(V2D_Point_d... points) {
         //offset = points[0].offset;
-        //offset = V2D_VectorDouble.ZERO;
+        //offset = V2D_Vector_d.ZERO;
         int len = points.length;
         switch (len) {
             case 0 ->
@@ -206,7 +206,7 @@ public class V2D_AABBDouble implements Serializable {
                         + "collection of points.");
             case 1 -> {
                 //offset = points[0].offset;
-                offset = V2D_VectorDouble.ZERO;
+                offset = V2D_Vector_d.ZERO;
                 xMin = points[0].getX();
                 xMax = xMin;
                 yMin = points[0].getY();
@@ -218,7 +218,7 @@ public class V2D_AABBDouble implements Serializable {
             }
             default -> {
                 //offset = points[0].offset;
-                offset = V2D_VectorDouble.ZERO;
+                offset = V2D_Vector_d.ZERO;
                 double xmin = points[0].getX();
                 double xmax = xmin;
                 double ymin = points[0].getY();
@@ -253,7 +253,7 @@ public class V2D_AABBDouble implements Serializable {
     /**
      * @return {@link #pts} initialising first if it is null.
      */
-    public HashSet<V2D_PointDouble> getPoints() {
+    public HashSet<V2D_Point_d> getPoints() {
         if (pts == null) {
             pts = new HashSet<>(4);
             pts.add(getLL());
@@ -270,7 +270,7 @@ public class V2D_AABBDouble implements Serializable {
      * @param e The V2D_AABB to test for equality with this.
      * @return {@code true} iff {@code this} and {@code e} are equal.
      */
-    public boolean equals(V2D_AABBDouble e) {
+    public boolean equals(V2D_AABB_d e) {
         return this.getXMin() == e.getXMin()
                 && this.getXMax() == e.getXMax()
                 && this.getYMin() == e.getYMin()
@@ -316,9 +316,9 @@ public class V2D_AABBDouble implements Serializable {
     /**
      * @return The LL corner point {@link #ll} setting it first if it is null.
      */
-    public V2D_PointDouble getLL() {
+    public V2D_Point_d getLL() {
         if (ll == null) {
-            ll = new V2D_PointDouble(env, xMin, yMin);
+            ll = new V2D_Point_d(env, xMin, yMin);
         }
         return ll;
     }
@@ -326,9 +326,9 @@ public class V2D_AABBDouble implements Serializable {
     /**
      * @return The UL corner point {@link #ul} setting it first if it is null.
      */
-    public V2D_PointDouble getUL() {
+    public V2D_Point_d getUL() {
         if (ul == null) {
-            ul = new V2D_PointDouble(env, xMin, yMax);
+            ul = new V2D_Point_d(env, xMin, yMax);
         }
         return ul;
     }
@@ -336,9 +336,9 @@ public class V2D_AABBDouble implements Serializable {
     /**
      * @return The UR corner point {@link #ur} setting it first if it is null.
      */
-    public V2D_PointDouble getUR() {
+    public V2D_Point_d getUR() {
         if (ur == null) {
-            ur = new V2D_PointDouble(env, xMax, yMax);
+            ur = new V2D_Point_d(env, xMax, yMax);
         }
         return ur;
     }
@@ -346,9 +346,9 @@ public class V2D_AABBDouble implements Serializable {
     /**
      * @return The LR corner point {@link #lr} setting it first if it is null.
      */
-    public V2D_PointDouble getLR() {
+    public V2D_Point_d getLR() {
         if (lr == null) {
-            lr = new V2D_PointDouble(env, xMax, yMin);
+            lr = new V2D_Point_d(env, xMax, yMin);
         }
         return lr;
     }
@@ -356,17 +356,17 @@ public class V2D_AABBDouble implements Serializable {
     /**
      * @return the left of the envelope.
      */
-    public V2D_FiniteGeometryDouble getLeft() {
+    public V2D_FiniteGeometry_d getLeft() {
         if (l == null) {
             double xmin = getXMin();
             double ymin = getYMin();
             double ymax = getYMax();
             if (ymin == ymax) {
-                l = new V2D_PointDouble(env, xmin, ymax);
+                l = new V2D_Point_d(env, xmin, ymax);
             } else {
-                l = new V2D_LineSegmentDouble(
-                        new V2D_PointDouble(env, xmin, ymin),
-                        new V2D_PointDouble(env, xmin, ymax));
+                l = new V2D_LineSegment_d(
+                        new V2D_Point_d(env, xmin, ymin),
+                        new V2D_Point_d(env, xmin, ymax));
             }
         }
         return l;
@@ -375,17 +375,17 @@ public class V2D_AABBDouble implements Serializable {
     /**
      * @return the right of the envelope.
      */
-    public V2D_FiniteGeometryDouble getRight() {
+    public V2D_FiniteGeometry_d getRight() {
         if (r == null) {
             double xmax = getXMax();
             double ymin = getYMin();
             double ymax = getYMax();
             if (ymin == ymax) {
-                r = new V2D_PointDouble(env, xmax, ymax);
+                r = new V2D_Point_d(env, xmax, ymax);
             } else {
-                r = new V2D_LineSegmentDouble(
-                        new V2D_PointDouble(env, xmax, ymin),
-                        new V2D_PointDouble(env, xmax, ymax));
+                r = new V2D_LineSegment_d(
+                        new V2D_Point_d(env, xmax, ymin),
+                        new V2D_Point_d(env, xmax, ymax));
             }
         }
         return r;
@@ -394,17 +394,17 @@ public class V2D_AABBDouble implements Serializable {
     /**
      * @return the top of the envelope.
      */
-    public V2D_FiniteGeometryDouble getTop() {
+    public V2D_FiniteGeometry_d getTop() {
         if (t == null) {
             double xmin = getXMin();
             double xmax = getXMax();
             double ymax = getYMax();
             if (xmin == xmax) {
-                t = new V2D_PointDouble(env, xmin, ymax);
+                t = new V2D_Point_d(env, xmin, ymax);
             } else {
-                t = new V2D_LineSegmentDouble(
-                        new V2D_PointDouble(env, xmin, ymax),
-                        new V2D_PointDouble(env, xmax, ymax));
+                t = new V2D_LineSegment_d(
+                        new V2D_Point_d(env, xmin, ymax),
+                        new V2D_Point_d(env, xmax, ymax));
             }
         }
         return t;
@@ -413,17 +413,17 @@ public class V2D_AABBDouble implements Serializable {
     /**
      * @return the bottom of the envelope.
      */
-    public V2D_FiniteGeometryDouble getBottom() {
+    public V2D_FiniteGeometry_d getBottom() {
         if (b == null) {
             double xmin = getXMin();
             double xmax = getXMax();
             double ymin = getYMin();
             if (xmin == xmax) {
-                b = new V2D_PointDouble(env, xmin, ymin);
+                b = new V2D_Point_d(env, xmin, ymin);
             } else {
-                b = new V2D_LineSegmentDouble(
-                        new V2D_PointDouble(env, xmin, ymin),
-                        new V2D_PointDouble(env, xmax, ymin));
+                b = new V2D_LineSegment_d(
+                        new V2D_Point_d(env, xmin, ymin),
+                        new V2D_Point_d(env, xmax, ymin));
             }
         }
         return b;
@@ -434,7 +434,7 @@ public class V2D_AABBDouble implements Serializable {
      *
      * @param v The vector of translation.
      */
-    public void translate(V2D_VectorDouble v) {
+    public void translate(V2D_Vector_d v) {
         offset = offset.add(v);
         pts = null;
         ll = null;
@@ -456,8 +456,8 @@ public class V2D_AABBDouble implements Serializable {
      *
      * @return The approximate or exact centre of this.
      */
-    public V2D_PointDouble getCentroid() {
-        return new V2D_PointDouble(env,
+    public V2D_Point_d getCentroid() {
+        return new V2D_Point_d(env,
                 (this.getXMax() + this.getXMin()) / 2d,
                 (this.getYMax() + this.getYMin()) / 2d);
     }
@@ -466,11 +466,11 @@ public class V2D_AABBDouble implements Serializable {
      * @param e The V2D_AABB to union with this.
      * @return an Envelope which is {@code this} union {@code e}.
      */
-    public V2D_AABBDouble union(V2D_AABBDouble e) {
+    public V2D_AABB_d union(V2D_AABB_d e) {
         if (contains(e)) {
             return this;
         } else {
-            return new V2D_AABBDouble(e.env,
+            return new V2D_AABB_d(e.env,
                     Math.min(e.getXMin(), getXMin()),
                     Math.max(e.getXMax(), getXMax()),
                     Math.min(e.getYMin(), getYMin()),
@@ -484,7 +484,7 @@ public class V2D_AABBDouble implements Serializable {
      * @param e The Vector_Envelope2D to test for intersection.
      * @return {@code true} if this intersects with {@code e}.
      */
-    public boolean intersects(V2D_AABBDouble e) {
+    public boolean intersects(V2D_AABB_d e) {
         return intersects(e, 0d);
     }
 
@@ -496,7 +496,7 @@ public class V2D_AABBDouble implements Serializable {
      * equal.
      * @return {@code true} if this intersects with {@code e}.
      */
-    public boolean intersects(V2D_AABBDouble e, double epsilon) {
+    public boolean intersects(V2D_AABB_d e, double epsilon) {
         if (isBeyond(e, epsilon)) {
             return !e.isBeyond(this, epsilon);
         } else {
@@ -511,7 +511,7 @@ public class V2D_AABBDouble implements Serializable {
      * @return {@code true} iff {@code this} is beyond {@code e} (i.e. they do
      * not touch or intersect).
      */
-    public boolean isBeyond(V2D_AABBDouble e, double epsilon) {
+    public boolean isBeyond(V2D_AABB_d e, double epsilon) {
         return getXMax() + epsilon < e.getXMin()
                 || getXMin() - epsilon > e.getXMax()
                 || getYMax() + epsilon < e.getYMin()
@@ -525,7 +525,7 @@ public class V2D_AABBDouble implements Serializable {
      * @param e V2D_AABB
      * @return if this is contained by {@code e}
      */
-    public boolean contains(V2D_AABBDouble e) {
+    public boolean contains(V2D_AABB_d e) {
         return getXMax() <= e.getXMax()
                 && getXMin() >= e.getXMin()
                 && getYMax() <= e.getYMax()
@@ -538,7 +538,7 @@ public class V2D_AABBDouble implements Serializable {
      * @param p The point to test if it is contained.
      * @return {@code} true iff {@code this} contains {@code p}
      */
-    public boolean contains(V2D_PointDouble p) {
+    public boolean contains(V2D_Point_d p) {
         return contains(p.getX(), p.getY());
     }
 
@@ -558,7 +558,7 @@ public class V2D_AABBDouble implements Serializable {
      * @param l The line to test for containment.
      * @return {@code true} if this intersects with {@code pl}
      */
-    public boolean contains(V2D_LineSegmentDouble l) {
+    public boolean contains(V2D_LineSegment_d l) {
         return contains(l.getP()) && contains(l.getQ());
     }
 
@@ -566,7 +566,7 @@ public class V2D_AABBDouble implements Serializable {
      * @param s The shape to test for containment.
      * @return {@code true} if this intersects with {@code pl}
      */
-    public boolean contains(V2D_ShapeDouble s) {
+    public boolean contains(V2D_Area_d s) {
         return contains(s.getAABB()) && contains0(s);
     }
 
@@ -574,7 +574,7 @@ public class V2D_AABBDouble implements Serializable {
      * @param s The shape to test for containment.
      * @return {@code true} if this intersects with {@code pl}
      */
-    public boolean contains0(V2D_ShapeDouble s) {
+    public boolean contains0(V2D_Area_d s) {
         return s.getPoints().values().parallelStream().allMatch(x
                 -> contains(x));
     }
@@ -583,7 +583,7 @@ public class V2D_AABBDouble implements Serializable {
      * @param p The point to test for intersection.
      * @return {@code true} if this intersects with {@code pl}
      */
-    public boolean intersects(V2D_PointDouble p) {
+    public boolean intersects(V2D_Point_d p) {
         return intersects(p.getX(), p.getY());
     }
 
@@ -604,11 +604,11 @@ public class V2D_AABBDouble implements Serializable {
      * @return {@code null} if there is no intersection; {@code en} if
      * {@code this.equals(en)}; otherwise returns the intersection.
      */
-    public V2D_AABBDouble getIntersection(V2D_AABBDouble en) {
+    public V2D_AABB_d getIntersection(V2D_AABB_d en) {
         if (!this.intersects(en)) {
             return null;
         }
-        return new V2D_AABBDouble(en.env,
+        return new V2D_AABB_d(en.env,
                 Math.max(getXMin(), en.getXMin()),
                 Math.min(getXMax(), en.getXMax()),
                 Math.max(getYMin(), en.getYMin()),

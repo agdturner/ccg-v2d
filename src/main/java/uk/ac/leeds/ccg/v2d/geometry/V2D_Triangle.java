@@ -33,7 +33,7 @@ import uk.ac.leeds.ccg.v2d.geometry.light.V2D_VTriangle;
  * @author Andy Turner
  * @version 2.0
  */
-public class V2D_Triangle extends V2D_Shape {
+public class V2D_Triangle extends V2D_Area {
 
     private static final long serialVersionUID = 1L;
 
@@ -999,7 +999,7 @@ public class V2D_Triangle extends V2D_Shape {
     /**
      * Computes and returns the intersection between {@code this} and {@code t}.
      * The intersection could be: null, a point, a line segment, a triangle, or
-     * a V2D_ConvexHull (with 4, 5, or 6 sides).
+     * a V2D_ConvexArea (with 4, 5, or 6 sides).
      *
      * @param t The triangle intersect with this.
      * @param oom The Order of Magnitude for the precision.
@@ -1136,7 +1136,7 @@ public class V2D_Triangle extends V2D_Shape {
                         if (gpql.intersects(gqrp, oom, rm)) {
                             return gpql;
                         } else {
-                            return new V2D_ConvexHull(oom, rm, gpql.getP(),
+                            return new V2D_ConvexArea(oom, rm, gpql.getP(),
                                     gpql.getQ(oom, rm), gqrp);
                         }
                     } else if (grp instanceof V2D_Point grpp) {
@@ -1152,11 +1152,11 @@ public class V2D_Triangle extends V2D_Shape {
                             case 3 ->
                                 new V2D_Triangle(pts2.get(0), pts2.get(1), pts2.get(2), oom, rm);
                             default ->
-                                new V2D_ConvexHull(oom, rm, gpql.getP(), gpql.getQ(oom, rm), gqrp, grpp);
+                                new V2D_ConvexArea(oom, rm, gpql.getP(), gpql.getQ(oom, rm), gqrp, grpp);
                         };
                     } else {
                         V2D_LineSegment grpl = (V2D_LineSegment) grp;
-                        return V2D_ConvexHull.getGeometry(
+                        return V2D_ConvexArea.getGeometry(
                                 oom, rm, gpql.getP(),
                                 gpql.getQ(oom, rm), gqrp, grpl.getP(),
                                 grpl.getQ(oom, rm));
@@ -1164,18 +1164,18 @@ public class V2D_Triangle extends V2D_Shape {
                 } else {
                     V2D_LineSegment gqrl = (V2D_LineSegment) gqr;
                     if (grp == null) {
-                        return V2D_ConvexHull.getGeometry(
+                        return V2D_ConvexArea.getGeometry(
                                 oom, rm,
                                 gpql.getP(), gpql.getQ(oom, rm),
                                 gqrl.getP(), gqrl.getQ(oom, rm));
                     } else if (grp instanceof V2D_Point grpp) {
-                        return V2D_ConvexHull.getGeometry(
+                        return V2D_ConvexArea.getGeometry(
                                 oom, rm, gpql.getP(),
                                 gpql.getQ(oom, rm), gqrl.getP(),
                                 gqrl.getQ(oom, rm), grpp);
                     } else {
                         V2D_LineSegment grpl = (V2D_LineSegment) grp;
-                        return V2D_ConvexHull.getGeometry(
+                        return V2D_ConvexArea.getGeometry(
                                 oom, rm, gpql.getP(),
                                 gpql.getQ(oom, rm), gqrl.getP(),
                                 gqrl.getQ(oom, rm), grpl.getP(),
@@ -1380,7 +1380,7 @@ public class V2D_Triangle extends V2D_Shape {
     /**
      * Used in intersecting two triangles. If l1, l2 and l3 are equal then the
      * line segment is returned. If there are 3 unique points then a triangle is
-     * returned. If there are 4 or more unique points, then a V2D_ConvexHull is
+     * returned. If there are 4 or more unique points, then a V2D_ConvexArea is
      * returned.
      *
      * @param l1 A line segment.
@@ -1426,7 +1426,7 @@ public class V2D_Triangle extends V2D_Shape {
                     pts[i] = p;
                     i++;
                 }
-                return new V2D_ConvexHull(oom, rm, pts);
+                return new V2D_ConvexArea(oom, rm, pts);
             }
         }
     }
@@ -1434,7 +1434,7 @@ public class V2D_Triangle extends V2D_Shape {
     /**
      * Used in intersecting two triangles to give the overall intersection.If
      * there are 3 unique points then a triangle is returned. If there are 4 or
-     * more unique points, then a V2D_ConvexHull is returned.
+     * more unique points, then a V2D_ConvexArea is returned.
      *
      * @param l1 A line segment.
      * @param l2 A line segment.
@@ -1476,7 +1476,7 @@ public class V2D_Triangle extends V2D_Shape {
                     pts[i] = p;
                     i++;
                 }
-                return new V2D_ConvexHull(oom, rm, pts);
+                return new V2D_ConvexArea(oom, rm, pts);
             }
         }
     }

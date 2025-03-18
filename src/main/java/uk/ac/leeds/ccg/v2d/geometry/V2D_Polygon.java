@@ -22,12 +22,9 @@ import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
 
 /**
- * Comprising two collections of V2D_ConvexHull one representing parts and the
- * other representing holes. Parts may intersect. Holes may intersect. So in OGC
- * terms, this is pore like a multi-polygon as holes may effectively split parts
- * and they may collectively cover all parts. Simplification of a V2D_Polygon
- * may be possible and may involve creating new geometries to represent parts
- * individually which may involve some rounding.
+ * V2D_Polygon extends V2D_PolygonNoInternalHoles and is also defined by a
+ * collection of non intersecting internal holes each represented also as a 
+ * V2D_Polygon.
  *
  * @author Andy Turner
  * @version 2.0
@@ -147,7 +144,7 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
         return super.contains(pt, oom, rm)
                 && !internalHolesContains(pt, oom, rm);
     }
-    
+
     /**
      * Identify if {@link #internalHoles} contains {@code pt}.
      *
@@ -158,9 +155,9 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
      */
     public boolean internalHolesContains(V2D_Point pt, int oom, RoundingMode rm) {
         return internalHoles.values().parallelStream().anyMatch(x
-                        -> x.contains(pt, oom, rm));
+                -> x.contains(pt, oom, rm));
     }
-    
+
     /**
      * Identify if {@link #internalHoles} intersects {@code pt}.
      *
@@ -171,9 +168,9 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
      */
     public boolean internalHolesIntersects(V2D_Point pt, int oom, RoundingMode rm) {
         return internalHoles.values().parallelStream().anyMatch(x
-                        -> x.intersects(pt, oom, rm));
+                -> x.intersects(pt, oom, rm));
     }
-    
+
     /**
      * Identify if {@code this} intersects {@code l}.
      *
@@ -187,7 +184,7 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
         return super.intersects(l, oom, rm)
                 && !internalHolesContains(l, oom, rm);
     }
-    
+
     /**
      * Identify if {@link #internalHoles} contains {@code l}.
      *
@@ -198,7 +195,7 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
      */
     public boolean internalHolesContains(V2D_LineSegment l, int oom, RoundingMode rm) {
         return internalHoles.values().parallelStream().anyMatch(x
-                        -> x.contains(l, oom, rm));
+                -> x.contains(l, oom, rm));
     }
 
     /**
@@ -211,7 +208,7 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
      */
     public boolean internalHolesIntersects(V2D_LineSegment l, int oom, RoundingMode rm) {
         return internalHoles.values().parallelStream().anyMatch(x
-                        -> x.intersects(l, oom, rm));
+                -> x.intersects(l, oom, rm));
     }
 
     /**
@@ -239,9 +236,9 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
     @Override
     public boolean intersects(V2D_Triangle t, int oom, RoundingMode rm) {
         return super.intersects(t, oom, rm)
-            && !internalHolesContains(t, oom, rm);
+                && !internalHolesContains(t, oom, rm);
     }
-    
+
     /**
      * Identify if {@link #internalHoles} contains {@code t}.
      *
@@ -250,10 +247,10 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
      * @param rm The RoundingMode for any rounding.
      * @return {@code true} iff {@link #internalHoles} contains {@code t}.
      */
-    public boolean internalHolesContains(V2D_Triangle t, int oom, 
+    public boolean internalHolesContains(V2D_Triangle t, int oom,
             RoundingMode rm) {
         return internalHoles.values().parallelStream().anyMatch(x
-                        -> x.contains(t, oom, rm));
+                -> x.contains(t, oom, rm));
     }
 
     /**
@@ -264,10 +261,10 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
      * @param rm The RoundingMode for any rounding.
      * @return {@code true} iff {@link #internalHoles} intersects {@code t}.
      */
-    public boolean internalHolesIntersects(V2D_Triangle t, int oom, 
+    public boolean internalHolesIntersects(V2D_Triangle t, int oom,
             RoundingMode rm) {
         return internalHoles.values().parallelStream().anyMatch(x
-                        -> x.intersects(t, oom, rm));
+                -> x.intersects(t, oom, rm));
     }
 
     /**
@@ -281,9 +278,9 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
     @Override
     public boolean contains(V2D_Triangle t, int oom, RoundingMode rm) {
         return super.contains(t, oom, rm)
-            && !internalHolesContains(t, oom, rm);
+                && !internalHolesContains(t, oom, rm);
     }
-    
+
     /**
      * Identify if {@code this} intersects {@code r}.
      *
@@ -297,7 +294,7 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
         return super.intersects(r, oom, rm)
                 && !internalHolesContains(r, oom, rm);
     }
-    
+
     /**
      * Identify if {@link #internalHoles} contains {@code t}.
      *
@@ -306,10 +303,10 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
      * @param rm The RoundingMode for any rounding.
      * @return {@code true} iff {@link #internalHoles} contains {@code t}.
      */
-    public boolean internalHolesContains(V2D_Rectangle r, int oom, 
+    public boolean internalHolesContains(V2D_Rectangle r, int oom,
             RoundingMode rm) {
         return internalHoles.values().parallelStream().anyMatch(x
-                        -> x.contains(r, oom, rm));
+                -> x.contains(r, oom, rm));
     }
 
     /**
@@ -320,10 +317,10 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
      * @param rm The RoundingMode for any rounding.
      * @return {@code true} iff {@link #internalHoles} intersects {@code t}.
      */
-    public boolean internalHolesIntersects(V2D_Rectangle r, int oom, 
+    public boolean internalHolesIntersects(V2D_Rectangle r, int oom,
             RoundingMode rm) {
         return internalHoles.values().parallelStream().anyMatch(x
-                        -> x.intersects(r, oom, rm));
+                -> x.intersects(r, oom, rm));
     }
 
     /**
@@ -349,11 +346,11 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
      * @return {@code true} iff {@code this} intersects {@code ch}.
      */
     @Override
-    public boolean intersects(V2D_ConvexHull ch, int oom, RoundingMode rm) {
+    public boolean intersects(V2D_ConvexArea ch, int oom, RoundingMode rm) {
         return super.intersects(ch, oom, rm)
-            && !internalHolesContains(ch, oom, rm);
+                && !internalHolesContains(ch, oom, rm);
     }
-    
+
     /**
      * Identify if {@link #internalHoles} contains {@code ch}.
      *
@@ -362,10 +359,10 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
      * @param rm The RoundingMode for any rounding.
      * @return {@code true} iff {@link #internalHoles} contains {@code ch}.
      */
-    public boolean internalHolesContains(V2D_ConvexHull ch, int oom, 
+    public boolean internalHolesContains(V2D_ConvexArea ch, int oom,
             RoundingMode rm) {
         return internalHoles.values().parallelStream().anyMatch(x
-                        -> x.contains(ch, oom, rm));
+                -> x.contains(ch, oom, rm));
     }
 
     /**
@@ -376,10 +373,10 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
      * @param rm The RoundingMode for any rounding.
      * @return {@code true} iff {@link #internalHoles} intersects {@code ch}.
      */
-    public boolean internalHolesIntersects(V2D_ConvexHull ch, int oom, 
+    public boolean internalHolesIntersects(V2D_ConvexArea ch, int oom,
             RoundingMode rm) {
         return internalHoles.values().parallelStream().anyMatch(x
-                        -> x.intersects(ch, oom, rm));
+                -> x.intersects(ch, oom, rm));
     }
 
     /**
@@ -391,9 +388,9 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
      * @return {@code true} iff {@code this} contains {@code ch}.
      */
     @Override
-    public boolean contains(V2D_ConvexHull ch, int oom, RoundingMode rm) {
+    public boolean contains(V2D_ConvexArea ch, int oom, RoundingMode rm) {
         return super.contains(ch, oom, rm)
-            && !internalHolesContains(ch, oom, rm);
+                && !internalHolesContains(ch, oom, rm);
     }
 
     /**
@@ -468,7 +465,6 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
 //        }
 //        return false;
 //    }
-
     /**
      * Adds an internal hole and return its assigned id.
      *

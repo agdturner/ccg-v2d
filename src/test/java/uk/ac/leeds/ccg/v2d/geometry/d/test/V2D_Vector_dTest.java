@@ -21,19 +21,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import uk.ac.leeds.ccg.v2d.core.d.V2D_EnvironmentDouble;
-import uk.ac.leeds.ccg.v2d.geometry.d.V2D_PointDouble;
-import uk.ac.leeds.ccg.v2d.geometry.d.V2D_VectorDouble;
+import uk.ac.leeds.ccg.v2d.core.d.V2D_Environment_d;
+import uk.ac.leeds.ccg.v2d.geometry.d.V2D_Point_d;
+import uk.ac.leeds.ccg.v2d.geometry.d.V2D_Vector_d;
 
 /**
- * Test of V2D_VectorDouble class.
+ * Test of V2D_Vector_d class.
  *
  * @author Andy Turner
  * @version 1.0
  */
-public class V2D_VectorDoubleTest extends V2D_TestDouble {
+public class V2D_Vector_dTest extends V2D_Test_d {
 
-    public V2D_VectorDoubleTest() {
+    public V2D_Vector_dTest() {
     }
 
     @BeforeAll
@@ -53,13 +53,13 @@ public class V2D_VectorDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of getDotProduct method, of class V2D_VectorDouble.
+     * Test of getDotProduct method, of class V2D_Vector_d.
      */
     @Test
     public void testGetDotProduct() {
         System.out.println("getDotProduct");
-        V2D_VectorDouble v = P0P1;
-        V2D_VectorDouble instance = P1P0;
+        V2D_Vector_d v = P0P1;
+        V2D_Vector_d instance = P1P0;
         double expResult = 0d;
         double result = instance.getDotProduct(v);
         assertTrue(expResult == result);
@@ -77,14 +77,14 @@ public class V2D_VectorDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of isOrthogonal method, of class V2D_VectorDouble.
+     * Test of isOrthogonal method, of class V2D_Vector_d.
      */
     @Test
-    public void testIsOrthogonal_double_V2D_VectorDouble() {
+    public void testIsOrthogonal_double_V2D_Vector_d() {
         System.out.println("isOrthogonal");
         double epsilon = 0.0000000001D;
-        V2D_VectorDouble v;
-        V2D_VectorDouble instance;
+        V2D_Vector_d v;
+        V2D_Vector_d instance;
         // Test 1
         v = P1P0;
         instance = P0P1;
@@ -122,13 +122,13 @@ public class V2D_VectorDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of isOrthogonal method, of class V2D_VectorDouble.
+     * Test of isOrthogonal method, of class V2D_Vector_d.
      */
     @Test
-    public void testIsOrthogonal_V2D_VectorDouble() {
+    public void testIsOrthogonal_V2D_Vector_d() {
         System.out.println("isOrthogonal");
-        V2D_VectorDouble v;
-        V2D_VectorDouble instance;
+        V2D_Vector_d v;
+        V2D_Vector_d instance;
         // Test 1
         v = P1P0;
         instance = P0P1;
@@ -166,12 +166,12 @@ public class V2D_VectorDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of getMagnitude method, of class V2D_VectorDouble.
+     * Test of getMagnitude method, of class V2D_Vector_d.
      */
     @Test
     public void testGetMagnitude() {
         System.out.println("getMagnitude");
-        V2D_VectorDouble instance = P0P0;
+        V2D_Vector_d instance = P0P0;
         double expResult = 0d;
         double result = instance.getMagnitude();
         assertTrue(expResult == result);
@@ -181,24 +181,24 @@ public class V2D_VectorDoubleTest extends V2D_TestDouble {
         result = instance.getMagnitude();
         assertTrue(expResult == result);
         // Test 2
-        instance = new V2D_VectorDouble(10d, 10d);
+        instance = new V2D_Vector_d(10d, 10d);
         expResult = Math.sqrt(200d);
         result = instance.getMagnitude();
         assertTrue(expResult == result);
         // Test 3
-        instance = new V2D_VectorDouble(3d, 4d);
+        instance = new V2D_Vector_d(3d, 4d);
         expResult = 5d;
         result = instance.getMagnitude();
         assertTrue(expResult == result);
         // Test 4
-        instance = new V2D_VectorDouble(3d, -4d);
+        instance = new V2D_Vector_d(3d, -4d);
         expResult = 5d;
         result = instance.getMagnitude();
         assertTrue(expResult == result);
     }
 
     /**
-     * Test of initMagnitude method, of class V2D_VectorDouble.
+     * Test of initMagnitude method, of class V2D_Vector_d.
      */
     @Test
     public void testInitMagnitude() {
@@ -207,14 +207,14 @@ public class V2D_VectorDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of isScalarMultiple method, of class V2D_VectorDouble.
+     * Test of isScalarMultiple method, of class V2D_Vector_d.
      */
     @Test
     public void testIsScalarMultiple_double_V2D_Vector() {
         System.out.println("isScalarMultiple");
         double epsilon = 0.0000000001d;
-        V2D_VectorDouble v = P0P0;
-        V2D_VectorDouble instance = P1P1;
+        V2D_Vector_d v = P0P0;
+        V2D_Vector_d instance = P1P1;
         assertTrue(instance.isScalarMultiple(epsilon, v));
         // Test 2
         instance = P0P0;
@@ -232,41 +232,41 @@ public class V2D_VectorDoubleTest extends V2D_TestDouble {
         instance = P0P1;
         assertFalse(instance.isScalarMultiple(epsilon, v));
         // Test 6
-        v = new V2D_VectorDouble(0d, 1d);
-        instance = new V2D_VectorDouble(0d, 1d + epsilon);
+        v = new V2D_Vector_d(0d, 1d);
+        instance = new V2D_Vector_d(0d, 1d + epsilon);
         //assertFalse(instance.isScalarMultiple(epsilon, v));
         assertTrue(instance.isScalarMultiple(epsilon, v));
         // Test 7
-        instance = new V2D_VectorDouble(3d, 1d);
-        v = new V2D_VectorDouble(-6d, -2d);
+        instance = new V2D_Vector_d(3d, 1d);
+        v = new V2D_Vector_d(-6d, -2d);
         assertTrue(instance.isScalarMultiple(epsilon, v));
         // Test 8
-        instance = new V2D_VectorDouble(-3d, 0d);
-        v = new V2D_VectorDouble(-6d, 0d);
+        instance = new V2D_Vector_d(-3d, 0d);
+        v = new V2D_Vector_d(-6d, 0d);
         assertTrue(instance.isScalarMultiple(epsilon, v));
         // Test 10
-        v = new V2D_VectorDouble(0d, 1d);
-        instance = new V2D_VectorDouble(0d, -1d);
+        v = new V2D_Vector_d(0d, 1d);
+        instance = new V2D_Vector_d(0d, -1d);
         assertTrue(instance.isScalarMultiple(epsilon, v));
         // Test 11
-        v = new V2D_VectorDouble(1d, 1d);
-        instance = new V2D_VectorDouble(-1d, -1d);
+        v = new V2D_Vector_d(1d, 1d);
+        instance = new V2D_Vector_d(-1d, -1d);
         assertTrue(instance.isScalarMultiple(epsilon, v));
         // Test 12
-        v = new V2D_VectorDouble(1d, 0d);
-        instance = new V2D_VectorDouble(-1d, 0d);
+        v = new V2D_Vector_d(1d, 0d);
+        instance = new V2D_Vector_d(-1d, 0d);
         assertTrue(instance.isScalarMultiple(epsilon, v));
     }
 
     /**
-     * Test of isScalarMultiple method, of class V2D_VectorDouble.
+     * Test of isScalarMultiple method, of class V2D_Vector_d.
      */
     @Test
     public void testIsScalarMultiple_V2D_Vector() {
         System.out.println("isScalarMultiple");
         double epsilon = 0.0000000001d;
-        V2D_VectorDouble v = P0P0;
-        V2D_VectorDouble instance = P1P1;
+        V2D_Vector_d v = P0P0;
+        V2D_Vector_d instance = P1P1;
         assertTrue(instance.isScalarMultiple(v));
         // Test 2
         instance = P0P0;
@@ -284,47 +284,47 @@ public class V2D_VectorDoubleTest extends V2D_TestDouble {
         instance = P0P1;
         assertFalse(instance.isScalarMultiple(v));
         // Test 6
-        v = new V2D_VectorDouble(0d, 1d);
-        instance = new V2D_VectorDouble(0d, 1d + epsilon);
+        v = new V2D_Vector_d(0d, 1d);
+        instance = new V2D_Vector_d(0d, 1d + epsilon);
         assertTrue(instance.isScalarMultiple(v));
         // Test 7
-        instance = new V2D_VectorDouble(3d, 1d);
-        v = new V2D_VectorDouble(-6d, -2d);
+        instance = new V2D_Vector_d(3d, 1d);
+        v = new V2D_Vector_d(-6d, -2d);
         assertTrue(instance.isScalarMultiple(v));
         // Test 8
-        instance = new V2D_VectorDouble(-3d, 0d);
-        v = new V2D_VectorDouble(-6d, 0d);
+        instance = new V2D_Vector_d(-3d, 0d);
+        v = new V2D_Vector_d(-6d, 0d);
         assertTrue(instance.isScalarMultiple(v));
         // Test 9
         epsilon = 0.0000000000000000001d;
-        v = new V2D_VectorDouble(0d, 1d);
-        instance = new V2D_VectorDouble(0d + epsilon, 1d);
+        v = new V2D_Vector_d(0d, 1d);
+        instance = new V2D_Vector_d(0d + epsilon, 1d);
         assertFalse(instance.isScalarMultiple(v));
         // Test 10
-        v = new V2D_VectorDouble(0d, 1d);
-        instance = new V2D_VectorDouble(0d, -1d);
+        v = new V2D_Vector_d(0d, 1d);
+        instance = new V2D_Vector_d(0d, -1d);
         assertTrue(instance.isScalarMultiple(v));
         // Test 11
-        v = new V2D_VectorDouble(1d, 1d);
-        instance = new V2D_VectorDouble(-1d, -1d);
+        v = new V2D_Vector_d(1d, 1d);
+        instance = new V2D_Vector_d(-1d, -1d);
         assertTrue(instance.isScalarMultiple(v));
         // Test 12
-        v = new V2D_VectorDouble(1d, 0d);
-        instance = new V2D_VectorDouble(-1d, 0d);
+        v = new V2D_Vector_d(1d, 0d);
+        instance = new V2D_Vector_d(-1d, 0d);
         assertTrue(instance.isScalarMultiple(v));
     }
 
     /**
-     * Test of equals method, of class V2D_VectorDouble.
+     * Test of equals method, of class V2D_Vector_d.
      */
     @Test
     public void testEquals_Object() {
         System.out.println("equals");
-        Object o = V2D_VectorDouble.I;
-        V2D_VectorDouble instance = V2D_VectorDouble.I;
+        Object o = V2D_Vector_d.I;
+        V2D_Vector_d instance = V2D_Vector_d.I;
         assertTrue(instance.equals(o));
         // Test 2
-        instance = V2D_VectorDouble.J;
+        instance = V2D_Vector_d.J;
         assertFalse(instance.equals(o));
         // Test 3
         o = P0P0;
@@ -337,342 +337,342 @@ public class V2D_VectorDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of isReverse method, of class V2D_VectorDouble.
+     * Test of isReverse method, of class V2D_Vector_d.
      */
     @Test
     public void testIsReverse() {
         System.out.println("isReverse");
-        V2D_VectorDouble v = V2D_VectorDouble.I;
-        V2D_VectorDouble instance = new V2D_VectorDouble(-1, 0);
+        V2D_Vector_d v = V2D_Vector_d.I;
+        V2D_Vector_d instance = new V2D_Vector_d(-1, 0);
         double epsilon = 0d;
         assertTrue(instance.isReverse(v, epsilon));
         // Test 2
         epsilon = 0.0000000001d;
-        instance = new V2D_VectorDouble(-1d + epsilon / 2, 0);
+        instance = new V2D_Vector_d(-1d + epsilon / 2, 0);
         assertTrue(instance.isReverse(v, epsilon));
         // Test 3
         epsilon = 0.0000000001d;
-        instance = new V2D_VectorDouble(-1d + 2 * epsilon, 0);
+        instance = new V2D_Vector_d(-1d + 2 * epsilon, 0);
         assertFalse(instance.isReverse(v, epsilon));
         // Test 4
         epsilon = 0.0000000001d;
-        instance = new V2D_VectorDouble(-1d + epsilon, -epsilon);
+        instance = new V2D_Vector_d(-1d + epsilon, -epsilon);
         assertTrue(instance.isReverse(v, epsilon));
     }
 
     /**
-     * Test of isZero method, of class V2D_VectorDouble.
+     * Test of isZero method, of class V2D_Vector_d.
      */
     @Test
     public void testIsZeroVector() {
         System.out.println("isZeroVector");
-        V2D_VectorDouble instance = new V2D_VectorDouble(0, 0);
+        V2D_Vector_d instance = new V2D_Vector_d(0, 0);
         assertTrue(instance.isZero());
         // Test 2
-        instance = new V2D_VectorDouble(1, 0);
+        instance = new V2D_Vector_d(1, 0);
         assertFalse(instance.isZero());
     }
 
     /**
-     * Test of isZero method, of class V2D_VectorDouble.
+     * Test of isZero method, of class V2D_Vector_d.
      */
     @Test
     public void testIsZeroVector_double() {
         System.out.println("isZeroVector");
         double epsilon = 0.000000001d;
-        V2D_VectorDouble instance = new V2D_VectorDouble(0, 0);
+        V2D_Vector_d instance = new V2D_Vector_d(0, 0);
         assertTrue(instance.isZero(epsilon));
         // Test 2
-        instance = new V2D_VectorDouble(1, 0);
+        instance = new V2D_Vector_d(1, 0);
         assertFalse(instance.isZero(epsilon));
         // Test 3
-        instance = new V2D_VectorDouble(epsilon, 0);
+        instance = new V2D_Vector_d(epsilon, 0);
         assertTrue(instance.isZero(epsilon));
         // Test 4
-        instance = new V2D_VectorDouble(epsilon, epsilon);
+        instance = new V2D_Vector_d(epsilon, epsilon);
         assertTrue(instance.isZero(epsilon));
         // Test 5
-        instance = new V2D_VectorDouble(2d * epsilon, 0);
+        instance = new V2D_Vector_d(2d * epsilon, 0);
         assertFalse(instance.isZero(epsilon));
         // Test 6
-        instance = new V2D_VectorDouble(2d * epsilon, 2d * epsilon);
+        instance = new V2D_Vector_d(2d * epsilon, 2d * epsilon);
         assertFalse(instance.isZero(epsilon));
     }
 
     /**
-     * Test of multiply method, of class V2D_VectorDouble.
+     * Test of multiply method, of class V2D_Vector_d.
      */
     @Test
     public void testMultiply() {
         System.out.println("multiply");
         double s = 0d;
-        V2D_VectorDouble instance = new V2D_VectorDouble(0, 0);
-        V2D_VectorDouble expResult = new V2D_VectorDouble(0, 0);
-        V2D_VectorDouble result = instance.multiply(s);
+        V2D_Vector_d instance = new V2D_Vector_d(0, 0);
+        V2D_Vector_d expResult = new V2D_Vector_d(0, 0);
+        V2D_Vector_d result = instance.multiply(s);
         assertTrue(expResult.equals(result));
         // Test 2
         s = 0d;
-        instance = new V2D_VectorDouble(10, 10);
-        expResult = new V2D_VectorDouble(0, 0);
+        instance = new V2D_Vector_d(10, 10);
+        expResult = new V2D_Vector_d(0, 0);
         result = instance.multiply(s);
         assertTrue(expResult.equals(result));
         // Test 3
         s = 2d;
-        instance = new V2D_VectorDouble(10, 10);
-        expResult = new V2D_VectorDouble(20, 20);
+        instance = new V2D_Vector_d(10, 10);
+        expResult = new V2D_Vector_d(20, 20);
         result = instance.multiply(s);
         assertTrue(expResult.equals(result));
     }
 
     /**
-     * Test of add method, of class V2D_VectorDouble.
+     * Test of add method, of class V2D_Vector_d.
      */
     @Test
     public void testAdd() {
         System.out.println("add");
-        V2D_VectorDouble instance = new V2D_VectorDouble(0, 0);
-        V2D_VectorDouble v = new V2D_VectorDouble(0, 0);
-        V2D_VectorDouble expResult = new V2D_VectorDouble(0, 0);
-        V2D_VectorDouble result = instance.add(v);
+        V2D_Vector_d instance = new V2D_Vector_d(0, 0);
+        V2D_Vector_d v = new V2D_Vector_d(0, 0);
+        V2D_Vector_d expResult = new V2D_Vector_d(0, 0);
+        V2D_Vector_d result = instance.add(v);
         assertTrue(expResult.equals(result));
         // Test 2
-        instance = new V2D_VectorDouble(0, 0);
-        v = new V2D_VectorDouble(1, 1);
-        expResult = new V2D_VectorDouble(1, 1);
+        instance = new V2D_Vector_d(0, 0);
+        v = new V2D_Vector_d(1, 1);
+        expResult = new V2D_Vector_d(1, 1);
         result = instance.add(v);
         assertTrue(expResult.equals(result));
         // Test 3
-        instance = new V2D_VectorDouble(2, 3);
-        v = new V2D_VectorDouble(7, 1);
-        expResult = new V2D_VectorDouble(9, 4);
+        instance = new V2D_Vector_d(2, 3);
+        v = new V2D_Vector_d(7, 1);
+        expResult = new V2D_Vector_d(9, 4);
         result = instance.add(v);
         assertTrue(expResult.equals(result));
         // Test 3
-        instance = new V2D_VectorDouble(-2, 3);
-        v = new V2D_VectorDouble(7, 1);
-        expResult = new V2D_VectorDouble(5, 4);
+        instance = new V2D_Vector_d(-2, 3);
+        v = new V2D_Vector_d(7, 1);
+        expResult = new V2D_Vector_d(5, 4);
         result = instance.add(v);
         assertTrue(expResult.equals(result));
     }
 
     /**
-     * Test of subtract method, of class V2D_VectorDouble.
+     * Test of subtract method, of class V2D_Vector_d.
      */
     @Test
     public void testSubtract() {
         System.out.println("subtract");
-        V2D_VectorDouble instance = new V2D_VectorDouble(0, 0);
-        V2D_VectorDouble v = new V2D_VectorDouble(0, 0);
-        V2D_VectorDouble expResult = new V2D_VectorDouble(0, 0);
-        V2D_VectorDouble result = instance.subtract(v);
+        V2D_Vector_d instance = new V2D_Vector_d(0, 0);
+        V2D_Vector_d v = new V2D_Vector_d(0, 0);
+        V2D_Vector_d expResult = new V2D_Vector_d(0, 0);
+        V2D_Vector_d result = instance.subtract(v);
         assertTrue(expResult.equals(result));
         // Test 2
-        instance = new V2D_VectorDouble(0, 0);
-        v = new V2D_VectorDouble(1, 1);
-        expResult = new V2D_VectorDouble(-1, -1);
+        instance = new V2D_Vector_d(0, 0);
+        v = new V2D_Vector_d(1, 1);
+        expResult = new V2D_Vector_d(-1, -1);
         result = instance.subtract(v);
         //assertTrue(expResult.compareTo(result) == 0);
         assertTrue(expResult.equals(result));
     }
 
     /**
-     * Test of reverse method, of class V2D_VectorDouble.
+     * Test of reverse method, of class V2D_Vector_d.
      */
     @Test
     public void testReverse() {
         System.out.println("reverse");
-        V2D_VectorDouble instance = new V2D_VectorDouble(0, 0);
-        V2D_VectorDouble expResult = new V2D_VectorDouble(0, 0);
-        V2D_VectorDouble result = instance.reverse();
+        V2D_Vector_d instance = new V2D_Vector_d(0, 0);
+        V2D_Vector_d expResult = new V2D_Vector_d(0, 0);
+        V2D_Vector_d result = instance.reverse();
         assertTrue(expResult.equals(result));
         // Test 2
-        instance = new V2D_VectorDouble(1, 1);
-        expResult = new V2D_VectorDouble(-1, -1);
+        instance = new V2D_Vector_d(1, 1);
+        expResult = new V2D_Vector_d(-1, -1);
         result = instance.reverse();
         assertTrue(expResult.equals(result));
     }
 
     /**
-     * Test of getMagnitudeSquared method, of class V2D_VectorDouble.
+     * Test of getMagnitudeSquared method, of class V2D_Vector_d.
      */
     @Test
     public void testGetMagnitudeSquared() {
         System.out.println("getMagnitudeSquared");
-        V2D_VectorDouble instance = new V2D_VectorDouble(0, 0);
+        V2D_Vector_d instance = new V2D_Vector_d(0, 0);
         double expResult = 0d;
         double result = instance.getMagnitudeSquared();
         assertTrue(expResult == result);
         // Test 2
-        instance = new V2D_VectorDouble(1, 1);
+        instance = new V2D_Vector_d(1, 1);
         expResult = 2d;
         result = instance.getMagnitudeSquared();
         assertTrue(expResult == result);
         // Test 3
-        instance = new V2D_VectorDouble(2, 2);
+        instance = new V2D_Vector_d(2, 2);
         expResult = 8d;
         result = instance.getMagnitudeSquared();
         assertTrue(expResult == result);
         // Test 4
-        instance = new V2D_VectorDouble(-2, 3);
+        instance = new V2D_Vector_d(-2, 3);
         expResult = 13d;
         result = instance.getMagnitudeSquared();
         assertTrue(expResult == result);
     }
 
     /**
-     * Test of getUnitVector method, of class V2D_VectorDouble.
+     * Test of getUnitVector method, of class V2D_Vector_d.
      */
     @Test
     public void testGetUnitVector() {
         System.out.println("getUnitVector");
-        V2D_VectorDouble instance = V2D_VectorDouble.I;
-        V2D_VectorDouble expResult = V2D_VectorDouble.I;
-        V2D_VectorDouble result = instance.getUnitVector();
+        V2D_Vector_d instance = V2D_Vector_d.I;
+        V2D_Vector_d expResult = V2D_Vector_d.I;
+        V2D_Vector_d result = instance.getUnitVector();
         assertTrue(expResult.equals(result));
         assertTrue(result.getMagnitudeSquared() == 1d);
         // Test 2
-        instance = new V2D_VectorDouble(100d, 0d);
-        expResult = V2D_VectorDouble.I;
+        instance = new V2D_Vector_d(100d, 0d);
+        expResult = V2D_Vector_d.I;
         result = instance.getUnitVector();
         assertTrue(expResult.equals(result));
         assertTrue(result.getMagnitudeSquared() == 1d);
         // Test 3
-        instance = new V2D_VectorDouble(100d, 100d);
-        expResult = new V2D_VectorDouble(100d / Math.sqrt(20000d), 100d / Math.sqrt(20000d));
+        instance = new V2D_Vector_d(100d, 100d);
+        expResult = new V2D_Vector_d(100d / Math.sqrt(20000d), 100d / Math.sqrt(20000d));
         result = instance.getUnitVector();
         assertTrue(expResult.equals(result));
         //assertTrue(result.getMagnitudeSquared().compareTo(double.ONE) != 1);
         // Test 4
-        instance = new V2D_VectorDouble(-100, 0);
-        expResult = new V2D_VectorDouble(-1, 0);
+        instance = new V2D_Vector_d(-100, 0);
+        expResult = new V2D_Vector_d(-1, 0);
         result = instance.getUnitVector();
         assertTrue(expResult.equals(result));
         // Test 5
-        instance = new V2D_VectorDouble(-100, -100);
-        expResult = new V2D_VectorDouble(-100d / Math.sqrt(20000d), -100d / Math.sqrt(20000d));
+        instance = new V2D_Vector_d(-100, -100);
+        expResult = new V2D_Vector_d(-100d / Math.sqrt(20000d), -100d / Math.sqrt(20000d));
         result = instance.getUnitVector();
         assertTrue(expResult.equals(result));
     }
 
     /**
-     * Test of getDX method, of class V2D_VectorDouble.
+     * Test of getDX method, of class V2D_Vector_d.
      */
     @Test
     public void testGetDX() {
         System.out.println("getDX");
-        V2D_VectorDouble instance = V2D_VectorDouble.I;
+        V2D_Vector_d instance = V2D_Vector_d.I;
         double expResult = 1d;
         double result = instance.dx;
         assertTrue(expResult == result);
         // Test 2
-        instance = V2D_VectorDouble.I.reverse();
+        instance = V2D_Vector_d.I.reverse();
         expResult = -1d;
         result = instance.dx;
         assertTrue(expResult == result);
     }
 
     /**
-     * Test of getDY method, of class V2D_VectorDouble.
+     * Test of getDY method, of class V2D_Vector_d.
      */
     @Test
     public void testGetDY() {
         System.out.println("getDY");
-        V2D_VectorDouble instance = V2D_VectorDouble.J;
+        V2D_Vector_d instance = V2D_Vector_d.J;
         double expResult = 1d;
         double result = instance.dy;
         assertTrue(expResult == result);
         // Test 2
-        instance = V2D_VectorDouble.J.reverse();
+        instance = V2D_Vector_d.J.reverse();
         expResult = -1d;
         result = instance.dy;
         assertTrue(expResult == result);
     }
 
     /**
-     * Test of divide method, of class V2D_VectorDouble.
+     * Test of divide method, of class V2D_Vector_d.
      */
     @Test
     public void testDivide() {
         System.out.println("divide");
-        V2D_EnvironmentDouble env = new V2D_EnvironmentDouble(0.00000001d);
+        V2D_Environment_d env = new V2D_Environment_d(0.00000001d);
         double s = 2d;
-        V2D_VectorDouble instance = V2D_VectorDouble.I;
-        V2D_VectorDouble expResult = new V2D_VectorDouble(
-                new V2D_PointDouble(env, 0.5d, 0d));
-        V2D_VectorDouble result = instance.divide(s);
+        V2D_Vector_d instance = V2D_Vector_d.I;
+        V2D_Vector_d expResult = new V2D_Vector_d(
+                new V2D_Point_d(env, 0.5d, 0d));
+        V2D_Vector_d result = instance.divide(s);
         assertTrue(expResult.equals(result));
     }
 
     /**
-     * Test of getAngle method, of class V2D_VectorDouble.
+     * Test of getAngle method, of class V2D_Vector_d.
      */
     @Test
     public void testGetAngle() {
         System.out.println("getAngle");
-        V2D_VectorDouble v;
-        V2D_VectorDouble instance;
+        V2D_Vector_d v;
+        V2D_Vector_d instance;
         double expResult;
         double result;
         // Test 1
-        v = V2D_VectorDouble.I;
-        instance = V2D_VectorDouble.J;
+        v = V2D_Vector_d.I;
+        instance = V2D_Vector_d.J;
         result = instance.getAngle(v);
         expResult = Math.PI / 2d;
         assertTrue(expResult == result);
     }
 
     /**
-     * Test of getDirection method, of class V2D_VectorDouble.
+     * Test of getDirection method, of class V2D_Vector_d.
      */
     @Test
     public void testGetDirection() {
         System.out.println("getDirection");
-        V2D_VectorDouble instance = V2D_VectorDouble.I;
+        V2D_Vector_d instance = V2D_Vector_d.I;
         int expResult = 1;
         int result = instance.getDirection();
         assertTrue(expResult == result);
         // Test 2
-        instance = V2D_VectorDouble.J;
+        instance = V2D_Vector_d.J;
         expResult = 1;
         result = instance.getDirection();
         assertTrue(expResult == result);
         // Test 3
-        instance = V2D_VectorDouble.IJ;
+        instance = V2D_Vector_d.IJ;
         expResult = 1;
         result = instance.getDirection();
         assertTrue(expResult == result);
         // Test 4
-        instance = new V2D_VectorDouble(0D, 0D);
+        instance = new V2D_Vector_d(0D, 0D);
         expResult = 0;
         result = instance.getDirection();
         assertTrue(expResult == result);
         // Test 5
-        instance = V2D_VectorDouble.I.reverse();
+        instance = V2D_Vector_d.I.reverse();
         expResult = 3;
         result = instance.getDirection();
         assertTrue(expResult == result);
         // Test 6
-        instance = V2D_VectorDouble.J.reverse();
+        instance = V2D_Vector_d.J.reverse();
         expResult = 2;
         result = instance.getDirection();
         assertTrue(expResult == result);
         // Test 7
-        instance = V2D_VectorDouble.IJ.reverse();
+        instance = V2D_Vector_d.IJ.reverse();
         expResult = 4;
         result = instance.getDirection();
         assertTrue(expResult == result);
     }
 
     /**
-     * Test of toString method, of class V2D_VectorDouble.
+     * Test of toString method, of class V2D_Vector_d.
      */
     @Test
     public void testToString_0args() {
         System.out.println("toString");
-        V2D_VectorDouble v = V2D_VectorDouble.ZERO;
+        V2D_Vector_d v = V2D_Vector_d.ZERO;
         String result = v.toString();
-        String expResult = "V2D_VectorDouble(dx=0.0, dy=0.0)";
-//        String expResult = "V2D_VectorDouble\n"
+        String expResult = "V2D_Vector_d(dx=0.0, dy=0.0)";
+//        String expResult = "V2D_Vector_d\n"
 //                + "(\n"
 //                + " dx=double(x=0, sqrtx=0, oom=0),\n"
 //                + " dy=double(x=0, sqrtx=0, oom=0),\n"
@@ -683,89 +683,89 @@ public class V2D_VectorDoubleTest extends V2D_TestDouble {
     }
 
     /**
-     * Test of equals method, of class V2D_VectorDouble.
+     * Test of equals method, of class V2D_Vector_d.
      */
     @Test
-    public void testEquals_V2D_VectorDouble() {
+    public void testEquals_V2D_Vector_d() {
         System.out.println("equals");
-        V2D_VectorDouble v = new V2D_VectorDouble(1, 1);
-        V2D_VectorDouble instance = new V2D_VectorDouble(1, 1);
+        V2D_Vector_d v = new V2D_Vector_d(1, 1);
+        V2D_Vector_d instance = new V2D_Vector_d(1, 1);
         assertTrue(instance.equals(v));
-        instance = new V2D_VectorDouble(1, -1);
+        instance = new V2D_Vector_d(1, -1);
         assertFalse(instance.equals(v));
     }
 
     /**
-     * Test of equals method, of class V2D_VectorDouble.
+     * Test of equals method, of class V2D_Vector_d.
      */
     @Test
-    public void testEquals_V2D_VectorDouble_double() {
+    public void testEquals_V2D_Vector_d_double() {
         System.out.println("equals");
         double epsilon = 1 / 10000d;
         double ediv2 = epsilon / 2.0d;
-        V2D_VectorDouble v = new V2D_VectorDouble(1, 1);
-        V2D_VectorDouble instance = new V2D_VectorDouble(1, 1);
+        V2D_Vector_d v = new V2D_Vector_d(1, 1);
+        V2D_Vector_d instance = new V2D_Vector_d(1, 1);
         assertTrue(instance.equals(epsilon, v));
         // Test 2
-        instance = new V2D_VectorDouble(1, -1);
+        instance = new V2D_Vector_d(1, -1);
         assertFalse(instance.equals(epsilon, v));
         // Test 3
-        instance = new V2D_VectorDouble(1, 1 + ediv2);
+        instance = new V2D_Vector_d(1, 1 + ediv2);
         assertTrue(instance.equals(epsilon, v));
         // Test 5
-        instance = new V2D_VectorDouble(1 + ediv2, 1);
+        instance = new V2D_Vector_d(1 + ediv2, 1);
         assertTrue(instance.equals(epsilon, v));
 
     }
 
     /**
-     * Test of getDX method, of class V2D_VectorDouble.
+     * Test of getDX method, of class V2D_Vector_d.
      */
     @Test
     public void testGetDX_int() {
         System.out.println("getDX");
-        V2D_VectorDouble instance = new V2D_VectorDouble(1, 1);
+        V2D_Vector_d instance = new V2D_Vector_d(1, 1);
         double expResult = 1d;
         assertTrue(expResult == instance.dx);
     }
 
     /**
-     * Test of getDY method, of class V2D_VectorDouble.
+     * Test of getDY method, of class V2D_Vector_d.
      */
     @Test
     public void testGetDY_int() {
         System.out.println("getDY");
-        V2D_VectorDouble instance = new V2D_VectorDouble(1, 1);
+        V2D_Vector_d instance = new V2D_Vector_d(1, 1);
         double expResult = 1d;
         assertTrue(expResult == instance.dy);
     }
 
     /**
-     * Test of getDX method, of class V2D_VectorDouble.
+     * Test of getDX method, of class V2D_Vector_d.
      */
     @Test
     public void testGetDX_0args() {
         System.out.println("getDX");
-        V2D_VectorDouble instance = new V2D_VectorDouble(1, 1);
+        V2D_Vector_d instance = new V2D_Vector_d(1, 1);
         double expResult = 1d;
         double result = instance.dx;
         assertTrue(expResult == result);
     }
 
     /**
-     * Test of getDY method, of class V2D_VectorDouble.
+     * Test of getDY method, of class V2D_Vector_d.
      */
     @Test
     public void testGetDY_0args() {
         System.out.println("getDY");
-        V2D_VectorDouble instance = new V2D_VectorDouble(1, 1);
+        V2D_Vector_d instance = new V2D_Vector_d(1, 1);
         double expResult = 1d;
         double result = instance.dy;
         assertTrue(expResult == result);
     }
 
     /**
-     * Test of rotate method, of class V2D_VectorDouble.
+     * Test of rotate method, of class V2D_Vector_d.
      */
     @Test
     public void testRotate() {
@@ -773,14 +773,14 @@ public class V2D_VectorDoubleTest extends V2D_TestDouble {
         double epsilon = 1 / 10000d;
         double Pi = Math.PI;
         double theta = Pi / 2d;
-        V2D_VectorDouble instance = new V2D_VectorDouble(1, 0);
-        V2D_VectorDouble expResult = new V2D_VectorDouble(0, -1);
-        V2D_VectorDouble result = instance.rotate(theta);
+        V2D_Vector_d instance = new V2D_Vector_d(1, 0);
+        V2D_Vector_d expResult = new V2D_Vector_d(0, -1);
+        V2D_Vector_d result = instance.rotate(theta);
         assertTrue(expResult.equals(epsilon, result));
         // Test 2
         theta = Pi / 2d;
-        instance = new V2D_VectorDouble(0, 1);
-        expResult = new V2D_VectorDouble(1, 0);
+        instance = new V2D_Vector_d(0, 1);
+        expResult = new V2D_Vector_d(1, 0);
         result = instance.rotate(theta);
         assertTrue(expResult.equals(epsilon, result));
     }

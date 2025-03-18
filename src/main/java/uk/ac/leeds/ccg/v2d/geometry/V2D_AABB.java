@@ -661,7 +661,7 @@ public class V2D_AABB implements Serializable {
      * @param rm The RoundingMode for any rounding.
      * @return {@code true} if this contains {@code s}
      */
-    public boolean contains(V2D_Shape s, int oom, RoundingMode rm) {
+    public boolean contains(V2D_Area s, int oom, RoundingMode rm) {
         return contains(s.getAABB(oom, rm), oom)
                 && contains0(s, oom, rm);
     }
@@ -672,7 +672,7 @@ public class V2D_AABB implements Serializable {
      * @param rm The RoundingMode for any rounding.
      * @return {@code true} if this contains {@code s}
      */
-    public boolean contains0(V2D_Shape s, int oom, RoundingMode rm) {
+    public boolean contains0(V2D_Area s, int oom, RoundingMode rm) {
         return s.getPoints(oom, rm).values().parallelStream().allMatch(x
                 -> contains(x, oom));
     }

@@ -24,20 +24,20 @@ import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
 import uk.ac.leeds.ccg.math.geometry.Math_AngleBigRational;
 
 /**
- * For representing a polygon with no internal holes. External holes are similar
- * polygons that share some part of an edge with the convex hull.
+ * Defined by a V2D_ConvexArea and a collection of non edge sharing 
+ * V2D_PolygonNoInternalHoles areas each defining an external hole or concavity.
  *
  * @author Andy Turner
  * @version 2.0
  */
-public class V2D_PolygonNoInternalHoles extends V2D_Shape {
+public class V2D_PolygonNoInternalHoles extends V2D_Area {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * The convex hull.
      */
-    public V2D_ConvexHull ch;
+    public V2D_ConvexArea ch;
 
     /**
      * The collection of externalHoles comprised of points in {@link points}.
@@ -77,7 +77,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
      */
-    public V2D_PolygonNoInternalHoles(V2D_ConvexHull ch, int oom,
+    public V2D_PolygonNoInternalHoles(V2D_ConvexArea ch, int oom,
             RoundingMode rm) {
         this(ch.getPointsArray(oom, rm), ch, oom, rm);
     }
@@ -91,7 +91,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
      */
     public V2D_PolygonNoInternalHoles(V2D_Point[] points, int oom,
             RoundingMode rm) {
-        this(points, new V2D_ConvexHull(oom, rm, points), oom, rm);
+        this(points, new V2D_ConvexArea(oom, rm, points), oom, rm);
     }
 
     /**
@@ -102,7 +102,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
      */
-    public V2D_PolygonNoInternalHoles(V2D_Point[] points, V2D_ConvexHull ch,
+    public V2D_PolygonNoInternalHoles(V2D_Point[] points, V2D_ConvexArea ch,
             int oom, RoundingMode rm) {
         super(points[0].env, V2D_Vector.ZERO);
         this.points = new HashMap<>();
@@ -207,7 +207,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
      * @param externalHoles What {@link #externalHoles} is set to.
      */
     public V2D_PolygonNoInternalHoles(HashMap<Integer, V2D_Point> points,
-            V2D_ConvexHull ch, HashMap<Integer, V2D_LineSegment> edges,
+            V2D_ConvexArea ch, HashMap<Integer, V2D_LineSegment> edges,
             HashMap<Integer, V2D_PolygonNoInternalHoles> externalHoles) {
         super(ch.env, V2D_Vector.ZERO);
         this.points = points;
@@ -262,8 +262,8 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
      * @param rm The RoundingMode for any rounding.
      * @return A copy of {@link exterior#ch} with the given tolerance applied.
      */
-    public V2D_ConvexHull getConvexHull(int oom, RoundingMode rm) {
-        return new V2D_ConvexHull(ch, oom, rm);
+    public V2D_ConvexArea getConvexHull(int oom, RoundingMode rm) {
+        return new V2D_ConvexArea(ch, oom, rm);
     }
 
     /**
@@ -421,7 +421,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
      * @param rm The RoundingMode for any rounding.
      * @return {@code true} iff there is containment.
      */
-    public boolean contains(V2D_ConvexHull ch, int oom, RoundingMode rm) {
+    public boolean contains(V2D_ConvexArea ch, int oom, RoundingMode rm) {
         return this.ch.intersects(ch, oom, rm)
                 && ch.getPoints(oom, rm).values().parallelStream().allMatch(x
                         -> contains(x, oom, rm));
@@ -516,7 +516,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
      * @param rm The RoundingMode for any rounding.
      * @return {@code true} iff this is intersected by {@code ch}.
      */
-    public boolean intersects(V2D_ConvexHull ch, int oom, RoundingMode rm) {
+    public boolean intersects(V2D_ConvexArea ch, int oom, RoundingMode rm) {
         return this.ch.intersects(ch, oom, rm)
                 && /**
                  * If any of the edges intersect or if one geometry contains the
@@ -618,7 +618,7 @@ public class V2D_PolygonNoInternalHoles extends V2D_Shape {
     @Override
     public V2D_PolygonNoInternalHoles rotateN(V2D_Point pt, BigRational theta,
             Math_BigDecimal bd, int oom, RoundingMode rm) {
-        V2D_ConvexHull rch = getConvexHull(oom, rm).rotate(pt, theta, bd, oom,
+        V2D_ConvexArea rch = getConvexHull(oom, rm).rotate(pt, theta, bd, oom,
                 rm);
         HashMap<Integer, V2D_Point> rPoints = new HashMap<>();
         for (var x : this.points.entrySet()) {

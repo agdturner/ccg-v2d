@@ -32,7 +32,7 @@ import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
  * @author Andy Turner
  * @version 2.0
  */
-public class V2D_Rectangle extends V2D_Shape {
+public class V2D_Rectangle extends V2D_Area {
 
     private static final long serialVersionUID = 1L;
 
@@ -479,7 +479,7 @@ public class V2D_Rectangle extends V2D_Shape {
                 V2D_Point[] rspitps = rspit.getPointsArray(oom, rm);
                 V2D_Point[] pts = Arrays.copyOf(pqritps, pqritps.length + rspitps.length);
                 System.arraycopy(rspitps, 0, pts, pqritps.length, rspitps.length);
-                return V2D_ConvexHull.getGeometry(oom, rm, pts);
+                return V2D_ConvexArea.getGeometry(oom, rm, pts);
             }
     }
 

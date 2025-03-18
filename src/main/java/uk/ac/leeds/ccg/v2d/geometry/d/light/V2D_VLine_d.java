@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Andy Turner, University of Leeds.
+ * Copyright 2020-2025 Andy Turner, University of Leeds.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,39 +18,39 @@ package uk.ac.leeds.ccg.v2d.geometry.d.light;
 import java.io.Serializable;
 
 /**
- * 2D representation of a moveable finite length line. The line starts at 
- * {@link #p} and ends at {@link #q}.
+ * A simple moveable finite length line that starts at {@link #p} and ends at
+ * {@link #q}.
  *
  * @author Andy Turner
  * @version 1.0
  */
-public class V2D_VLineDouble implements Serializable {
+public class V2D_VLine_d implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * A point defining the line.
      */
-    public final V2D_VDouble p;
+    public final V2D_V_d p;
 
     /**
      * A point defining the line.
      */
-    public final V2D_VDouble q;
+    public final V2D_V_d q;
 
     /**
      * @param l Used to initialise this.
      */
-    public V2D_VLineDouble(V2D_VLineDouble l) {
-        this.p = new V2D_VDouble(l.p);
-        this.q = new V2D_VDouble(l.q);
+    public V2D_VLine_d(V2D_VLine_d l) {
+        this.p = new V2D_V_d(l.p);
+        this.q = new V2D_V_d(l.q);
     }
 
     /**
      * @param p What {@link #p} is set to.
      * @param q What {@link #q} is set to.
      */
-    public V2D_VLineDouble(V2D_VDouble p, V2D_VDouble q) {
+    public V2D_VLine_d(V2D_V_d p, V2D_V_d q) {
         this.p = p;
         this.q = q;
     }
@@ -86,7 +86,7 @@ public class V2D_VLineDouble implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof V2D_VLineDouble l) {
+        if (o instanceof V2D_VLine_d l) {
             return equals(l);
         }
         return false;
@@ -98,23 +98,23 @@ public class V2D_VLineDouble implements Serializable {
     }
 
     /**
-     * The lines are equal irrespective of the direction vector between the 
+     * The lines are equal irrespective of the direction vector between the
      * points.
-     * 
+     *
      * @param l The line to test if it is the same as {@code this}.
      * @return {@code true} iff {@code l} is the same as {@code this}.
      */
-    public boolean equals(V2D_VLineDouble l) {
+    public boolean equals(V2D_VLine_d l) {
         return (p.equals(l.p) && q.equals(l.q))
                 || (p.equals(l.q) && q.equals(l.p));
     }
 
     /**
-     * @return The centre of the line. 
+     * @return The centre of the line.
      */
-    public V2D_VDouble getC() {
-        return new V2D_VDouble(
-                    (p.x + q.x)/2D,
-                    (p.y + q.y)/2D);
+    public V2D_V_d getC() {
+        return new V2D_V_d(
+                (p.x + q.x) / 2D,
+                (p.y + q.y) / 2D);
     }
 }

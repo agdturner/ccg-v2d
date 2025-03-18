@@ -15,15 +15,10 @@
  */
 package uk.ac.leeds.ccg.v2d.core.d;
 
-import uk.ac.leeds.ccg.v2d.core.*;
-import ch.obermuhlner.math.big.BigRational;
 import java.io.Serializable;
-import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.TreeSet;
-import uk.ac.leeds.ccg.math.arithmetic.Math_BigDecimal;
-import uk.ac.leeds.ccg.v2d.geometry.d.V2D_ShapeDouble;
+import uk.ac.leeds.ccg.v2d.geometry.d.V2D_Area_d;
 
 /**
  * V2D_Environment
@@ -31,7 +26,7 @@ import uk.ac.leeds.ccg.v2d.geometry.d.V2D_ShapeDouble;
  * @author Andy Turner
  * @version 2.0
  */
-public class V2D_EnvironmentDouble implements Serializable {
+public class V2D_Environment_d implements Serializable {
     
     private static final long serialVersionUID = 1L;
 
@@ -43,7 +38,7 @@ public class V2D_EnvironmentDouble implements Serializable {
     /**
      * The shapes.
      */
-    public HashMap<Integer, V2D_ShapeDouble> shapes;
+    public HashMap<Integer, V2D_Area_d> shapes;
     
     /**
      * The ids of shapes.
@@ -53,7 +48,7 @@ public class V2D_EnvironmentDouble implements Serializable {
     /**
      * Creates a new instance.
      */
-    public V2D_EnvironmentDouble(double epsilon){
+    public V2D_Environment_d(double epsilon){
         shapes = new HashMap<>();
         ids = new HashSet<>();
     }
@@ -76,7 +71,7 @@ public class V2D_EnvironmentDouble implements Serializable {
      * @param shape The shape to be put in {@link #shapes}.
      * @return The id of the shape allocated. 
      */
-    public int add(V2D_ShapeDouble shape) {
+    public int add(V2D_Area_d shape) {
         int id = getNextID();
         shapes.put(id, shape);
         return id;

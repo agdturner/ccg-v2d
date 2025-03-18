@@ -16,25 +16,25 @@
 package uk.ac.leeds.ccg.v2d.geometrics.d;
 
 import java.util.Comparator;
-import uk.ac.leeds.ccg.v2d.geometry.d.V2D_PointDouble;
-import uk.ac.leeds.ccg.v2d.geometry.d.V2D_VectorDouble;
+import uk.ac.leeds.ccg.v2d.geometry.d.V2D_Point_d;
+import uk.ac.leeds.ccg.v2d.geometry.d.V2D_Vector_d;
 
 /**
  * Comparator for ordering points around a centroid.
  *
  * @author Andy Turner
  */
-public class V2D_SortByAngleDouble implements Comparator<V2D_PointDouble> {
+public class V2D_SortByAngle_d implements Comparator<V2D_Point_d> {
 
     /**
      * A point somewhere near the centre of points.
      */
-    V2D_PointDouble c;
+    V2D_Point_d c;
     
     /**
      * The reference point used to order all other points with respect to the centroid.
      */
-    V2D_PointDouble r;
+    V2D_Point_d r;
 
     /**
      * Create a new instance.
@@ -42,13 +42,13 @@ public class V2D_SortByAngleDouble implements Comparator<V2D_PointDouble> {
      * @param c A central point.
      * @param r A reference point.
      */
-    public V2D_SortByAngleDouble(V2D_PointDouble c, V2D_PointDouble r) {
+    public V2D_SortByAngle_d(V2D_Point_d c, V2D_Point_d r) {
         this.c = c;
         this.r = r;
     }
 
     @Override
-    public int compare(V2D_PointDouble a, V2D_PointDouble b) {
+    public int compare(V2D_Point_d a, V2D_Point_d b) {
         double cx = c.getX();
         double cy = c.getY();
         double rx = r.getX();
@@ -63,9 +63,9 @@ public class V2D_SortByAngleDouble implements Comparator<V2D_PointDouble> {
         double ayscy = ay - cy;
         double bxscx = bx - cx;
         double byscy = by - cy;
-        V2D_VectorDouble cr = new V2D_VectorDouble(rxscx, ryscy); 
-        V2D_VectorDouble ca = new V2D_VectorDouble(axscx, ayscy); 
-        V2D_VectorDouble cb = new V2D_VectorDouble(bxscx, byscy);
+        V2D_Vector_d cr = new V2D_Vector_d(rxscx, ryscy); 
+        V2D_Vector_d ca = new V2D_Vector_d(axscx, ayscy); 
+        V2D_Vector_d cb = new V2D_Vector_d(bxscx, byscy);
         double aa = cr.getAngle2(ca);
         double ba = cr.getAngle2(cb);
         if (aa > ba) {
