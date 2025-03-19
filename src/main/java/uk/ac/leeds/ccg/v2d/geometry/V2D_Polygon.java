@@ -37,6 +37,7 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
      * The collection of internalHoles.
      */
     public HashMap<Integer, V2D_PolygonNoInternalHoles> internalHoles;
+    //public HashMap<Integer, V2D_Polygon> internalHoles;
 
     /**
      * Create a new shallow copy.
@@ -84,6 +85,7 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
      */
     public V2D_Polygon(V2D_PolygonNoInternalHoles p,
             HashMap<Integer, V2D_PolygonNoInternalHoles> internalHoles,
+            //HashMap<Integer, V2D_Polygon> internalHoles,
             int oom, RoundingMode rm) {
         super(p);
         this.internalHoles = internalHoles;
@@ -98,6 +100,7 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
      * @param rm The RoundingMode.
      */
     public V2D_Polygon(V2D_Point[] pts, HashMap<Integer, V2D_PolygonNoInternalHoles> internalHoles,
+    //public V2D_Polygon(V2D_Point[] pts, HashMap<Integer, V2D_Polygon> internalHoles,
             int oom, RoundingMode rm) {
         super(pts, oom, rm);
         this.internalHoles = internalHoles;
@@ -448,6 +451,7 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
             Math_BigDecimal bd, int oom, RoundingMode rm) {
         V2D_PolygonNoInternalHoles exterior = super.rotateN(pt, theta, bd, oom, rm);
         HashMap<Integer, V2D_PolygonNoInternalHoles> rInternalHoles = new HashMap<>();
+        //HashMap<Integer, V2D_Polygon> rInternalHoles = new HashMap<>();
         if (internalHoles != null) {
             for (int i = 0; i < internalHoles.size(); i++) {
                 rInternalHoles.put(rInternalHoles.size(), internalHoles.get(i).rotate(pt, theta, bd, oom, rm));

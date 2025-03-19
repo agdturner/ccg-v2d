@@ -30,7 +30,11 @@ import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
  * external hole or concavity. V2D_Polygon extends V2D_PolygonNoInternalHoles
  * and is also defined by a collection of non edge sharing internal holes each
  * represented also as a V2D_Polygon.
- *
+ * 
+ * Conceivably it may be useful to add a further abstraction and have a class 
+ * which is similar to a V2D_Polygon but allows external and internal holes to 
+ * contain internal holes.
+ * 
  * @author Andy Turner
  * @version 1.0
  */

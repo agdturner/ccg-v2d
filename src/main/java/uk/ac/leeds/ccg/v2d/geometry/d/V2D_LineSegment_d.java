@@ -465,7 +465,7 @@ public class V2D_LineSegment_d extends V2D_FiniteGeometry_d {
         if (li != null) {
             if (li instanceof V2D_Point_d pli) {
                 //if (intersects(pli, epsilon)) {
-                if (isBetween(pli, epsilon)) {
+                if (isAligned(pli, epsilon)) {
                     return pli;
                 } else {
                     return null;
@@ -568,7 +568,7 @@ public class V2D_LineSegment_d extends V2D_FiniteGeometry_d {
                 } else {
                     if (lsil instanceof V2D_Point_d lsilp) {
                         //if (intersects(lsilp, epsilon)) {
-                        if (isBetween(lsilp, epsilon)) {
+                        if (isAligned(lsilp, epsilon)) {
                             return lsilp;
                         } else {
                             return null;
@@ -581,7 +581,7 @@ public class V2D_LineSegment_d extends V2D_FiniteGeometry_d {
             } else {
                 if (tils instanceof V2D_Point_d tilsp) {
                     //if (intersects(tilsp, epsilon) && ls.intersects(tilsp, epsilon)) {
-                    if (isBetween(tilsp, epsilon) && ls.isBetween(tilsp, epsilon)) {
+                    if (isAligned(tilsp, epsilon) && ls.isAligned(tilsp, epsilon)) {
                         return tilsp;
                     } else {
                         return null;
@@ -702,14 +702,14 @@ public class V2D_LineSegment_d extends V2D_FiniteGeometry_d {
         V2D_Point_d lq = ls.getQ();
         V2D_Point_d tp = getP();
         V2D_Point_d tq = getQ();
-        if (isBetween(lp, epsilon)) {
+        if (isAligned(lp, epsilon)) {
             // Cases: 1, 2, 3, 5, 8, 9, 10, 12, 17, 19, 20, 21, 24, 26, 27, 28
-            if (isBetween(lq, epsilon)) {
+            if (isAligned(lq, epsilon)) {
                 // Cases: 3, 5, 10, 12, 17, 19, 24, 26
                 return ls;
             } else {
                 // Cases: 1, 2, 8, 9, 20, 21, 27, 28
-                if (ls.isBetween(tp, epsilon)) {
+                if (ls.isAligned(tp, epsilon)) {
                     // Cases: 8, 9, 20, 21
                     if (tp.equals(lp, epsilon)) {
                         // Cases: 8, 21
@@ -731,11 +731,11 @@ public class V2D_LineSegment_d extends V2D_FiniteGeometry_d {
             }
         } else {
             // Cases: 4, 6, 7, 11, 13, 14, 15, 16, 18, 22, 23, 25
-            if (isBetween(lq, epsilon)) {
+            if (isAligned(lq, epsilon)) {
                 // Cases: 6, 7, 13, 14, 15, 16, 22, 23
-                if (ls.isBetween(tp, epsilon)) {
+                if (ls.isAligned(tp, epsilon)) {
                     // Cases: 6, 7, 22, 23
-                    if (ls.isBetween(tq, epsilon)) {
+                    if (ls.isAligned(tq, epsilon)) {
                         // Case: 23
                         return V2D_LineSegment_d.getGeometry(lq, tp, epsilon);
                     } else {
@@ -821,10 +821,8 @@ public class V2D_LineSegment_d extends V2D_FiniteGeometry_d {
      * @return {@code true} If pt is in line with this.
      */
     public boolean isAligned(V2D_Point_d pt, double epsilon) {
-        if (getPL().isOnSameSide(pt, getQ(), epsilon)) {
-            return getQL().isOnSameSide(pt, getP(), epsilon);
-        }
-        return false;
+        return getPL().isOnSameSide(pt, getQ(), epsilon) 
+            && getQL().isOnSameSide(pt, getP(), epsilon);
     }
 
     /**
@@ -838,10 +836,8 @@ public class V2D_LineSegment_d extends V2D_FiniteGeometry_d {
      * @return {@code true} If pt is in line with this.
      */
     public boolean isAligned(V2D_LineSegment_d l, double epsilon) {
-        if (isAligned(l.getP(), epsilon)) {
-            return isAligned(l.getQ(), epsilon);
-        }
-        return false;
+        return isAligned(l.getP(), epsilon)
+            && isAligned(l.getQ(), epsilon);
     }
 
     /**
@@ -1201,7 +1197,7 @@ public class V2D_LineSegment_d extends V2D_FiniteGeometry_d {
                     //return new V2D_LineSegment(tloiq, getNearestPoint(this, tloiq));
                 } else {
                     // tloip is on
-                    if (isBetween(tloip, epsilon)) {
+                    if (isAligned(tloip, epsilon)) {
                         return new V2D_LineSegment_d(tloip, getNearestPoint(ls, tloip));
                     } else {
                         return new V2D_LineSegment_d(
@@ -1239,25 +1235,6 @@ public class V2D_LineSegment_d extends V2D_FiniteGeometry_d {
             ql = new V2D_Line_d(pt, l.v.rotate90());
         }
         return ql;
-    }
-
-    /**
-     * Useful for intersection tests.
-     *
-     * @param pt The point to test if it is between {@link #qv} and the point of
-     * {@link #l}.
-     * @param epsilon The tolerance within which two vectors are regarded as
-     * equal.
-     * @return {@code true} iff pt lies between the planes at the end of the
-     * line segment.
-     */
-    public boolean isBetween(V2D_Point_d pt, double epsilon) {
-        if (getPL().isOnSameSide(pt, getQ(), epsilon)) {
-            if (getQL().isOnSameSide(pt, getP(), epsilon)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**

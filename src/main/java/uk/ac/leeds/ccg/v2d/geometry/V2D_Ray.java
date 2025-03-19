@@ -332,7 +332,7 @@ public class V2D_Ray extends V2D_Geometry {
             return null;
         } else if (g instanceof V2D_Point pt) {
             if (isAligned(pt, oom, rm)) {
-                if (ls.isBetween(pt, oom, rm)) {
+                if (ls.isAligned(pt, oom, rm)) {
                     return pt;
                 } else {
                     return null;

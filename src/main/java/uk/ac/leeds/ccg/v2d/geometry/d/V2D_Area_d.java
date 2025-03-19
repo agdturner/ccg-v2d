@@ -21,7 +21,7 @@ import uk.ac.leeds.ccg.v2d.core.d.V2D_Environment_d;
 
 /**
  * The simplest V2D_Area_d is a V2D_Triangle_d that represents a triangle in 2D.
- * V2D_ConvexArea_d extends V2D_Area and is for representing a convex area
+ * V2D_ConvexArea_d extends V2D_Area_d and is for representing a convex area
  * comprising one or more triangles sharing internal edges and with a convex
  * external edge. All points of convex areas are on the external edge.
  * V2D_PolygonNoInternalHoles_d are defined by a V2D_ConvexArea_d and a
@@ -30,6 +30,10 @@ import uk.ac.leeds.ccg.v2d.core.d.V2D_Environment_d;
  * V2D_PolygonNoInternalHoles_d and is also defined by a collection of non edge
  * sharing internal holes each represented also as a V2D_Polygon_d.
  *
+ * Conceivably it may be useful to add a further abstraction and have a class 
+ * which is similar to a V2D_Polygon_d but allows external and internal holes to 
+ * contain internal holes.
+ * 
  * @author Andy Turner
  * @version 2.0
  */

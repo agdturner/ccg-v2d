@@ -672,7 +672,7 @@ public class V2D_Triangle_d extends V2D_Area_d {
         }
         if (g instanceof V2D_Point_d gp) {
             if (intersects(gp, epsilon)) {
-                if (l.isBetween(gp, epsilon)) {
+                if (l.isAligned(gp, epsilon)) {
                     return gp;
                 }
             }

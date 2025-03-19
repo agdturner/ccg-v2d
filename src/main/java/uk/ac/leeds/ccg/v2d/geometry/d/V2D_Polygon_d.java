@@ -369,6 +369,14 @@ public class V2D_Polygon_d extends V2D_PolygonNoInternalHoles_d {
                         -> x.intersects(ch, epsilon));
     }
 
+    @Override
+    public HashMap<Integer, V2D_LineSegment_d> getEdges() {
+        HashMap<Integer, V2D_LineSegment_d> edges = super.getEdges();
+        internalHoles.values().parallelStream().forEach(x
+                        -> edges.putAll(x.getEdges()));
+        return edges;
+    }
+    
     /**
      * Identify if {@code this} contains {@code ch}.
      *

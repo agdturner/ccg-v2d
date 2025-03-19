@@ -950,7 +950,7 @@ public class V2D_Triangle extends V2D_Area {
         }
         if (g instanceof V2D_Point gp) {
             if (intersects(gp, oom, rm)
-                    && l.isBetween(gp, oom, rm)) {
+                    && l.isAligned(gp, oom, rm)) {
                 return gp;
             }
             return null;

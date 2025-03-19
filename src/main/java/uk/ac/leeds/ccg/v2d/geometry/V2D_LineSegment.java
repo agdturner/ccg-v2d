@@ -469,7 +469,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
         if (li != null) {
             if (li instanceof V2D_Point pli) {
                 //if (intersects(pli, oom, rm)) {
-                if (isBetween(pli, oom, rm)) {
+                if (isAligned(pli, oom, rm)) {
                     return pli;
                 } else {
                     return null;
@@ -582,7 +582,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
                 } else {
                     if (lsil instanceof V2D_Point lsilp) {
                         //if (intersects(lsilp, oom, rm)) {
-                        if (isBetween(lsilp, oom, rm)) {
+                        if (isAligned(lsilp, oom, rm)) {
                             return lsilp;
                         } else {
                             return null;
@@ -595,7 +595,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
             } else {
                 if (tils instanceof V2D_Point tilsp) {
                     //if (intersects(tilsp, oom, rm) && ls.intersects(tilsp, oom, rm)) {
-                    if (isBetween(tilsp, oom, rm) && ls.isBetween(tilsp, oom, rm)) {
+                    if (isAligned(tilsp, oom, rm) && ls.isAligned(tilsp, oom, rm)) {
                         return tilsp;
                     } else {
                         return null;
@@ -717,16 +717,16 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
         V2D_Point tp = getP();
         V2D_Point tq = getQ(oom, rm);
         //if (intersects(lp, oom, rm)) {
-        if (isBetween(lp, oom, rm)) {
+        if (isAligned(lp, oom, rm)) {
             // Cases: 1, 2, 3, 5, 8, 9, 10, 12, 17, 19, 20, 21, 24, 26, 27, 28
             //if (intersects(lq, oom, rm)) {
-            if (isBetween(lq, oom, rm)) {
+            if (isAligned(lq, oom, rm)) {
                 // Cases: 3, 5, 10, 12, 17, 19, 24, 26
                 return ls;
             } else {
                 // Cases: 1, 2, 8, 9, 20, 21, 27, 28
                 //if (ls.intersects(tp, oom, rm)) {
-                if (ls.isBetween(tp, oom, rm)) {
+                if (ls.isAligned(tp, oom, rm)) {
                     // Cases: 8, 9, 20, 21
                     if (tp.equals(lp, oom, rm)) {
                         // Cases: 8, 21
@@ -749,13 +749,13 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
         } else {
             // Cases: 4, 6, 7, 11, 13, 14, 15, 16, 18, 22, 23, 25
             //if (intersects(lq, oom, rm)) {
-            if (isBetween(lq, oom, rm)) {
+            if (isAligned(lq, oom, rm)) {
                 // Cases: 6, 7, 13, 14, 15, 16, 22, 23
                 //if (ls.intersects(tp, oom, rm)) {
-                if (ls.isBetween(tp, oom, rm)) {
+                if (ls.isAligned(tp, oom, rm)) {
                     // Cases: 6, 7, 22, 23
                     //if (ls.intersects(tq, oom, rm)) {
-                    if (ls.isBetween(tq, oom, rm)) {
+                    if (ls.isAligned(tq, oom, rm)) {
                         // Cases: 23
                         return V2D_LineSegment.getGeometry(lq, tp, oom, rm);
                     } else {
@@ -982,10 +982,10 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
                     return new V2D_LineSegment(q, r, oom, rm);
                 }
 //-----------
-//            if (r.isBetween(p, q, oom, rm)) {
+//            if (r.isAligned(p, q, oom, rm)) {
 //                return new V2D_LineSegment(p, q, oom, rm);
 //            } else {
-//                if (p.isBetween(r, q, oom, rm)) {
+//                if (p.isAligned(r, q, oom, rm)) {
 //                    return new V2D_LineSegment(q, r, oom, rm);
 //                } else {
 //                    return new V2D_LineSegment(p, r, oom, rm);
@@ -1275,7 +1275,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
                     //return new V2D_LineSegment(tloiq, getNearestPoint(this, tloiq));
                 } else {
                     // tloip is on
-                    if (isBetween(tloip, oom, rm)) {
+                    if (isAligned(tloip, oom, rm)) {
                         return new V2D_LineSegment(tloip, getNearestPoint(ls, tloip, oom, rm), oom, rm);
                     } else {
                         return new V2D_LineSegment(
@@ -1349,7 +1349,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
 //                    //return new V2D_LineSegment(tloiq, getNearestPoint(this, tloiq, oom, rm), oom, rm);
 //                } else {
 //                    // tloip is on
-//                    if (isBetween(tloip, oom, rm)) {
+//                    if (isAligned(tloip, oom, rm)) {
 //                        return new V2D_LineSegment(tloip, getNearestPoint(ls, tloip, oom, rm), oom, rm);
 //                    } else {
 //                        return new V2D_LineSegment(
@@ -1390,25 +1390,6 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
             ql = new V2D_Line(getQ(oom, rm), l.v.rotate90());
         }
         return ql;
-    }
-
-    /**
-     * Useful for intersection tests.
-     *
-     * @param pt The point to test if it is between {@link #qv} and the point of
-     * {@link #l}.
-     * @param oom The Order of Magnitude for the precision.
-     * @param rm The RoundingMode for any rounding.
-     * @return {@code true} iff pt lies between the planes at the end of the
-     * line segment.
-     */
-    public boolean isBetween(V2D_Point pt, int oom, RoundingMode rm) {
-        if (getPL().isOnSameSide(pt, getQ(oom, rm), oom, rm)) {
-            if (getQL(oom, rm).isOnSameSide(pt, getP(), oom, rm)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
