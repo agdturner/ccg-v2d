@@ -463,7 +463,7 @@ public class V2D_ConvexArea_d extends V2D_Area_d {
      */
     public boolean intersects0(V2D_Triangle_d t, double epsilon) {
         return getTriangles().parallelStream().anyMatch(x
-                -> x.intersects(t, epsilon));
+                -> x.intersects0(t, epsilon));
     }
 
     /**
@@ -516,9 +516,9 @@ public class V2D_ConvexArea_d extends V2D_Area_d {
      */
     public boolean intersects0(V2D_ConvexArea_d ch, double epsilon) {
         return getTriangles().parallelStream().anyMatch(x
-                -> ch.intersects(x, epsilon))
+                -> ch.intersects0(x, epsilon))
                 || ch.getTriangles().parallelStream().anyMatch(x
-                        -> intersects(x, epsilon));
+                        -> intersects0(x, epsilon));
     }
 
     /**

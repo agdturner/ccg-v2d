@@ -443,9 +443,9 @@ public class V2D_Triangle_d extends V2D_Area_d {
      * @return {@code true} iff pl is aligned with this.
      */
     public boolean intersects0(V2D_Point_d pt, double epsilon) {
-        return (getPQ().l.isOnSameSide(pt, getR(), epsilon)
+        return getPQ().l.isOnSameSide(pt, getR(), epsilon)
                 && getQR().l.isOnSameSide(pt, getP(), epsilon)
-                && getRP().l.isOnSameSide(pt, getQ(), epsilon));
+                && getRP().l.isOnSameSide(pt, getQ(), epsilon);
     }
 
     /**
@@ -471,11 +471,13 @@ public class V2D_Triangle_d extends V2D_Area_d {
 //                || qr.l.isOnSameSide(p, lsq, epsilon))
 //                && (getRP().l.isOnSameSide(q, lsp, epsilon)
 //                || rp.l.isOnSameSide(q, lsq, epsilon));
-        if (intersects0(l.getP(), epsilon)) {
-            return intersects0(l.getQ(), epsilon);
-        }
-        return getEdges().values().parallelStream().anyMatch(x
+        if (intersects0(l.getP(), epsilon)
+            || intersects0(l.getQ(), epsilon)) {
+            return true;
+        } else {
+            return getEdges().values().parallelStream().anyMatch(x
                 -> x.intersects(l, epsilon));
+        }
     }
 
     /**
