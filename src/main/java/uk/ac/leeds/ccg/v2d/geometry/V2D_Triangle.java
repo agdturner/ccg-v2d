@@ -577,11 +577,7 @@ public class V2D_Triangle extends V2D_Area {
 
     @Override
     public V2D_Point[] getPointsArray(int oom, RoundingMode rm) {
-        V2D_Point[] pts = new V2D_Point[3];
-        pts[0] = getP(oom, rm);
-        pts[1] = getQ(oom, rm);
-        pts[2] = getR(oom, rm);
-        return pts;
+        return getPoints(oom, rm).values().toArray(new V2D_Point[3]);
     }
 
     @Override

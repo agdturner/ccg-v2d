@@ -326,11 +326,7 @@ public class V2D_Triangle_d extends V2D_Area_d {
 
     @Override
     public V2D_Point_d[] getPointsArray() {
-        V2D_Point_d[] pts = new V2D_Point_d[3];
-        pts[0] = getP();
-        pts[1] = getQ();
-        pts[2] = getR();
-        return pts;
+        return getPoints().values().toArray(new V2D_Point_d[3]);
     }
 
     @Override

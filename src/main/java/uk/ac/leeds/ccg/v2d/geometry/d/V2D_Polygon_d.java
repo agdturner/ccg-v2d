@@ -34,7 +34,13 @@ public class V2D_Polygon_d extends V2D_PolygonNoInternalHoles_d {
      * The collection of internalHoles. Keys are identifiers.
      */
     public HashMap<Integer, V2D_PolygonNoInternalHoles_d> internalHoles;
-
+    //public HashMap<Integer, V2D_Polygon_d> internalHoles;
+    
+    /**
+     * For storing the internalHoles edges.
+     */
+    protected HashMap<Integer, V2D_LineSegment_d> internalHolesEdges;
+    
     /**
      * Create a new shallow copy.
      *
@@ -43,23 +49,9 @@ public class V2D_Polygon_d extends V2D_PolygonNoInternalHoles_d {
     public V2D_Polygon_d(V2D_Polygon_d p) {
         super(p);
         this.internalHoles = p.internalHoles;
+        this.internalHolesEdges = p.internalHolesEdges;
     }
-
-//    /**
-//     * Create a new deep copy.
-//     *
-//     * @param p The polygon to duplicate.
-//     * @param epsilon The tolerance within which two vectors are regarded as
-//     * equal.
-//     */
-//    public V2D_Polygon_d(V2D_Polygon_d p, double epsilon) {
-//        super(p, epsilon);        
-//        this.internalHoles = new HashMap<>();
-//        for (var x: p.internalHoles.entrySet()) {
-//            this.internalHoles.put(x.getKey(), new V2D_PolygonNoInternalHoles_d(
-//                    x.getValue(), epsilon));
-//        }
-//    }
+    
     /**
      * Create a new instance.
      *
@@ -95,23 +87,24 @@ public class V2D_Polygon_d extends V2D_PolygonNoInternalHoles_d {
      * equal.
      */
     public V2D_Polygon_d(V2D_Point_d[] pts, HashMap<Integer, V2D_PolygonNoInternalHoles_d> internalHoles, double epsilon) {
+    //public V2D_Polygon_d(V2D_Point_d[] pts, HashMap<Integer, V2D_Polygon_d> internalHoles, double epsilon) {
         super(pts, epsilon);
         this.internalHoles = internalHoles;
     }
-
-//    /**
-//     * @param epsilon The tolerance within which two vectors are regarded as
-//     * equal.
-//     * @return A copy of {@link internalHoles} with the given tolerance applied.
-//     */
-//    public HashMap<Integer, V2D_PolygonNoInternalHoles_d> getInternalHoles(
-//    double epsilon) {
-//        HashMap<Integer, V2D_PolygonNoInternalHoles_d> r = new HashMap<>();
-//        for (V2D_PolygonNoInternalHoles_d h : internalHoles.values()) {
-//            r.put(r.size(), new V2D_PolygonNoInternalHoles_d(h, epsilon));
-//        }
-//        return r;
-//    }
+    
+    /**
+     * @return A collection of the edges of all the internal holes.
+     */
+    public HashMap<Integer, V2D_LineSegment_d> getInternalHolesEdges() {
+        if (internalHolesEdges == null) {
+            internalHolesEdges = new HashMap<>();
+            internalHoles.values().forEach(x
+                -> edges.values().forEach(y
+                -> internalHolesEdges.put(internalHolesEdges.size(), y)));
+        }
+        return internalHolesEdges;
+    }
+    
     /**
      * Identify if {@code this} intersects {@code pt}.
      *
@@ -367,14 +360,6 @@ public class V2D_Polygon_d extends V2D_PolygonNoInternalHoles_d {
     public boolean internalHolesIntersects(V2D_ConvexArea_d ch, double epsilon) {
         return internalHoles.values().parallelStream().anyMatch(x
                         -> x.intersects(ch, epsilon));
-    }
-
-    @Override
-    public HashMap<Integer, V2D_LineSegment_d> getEdges() {
-        HashMap<Integer, V2D_LineSegment_d> edges = super.getEdges();
-        internalHoles.values().parallelStream().forEach(x
-                        -> edges.putAll(x.getEdges()));
-        return edges;
     }
     
     /**

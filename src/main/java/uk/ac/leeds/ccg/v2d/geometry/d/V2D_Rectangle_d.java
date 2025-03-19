@@ -126,22 +126,19 @@ public class V2D_Rectangle_d extends V2D_Area_d {
 
     @Override
     public V2D_Point_d[] getPointsArray() {
-        V2D_Point_d[] r = new V2D_Point_d[4];
-        r[0] = getP();
-        r[1] = getQ();
-        r[2] = getR();
-        r[3] = getS();
-        return r;
+        return getPoints().values().toArray(new V2D_Point_d[4]);
     }
 
     @Override
     public HashMap<Integer, V2D_Point_d> getPoints() {
-        HashMap<Integer, V2D_Point_d> r = new HashMap<>(4);
-        r.put(0, getP());
-        r.put(1, getQ());
-        r.put(2, getR());
-        r.put(3, getS());
-        return r;
+        if (points == null) {
+            points = new HashMap<>(4);
+            points.put(0, getP());
+            points.put(1, getQ());
+            points.put(2, getR());
+            points.put(3, getS());
+        }
+        return points;
     }
 
     /**

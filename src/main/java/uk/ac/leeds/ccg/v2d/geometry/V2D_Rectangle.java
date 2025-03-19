@@ -28,7 +28,7 @@ import uk.ac.leeds.ccg.v2d.core.V2D_Environment;
 /**
  * For representing and processing rectangles in 2D. A rectangle is a right
  * angled quadrilateral.
- * 
+ *
  * @author Andy Turner
  * @version 2.0
  */
@@ -48,7 +48,7 @@ public class V2D_Rectangle extends V2D_Area {
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param r Another rectangle.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
@@ -79,7 +79,8 @@ public class V2D_Rectangle extends V2D_Area {
     /**
      * Creates a new instance.
      *
-     * @param p Used to initialise {@link #offset}, {@link #pqr} and {@link #rsp}.
+     * @param p Used to initialise {@link #offset}, {@link #pqr} and
+     * {@link #rsp}.
      * @param q Used to initialise {@link #pqr} and {@link #rsp}.
      * @param r Used to initialise {@link #pqr} and {@link #rsp}.
      * @param s Used to initialise {@link #rsp}.
@@ -88,7 +89,7 @@ public class V2D_Rectangle extends V2D_Area {
      */
     public V2D_Rectangle(V2D_Point p, V2D_Point q, V2D_Point r, V2D_Point s,
             int oom, RoundingMode rm) {
-        this(p.env, V2D_Vector.ZERO, p.getVector(oom, rm), q.getVector(oom, rm), 
+        this(p.env, V2D_Vector.ZERO, p.getVector(oom, rm), q.getVector(oom, rm),
                 r.getVector(oom, rm), s.getVector(oom, rm));
     }
 
@@ -123,25 +124,21 @@ public class V2D_Rectangle extends V2D_Area {
 
     @Override
     public V2D_Point[] getPointsArray(int oom, RoundingMode rm) {
-        V2D_Point[] re = new V2D_Point[4];
-        re[0] = getP(oom, rm);
-        re[1] = getQ(oom, rm);
-        re[2] = getR(oom, rm);
-        re[3] = getS(oom, rm);
-        return re;
-    }
-    
-    @Override
-    public HashMap<Integer, V2D_Point> getPoints(int oom, RoundingMode rm) {
-        HashMap<Integer, V2D_Point> pts = new HashMap<>(4);
-        pts.put(0, getP(oom, rm));
-        pts.put(1, getQ(oom, rm));
-        pts.put(2, getR(oom, rm));
-        pts.put(2, getS(oom, rm));
-        return pts;
+        return getPoints(oom, rm).values().toArray(new V2D_Point[4]);
     }
 
-    
+    @Override
+    public HashMap<Integer, V2D_Point> getPoints(int oom, RoundingMode rm) {
+        if (points == null) {
+            points = new HashMap<>(4);
+            points.put(0, getP(oom, rm));
+            points.put(1, getQ(oom, rm));
+            points.put(2, getR(oom, rm));
+            points.put(3, getS(oom, rm));
+        }
+        return points;
+    }
+
     /**
      * @return A collection of the edges.
      * @param oom The Order of Magnitude for the precision.
@@ -149,28 +146,30 @@ public class V2D_Rectangle extends V2D_Area {
      */
     @Override
     public HashMap<Integer, V2D_LineSegment> getEdges(int oom, RoundingMode rm) {
-        HashMap<Integer, V2D_LineSegment> edges = new HashMap<>();
-        edges.put(0, getPQ(oom, rm));
-        edges.put(0, getQR(oom, rm));
-        edges.put(0, getRS(oom, rm));
-        edges.put(0, getSP(oom, rm));
+        if (edges == null) {
+            edges = new HashMap<>();
+            edges.put(0, getPQ(oom, rm));
+            edges.put(1, getQR(oom, rm));
+            edges.put(2, getRS(oom, rm));
+            edges.put(3, getSP(oom, rm));
+        }
         return edges;
     }
-    
+
     /**
      * @return {@link #pqr}.
      */
     public V2D_Triangle getPQR() {
         return pqr;
     }
-    
+
     /**
      * @return {@link #rsp}.
      */
     public V2D_Triangle getRSP() {
         return rsp;
     }
-    
+
     /**
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
@@ -228,7 +227,7 @@ public class V2D_Rectangle extends V2D_Area {
             return rsp.intersects(pt, oom, rm);
         }
     }
-    
+
     /**
      * @param l The line segment to test for intersect with.
      * @param oom The Order of Magnitude for the precision.
@@ -242,7 +241,7 @@ public class V2D_Rectangle extends V2D_Area {
             return getRSP().intersects(l, oom, rm);
         }
     }
-    
+
     /**
      * @param ls The line segments to test for intersection.
      * @param oom The Order of Magnitude for the precision.
@@ -252,7 +251,7 @@ public class V2D_Rectangle extends V2D_Area {
     public boolean intersects(int oom, RoundingMode rm, V2D_LineSegment... ls) {
         return intersects(oom, rm, Arrays.asList(ls));
     }
-    
+
     /**
      * @param ls The line segments to test for intersection.
      * @param oom The Order of Magnitude for the precision.
@@ -262,7 +261,7 @@ public class V2D_Rectangle extends V2D_Area {
     public boolean intersects(int oom, RoundingMode rm, Collection<V2D_LineSegment> ls) {
         return ls.parallelStream().anyMatch(x -> intersects(x, oom, rm));
     }
-    
+
     /**
      * @param t The triangle segment to test for intersect with.
      * @param oom The Order of Magnitude for the precision.
@@ -270,11 +269,8 @@ public class V2D_Rectangle extends V2D_Area {
      * @return A point or line segment.
      */
     public boolean intersects(V2D_Triangle t, int oom, RoundingMode rm) {
-        if (pqr.intersects(t, oom, rm)) {
-            return true;
-        } else {
-            return rsp.intersects(t, oom, rm);
-        }
+        return getPQR().intersects(t, oom, rm)
+                || getRSP().intersects(t, oom, rm);
     }
 
     /**
@@ -321,9 +317,9 @@ public class V2D_Rectangle extends V2D_Area {
      */
     public V2D_FiniteGeometry getIntersect(V2D_Line l,
             int oom, RoundingMode rm) {
-            V2D_FiniteGeometry pqri = pqr.getIntersect(l, oom, rm);
-            V2D_FiniteGeometry rspi = rsp.getIntersect(l, oom, rm);
-            return join(oom, rm, pqri, rspi);
+        V2D_FiniteGeometry pqri = pqr.getIntersect(l, oom, rm);
+        V2D_FiniteGeometry rspi = rsp.getIntersect(l, oom, rm);
+        return join(oom, rm, pqri, rspi);
     }
 
     private V2D_FiniteGeometry join(int oom, RoundingMode rm,
@@ -365,9 +361,9 @@ public class V2D_Rectangle extends V2D_Area {
      */
     public V2D_FiniteGeometry getIntersect(V2D_LineSegment l,
             int oom, RoundingMode rm) {
-            V2D_FiniteGeometry pqri = pqr.getIntersect(l, oom, rm);
-            V2D_FiniteGeometry rspi = rsp.getIntersect(l, oom, rm);
-            return join(oom, rm, pqri, rspi);
+        V2D_FiniteGeometry pqri = pqr.getIntersect(l, oom, rm);
+        V2D_FiniteGeometry rspi = rsp.getIntersect(l, oom, rm);
+        return join(oom, rm, pqri, rspi);
     }
 
 //    public BigRational getPerimeter(int oom, RoundingMode rm) {
@@ -380,7 +376,6 @@ public class V2D_Rectangle extends V2D_Area {
 //        return pqr.getPQ(oom, rm).getLength(oom, rm).multiply(
 //                pqr.getQR(oom, rm).getLength(oom, rm));
 //    }
-
     /**
      * Get the distance between this and {@code pl}.
      *
@@ -421,7 +416,7 @@ public class V2D_Rectangle extends V2D_Area {
     }
 
     @Override
-    public V2D_Rectangle rotate(V2D_Point pt, BigRational theta, 
+    public V2D_Rectangle rotate(V2D_Point pt, BigRational theta,
             Math_BigDecimal bd, int oom, RoundingMode rm) {
         theta = Math_AngleBigRational.normalise(theta, bd, oom, rm);
         if (theta.compareTo(BigRational.ZERO) == 0d) {
@@ -430,9 +425,9 @@ public class V2D_Rectangle extends V2D_Area {
             return rotateN(pt, theta, bd, oom, rm);
         }
     }
-    
+
     @Override
-    public V2D_Rectangle rotateN(V2D_Point pt, BigRational theta, 
+    public V2D_Rectangle rotateN(V2D_Point pt, BigRational theta,
             Math_BigDecimal bd, int oom, RoundingMode rm) {
         return new V2D_Rectangle(
                 getP(oom, rm).rotateN(pt, theta, bd, oom, rm),
@@ -454,33 +449,33 @@ public class V2D_Rectangle extends V2D_Area {
      */
     public V2D_FiniteGeometry getIntersect(V2D_Triangle t,
             int oom, RoundingMode rm) {
-        int oomn2 = oom -2;
-            V2D_FiniteGeometry pqrit = pqr.getIntersect(t, oomn2-10, rm);
-            V2D_FiniteGeometry rspit = rsp.getIntersect(t, oomn2, rm);
-            if (pqrit == null) {
-                return rspit;
-            } else if (pqrit instanceof V2D_Point) {
-                if (rspit == null) {
-                    return pqrit;
-                } else {
-                    return rspit;
-                }
-            } else if (pqrit instanceof V2D_LineSegment) {
-                if (rspit == null) {
-                    return pqrit;
-                } else {
-                    return rspit;
-                }
+        int oomn2 = oom - 2;
+        V2D_FiniteGeometry pqrit = pqr.getIntersect(t, oomn2 - 10, rm);
+        V2D_FiniteGeometry rspit = rsp.getIntersect(t, oomn2, rm);
+        if (pqrit == null) {
+            return rspit;
+        } else if (pqrit instanceof V2D_Point) {
+            if (rspit == null) {
+                return pqrit;
             } else {
-                if (rspit == null) {
-                    return pqrit;
-                }
-                V2D_Point[] pqritps = pqrit.getPointsArray(oom, rm);
-                V2D_Point[] rspitps = rspit.getPointsArray(oom, rm);
-                V2D_Point[] pts = Arrays.copyOf(pqritps, pqritps.length + rspitps.length);
-                System.arraycopy(rspitps, 0, pts, pqritps.length, rspitps.length);
-                return V2D_ConvexArea.getGeometry(oom, rm, pts);
+                return rspit;
             }
+        } else if (pqrit instanceof V2D_LineSegment) {
+            if (rspit == null) {
+                return pqrit;
+            } else {
+                return rspit;
+            }
+        } else {
+            if (rspit == null) {
+                return pqrit;
+            }
+            V2D_Point[] pqritps = pqrit.getPointsArray(oom, rm);
+            V2D_Point[] rspitps = rspit.getPointsArray(oom, rm);
+            V2D_Point[] pts = Arrays.copyOf(pqritps, pqritps.length + rspitps.length);
+            System.arraycopy(rspitps, 0, pts, pqritps.length, rspitps.length);
+            return V2D_ConvexArea.getGeometry(oom, rm, pts);
+        }
     }
 
     /**
@@ -642,10 +637,10 @@ public class V2D_Rectangle extends V2D_Area {
         }
         return false;
     }
-    
+
     /**
      * Identify if {@code this} is intersected by {@code aabb}.
-     * 
+     *
      * @param aabb The envelope to test for intersection.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode if rounding is needed.

@@ -38,6 +38,11 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
      */
     public HashMap<Integer, V2D_PolygonNoInternalHoles> internalHoles;
     //public HashMap<Integer, V2D_Polygon> internalHoles;
+    
+    /**
+     * For storing the internalHoles edges.
+     */
+    protected HashMap<Integer, V2D_LineSegment> internalHolesEdges;
 
     /**
      * Create a new shallow copy.
@@ -47,23 +52,9 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
     public V2D_Polygon(V2D_Polygon p) {
         super(p);
         this.internalHoles = p.internalHoles;
+        this.internalHolesEdges = p.internalHolesEdges;
     }
-
-//    /**
-//     * Create a new deep copy.
-//     *
-//     * @param p The polygon to duplicate.
-//     * @param oom The Order of Magnitude for the precision.
-//     * @param rm The RoundingMode.
-//     */
-//    public V2D_Polygon(V2D_Polygon p, int oom, RoundingMode rm) {
-//        super(p, oom, rm);
-//        this.internalHoles = new HashMap<>();
-//        for (var x: p.internalHoles.entrySet()) {
-//            this.internalHoles.put(x.getKey(), new V2D_PolygonNoInternalHoles(
-//                    x.getValue(), oom, rm));
-//        }
-//    }
+    
     /**
      * Create a new instance.
      *
@@ -106,19 +97,21 @@ public class V2D_Polygon extends V2D_PolygonNoInternalHoles {
         this.internalHoles = internalHoles;
     }
 
-//    /**
-//     * @param oom The Order of Magnitude for the precision.
-//     * @param rm The RoundingMode for any rounding.
-//     * @return A copy of {@link internalHoles} with the given tolerance applied.
-//     */
-//    public HashMap<Integer, V2D_PolygonNoInternalHoles> getInternalHoles(
-//            int oom, RoundingMode rm) {
-//        HashMap<Integer, V2D_PolygonNoInternalHoles> r = new HashMap<>();
-//        for (V2D_PolygonNoInternalHoles h : internalHoles.values()) {
-//            r.put(r.size(), new V2D_PolygonNoInternalHoles(h, oom, rm));
-//        }
-//        return r;
-//    }
+    /**
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return A collection of the edges of all the internal holes.
+     */
+    public HashMap<Integer, V2D_LineSegment> getInternalHolesEdges(int oom, RoundingMode rm) {
+        if (internalHolesEdges == null) {
+            internalHolesEdges = new HashMap<>();
+            internalHoles.values().forEach(x
+                -> edges.values().forEach(y
+                -> internalHolesEdges.put(internalHolesEdges.size(), y)));
+        }
+        return internalHolesEdges;
+    }
+    
     /**
      * Identify if {@code this} intersects {@code pt}.
      *

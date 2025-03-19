@@ -307,8 +307,8 @@ public class V2D_PolygonNoInternalHoles extends V2D_Area {
 
     @Override
     public V2D_Point[] getPointsArray(int oom, RoundingMode rm) {
-        Collection<V2D_Point> pts = points.values();
-        return pts.toArray(V2D_Point[]::new);
+        return points.values().toArray(new V2D_Point[points.size()]);
+        //return points.values().toArray(V2D_Point[]::new);
     }
 
     @Override

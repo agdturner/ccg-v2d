@@ -49,8 +49,7 @@ public class V2D_PolygonNoInternalHoles_d extends V2D_Area_d {
      *
      * @param p The polygon to copy.
      */
-    public V2D_PolygonNoInternalHoles_d(
-            V2D_PolygonNoInternalHoles_d p) {
+    public V2D_PolygonNoInternalHoles_d(V2D_PolygonNoInternalHoles_d p) {
         this(p.points, p.ch, p.edges, p.externalHoles);
     }
 

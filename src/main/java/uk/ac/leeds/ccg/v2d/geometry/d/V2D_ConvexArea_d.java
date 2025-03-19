@@ -179,12 +179,7 @@ public class V2D_ConvexArea_d extends V2D_Area_d {
 
     @Override
     public V2D_Point_d[] getPointsArray() {
-        int np = points.size();
-        V2D_Point_d[] pts = new V2D_Point_d[np];
-        for (int i = 0; i < np; i++) {
-            pts[i] = new V2D_Point_d(points.get(i));
-        }
-        return pts;
+        return points.values().toArray(new V2D_Point_d[points.size()]);
     }
 
     @Override
