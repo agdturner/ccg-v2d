@@ -190,19 +190,19 @@ public class V2D_ConvexArea_d extends V2D_Area_d {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
-        s.append(this.getClass().getName()).append("(");
+        s.append(this.getClass().getName()).append("(\n");
         {
-            s.append("\npoints (\n");
+            s.append("points  (\n");
             for (var entry : points.entrySet()) {
-                s.append("(");
+                s.append(" (");
                 s.append(entry.getKey());
-                s.append(",");
+                s.append(", ");
                 s.append(entry.getValue().toString());
-                s.append("), ");
+                s.append("),\n");
             }
             int l = s.length();
             s = s.delete(l - 2, l);
-            s.append("\n)\n");
+            s.append("\n )");
         }
         s.append("\n)");
         return s.toString();
