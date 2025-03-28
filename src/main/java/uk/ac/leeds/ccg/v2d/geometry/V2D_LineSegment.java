@@ -371,12 +371,68 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
             return false;
         }
     }
+    
+    /**
+     * @param aabb The Axis Aligned Bounding Box to test for intersection.
+     * @param oom The Order of Magnitude for the precision.
+     * @param rm The RoundingMode for any rounding.
+     * @return {@code true} if {@code this} is intersected by {@code aabb}.
+     */
+    public boolean intersects(V2D_AABB aabb, int oom, RoundingMode rm) {
+        if (getAABB(oom, rm).intersects(aabb, oom)) {
+            if (aabb.intersects(getP(), oom, rm)
+                    && aabb.intersects(getQ(oom, rm), oom, rm)) {
+                return true;
+            }
+            V2D_FiniteGeometry left = aabb.getLeft(oom, rm);
+            if (left instanceof V2D_LineSegment ll) {
+                if (intersects(ll, oom, rm)) {
+                    return true;
+                }
+            } else {
+                if (intersects((V2D_Point) left, oom, rm)) {
+                    return true;
+                }
+            }
+            V2D_FiniteGeometry r = aabb.getRight(oom, rm);
+            if (r instanceof V2D_LineSegment rl) {
+                if (intersects(rl, oom, rm)) {
+                    return true;
+                }
+            } else {
+                if (intersects((V2D_Point) r, oom, rm)) {
+                    return true;
+                }
+            }
+            V2D_FiniteGeometry t = aabb.getTop(oom, rm);
+            if (t instanceof V2D_LineSegment tl) {
+                if (intersects(tl, oom, rm)) {
+                    return true;
+                }
+            } else {
+                if (intersects((V2D_Point) t, oom, rm)) {
+                    return true;
+                }
+            }
+            V2D_FiniteGeometry b = aabb.getBottom(oom, rm);
+            if (b instanceof V2D_LineSegment bl) {
+                if (intersects(bl, oom, rm)) {
+                    return true;
+                }
+            } else {
+                if (intersects((V2D_Point) b, oom, rm)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     /**
      * @param l A line to test for intersection.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
-     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     * @return {@code true} if {@code this} is intersected by {@code l}.
      */
     public boolean intersects(V2D_Line l, int oom, RoundingMode rm) {
         if (this.l.intersects(l, oom, rm)) {
@@ -390,7 +446,8 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @param rm The RoundingMode for any rounding.
      * @param l A line to test for with any of the lines in ls.
      * @param ls The other lines to test for intersection with l.
-     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     * @return {@code true} if {@code l} is intersects any of the 
+     * line segments in {@code ls}.
      */
     public static boolean intersects(int oom, RoundingMode rm, 
             V2D_LineSegment l, V2D_LineSegment... ls) {
@@ -402,7 +459,8 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @param rm The RoundingMode for any rounding.
      * @param l A line to test for with any of the lines in ls.
      * @param ls The other lines to test for intersection with l.
-     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     * @return {@code true} if {@code l} is intersects any of the 
+     * line segments in {@code ls}.
      */
     public static boolean intersects(int oom, RoundingMode rm,
             V2D_LineSegment l, Collection<V2D_LineSegment> ls) {
@@ -414,7 +472,8 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @param ls The lines to test for intersection with p.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
-     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     * @return {@code true} if {@code p} intersects any of the 
+     * line segments in {@code ls}.
      */
     public static boolean intersects(int oom, RoundingMode rm, V2D_Point p,
             V2D_LineSegment... ls) {
@@ -426,7 +485,8 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @param ls The lines to test for intersection with p.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
-     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     * @return {@code true} if {@code p} intersects any of the 
+     * line segments in {@code ls}.
      */
     public static boolean intersects(int oom, RoundingMode rm, V2D_Point p,
             Collection<V2D_LineSegment> ls) {
@@ -437,7 +497,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
      * @param l A line segment to test for intersection.
      * @param oom The Order of Magnitude for the precision.
      * @param rm The RoundingMode for any rounding.
-     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     * @return {@code true} if {@code this} is intersected by {@code l}.
      */
     public boolean intersects(V2D_LineSegment l, int oom, RoundingMode rm) {
         return getIntersect(l, oom, rm) != null;
@@ -1490,58 +1550,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
 //            return this;
 //        }
 //    }
-    public boolean intersects(V2D_AABB aabb, int oom, RoundingMode rm) {
-        if (getAABB(oom, rm).intersects(aabb, oom)) {
-            V2D_Point p = getP();
-            if (aabb.intersects(p, oom, rm)) {
-                return true;
-            }
-            V2D_Point q = getQ(oom, rm);
-            if (aabb.intersects(q, oom, rm)) {
-                return true;
-            }
-            V2D_FiniteGeometry left = aabb.getLeft(oom, rm);
-            if (left instanceof V2D_LineSegment ll) {
-                if (intersects(ll, oom, rm)) {
-                    return true;
-                }
-            } else {
-                if (intersects((V2D_Point) left, oom, rm)) {
-                    return true;
-                }
-            }
-            V2D_FiniteGeometry r = aabb.getRight(oom, rm);
-            if (r instanceof V2D_LineSegment rl) {
-                if (intersects(rl, oom, rm)) {
-                    return true;
-                }
-            } else {
-                if (intersects((V2D_Point) r, oom, rm)) {
-                    return true;
-                }
-            }
-            V2D_FiniteGeometry t = aabb.getTop(oom, rm);
-            if (left instanceof V2D_LineSegment tl) {
-                if (intersects(tl, oom, rm)) {
-                    return true;
-                }
-            } else {
-                if (intersects((V2D_Point) t, oom, rm)) {
-                    return true;
-                }
-            }
-            V2D_FiniteGeometry b = aabb.getBottom(oom, rm);
-            if (b instanceof V2D_LineSegment bl) {
-                if (intersects(bl, oom, rm)) {
-                    return true;
-                }
-            } else {
-                if (intersects((V2D_Point) b, oom, rm)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+    
+   
 
 }

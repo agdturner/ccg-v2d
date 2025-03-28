@@ -302,7 +302,7 @@ public class V2D_LineSegment_d extends V2D_FiniteGeometry_d {
 
     /**
      * @param pt A point to test for intersection.
-     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     * @return {@code true} if {@code this} is intersected by {@code pt}.
      */
     public boolean intersects(V2D_Point_d pt) {
         if (getAABB().intersects(pt.getAABB())) {
@@ -329,11 +329,66 @@ public class V2D_LineSegment_d extends V2D_FiniteGeometry_d {
      * @param pt A point to test for intersection.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
-     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     * @return {@code true} if {@code this} is intersected by {@code pt}.
      */
     public boolean intersects(V2D_Point_d pt, double epsilon) {
         if (getAABB().intersects(pt.getAABB(), epsilon)) {
             return intersects0(pt, epsilon);
+        }
+        return false;
+    }
+    
+    /**
+     * @param aabb The Axis Aligned Bounding Box to test for intersection.
+     * @param epsilon The tolerance within which two vectors are regarded as
+     * equal.
+     * @return {@code true} if {@code this} is intersected by {@code aabb}.
+     */
+    public boolean intersects(V2D_AABB_d aabb, double epsilon) {
+        if (getAABB().intersects(aabb, epsilon)) {
+            if (aabb.intersects(getP()) && aabb.intersects(getQ())) {
+                return true;
+            }
+            V2D_FiniteGeometry_d left = aabb.getLeft();
+            if (left instanceof V2D_LineSegment_d ll) {
+                if (intersects(ll, epsilon)) {
+                    return true;
+                }
+            } else {
+                if (intersects((V2D_Point_d) left, epsilon)) {
+                    return true;
+                }
+            }
+            V2D_FiniteGeometry_d r = aabb.getRight();
+            if (r instanceof V2D_LineSegment_d rl) {
+                if (intersects(rl, epsilon)) {
+                    return true;
+                }
+            } else {
+                if (intersects((V2D_Point_d) r, epsilon)) {
+                    return true;
+                }
+            }
+            V2D_FiniteGeometry_d t = aabb.getTop();
+            if (t instanceof V2D_LineSegment_d tl) {
+                if (intersects(tl, epsilon)) {
+                    return true;
+                }
+            } else {
+                if (intersects((V2D_Point_d) t, epsilon)) {
+                    return true;
+                }
+            }
+            V2D_FiniteGeometry_d b = aabb.getBottom();
+            if (b instanceof V2D_LineSegment_d bl) {
+                if (intersects(bl, epsilon)) {
+                    return true;
+                }
+            } else {
+                if (intersects((V2D_Point_d) b, epsilon)) {
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -342,7 +397,7 @@ public class V2D_LineSegment_d extends V2D_FiniteGeometry_d {
      * @param pt A point to test for intersection.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
-     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     * @return {@code true} if {@code this} is intersected by {@code pt}.
      */
     public boolean intersects0(V2D_Point_d pt, double epsilon) {
             if (l.intersects(epsilon, pt)) {
@@ -371,7 +426,7 @@ public class V2D_LineSegment_d extends V2D_FiniteGeometry_d {
      * @param l A line to test for intersection.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
-     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     * @return {@code true} if {@code this} is intersected by {@code l}.
      */
     public boolean intersects(V2D_Line_d l, double epsilon) {
         if (this.l.intersects(epsilon, l)) {
@@ -385,7 +440,8 @@ public class V2D_LineSegment_d extends V2D_FiniteGeometry_d {
      * equal.
      * @param l A line to test for with any of the lines in ls.
      * @param ls The other lines to test for intersection with l.
-     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     * @return {@code true} if {@code l} intersects any of the 
+     * line segments in {@code ls}.
      */
     public static boolean intersects(double epsilon, 
             V2D_LineSegment_d l, V2D_LineSegment_d... ls) {
@@ -397,7 +453,8 @@ public class V2D_LineSegment_d extends V2D_FiniteGeometry_d {
      * equal.
      * @param l A line to test for with any of the lines in ls.
      * @param ls The other lines to test for intersection with l.
-     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     * @return {@code true} if {@code l} intersects any of the 
+     * line segments in {@code ls}.
      */
     public static boolean intersects(double epsilon, 
             V2D_LineSegment_d l, Collection<V2D_LineSegment_d> ls) {
@@ -409,7 +466,8 @@ public class V2D_LineSegment_d extends V2D_FiniteGeometry_d {
      * @param ls The lines to test for intersection with p.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
-     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     * @return {@code true} if {@code p} intersects any of the 
+     * line segments in {@code ls}.
      */
     public static boolean intersects(double epsilon,
             V2D_Point_d p, V2D_LineSegment_d... ls) {
@@ -421,7 +479,8 @@ public class V2D_LineSegment_d extends V2D_FiniteGeometry_d {
      * @param ls The lines to test for intersection with p.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
-     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     * @return {@code true} if {@code p} intersects any of the 
+     * line segments in {@code ls}.
      */
     public static boolean intersects(double epsilon,
             V2D_Point_d p, Collection<V2D_LineSegment_d> ls) {
@@ -432,7 +491,7 @@ public class V2D_LineSegment_d extends V2D_FiniteGeometry_d {
      * @param l A line segment to test for intersection.
      * @param epsilon The tolerance within which two vectors are regarded as
      * equal.
-     * @return {@code true} if {@code this} is intersected by {@code pv}.
+     * @return {@code true} if {@code this} is intersected by {@code l}.
      */
     public boolean intersects(V2D_LineSegment_d l, double epsilon) {
         return getIntersect(epsilon, l) != null;
@@ -1332,57 +1391,5 @@ public class V2D_LineSegment_d extends V2D_FiniteGeometry_d {
 //            return this;
 //        }
 //    }
-    public boolean intersects(V2D_AABB_d aabb, double epsilon) {
-        if (getAABB().intersects(aabb, epsilon)) {
-            V2D_Point_d p = getP();
-            if (aabb.intersects(p)) {
-                return true;
-            }
-            V2D_Point_d q = getQ();
-            if (aabb.intersects(q)) {
-                return true;
-            }
-            V2D_FiniteGeometry_d left = aabb.getLeft();
-            if (left instanceof V2D_LineSegment_d ll) {
-                if (intersects(ll, epsilon)) {
-                    return true;
-                }
-            } else {
-                if (intersects((V2D_Point_d) left, epsilon)) {
-                    return true;
-                }
-            }
-            V2D_FiniteGeometry_d r = aabb.getRight();
-            if (r instanceof V2D_LineSegment_d rl) {
-                if (intersects(rl, epsilon)) {
-                    return true;
-                }
-            } else {
-                if (intersects((V2D_Point_d) r, epsilon)) {
-                    return true;
-                }
-            }
-            V2D_FiniteGeometry_d t = aabb.getTop();
-            if (left instanceof V2D_LineSegment_d tl) {
-                if (intersects(tl, epsilon)) {
-                    return true;
-                }
-            } else {
-                if (intersects((V2D_Point_d) t, epsilon)) {
-                    return true;
-                }
-            }
-            V2D_FiniteGeometry_d b = aabb.getBottom();
-            if (b instanceof V2D_LineSegment_d bl) {
-                if (intersects(bl, epsilon)) {
-                    return true;
-                }
-            } else {
-                if (intersects((V2D_Point_d) b, epsilon)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+    
 }
