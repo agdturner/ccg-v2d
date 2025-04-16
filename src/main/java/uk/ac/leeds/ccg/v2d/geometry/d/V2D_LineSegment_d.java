@@ -346,7 +346,7 @@ public class V2D_LineSegment_d extends V2D_FiniteGeometry_d {
      */
     public boolean intersects(V2D_AABB_d aabb, double epsilon) {
         if (getAABB().intersects(aabb, epsilon)) {
-            if (aabb.intersects(getP()) && aabb.intersects(getQ())) {
+            if (aabb.intersects(getP()) || aabb.intersects(getQ())) {
                 return true;
             }
             V2D_FiniteGeometry_d left = aabb.getLeft();

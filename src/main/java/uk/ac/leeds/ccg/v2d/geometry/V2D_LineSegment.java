@@ -381,7 +381,7 @@ public class V2D_LineSegment extends V2D_FiniteGeometry {
     public boolean intersects(V2D_AABB aabb, int oom, RoundingMode rm) {
         if (getAABB(oom, rm).intersects(aabb, oom)) {
             if (aabb.intersects(getP(), oom, rm)
-                    && aabb.intersects(getQ(oom, rm), oom, rm)) {
+                    || aabb.intersects(getQ(oom, rm), oom, rm)) {
                 return true;
             }
             V2D_FiniteGeometry left = aabb.getLeft(oom, rm);

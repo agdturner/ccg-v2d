@@ -190,8 +190,8 @@ public class V2D_Point extends V2D_FiniteGeometry {
         if (p == null) {
             return false;
         }
-        if (this.getX(oom, rm).compareTo(p.getX(oom, rm)) == 0) {
-            if (this.getY(oom, rm).compareTo(p.getY(oom, rm)) == 0) {
+        if (getX(oom, rm).compareTo(p.getX(oom, rm)) == 0) {
+            if (getY(oom, rm).compareTo(p.getY(oom, rm)) == 0) {
                 return true;
             }
         }

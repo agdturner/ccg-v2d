@@ -280,6 +280,28 @@ public class V2D_LineSegmentTest extends V2D_Test {
         expResult = new V2D_LineSegment(pP0P0, pP1P0, oom, rm);
         assertTrue(((V2D_LineSegment) expResult).equalsIgnoreDirection(
                 (V2D_LineSegment) result, oom, rm));
+        // Test 6
+        // https://arstechnica.com/civis/threads/line-intersection-with-large-floating-point-values.389579/
+        BigRational x1 = BigRational.valueOf("2089426.5233462777");
+        BigRational y1 = BigRational.valueOf("1180182.3877339689");
+        BigRational x2 = BigRational.valueOf("2085646.6891757075");
+        BigRational y2 = BigRational.valueOf("1195618.7333999649");
+        BigRational x3 = BigRational.valueOf("1889281.8148903656");
+        BigRational y3 = BigRational.valueOf("1997547.0560044837");
+        BigRational x4 = BigRational.valueOf("2259977.3672235999");
+        BigRational y4 = BigRational.valueOf("483675.17050843034");
+        oom = -11;
+        l = new V2D_LineSegment(new V2D_Point(env, x1, y1), 
+                new V2D_Point(env, x2, y2), oom, rm);
+        instance = new V2D_LineSegment(new V2D_Point(env, x3, y3), 
+                new V2D_Point(env, x4, y4), oom, rm);
+        result = instance.getIntersect(l, oom, rm);
+        //System.out.println(result);
+        V2D_Vector v = new V2D_Vector(
+                BigRational.valueOf("2087250.2576044934441770188502418715434"),
+                BigRational.valueOf("1189069.9708223505967928378597979643843"));
+        expResult = new V2D_Point(env, v.getDX(oom, rm), v.getDY(oom, rm));
+        assertTrue(((V2D_Point) expResult).equals((V2D_Point) result, oom, rm));
     }
 
     /**
